@@ -1,9 +1,12 @@
 Package: gppmr
-Title: What the Package Does (one line, title case)
+Title: Demonstration Code for Title
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R:  c(person(c("Julian", "D."), "Karch", email="karch@mpib-berlin.mpg.de", role=c("aut", "cre", "cph")))
+Description: Demonstration Code for Title
 Depends: R (>= 3.3.1)
-License: What license is it under?
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/karchjd/gppmr
+BugReports: https://github.com/karchjd/gppmr/issues
+

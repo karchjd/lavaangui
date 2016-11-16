@@ -122,15 +122,3 @@ gppModel <- function(X,Y,meanFunction,covFunction){
   funML        <- mxFitFunctionML()
   model <- mxModel(model,exp,funML)
 }
-
-# X <- list()
-# Y <- list()
-# for (i in 1:100){
-#   x <- mvrnorm(n=1,mu=rep(0,10),Sigma=diag(rep(1,10)))
-#   y <- 5*x + mvrnorm(n=1,mu=rep(0,10),Sigma=diag(rep(10,10)))
-#   X[[i]] <- x
-#   Y[[i]] <- y
-# }
-# 
-# model <- gppModel(X,Y,'$t$*$muI$','omxApproxEquals($s$,$t$,0.0000001)*$vErr$')
-# fitModel <- mxRun(model)
