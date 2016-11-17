@@ -1,12 +1,15 @@
 Package: gppmr
 Title: Demonstration Code for Title
 Version: 0.0.0.9000
-Authors@R:  c(person(c("Julian", "D."), "Karch", email="karch@mpib-berlin.mpg.de", role=c("aut", "cre", "cph")))
+Authors@R: c(person(c("Julian", "D."), "Karch", email="karch@mpib-berlin.mpg.de", role=c("aut", "cre", "cph")))
 Description: Demonstration Code for Title
-Depends: R (>= 3.3.1)
+Depends:
+    R (>= 3.3.1)
+Imports:
+    OpenMx (>= 2.6.9)
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/karchjd/gppmr
 BugReports: https://github.com/karchjd/gppmr/issues
-
+RoxygenNote: 5.0.1

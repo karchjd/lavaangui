@@ -42,7 +42,7 @@ getVariables <- function(meanFunction){
         result <- c(result,buffer)
         dollarRead <- FALSE
       }else{
-        buffer <- paste0(buffer,currentChar) 
+        buffer <- paste0(buffer,currentChar)
       }
     }
   }
@@ -53,12 +53,13 @@ getVariables <- function(meanFunction){
 }
 
 
-
+#' @export
+#' @import OpenMx
 gppModel <- function(X,Y,meanFunction,covFunction){
   ##create data matrix for openmx
   N <- length(X)
   stopifnot(N==length(Y))
-  
+
   xsize <- sapply(X,length)
   ysize <- sapply(Y, length)
   stopifnot(identical(xsize,ysize))
@@ -76,7 +77,7 @@ gppModel <- function(X,Y,meanFunction,covFunction){
           manifestVars = manifests,
           mxData(dataForOpenMx,type="raw"),
           mxMatrix(type='Full',nrow=1,ncol=maxColNumber,labels=paste0("data.time",1:maxColNumber),name='T'))
-  
+
   ##get parameters from mean and covariance function and add them to the model
   mParams <- getVariables(meanFunction)
   cParams <- getVariables(covFunction)
@@ -84,9 +85,9 @@ gppModel <- function(X,Y,meanFunction,covFunction){
   stopifnot(length(allParams)==length(mParams)+length(cParams)) #params in mean and covfunction should be unique
   for (i in 1:length(allParams)){
     model <- mxModel(model,
-                     mxMatrix(type='Full',nrow=1,ncol=1,free=TRUE,value=1,name=allParams[i]))  
+                     mxMatrix(type='Full',nrow=1,ncol=1,free=TRUE,value=1,name=allParams[i]))
   }
-  
+
   ##generate the mean algebras and the mean matrix
   for (colIndex in 1:maxColNumber){
     theName <- paste0('mus',colIndex)
@@ -95,28 +96,28 @@ gppModel <- function(X,Y,meanFunction,covFunction){
     eval(parse(text=string))
   }
   model <- mxModel(model,mxMatrix(type='Full',nrow=1,ncol=maxColNumber,free=FALSE,labels=paste0('mus',1:maxColNumber,'[1,1]'),name='expMean'))
-  
+
   ##generate the covariance algebras and the covariance matrix
   for (colIndex in 1:maxColNumber){
     for (colIndex2 in colIndex:maxColNumber){
       theName <- paste0('cov',colIndex,',',colIndex2)
       theAlgebra <- generateCov(colIndex,colIndex2,covFunction)
       string <- paste0("model <- mxModel(model,mxAlgebra(",theAlgebra,",name='",theName,"'))")
-      eval(parse(text=string)) 
+      eval(parse(text=string))
     }
   }
   labelMatrix <- matrix('cov',nrow=maxColNumber,ncol=maxColNumber)
   for (i in 1:maxColNumber){
     for (j in 1:maxColNumber){
       if (i>j){
-        labelMatrix[i,j] <- paste0('cov',j,',',i,'[1,1]')   
+        labelMatrix[i,j] <- paste0('cov',j,',',i,'[1,1]')
       }else{
-        labelMatrix[i,j] <- paste0('cov',i,',',j,'[1,1]')      
+        labelMatrix[i,j] <- paste0('cov',i,',',j,'[1,1]')
       }
     }
   }
   model <- mxModel(model,mxMatrix(type='Full',nrow=maxColNumber,ncol=maxColNumber,free=FALSE,labels=labelMatrix,name='expCov'))
-  
+
   #add fit functions
   exp          <- mxExpectationNormal(covariance="expCov", means="expMean", dimnames=manifests )
   funML        <- mxFitFunctionML()
