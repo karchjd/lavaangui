@@ -1,5 +1,5 @@
 library(stringr)
-context("String length")
+context("gppModel")
 test_that("gppModel runs", {
   ##set parameter values
   b0<-10
