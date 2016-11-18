@@ -2,6 +2,7 @@ newSeq <- function(from,to){
   if (to>=from){
     return(from:to)
   }else{
+
     return(c())
   }
 }

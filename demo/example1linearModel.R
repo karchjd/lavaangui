@@ -1,7 +1,6 @@
-
-source('~/mystuff/projects/dissertation/paper/code/extendOpenMx/gppModel.R')
-require(OpenMx)
 ##set parameter values
+library(OpenMx)
+library(gppmr)
 b0<-10
 b1<-3
 vErr <- 10
@@ -36,7 +35,10 @@ resGP <- resGP[1:2,]
 rownames(resGP) <- c('b0','b1')
 colnames(resGP) <- c('2.5 %','estimate','97.5 %','')
 print(resGP)
-stopifnot(all.equal(resLin[,'estimate'],resGP[,'estimate'],tolerance=0.0001,check.names=FALSE))
-print('Borders of 95% confidence intervals are not excactly the same because different strategies are used.
-      However, they converge  as N grows')
+stopifnot(all.equal(resLin[,'estimate'],resGP[,'estimate'],
+                    tolerance=0.0001,check.names=FALSE))
+cat('\nPoint estimates are identical\n\n')
+cat('Borders of 95% confidence intervals are not excactly the same
+because different strategies are used.
+However, they converge  as N grows')
 
