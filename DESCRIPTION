@@ -13,4 +13,7 @@ LazyData: true
 URL: https://github.com/karchjd/gppmr
 BugReports: https://github.com/karchjd/gppmr/issues
 RoxygenNote: 5.0.1
-Suggests: testthat (>= 1.0.2)
+Suggests: testthat (>= 1.0.2),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

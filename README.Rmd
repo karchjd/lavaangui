@@ -1,0 +1,35 @@
+---
+title: "Readme for gppmr"
+author: "Julian Karch"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Readme for gppmr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+## Install
+
+To install the gppmr package. Copy the following line into R:
+```{r, eval=FALSE}
+source('https://raw.githubusercontent.com/karchjd/gppmr/master/tools/gppmrInstall.R')
+```
+
+
+## Examples
+The examples for the paper are included as R demos. To see a list of all examples do the following:
+```{r}
+demo(package='gppmr')
+```
+
+To run a particular example. You can do the following. Here exemplified for 'example1linearModel'.
+```{r, eval=FALSE}
+demo('example1linearModel',package='gppmr')
+```
+
+However, the recommended approach is to look at the source directly. To locate the demo folder in which all examples resides on your computer do the following:
+```{r}
+system.file("demo", package ="gppmr")
+```
+
+
