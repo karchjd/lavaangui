@@ -83,7 +83,6 @@ gppModel <- function(X,Y,meanFunction,covFunction){
   mParams <- getVariables(meanFunction)
   cParams <- getVariables(covFunction)
   allParams <- union(mParams,cParams)
-  stopifnot(length(allParams)==length(mParams)+length(cParams)) #params in mean and covfunction should be unique
   for (i in 1:length(allParams)){
     model <- mxModel(model,
                      mxMatrix(type='Full',nrow=1,ncol=1,free=TRUE,value=1,name=allParams[i]))
