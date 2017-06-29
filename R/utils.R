@@ -4,6 +4,11 @@ simulateData <- function(run,N=1){
   stopifnot(class(run)=='MxModel' |class(run)=='MxRAMModel')
   manifests <- run@manifestVars
 
+  #add fake data
+  fake.data <- data.frame(matrix(1:(length(manifests)*2),ncol=length(manifests)))
+  names(fake.data)<- manifests
+  run@data <- mxData(fake.data,type="raw")
+
   #run to get exp mean and covariance
   fit <- mxRun(run,useOptimizer=F,silent=T)
   covM <- fit$fitfunction@info$expCov
