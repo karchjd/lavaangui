@@ -1,7 +1,7 @@
 #simulate Data for on OpenMx Model
 #' @export
 simulateData <- function(run,N=1){
-  stopifnot(class(run)=='MxModel')
+  stopifnot(class(run)=='MxModel' |class(run)=='MxRAMModel')
   manifests <- run@manifestVars
 
   #run to get exp mean and covariance
@@ -21,7 +21,7 @@ simulateData <- function(run,N=1){
 
 plotSEM <- function(simData,N=1){
   simDataLong <- melt(simData, id="Time")
-  print(ggplot(simDataLong,aes(x=Time,y=value,colour=variable)) + geom_line())    
+  print(ggplot(simDataLong,aes(x=Time,y=value,colour=variable)) + geom_line())
 }
 
 
