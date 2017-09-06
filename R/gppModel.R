@@ -57,6 +57,25 @@ getVariables <- function(meanFunction){
 #' @export
 #' @import OpenMx
 gppModel <- function(X,Y,meanFunction,covFunction){
+  #transform vectors into matrices
+  if (is.vector(X) && !is.list(X)){
+    X <- as.matrix(X)
+  }
+  if (is.vector(Y) && !is.list(X)){
+    Y <- as.matrix(Y)
+  }
+
+
+  #transform matrix input into the more general list input format
+  #each row become as list entry
+  if (is.matrix(X) && is.matrix(Y)){
+    X  <- t(X)
+    Y <- t(Y)
+    X <- split(X, rep(1:ncol(X), each = nrow(X)))
+    Y <- split(Y, rep(1:ncol(Y), each = nrow(Y)))
+  }
+  stopifnot(is.list(X) && is.list(Y))
+
   ##create data matrix for openmx
   N <- length(X)
   stopifnot(N==length(Y))

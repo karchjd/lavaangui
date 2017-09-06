@@ -1,8 +1,8 @@
 Package: gppmr
-Title: Demonstration Code for Title
+Title: Preliminary Implementation of GPPM
 Version: 0.0.0.9000
 Authors@R: c(person(c("Julian", "D."), "Karch", email="karch@mpib-berlin.mpg.de", role=c("aut", "cre", "cph")))
-Description: This is an example description. This is another example description.
+Description: Preliminary Implementation of GPPM
 Depends:
     R (>= 3.3.1)
 Imports:
@@ -12,8 +12,9 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/karchjd/gppmr
 BugReports: https://github.com/karchjd/gppmr/issues
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Suggests: testthat (>= 1.0.2),
     knitr,
-    rmarkdown
+    rmarkdown,
+    MASS
 VignetteBuilder: knitr
