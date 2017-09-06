@@ -1,3 +1,8 @@
+##Note
+While all major functionality is available, this package is still in a rather early stage. For example, documentation is mostly missing and the fitting algorithm is implemented inefficiently. Its current purpose is mainly a proof of concept and to enable reachers familiar with R to experiment with the new panel modeling technique Gaussian Process Panel Modeling. The Matlab implementation https://github.com/karchjd/GPPMM is more mature.
+
+The recommended approach to learn about the functionality of the package is currently to closely follow the examples provided. This is described in the following.
+
 ## Install
 
 To install the gppmr package. Copy the following line into R:
