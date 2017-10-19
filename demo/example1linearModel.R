@@ -1,4 +1,4 @@
-##setup
+  ##setup
 require(gppmr)
 require(OpenMx)
 
@@ -18,9 +18,9 @@ names(parasLM) <- c("LM.b0",'LM.b1','LM.sigma')
 print(parasLM)
 
 ##get results using GPPM
-gpModel <- gppModel(tVector,yVector,'$b0$ + $b1$*$t$','omxApproxEquals($s$,$t$,0.0000001)*$sigma$')
+gpModel <- gppModel(tVector,yVector,'$b0$ + $b1$*$t$','omxApproxEquals($s$,$t$,0.0000001)*$sigma$') #TODO less ugly
 gpModel <- suppressWarnings(mxRun(gpModel))
-parasGPPM <- omxGetParameters(gpModel)
+parasGPPM <- omxGetParameters(gpModel) #TODO less ugly
 names(parasGPPM) <- c("GPPM.b0",'GPPM.b1','GPPM.sigma')
 
 ##check results
