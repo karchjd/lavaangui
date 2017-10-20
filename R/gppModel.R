@@ -7,6 +7,12 @@ newSeq <- function(from,to){
   }
 }
 
+#add dollars around everything that is only a string
+#splitters are + and *, (,),
+addDollars <- function(modelString){
+  splitters <- c('^','%^%','+','-','%*%','*','/','%x%','%&%','(',')',',')
+}
+
 generateMean <- function(timeIndex,meanFunction){
   #find $t$ expression
   replacement <- paste0('T[1,',timeIndex,']');
@@ -27,6 +33,8 @@ generateCov <- function(sIndex,tIndex,covFunction){
   covFunction <- gsub("\\$","",covFunction)
   return(covFunction)
 }
+
+
 
 getVariables <- function(meanFunction){
   result <- c()
@@ -121,6 +129,7 @@ gppModel <- function(X,Y,meanFunction,covFunction){
     for (colIndex2 in colIndex:maxColNumber){
       theName <- paste0('cov',colIndex,',',colIndex2)
       theAlgebra <- generateCov(colIndex,colIndex2,covFunction)
+      browser()
       string <- paste0("model <- mxModel(model,mxAlgebra(",theAlgebra,",name='",theName,"'))")
       eval(parse(text=string))
     }
