@@ -10,7 +10,7 @@ newSeq <- function(from,to){
 #add dollars around everything that is only a string
 #splitters are + and *, (,),
 addDollars <- function(modelString){
-  splitters <- c('^','%^%','+','-','%*%','*','/','%x%','%&%','(',')',',')
+  splitters <- c('^','%^%','+','-','%*%','*','/','%x%','%&%','(',')',',',)
 }
 
 generateMean <- function(timeIndex,meanFunction){
@@ -62,53 +62,27 @@ getVariables <- function(meanFunction){
 }
 
 
+
+
 #' @export
 #' @import OpenMx
-gppModel <- function(X,Y,meanFunction,covFunction){
-  #transform vectors into matrices
-  if (is.vector(X) && !is.list(X)){
-    X <- as.matrix(X)
-  }
-  if (is.vector(Y) && !is.list(X)){
-    Y <- as.matrix(Y)
-  }
+gppModel <- function(meanFunction,covFunction,data){
 
-
-  #transform matrix input into the more general list input format
-  #each row become as list entry
-  if (is.matrix(X) && is.matrix(Y)){
-    X  <- t(X)
-    Y <- t(Y)
-    X <- split(X, rep(1:ncol(X), each = nrow(X)))
-    Y <- split(Y, rep(1:ncol(Y), each = nrow(Y)))
-  }
-  stopifnot(is.list(X) && is.list(Y))
-
-  ##create data matrix for openmx
-  N <- length(X)
-  stopifnot(N==length(Y))
-
-  xsize <- sapply(X,length)
-  ysize <- sapply(Y, length)
-  stopifnot(identical(xsize,ysize))
+  ##create empty open mx model
+  N <- nrow(data)
   maxColNumber <- max(ysize)
-  dataForOpenMx <- matrix(data=NA,nrow=N,ncol=2*maxColNumber)
+  dataForOpenMx <- data
   manifests <- paste0('Y',1:maxColNumber)
-  colnames(dataForOpenMx) <- c(manifests,paste0('time',1:maxColNumber))
-  for (i in 1:N){
-    dataForOpenMx[i,newSeq(1,ysize[i])] <- Y[[i]]
-    dataForOpenMx[i,newSeq(ysize[i]+1,maxColNumber)] <- NA
-    dataForOpenMx[i,newSeq(maxColNumber+1,maxColNumber+ysize[i])] <- X[[i]]
-    dataForOpenMx[i,newSeq(maxColNumber+ysize[i]+1,2*maxColNumber)] <- 1000000 #arbitrary value that will be ignored anyway
-  }
   model <- mxModel(model="GPPM",
           manifestVars = manifests,
           mxData(dataForOpenMx,type="raw"),
           mxMatrix(type='Full',nrow=1,ncol=maxColNumber,labels=paste0("data.time",1:maxColNumber),name='T'))
 
+
+
+
+  allParams <-
   ##get parameters from mean and covariance function and add them to the model
-  mParams <- getVariables(meanFunction)
-  cParams <- getVariables(covFunction)
   allParams <- union(mParams,cParams)
   for (i in 1:length(allParams)){
     model <- mxModel(model,
