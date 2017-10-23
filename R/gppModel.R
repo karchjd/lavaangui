@@ -7,10 +7,71 @@ newSeq <- function(from,to){
   }
 }
 
-#add dollars around everything that is only a string
-#splitters are + and *, (,),
-addDollars <- function(modelString){
-  splitters <- c('^','%^%','+','-','%*%','*','/','%x%','%&%','(',')',',',)
+#returns  the names of the parameters as string vectors and adds dollars to all stuff the needs to be replace, that is stuff in the data
+
+betterRegMatches <- function(modString,resGreg,value=' '){
+  stopifnot(length(resGreg)==1)
+  resGreg <- resGreg[[1]]
+  for (i in 1:length(resGreg)){
+    substr(modString,resGreg[i],resGreg[i]+attributes(resGreg)$match.length[i]-1) <- paste0(rep(value,attributes(resGreg)$match.length[i]),collapse = '')
+  }
+  return(modString)
+}
+
+mParse <- function(meanFunction,myData){
+  specialChar <- '!'
+
+  #get rid of all reserved chars
+  splitters <- c('\\^','%\\^%','\\+','-','%\\*%','\\*','/','%x%','%&%','\\(','\\)',',','[[:alnum:]]*\\(')
+  regExp <- paste0(splitters,'|',collapse = '')
+  regExp <- substr(regExp,1,nchar(regExp)-1)
+  grepRes <- gregexpr(regExp,meanFunction)
+  newMeanFunction <- meanFunction
+  newMeanFunction <- betterRegMatches(newMeanFunction, grepRes)
+
+  #find all vars in the data
+  dataNames <- setdiff(unique(gsub('[[:digit:]]','',names(myData))),'Y') #get all variables in wide data set without Y
+  dataNames <- paste0(dataNames,c('',specialChar)) #add special char
+  regExp <- paste0(dataNames,'|',collapse = '') #looking for all chars
+  regExp <- substr(regExp,1,nchar(regExp)-1)
+  regExp <- paste0('(?<=^| )(',regExp,')(?=$| )',collapse = '') #only look for stuff with whitespace before and after
+  grepRes <- gregexpr(regExp,newMeanFunction,perl = TRUE)
+
+  #extract vars in data
+  vars <- regmatches(newMeanFunction,grepRes)[[1]]
+  vars <- gsub(specialChar,'',vars)
+  vars <- unique(vars)
+
+
+  #extract parameters
+  newMeanFunction <- betterRegMatches(newMeanFunction, grepRes)
+  params <- strsplit(newMeanFunction,'[[:space:]]+')[[1]]
+  isnotNumber <- suppressWarnings(is.na(as.double(params)))
+  params <- params[isnotNumber]
+
+  #add dollars to orginal  function for the later replacement funtions
+  toReplace <- grepRes[[1]]
+  meanReturn <- meanFunction
+  dollarPosition <- c(toReplace,toReplace+attributes(toReplace)$capture.length)
+  dollarPosition <- sort(dollarPosition)
+  for (i in 1:length(dollarPosition)){
+    meanReturn <- paste0(substr(meanReturn,1,dollarPosition[i]-1),'$',substr(meanReturn,dollarPosition[i],nchar(meanReturn)),collapse='')
+    dollarPosition <- dollarPosition+1
+  }
+  return(list(params=params,modelF=meanReturn,vars=vars))
+}
+
+parseModel <- function(meanFunction,covFunction,myData){
+  #parse kernel function
+  covRes <- mParse(covFunction,myData)
+
+  #parse mean funnction
+  meanRes <- mParse(meanFunction,myData)
+
+  #join information
+  params <- union(meanRes$params,covRes$params)
+  vars <- union(meanRes$vars,covRes$vars)
+  return(list(params=params,meanFunction=meanRes$modelF,covFunction=covRes$modelF,vars=vars))
 }
 
 generateMean <- function(timeIndex,meanFunction){
@@ -34,36 +95,6 @@ generateCov <- function(sIndex,tIndex,covFunction){
   return(covFunction)
 }
 
-
-
-getVariables <- function(meanFunction){
-  result <- c()
-  dollarRead <- FALSE
-  for (i in 1:nchar(meanFunction)){
-    currentChar <- substr(meanFunction,i,i)
-    if (!dollarRead){
-      if (currentChar=='$'){
-        dollarRead <- TRUE
-        buffer <- c()
-      }
-    }else{
-      if (currentChar=='$'){
-        result <- c(result,buffer)
-        dollarRead <- FALSE
-      }else{
-        buffer <- paste0(buffer,currentChar)
-      }
-    }
-  }
-  #remove s and t
-  result <- setdiff(result,c('s','t'))
-  stopifnot(length(result)==length(unique(result)))
-  return(result)
-}
-
-
-
-
 #' @export
 #' @import OpenMx
 gppModel <- function(meanFunction,covFunction,data){
@@ -81,9 +112,11 @@ gppModel <- function(meanFunction,covFunction,data){
 
 
 
-  allParams <-
-  ##get parameters from mean and covariance function and add them to the model
-  allParams <- union(mParams,cParams)
+
+  parsedModel <- parseModel(meanf,covf,myData)
+
+  ##add params to the model
+  allParams <- parsedModel <-
   for (i in 1:length(allParams)){
     model <- mxModel(model,
                      mxMatrix(type='Full',nrow=1,ncol=1,free=TRUE,value=1,name=allParams[i]))
