@@ -24,5 +24,8 @@ test <- parseModel(meanf,covf,myData)
 expect_equal(test$meanFunction,'muI+muS*$t$')
 expect_equal(test$covFunction,'varI+covIS*($t$+$t!$)+varS*$t$*$t!$+omxApproxEquals($t$,$t!$,0.001)*sigma')
 expect_equal(test$params,c('muI','muS','varI','covIS','varS','sigma'))
-expect_equal(test$vars,c('t'))
+expect_equal(test$covVars,c('t'))
+expect_equal(test$meanVars,c('t'))
+
+
 
