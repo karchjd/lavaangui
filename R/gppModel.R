@@ -70,26 +70,30 @@ parseModel <- function(meanFunction,covFunction,myData){
 
   #join information
   params <- union(meanRes$params,covRes$params)
-  vars <- union(meanRes$vars,covRes$vars)
-  return(list(params=params,meanFunction=meanRes$modelF,covFunction=covRes$modelF,vars=vars))
+  return(list(params=params,meanFunction=meanRes$modelF,covFunction=covRes$modelF,meanVars=meanRes$vars,covVars=covRes$vars))
 }
 
-generateMean <- function(timeIndex,meanFunction){
-  #find $t$ expression
-  replacement <- paste0('T[1,',timeIndex,']');
-  meanFunction <- gsub("\\$t\\$",replacement,meanFunction)
+generateMean <- function(timeIndex,meanFunction,meanVars){
+  #replace vars
+  for (cVar in meanVars){
+    replacement <- paste0(cVar,'[1,',timeIndex,']');
+    meanFunction <- gsub(paste0('\\$',cVar,'\\$'),replacement,meanFunction)
+  }
   #remove $
   meanFunction <- gsub("\\$","",meanFunction)
   return(meanFunction)
 }
 
-generateCov <- function(sIndex,tIndex,covFunction){
-  #find $t$ expression
-  replacement <- paste0('T[1,',tIndex,']');
-  covFunction <- gsub("\\$t\\$",replacement,covFunction)
-  #find $s$ expression
-  replacement <- paste0('T[1,',sIndex,']');
-  covFunction <- gsub("\\$s\\$",replacement,covFunction)
+generateCov <- function(sIndex,tIndex,covFunction,covVars){
+  #replace vars
+  for (cVar in covVars){
+    #find normal expression
+    replacement <- paste0(cVar,'[1,',tIndex,']');
+    covFunction <- gsub(paste0('\\$',cVar,'\\$'),replacement,covFunction)
+    #find ! expression
+    replacement <- paste0(cVar,'[1,',sIndex,']');
+    covFunction <- gsub(paste0('\\$',cVar,'!\\$'),replacement,covFunction)
+  }
   #remove $
   covFunction <- gsub("\\$","",covFunction)
   return(covFunction)
@@ -97,35 +101,37 @@ generateCov <- function(sIndex,tIndex,covFunction){
 
 #' @export
 #' @import OpenMx
-gppModel <- function(meanFunction,covFunction,data){
-
+gppModel <- function(meanFunction,covFunction,myData){
   ##create empty open mx model
   N <- nrow(data)
-  maxColNumber <- max(ysize)
-  dataForOpenMx <- data
-  manifests <- paste0('Y',1:maxColNumber)
+  yColsOrig <- names(myData)[grep("Y[[:digit:]]+",names(myData))]
+  yCols <- gsub('Y','',yColsOrig)
+  yCols <- as.double(yCols)
+  maxColNumber <- max(yCols)
+  stopifnot(maxColNumber==length(yCols))
+  dataForOpenMx <- myData
+  manifests <- yColsOrig
   model <- mxModel(model="GPPM",
-          manifestVars = manifests,
-          mxData(dataForOpenMx,type="raw"),
-          mxMatrix(type='Full',nrow=1,ncol=maxColNumber,labels=paste0("data.time",1:maxColNumber),name='T'))
+                   manifestVars = manifests,
+                   mxData(myData,type="raw"))
 
+  #parse the model strings
+  parsedModel <- parseModel(meanFunction,covFunction,myData)
 
-
-
-
-  parsedModel <- parseModel(meanf,covf,myData)
-
+  #add matrices to openmx model, so that data can be accessed from within algebras
+  for (cVar in union(parsedModel$meanVars,parsedModel$covVars)){
+    model <- mxModel(model,mxMatrix(type='Full',nrow=1,ncol=maxColNumber,labels=paste0("data.",cVar,1:maxColNumber),name=cVar))
+  }
   ##add params to the model
-  allParams <- parsedModel <-
+  allParams <- parsedModel$params
   for (i in 1:length(allParams)){
     model <- mxModel(model,
                      mxMatrix(type='Full',nrow=1,ncol=1,free=TRUE,value=1,name=allParams[i]))
   }
-
   ##generate the mean algebras and the mean matrix
   for (colIndex in 1:maxColNumber){
     theName <- paste0('mus',colIndex)
-    theAlgebra <- generateMean(colIndex,meanFunction)
+    theAlgebra <- generateMean(colIndex,parsedModel$meanFunction,parsedModel$meanVars)
     string <- paste0("model <- mxModel(model,mxAlgebra(",theAlgebra,",name='",theName,"'))")
     eval(parse(text=string))
   }
@@ -135,8 +141,7 @@ gppModel <- function(meanFunction,covFunction,data){
   for (colIndex in 1:maxColNumber){
     for (colIndex2 in colIndex:maxColNumber){
       theName <- paste0('cov',colIndex,',',colIndex2)
-      theAlgebra <- generateCov(colIndex,colIndex2,covFunction)
-      browser()
+      theAlgebra <- generateCov(colIndex,colIndex2,parsedModel$covFunction,parsedModel$covVars)
       string <- paste0("model <- mxModel(model,mxAlgebra(",theAlgebra,",name='",theName,"'))")
       eval(parse(text=string))
     }
