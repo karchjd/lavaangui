@@ -70,7 +70,7 @@ parseModel <- function(meanFunction,covFunction,myData){
 
   #join information
   params <- union(meanRes$params,covRes$params)
-  return(list(params=params,meanFunction=meanRes$modelF,covFunction=covRes$modelF,meanVars=meanRes$vars,covVars=covRes$vars))
+  return(list(params=params,meanFunction=meanRes$modelF,covFunction=covRes$modelF,meanVars=meanRes$vars,covVars=covRes$vars,meanPars=meanRes$params,covPars=covRes$params))
 }
 
 generateMean <- function(timeIndex,meanFunction,meanVars){
@@ -162,4 +162,25 @@ gppModel <- function(meanFunction,covFunction,myData){
   exp          <- mxExpectationNormal(covariance="expCov", means="expMean", dimnames=manifests )
   funML        <- mxFitFunctionML()
   model <- mxModel(model,exp,funML)
+
+
+  #set starting values
+  startMean <- rep(1,length(parsedModel$meanPars))
+  model <- omxSetParameters(model, labels=paste0('GPPM.',parsedModel$meanPars,'[1,1]'),
+                              values=startMean) #same starting values
+  startCov <- rep(0.1,length(parsedModel$covPars)-1)
+  model <- omxSetParameters(model, labels=paste0('GPPM.',setdiff(parsedModel$covPars,'sigma'),'[1,1]'),
+                                                      values=startCov) #same starting values
+  #TODO: better
+  startNoise <- 1
+  model <- omxSetParameters(model, labels=paste0('GPPM.','sigma','[1,1]'),
+                                                      values=startNoise) #same starting values
+
+  #init gpModel object
+  startParas <- c(startMean,startCov,startNoise)
+  names(startParas) <- c(parsedModel$meanPars,setdiff(parsedModel$covPars,'sigma'),'sigma')
+  gpModel <- list(omx=model,mf=meanFunction,cf=covFunction,data=myData,startParas,mlParas=startParas,mll=NULL)
+  gpModel$mlParas=NA
+  class(gpModel) <- 'GPPM'
+  return(gpModel)
 }

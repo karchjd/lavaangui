@@ -24,11 +24,9 @@ myData <- as.data.frame(cbind(tMatrix,yMatrix))
 
 # ##fit data using GPPM
 gpModel <- gppModel('muI+muS*t','varI+covIS*(t+t!)+varS*t*t!+omxApproxEquals(t,t!,0.0001)*sigma',myData)
-gpModel <- omxSetParameters(gpModel, labels=c("GPPM.muI[1,1]","GPPM.muS[1,1]","GPPM.varI[1,1]","GPPM.varS[1,1]","GPPM.covIS[1,1]","GPPM.sigma[1,1]"),
-                             values=omxGetParameters(lgcModel)[c('muI','muS','varI','varS','covIS','sigma')]) #same starting values
-gpModelFit <- mxRun(gpModel,silent=TRUE)
+gpModelFit <- gppFit(gpModel)
 
  ##compare results
-lgcmSame <- all.equal(omxGetParameters(gpModelFit),omxGetParameters(semModel)[c('muI','muS','varI','covIS','varS','sigma')],check.attributes=FALSE,tolerance=0.0001)
+lgcmSame <- all.equal(gpModelFit$mlParas,omxGetParameters(semModel)[names(gpModelFit$mlParas)],check.attributes=FALSE,tolerance=0.0001)
 message(sprintf('Estimated parameters for the LGCM model are the same: %s',lgcmSame))
 
