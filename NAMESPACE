@@ -2,6 +2,7 @@
 
 export(generateAR)
 export(generateLGCM)
+export(gppFit)
 export(gppModel)
 export(simulateData)
 import(OpenMx)
