@@ -1,12 +1,12 @@
 ## Note
 
-While all major functionality is available, this package is still in a rather early stage. For example, documentation is mostly missing and the fitting algorithm is implemented inefficiently. Its current purpose is mainly a proof of concept and to enable reachers familiar with R to experiment with the new panel modeling technique Gaussian Process Panel Modeling. The Matlab implementation https://github.com/karchjd/GPPMM is more mature.
+While all major functionality is available, this package is still in a rather early stage. For example, documentation is mostly missing and the fitting algorithm is implemented inefficiently. Its current purpose is mainly a proof of concept and to enable reachers familiar with R to experiment with Gaussian Process Panel Modeling. The Matlab implementation https://github.com/karchjd/GPPMM is more mature.
 
 The recommended approach to learn about the functionality of the package is currently to closely follow the examples provided. This is described in the following.
 
 ## Install
 
-To install the gppmr package. Copy the following line into R:
+To install the gppmr package, copy the following line into R:
 ```{r, eval=FALSE}
 source('https://raw.githubusercontent.com/karchjd/gppmr/master/tools/gppmrInstall.R')
 ```
@@ -18,12 +18,12 @@ The examples for the paper are included as R demos. To see a list of all example
 demo(package='gppmr')
 ```
 
-To run a particular example. You can do the following. Here exemplified for 'example1linearModel'.
+To run a particular example, you can do the following. Here, exemplified for 'example1linearModel':
 ```{r, eval=FALSE}
 demo('example1linearModel',package='gppmr')
 ```
 
-However, the recommended approach is to look at the source directly. To locate the demo folder in which all examples resides on your computer do the following:
+However, the recommended approach is to look at the source directly. To locate the demo folder in which all examples resides on your computer, do the following:
 ```{r}
 system.file("demo", package ="gppmr")
 ```
