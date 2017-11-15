@@ -1,6 +1,6 @@
 #' @export
 gppFit <- function(gpModel){
-  stopifnot(class(gpModel)==''GPPM'')
+  stopifnot(class(gpModel)=='GPPM')
   #fit
   fittedModel <- gpModel
   fittedModel$omx <- mxRun(gpModel$omx,silent=TRUE)
@@ -11,5 +11,3 @@ gppFit <- function(gpModel){
   fittedModel$mlParas <- omxParas[names(fittedModel$mlParas)]
   return(fittedModel)
 }
-
-summary.fit()
