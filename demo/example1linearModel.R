@@ -1,6 +1,4 @@
-  ##setup
 require(gppmr)
-require(OpenMx)
 
 #generate data according to the linear change model
 b0 <- 3

@@ -1,37 +1,29 @@
-library(stringr)
-library(tictoc)
 context("gppModel")
 test_that("gppModel runs", {
-  ##set parameter values
-  b0<-10
-  b1<-3
-  vErr <- 10
-  N<- 20
+  #generate data according to the linear change model
+  b0 <- 3
+  b1 <- 2
+  sigma <- 1 #abbreviation for \sigma_\epsilon^2
+  nTime <- 3
+  trueModel <- function(t){b0+b1*t+rnorm(n=1,mean=0,sd=sqrt(sigma))}
+  tVector <- 1:nTime
+  yVector <- vapply(tVector, trueModel, 1)
 
-  #simualte data
-  timePoints <- c(1:N)
-  ys <- b0+timePoints*b1+rnorm(N,sd=vErr)
-  #use lm
-  linearModel <- lm(ys~ 1+timePoints)
+  #get results using lm
+  fittedLM <- lm(yVector ~ tVector)
+  parasLM <- coefficients(fittedLM)
+  parasLM[3] <-summary(fittedLM)$sigma
+  names(parasLM) <- c("LM.b0",'LM.b1','LM.sigma')
 
-  #slow
-  X <- list(timePoints)
-  Y <- list(ys)
-  #use GPPM
-  gpModel <- gppModel(X,Y,'$b0$+$b1$*$t$','omxApproxEquals($s$,$t$,0.0000001)*$vErr$')
-  gpModel <- mxModel(gpModel,mxCI(names(omxGetParameters(gpModel))))
-  tic()
-  gpModel <- mxRun(gpModel)
-  toc()
+  #wide data format for GPPM
+  names(tVector) <- paste0('t',1:nTime)
+  names(yVector) <- paste0('Y',1:nTime)
+  myData <- as.data.frame(t(c(tVector,yVector))) #force R to make dataframe with one row
 
-  #fast
-  X <- as.list(timePoints)
-  Y <- as.list(ys)
-  #use GPPM
-  gpModel2 <- gppModel(X,Y,'$b0$+$b1$*$t$','omxApproxEquals($s$,$t$,0.0000001)*$vErr$')
-  gpModel2 <- mxModel(gpModel2,mxCI(names(omxGetParameters(gpModel))))
-  tic()
-  gpModel2 <- mxRun(gpModel2)
-  toc()
-  expect_equal(omxGetParameters(gpModel2),omxGetParameters(gpModel))
+  #get results using GPPM
+  gpModel <- gppModel('b0+b1*t','omxApproxEquals(t,t!,0.0001)*sigma',myData)
+  gpModel <- gppFit(gpModel)
+
+  #compare results
+  expect_equal(parasLM[1:2],gpModel$mlParas[1:2],check.attributes = FALSE,tolerance = 0.0001)
 })

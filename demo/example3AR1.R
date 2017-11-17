@@ -1,6 +1,5 @@
-##setup
 require(gppmr)
-require(OpenMx)
+
 
 ##settings
 nT <- 20 #number of time points

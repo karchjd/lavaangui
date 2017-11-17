@@ -1,5 +1,4 @@
-context("gppModel")
-
+context("meansAndKernels")
 #generate data according to the linear change model
 b0 <- 3
 b1 <- 2
