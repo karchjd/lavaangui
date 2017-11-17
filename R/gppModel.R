@@ -27,7 +27,10 @@ mParse <- function(meanFunction,myData){
   regExp <- substr(regExp,1,nchar(regExp)-1)
   grepRes <- gregexpr(regExp,meanFunction)
   newMeanFunction <- meanFunction
-  newMeanFunction <- betterRegMatches(newMeanFunction, grepRes)
+  if(grepRes[[1]][1] !=-1){ #any match
+    newMeanFunction <- betterRegMatches(newMeanFunction, grepRes)
+  }
+
 
   #find all vars in the data
   dataNames <- setdiff(unique(gsub('[[:digit:]]','',names(myData))),'Y') #get all variables in wide data set without Y
@@ -166,13 +169,21 @@ gppModel <- function(meanFunction,covFunction,myData){
   model <- mxModel(model,exp,funML)
 
   #set starting values TODO: better
-  startMean <- rep(1,length(parsedModel$meanPars))
-  model <- omxSetParameters(model, labels=paste0('GPPM.',parsedModel$meanPars,'[1,1]'),
+  if (length(parsedModel$meanPars)>0){
+    startMean <- rep(1,length(parsedModel$meanPars))
+    model <- omxSetParameters(model, labels=paste0('GPPM.',parsedModel$meanPars,'[1,1]'),
                               values=startMean) #some starting values
+  }else{
+    startMean <- NULL
+  }
 
-  startCov <- rep(0.1,length(parsedModel$covPars))
-  model <- omxSetParameters(model, labels=paste0('GPPM.',parsedModel$covPars,'[1,1]'),
+  if (length(parsedModel$covPars)>0){
+    startCov <- rep(0.1,length(parsedModel$covPars))
+    model <- omxSetParameters(model, labels=paste0('GPPM.',parsedModel$covPars,'[1,1]'),
                                                       values=startCov) #some starting values
+  }else{
+    startCov <- NULL
+  }
 
   #init gpModel object
   startParas <- c(startMean,startCov)
