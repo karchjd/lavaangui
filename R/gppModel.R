@@ -37,17 +37,20 @@ mParse <- function(meanFunction,myData){
   regExp <- paste0('(?<=^| )(',regExp,')(?=$| )',collapse = '') #only look for stuff with whitespace before and after
   grepRes <- gregexpr(regExp,newMeanFunction,perl = TRUE)
 
-  #extract vars in data
+  #extract vars in data if present
   vars <- regmatches(newMeanFunction,grepRes)[[1]]
-  vars <- gsub(specialChar,'',vars)
-  vars <- unique(vars)
-
+  if (length(vars)>0){
+    vars <- gsub(specialChar,'',vars)
+    vars <- unique(vars)
+    newMeanFunction <- betterRegMatches(newMeanFunction, grepRes)
+  }
 
   #extract parameters
-  newMeanFunction <- betterRegMatches(newMeanFunction, grepRes)
+  newMeanFunction <- gsub('^[[:space:]]+',"",newMeanFunction) #remove spaces at the beginning
   params <- strsplit(newMeanFunction,'[[:space:]]+')[[1]]
   isnotNumber <- suppressWarnings(is.na(as.double(params)))
   params <- params[isnotNumber]
+  params <- unique(params)
 
   #add dollars to orginal  function for the later replacement funtions
   toReplace <- grepRes[[1]]
@@ -117,7 +120,6 @@ gppModel <- function(meanFunction,covFunction,myData){
 
   #parse the model strings
   parsedModel <- parseModel(meanFunction,covFunction,myData)
-
   #add matrices to openmx model, so that data can be accessed from within algebras
   for (cVar in union(parsedModel$meanVars,parsedModel$covVars)){
     model <- mxModel(model,mxMatrix(type='Full',nrow=1,ncol=maxColNumber,labels=paste0("data.",cVar,1:maxColNumber),name=cVar))
@@ -163,24 +165,20 @@ gppModel <- function(meanFunction,covFunction,myData){
   funML        <- mxFitFunctionML()
   model <- mxModel(model,exp,funML)
 
-
-  #set starting values
+  #set starting values TODO: better
   startMean <- rep(1,length(parsedModel$meanPars))
   model <- omxSetParameters(model, labels=paste0('GPPM.',parsedModel$meanPars,'[1,1]'),
-                              values=startMean) #same starting values
-  startCov <- rep(0.1,length(parsedModel$covPars)-1)
-  model <- omxSetParameters(model, labels=paste0('GPPM.',setdiff(parsedModel$covPars,'sigma'),'[1,1]'),
-                                                      values=startCov) #same starting values
-  #TODO: better
-  startNoise <- 1
-  model <- omxSetParameters(model, labels=paste0('GPPM.','sigma','[1,1]'),
-                                                      values=startNoise) #same starting values
+                              values=startMean) #some starting values
+
+  startCov <- rep(0.1,length(parsedModel$covPars))
+  model <- omxSetParameters(model, labels=paste0('GPPM.',parsedModel$covPars,'[1,1]'),
+                                                      values=startCov) #some starting values
 
   #init gpModel object
-  startParas <- c(startMean,startCov,startNoise)
-  names(startParas) <- c(parsedModel$meanPars,setdiff(parsedModel$covPars,'sigma'),'sigma')
-  gpModel <- list(omx=model,mf=meanFunction,cf=covFunction,data=myData,startParas,mlParas=startParas,mll=NULL)
-  gpModel$mlParas=NA
+  startParas <- c(startMean,startCov)
+  names(startParas) <- c(parsedModel$meanPars,parsedModel$covPars)
+  gpModel <- list(omx=model,mf=meanFunction,cf=covFunction,data=myData,startParas=startParas,mlParas=startParas,mll=NULL)
+  gpModel$mlParas[1:length(gpModel$mlParas)] <-NA
   class(gpModel) <- 'GPPM'
   return(gpModel)
 }
