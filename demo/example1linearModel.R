@@ -1,6 +1,6 @@
 require(gppmr)
 
-#generate data according to the linear change model
+#generate data according to the linear growth model
 b0 <- 3
 b1 <- 2
 sigma <- 1 #abbreviation for \sigma_\epsilon^2
@@ -29,4 +29,4 @@ gpModel <- gppFit(gpModel)
 #compare results
 coefSame <- all.equal(parasLM[1:2],gpModel$mlParas[1:2],check.attributes = FALSE,tolerance = 0.0001)
 message(sprintf('Coefficients of linear model are the same: %s',coefSame))
-#residual variances, i.e. parasLM[3] and parasGPPM[3] are not the same  because GPPM uses ML for parameter estimation and lm OLS
+#residual variances, i.e., parasLM[3] and gpModel$mlParas[3] are not the same because GPPM uses ML for parameter estimation and lm OLS

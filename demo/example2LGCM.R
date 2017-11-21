@@ -6,7 +6,7 @@ require(MASS)
 nP <- 100
 nT <- 3
 
-##define latent growth curve model using SEM software
+##define latent growth curve model using the SEM software OpenMx
 lgcModel <- generateLGCM(nT)
 trueModel <- omxSetParameters(lgcModel,labels=c('muI','muS','varI','varS','covIS','sigma'),values=c(10,3,4,10,0.5,10))
 
@@ -15,13 +15,13 @@ yMatrix <- simulateData(trueModel,N=nP)
 tMatrix <- matrix(rep(0:(nT-1),each=nP),nrow = nP,ncol = nT)
 
 
-##fit data using SEM
+##fit data using OpenMx
 semModel <- mxModel(lgcModel,mxData(yMatrix,type = "raw"))
 semModel <- mxRun(semModel,silent = TRUE)
 colnames(tMatrix) <- paste0('t',1:nT)
 myData <- as.data.frame(cbind(tMatrix,yMatrix))
 
-# ##fit data using GPPM
+##fit data using GPPM
 gpModel <- gppModel('muI+muS*t','varI+covIS*(t+t!)+varS*t*t!+omxApproxEquals(t,t!,0.0001)*sigma',myData)
 gpModelFit <- gppFit(gpModel)
 
