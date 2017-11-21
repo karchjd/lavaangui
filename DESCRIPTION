@@ -1,11 +1,13 @@
 Package: gppmr
 Title: Preliminary Implementation of GPPM
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(person(c("Julian", "D."), "Karch", email="karch@mpib-berlin.mpg.de", role=c("aut", "cre", "cph")))
 Description: Preliminary Implementation of Gaussian Process Panel Modeling.
 Depends:
     R (>= 3.3.1),
-    OpenMx (>= 2.6.9)
+    OpenMx (>= 2.6.9),
+Imports:
+    MASS
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -15,5 +17,4 @@ RoxygenNote: 6.0.1
 Suggests: testthat (>= 1.0.2),
     knitr,
     rmarkdown,
-    MASS
 VignetteBuilder: knitr

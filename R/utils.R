@@ -14,7 +14,7 @@ simulateData <- function(run,N=1){
   mu <- fit$fitfunction@info$expMean
 
   #generate Data
-  simData <- mvrnorm(n=N, mu, covM)
+  simData <- MASS::mvrnorm(n=N, mu, covM)
   if (N==1){
     simData <- t(simData)
   }
