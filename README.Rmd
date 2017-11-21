@@ -13,7 +13,7 @@ source('https://raw.githubusercontent.com/karchjd/gppmr/master/tools/gppmrInstal
 
 
 ## Examples
-The examples for the paper are included as R demos. To see a list of all examples do the following:
+The examples are included as R demos. To see a list of all examples do the following:
 ```{r}
 demo(package='gppmr')
 ```
