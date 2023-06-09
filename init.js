@@ -1,0 +1,123 @@
+
+var cy = cytoscape({
+    container: document.getElementById('cy'),
+    elements: [],
+    style: [
+        {
+            selector: 'node.observed-variable',
+            style: {
+                'shape': 'rectangle',
+                'width': '80',
+                'height': '80',
+                'background-color': 'white',
+                'border-color': 'black',
+                'border-width': '2px',
+                'label': 'data(id)',
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'label': 'data(label)'
+            }
+        },
+        {
+            selector: 'node.latent-variable',
+            style: {
+                'shape': 'ellipse',
+                'width': '80',
+                'height': '80',
+                'background-color': 'white',
+                'border-color': 'black',
+                'border-width': '2px',
+                'label': 'data(id)',
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'label': 'data(label)'
+            }
+        },
+        {
+            selector: 'edge',
+            style: {
+                'width': 3,
+                'line-color': '#000',
+                'target-arrow-color': '#000', // Set target arrow color to black
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier',
+                'label': function (edge) {
+                    return edge.data('label');
+                },
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'text-wrap': 'wrap',
+                'text-max-width': 80,
+                'font-size': '14px',
+                'z-index': 10,
+                'color': '#000',
+                'text-outline-color': '#fff',
+                'text-outline-width': '2px',
+                'text-background-color': '#fff',
+                'text-background-opacity': 1,
+                'text-background-padding': '4px',
+            }
+        },
+        {
+            selector: 'edge.loop',
+            style: {
+                'width': 3,
+                'line-color': '#000',
+                'curve-style': 'unbundled-bezier',
+                'control-point-distances': [50],
+                'control-point-weights': [0.5],
+                'loop-direction': '0', // -Math.PI / 2 in radians to position at top
+                'loop-sweep': '0.8', // rounding of the loop, in radians
+                'target-arrow-shape': 'triangle',
+                'source-arrow-shape': 'triangle',
+                'target-arrow-fill': 'filled',
+                'source-arrow-fill': 'filled',
+                'target-arrow-color': '#000',
+                'source-arrow-color': '#000'
+            }
+        },
+        {
+            selector: 'edge.undirected',
+            style: {
+                'width': 3,
+                'line-color': '#ccc',
+                'curve-style': 'unbundled-bezier',
+                'control-point-distances': [100],
+                'control-point-weights': [0.5],
+                'target-arrow-shape': 'triangle',
+                'source-arrow-shape': 'triangle'
+            }
+        }
+    ]
+});
+
+cy.nodeEditing({
+    resizeToContentCueImage: 'resizeCue.svg',
+    autoRemoveResizeToContentCue: true,
+});
+
+cy.on("nodeediting.resizestart", function (e, type) {
+    console.log(type);
+});
+
+cy.on("nodeediting.resizeend", function (e, type) {
+    document.body.style.cursor = 'initial';
+});
+
+var layout = cy.layout({ name: 'grid' });
+
+// Initialize edgehandles extension
+var eh = cy.edgehandles({
+    preview: false, // disables the ghost edge preview
+    hoverDelay: 150, // time spend over a target node before it's considered a hover
+    handleNodes: 'node', // selector/filter for whether edges can be made from a given node
+    snap: true, // when enabled, the edge can be drawn by just moving close to a target node (can be confusing on compound graphs because you don't need to actually start on the node itself to start drawing)
+    handleColor: '#ff0000', // bright red
+    handleSize: 10, // increase the size
+    canConnect: function (sourceNode, targetNode) {
+        // Allow connection if it doesn't create a parallel edge
+        return !cy.elements('edge[source = "' + sourceNode.id() + '"][target = "' + targetNode.id() + '"]').length;
+    }
+});
+
+var nodeIdCounter = 0;
