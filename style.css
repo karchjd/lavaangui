@@ -1,6 +1,0 @@
-.cy-context-menus-cxt-menu {
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* This adds a shadow to the menu */
-    border-radius: 8px; /* This makes the edges of the menu rounded */
-    overflow: hidden; /* This is necessary so that the inner items don't spill out of the rounded corners */
-    background-color: #FFFFFF;
-  }

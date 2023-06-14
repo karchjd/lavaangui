@@ -2,15 +2,15 @@
 var cy = cytoscape({
     container: document.getElementById('cy'),
     elements: [],
+    autoungrabify: false,
     style: [
         {
-            selector: 'node.observed-variable',
+            selector: 'node',
             style: {
-                'shape': 'rectangle',
                 'width': '80',
                 'height': '80',
                 'background-color': 'white',
-                'border-color': 'black',
+                'border-color': 'grey',
                 'border-width': '2px',
                 'label': 'data(id)',
                 'text-valign': 'center',
@@ -19,18 +19,33 @@ var cy = cytoscape({
             }
         },
         {
+            selector: 'node.observed-variable',
+            style: {
+                'shape': 'rectangle',
+            }
+        },
+        {
             selector: 'node.latent-variable',
             style: {
                 'shape': 'ellipse',
-                'width': '80',
-                'height': '80',
-                'background-color': 'white',
-                'border-color': 'black',
-                'border-width': '2px',
-                'label': 'data(id)',
+            }
+        },
+        {
+            selector: 'node.constant',
+            style: {
+                'shape': 'triangle',
+                'label': '1',
                 'text-valign': 'center',
-                'text-halign': 'center',
-                'label': 'data(label)'
+                'text-margin-y': '10px',
+                'border-color': 'black',
+
+
+            }
+        },
+        {
+            selector: 'node.linked',
+            style: {
+                'border-color': 'black'
             }
         },
         {
@@ -39,11 +54,9 @@ var cy = cytoscape({
                 'width': 3,
                 'line-color': '#000',
                 'target-arrow-color': '#000', // Set target arrow color to black
+                'source-arrow-color': '#000', // Set target arrow color to black
                 'target-arrow-shape': 'triangle',
                 'curve-style': 'bezier',
-                'label': function (edge) {
-                    return edge.data('label');
-                },
                 'text-valign': 'center',
                 'text-halign': 'center',
                 'text-wrap': 'wrap',
@@ -55,14 +68,12 @@ var cy = cytoscape({
                 'text-outline-width': '2px',
                 'text-background-color': '#fff',
                 'text-background-opacity': 1,
-                'text-background-padding': '4px',
+                'text-background-padding': '4px'
             }
         },
         {
             selector: 'edge.loop',
             style: {
-                'width': 3,
-                'line-color': '#000',
                 'curve-style': 'unbundled-bezier',
                 'control-point-distances': [50],
                 'control-point-weights': [0.5],
@@ -79,13 +90,49 @@ var cy = cytoscape({
         {
             selector: 'edge.undirected',
             style: {
-                'width': 3,
-                'line-color': '#ccc',
                 'curve-style': 'unbundled-bezier',
-                'control-point-distances': [100],
+                'control-point-distances': [50],
                 'control-point-weights': [0.5],
                 'target-arrow-shape': 'triangle',
                 'source-arrow-shape': 'triangle'
+            }
+        },
+        {
+            selector: 'edge.free.label, edge.forcefree.label',
+            style: {
+                'label': function(edge) {
+                    return edge.data('label');
+                }
+            }
+        },
+        {
+            selector: 'edge.fixed.label',
+            style: {
+                'label': function(edge) {
+                    return edge.data('label') + '@' + edge.data('value');
+                }
+            }
+        },
+        {
+            selector: 'edge.fixed.nolabel',
+            style: {
+                'label': function(edge) {
+                    return '@' + edge.data('value');
+                }
+            }
+        },
+        {
+            selector: 'edge.hasEst',
+            style: {
+                'label': function(edge) {
+                    return edge.data('value');
+                }
+            }
+        },
+        {
+            selector: 'edge.forcefree',
+            style: {
+                'line-color': 'blue'
             }
         }
     ]
@@ -119,5 +166,3 @@ var eh = cy.edgehandles({
         return !cy.elements('edge[source = "' + sourceNode.id() + '"][target = "' + targetNode.id() + '"]').length;
     }
 });
-
-var nodeIdCounter = 0;

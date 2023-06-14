@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Your App Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.2.9/cytoscape.min.js"></script>
+    <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-edgehandles/master/cytoscape-edgehandles.js"></script>
+    <script src="https://cdn.rawgit.com/konvajs/konva/1.6.3/konva.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/iVis-at-Bilkent/cytoscape.js-undo-redo@master/cytoscape-undo-redo.js"></script>
+    <script src="https://unpkg.com/cytoscape-context-menus@3.0.1"></script>
+    <script src="https://unpkg.com/cytoscape-node-editing@latest"></script>
+    <link href="https://unpkg.com/cytoscape-context-menus@3.0.1/cytoscape-context-menus.css" rel="stylesheet" type="text/css">
+    <!-- <link href="www/style.css" rel="stylesheet" type="text/css"> -->
+    <!-- <link href="www/style_menu.css" rel="stylesheet" type="text/css"> -->
+</head>
+
+<body>
+    <nav class="menu">
+        <ul>
+            <li><a href="#">File</a>
+                <ul class="submenu">
+                    <li id="loadDataMenuItem"><a href="#">Load Data</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Edit</a>
+                <ul class="submenu">
+                    <li><a href="#">Cut</a></li>
+                    <li><a href="#">Copy</a></li>
+                    <li><a href="#">Paste</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Lavaan</a>
+                <ul class="submenu">
+                    <li><a href="#">Option 1</a></li>
+                    <li><a href="#">Option 2</a></li>
+                </ul>
+            </li>
+            <li><a href="#">View</a>
+                <ul class="submenu">
+                    <li><a href="#">Option 1</a></li>
+                    <li><a href="#">Option 2</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div class="toolbox">
+        <button class="toolbox-btn" id="add-latent-variable" title="Create Latent Variable"></button>
+        <button class="toolbox-btn" id="add-manifest-variable" title="Create Observed Variable"></button>
+        <button class="toolbox-btn" id="add-constant-variable" title="Create Constant Variable"></button>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h3>Select Variables:</h3>
+            <div class="selection-container">
+                <div class="available-variables">
+                    <h4>Available Variables</h4>
+                    <select id="availableVariables" multiple size="5"></select>
+                </div>
+                <div class="buttons">
+                    <button id="btnAdd"> &gt; </button>
+                    <button id="btnRemove"> &lt; </button>
+                </div>
+                <div class="selected-variables">
+                    <h4>Selected Variables</h4>
+                    <select id="selectedVariables" multiple size="5"></select>
+                </div>
+            </div>
+            <button id="btnDone">Done</button>
+        </div>
+    </div>
+
+    <div id="chosenVariablesBox" class="draggable-box" style="display:none;">
+        <div id="chosenVariablesHeader" class="draggable-box-header">Dataset Name</div>
+        <ul id="chosenVariablesList"></ul>
+    </div>
+    <input type="file" id="fileInput" accept=".csv" style="display: none;">
+    <div id="cy" style="width: 100%; height: 80vh;"></div>
+    <div id="controls" style="margin-top: 20px; text-align: center;">
+        <button id="ctrScript">Create Script</button>
+        <button id="run">Run lavaan</button>
+    </div>
+
+    <script src="www/ini_simple.js"></script>
+    <script src="www/undo.js"></script>
+    <!-- <script src="www/io.js"></script> -->
+    <script src="www/graphmanipulation.js"></script>
+    <!-- <script src="www/context_menus.js"></script>
+    <script src="www/main_menus.js"></script>
+    <script src="www/R_interface.js"></script> -->
+</body>
+
+</html>

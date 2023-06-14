@@ -1,0 +1,85 @@
+
+    <nav class="menu">
+        <ul>
+            <li><a href="#">File</a>
+                <ul class="submenu">
+                    <li id="loadDataMenuItem"><a href="#">Load Data</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Edit</a>
+                <ul class="submenu">
+                    <li><a href="#">Cut</a></li>
+                    <li><a href="#">Copy</a></li>
+                    <li><a href="#">Paste</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Lavaan</a>
+                <ul class="submenu">
+                    <li><a href="#">Option 1</a></li>
+                    <li><a href="#">Option 2</a></li>
+                </ul>
+            </li>
+            <li><a href="#">View</a>
+                <ul class="submenu">
+                    <!-- New checkmark items -->
+                    <li class="checkmark-container" data-selected="false">
+                        <span class="checkmark"></span>
+                        <label for="showEstimate">Show Estimate</label>
+                    </li>
+                    <li class="checkmark-container" data-selected="false">
+                        <span class="checkmark"></span>
+                        <label for="showPValue">Show pvalue</label>
+                    </li>
+                    <li class="checkmark-container" data-selected="false">
+                        <span class="checkmark"></span>
+                        <label for="showStandardError">Show standard error</label>
+                    </li>
+                    <li class="checkmark-container" data-selected="false">
+                        <span class="checkmark"></span>
+                        <label for="showConfidenceInterval">Show confidence interval</label>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div class="toolbox">
+        <button class="toolbox-btn" id="add-latent-variable" title="Create Latent Variable"></button>
+        <button class="toolbox-btn" id="add-manifest-variable" title="Create Observed Variable"></button>
+        <button class="toolbox-btn" id="add-constant-variable" title="Create Constant Variable"></button>
+    </div>
+    
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h3>Select Variables:</h3>
+            <div class="selection-container">
+                <div class="available-variables">
+                    <h4>Available Variables</h4>
+                    <select id="availableVariables" multiple size="5"></select>
+                </div>
+                <div class="buttons">
+                    <button id="btnAdd"> &gt; </button>
+                    <button id="btnRemove"> &lt; </button>
+                </div>
+                <div class="selected-variables">
+                    <h4>Selected Variables</h4>
+                    <select id="selectedVariables" multiple size="5"></select>
+                </div>
+            </div>
+            <button id="btnDone">Done</button>
+        </div>
+    </div>
+
+    <div id="chosenVariablesBox" class="draggable-box" style="display:none;">
+        <div id="chosenVariablesHeader" class="draggable-box-header">Dataset Name</div>
+        <ul id="chosenVariablesList"></ul>
+    </div>
+    <input type="file" id="fileInput" accept=".csv" style="display: none;">
+    <div class="container">
+        <div id="cy"></div>
+        <div id="lavaan_syntax_R" class="shiny-html-output"></div>
+    </div>
+  <div id="controls" style="margin-top: 20px; text-align: center;">
+    <button id= "ctrScript">Create Script</button>
+    <button id= "run">Run lavaan</button>
+  </div>

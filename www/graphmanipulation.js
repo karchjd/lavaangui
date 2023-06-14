@@ -1,48 +1,66 @@
-function addNode(nodeType) {
+var nodeIdCounter = 0;
+var edgeIdCounter = 0;
+function addNode(nodeType, position) {
     var nodeId = 'node' + nodeIdCounter++;
-    var edgeId = 'edge' + (nodeIdCounter - 1);
     var label = 'x' + nodeIdCounter;
 
-    // Add the node
+    // Check if position is provided, if not, use random position
+    var finalPosition = position ? position : { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 };
+  
     cy.add({
         group: 'nodes',
         data: { id: nodeId, label: label },
         classes: nodeType,
-        position: { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 }
+        position: finalPosition
     });
-
-    // Add the loop edge
+    
+    if(nodeType !== "constant")
+    var edgeId = 'edge' + edgeIdCounter++;
     cy.add({
         group: 'edges',
         data: {
             id: edgeId,
             source: nodeId,
             target: nodeId,
-            label: '',
-            free: true,
+            label: ''
         },
-        classes: 'loop'
-    });
+        classes: 'loop free nolabel'
+    });    
 }
+
 
 // Listen for keydown event
 document.addEventListener('keydown', function (event) {
     // Check if the Command key was pressed
-    if (event.key === 'Meta') {
+    if (event.key === 'Meta' || event.key === 'Control') {
         eh.enableDrawMode();
+    }
+
+    if (event.key === 'Backspace') {
+        var selectedElements = cy.$(':selected');
+
+        selectedElements.forEach(function(element) {
+            if (element.isNode()) {
+                element.remove();
+            } else if (element.isEdge()) {
+                element.remove();
+            }
+        });
     }
 });
 
 // Listen for keyup event
 document.addEventListener('keyup', function (event) {
     // Check if the Command key was released
-    if (event.key === 'Meta') {
+    if (event.key === 'Meta' || event.key === 'Control') {
         eh.disableDrawMode();
     }
 });
 
 addNode('observed-variable');
 addNode('observed-variable');
+addNode('observed-variable');
+
 
 function countEdgesConnectedToNodeSides(nodeId) {
     var node = cy.getElementById(nodeId);
@@ -141,16 +159,59 @@ function isNode(str) {
 // ceck for collision when adding
 cy.on('add', 'edge', function (event) {
     var edge = event.target;
-    edge.data('free', true)
     var sourceNodeId = edge.source().id();
     var targetNodeId = edge.target().id();
+    edge.addClass('free');
+    edge.addClass('nolabel');
 
     if (sourceNodeId !== targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)) {
         // Call your function for both nodes
         checkNodeLoop(sourceNodeId);
         checkNodeLoop(targetNodeId);
+        edge.addClass('directed');
+    }else if (sourceNodeId === targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)){
+        edge.addClass('loop');
+    }
+    if (edge.hasClass('undirected') && (edge.source().hasClass('constant') || edge.source().hasClass('constant'))){
+        cy.remove(edge);
+    }
+
+    if(edge.hasClass('directed') && (edge.target().hasClass('constant'))){
+        cy.remove(edge);
+    }
+
+    if(edge.hasClass('directed') && (edge.source().hasClass('constant'))){
+        edge.data('isMean', "1");
+    }else{
+        edge.data('isMean', "0");
     }
 });
+
+
+
+
+
+// put added edge in undo stack
+/*cy.on('ehcomplete', function (event, sourceNode, targetNode, addedEles) {
+    // Remove the edge that was added directly by edgehandles
+    cy.remove(addedEles[0]);
+
+    // Construct the actions array for batching undo-redo actions
+    var actions = [];
+
+    // Push the 'add' action for the edge to the actions array
+    actions.push({
+        name: 'add',
+        param: {
+            group: 'edges',
+            data: { id: addedEles[0].id(), source: sourceNode.id(), target: targetNode.id() },
+            classes: 'free directed'
+        }
+    });
+
+    // Use the undo-redo extension to perform the batch of actions
+    ur.do('batch', actions);
+});*/
 
 // check for collision when moving stuff
 cy.on('position', 'node', function (event) {
@@ -166,3 +227,17 @@ cy.on('position', 'node', function (event) {
         checkNodeLoop(connectedNodeId);
     });
 });
+
+$("#add-latent-variable").click(function() {
+    addNode("latent-variable");
+  });
+
+  // Button click event for "Create Observed Variable"
+  $("#add-manifest-variable").click(function() {
+    addNode("observed-variable");
+  });
+
+  // Button click event for "Create Constant Variable"
+  $("#add-constant-variable").click(function() {
+    addNode("constant");
+  });
