@@ -29,6 +29,23 @@ document.querySelectorAll('.menu > ul > li').forEach(item => {
     });
 });
 
+document.getElementById("help-menu-item").addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+
+    // Help content
+    var helpContent = [
+        "Hold command or ctrl: draw directed arrows",
+        "Hold space: draw undirected arrows (currently disabled because of bug)",
+        "Backspace: delete selected elements",
+        "o: create observed variable at mouse location",
+        "l: create latent variable at mouse location",
+        "c: create constant variable at mouse location"
+    ].join('\n'); // Join the array into a single string, separating each item with a newline character
+
+    // Show the alert
+    alert(helpContent);
+});
+
 
 document.getElementById("btnAdd").addEventListener("click", () => moveOption("availableVariables", "selectedVariables"));
 document.getElementById("btnRemove").addEventListener("click", () => moveOption("selectedVariables", "availableVariables"));
