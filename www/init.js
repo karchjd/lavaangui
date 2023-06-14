@@ -3,6 +3,7 @@ var cy = cytoscape({
     container: document.getElementById('cy'),
     elements: [],
     autoungrabify: false,
+    autolock: false,
     style: [
         {
             selector: 'node',
