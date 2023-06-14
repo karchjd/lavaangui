@@ -8,29 +8,29 @@ function containsObject(obj, list) {
     return false;
 }
 
-function addTerms(node, edge){
+function addTerms(node, edge) {
     let node_label = node.data('label');
     let premultiplier = false;
     let formula;
-    if(edge.hasClass("fixed")){
+    if (edge.hasClass("fixed")) {
         formula = edge.data('value') + "*" + node_label;
         premultiplier = true;
-    }else if(edge.hasClass("forcefree")){
-        formula =  "NA*" + node_label;
+    } else if (edge.hasClass("forcefree")) {
+        formula = "NA*" + node_label;
         premultiplier = true;
     }
 
-    if(edge.hasClass("label")){
+    if (edge.hasClass("label")) {
         label = edge.data('label');
-        if (!premultiplier){
+        if (!premultiplier) {
             formula = label + "*" + node_label;
-        }else{
+        } else {
             formula += " + " + label + "*" + node_label;
         }
-    }else{
-        if (!premultiplier){
+    } else {
+        if (!premultiplier) {
             formula = node_label;
-        }else{
+        } else {
             formula += " + " + node_label;
         }
     }
@@ -38,7 +38,6 @@ function addTerms(node, edge){
 }
 
 function createSyntax() {
-    var meanStruc = true;
     var syntax = "";
     if (loadedFileName === "") {
         loadedFileName === "YOUR_DATA.csv"
@@ -46,18 +45,6 @@ function createSyntax() {
 
     var R_script = "library(lavaan)" + "\n";
     R_script = "data <- read.csv('data.csv')" + "\n";
-
-    // // mean structure
-    // nonconstant_nodes = cy.nodes(function(node){return !node.hasClass('constant')});
-    // for (let i = 0; i < nonconstant_nodes.length; i++) {
-    //     c_node = nonconstant_nodes[i];
-    //     var connectedEdges = c_node.connectedEdges(function(edge){
-    //         return edge.hasClass("free") && edge.source().hasClass("constant")
-    //     });
-    //     if(connectedEdges.length == 0){
-    //         meanStruc = false;
-    //     }
-    //   }
 
     // measurement model
     var latentNodes = cy.nodes(function (node) { return node.hasClass('latent-variable') });
@@ -76,8 +63,8 @@ function createSyntax() {
                 if (j > 0) {
                     nodeNames += " + ";
                 }
-                
-                nodeNames +=  addTerms(node,connectedEdges[j]);
+
+                nodeNames += addTerms(node, connectedEdges[j]);
             }
             syntax += latentNode.data('label') + ' =~ ' + nodeNames + '\n ';
         }
@@ -110,7 +97,7 @@ function createSyntax() {
                 if (j > 0) {
                     nodeNames += " + ";
                 }
-                nodeNames += addTerms(node,connectedEdges[j]);
+                nodeNames += addTerms(node, connectedEdges[j]);
             }
             syntax += targetNode.data('label') + ' ~ ' + nodeNames + '\n ';
         }
@@ -124,7 +111,21 @@ function createSyntax() {
         for (var i = 0; i < cov_edges.length; i++) {
             node1 = cov_edges[i].source().data('label');
             node2 = cov_edges[i].target().data('label');
-            syntax += node1 + ' ~~ ' + addTerms(cov_edges[i].target(),cov_edges[i]) + '\n ';
+            syntax += node1 + ' ~~ ' + addTerms(cov_edges[i].target(), cov_edges[i]) + '\n ';
+        }
+    }
+
+    // mean structure
+    constant_nodes = cy.nodes(function (node) { return node.hasClass('constant') });
+    for (let i = 0; i < constant_nodes.length; i++) {
+        c_node = constant_nodes[i];
+        var connectedEdges = c_node.connectedEdges();
+        if (connectedEdges.length > 0) {
+            syntax += "# intercepts" + '\n '
+            for (var j = 0; j < connectedEdges.length; j++) {
+                var node = connectedEdges[j].target();
+                syntax += node.data('label') + ' ~ 1 \n ';
+            }
         }
     }
 
@@ -177,7 +178,7 @@ function findEdge(lhs, op, rhs) {
 
     correct_edge = cy.edges(function (edge) {
         res = edge.source().data('label') == source && edge.target().data('label') == target
-        if(directed == "undirected"){
+        if (directed == "undirected") {
             res = res || (edge.source().data('label') == target && edge.target().data('label') == source)
         }
         return res;
