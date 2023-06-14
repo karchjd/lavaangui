@@ -29,8 +29,17 @@ function addNode(nodeType, position) {
     } 
 }
 
+// First, let's keep track of the last known mouse position within the Cytoscape container.
+var lastMousePosition = { x: 0, y: 0 };
 
-// Listen for keydown event
+// Adding a mousemove event listener to the Cytoscape container.
+$('#cy').mousemove(function(event) { // Assuming 'cy' is the id of the Cytoscape container.
+    lastMousePosition = {
+        x: event.offsetX,
+        y: event.offsetY
+    };
+});
+
 document.addEventListener('keydown', function (event) {
     // Check if the Command key was pressed
     if (event.key === 'Meta' || event.key === 'Control') {
@@ -48,7 +57,24 @@ document.addEventListener('keydown', function (event) {
             }
         });
     }
+
+    if (['l', 'o', 'c'].includes(event.key.toLowerCase())) {
+        var nodeType;
+        switch (event.key.toLowerCase()) {
+            case 'l':
+                nodeType = 'latent-variable';
+                break;
+            case 'o':
+                nodeType = 'observed-variable';
+                break;
+            case 'c':
+                nodeType = 'constant';
+                break;
+        }
+        addNode(nodeType, lastMousePosition); // Use the last known mouse position within Cytoscape container.
+    }
 });
+
 
 // Listen for keyup event
 document.addEventListener('keyup', function (event) {
