@@ -173,12 +173,20 @@ cy.on('add', 'edge', function (event) {
     }else if (sourceNodeId === targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)){
         edge.addClass('loop');
     }
-    if ((edge.hasClass('undirected') || edge.hasClass('loop')) && (edge.source().hasClass('constant') || edge.source().hasClass('constant'))){
+    if ((edge.hasClass('undirected') || edge.hasClass('loop')) && (edge.source().hasClass('constant') || edge.target().hasClass('constant'))){
         cy.remove(edge);
     }
 
     if(edge.hasClass('directed') && (edge.target().hasClass('constant'))){
         cy.remove(edge);
+    }
+
+    if(edge.hasClass('directed') && (edge.source().hasClass('constant'))){
+        t_node = edge.target()
+        conConstant = t_node.connectedEdges(function(edge){return edge.source().hasClass('constant')})
+        if(conConstant.length > 1){
+            cy.remove(edge);
+        }
     }
 
     if(edge.hasClass('directed') && (edge.source().hasClass('constant'))){
