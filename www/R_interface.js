@@ -9,7 +9,12 @@ function containsObject(obj, list) {
 }
 
 function addTerms(node, edge) {
-    let node_label = node.data('label');
+    let node_label;
+    if(node== undefined){
+        node_label = "1";
+    }else{
+        node_label = node.data('label');
+    }
     let premultiplier = false;
     let formula;
     if (edge.hasClass("fixed")) {
@@ -124,7 +129,7 @@ function createSyntax() {
             syntax += "# intercepts" + '\n '
             for (var j = 0; j < connectedEdges.length; j++) {
                 var node = connectedEdges[j].target();
-                syntax += node.data('label') + ' ~ 1 \n ';
+                syntax += node.data('label') + ' ~ ' + addTerms(undefined, connectedEdges[j]) + '\n';
             }
         }
     }
