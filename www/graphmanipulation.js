@@ -14,8 +14,8 @@ function addNode(nodeType, position) {
         position: finalPosition
     });
     
-    if(nodeType !== "constant")
-    var edgeId = 'edge' + edgeIdCounter++;
+    if(nodeType !== "constant"){
+        var edgeId = 'edge' + edgeIdCounter++;
     cy.add({
         group: 'edges',
         data: {
@@ -25,7 +25,8 @@ function addNode(nodeType, position) {
             label: ''
         },
         classes: 'loop free nolabel'
-    });    
+    });
+    } 
 }
 
 
@@ -172,7 +173,7 @@ cy.on('add', 'edge', function (event) {
     }else if (sourceNodeId === targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)){
         edge.addClass('loop');
     }
-    if (edge.hasClass('undirected') && (edge.source().hasClass('constant') || edge.source().hasClass('constant'))){
+    if ((edge.hasClass('undirected') || edge.hasClass('loop')) && (edge.source().hasClass('constant') || edge.source().hasClass('constant'))){
         cy.remove(edge);
     }
 
@@ -186,32 +187,6 @@ cy.on('add', 'edge', function (event) {
         edge.data('isMean', "0");
     }
 });
-
-
-
-
-
-// put added edge in undo stack
-/*cy.on('ehcomplete', function (event, sourceNode, targetNode, addedEles) {
-    // Remove the edge that was added directly by edgehandles
-    cy.remove(addedEles[0]);
-
-    // Construct the actions array for batching undo-redo actions
-    var actions = [];
-
-    // Push the 'add' action for the edge to the actions array
-    actions.push({
-        name: 'add',
-        param: {
-            group: 'edges',
-            data: { id: addedEles[0].id(), source: sourceNode.id(), target: targetNode.id() },
-            classes: 'free directed'
-        }
-    });
-
-    // Use the undo-redo extension to perform the batch of actions
-    ur.do('batch', actions);
-});*/
 
 // check for collision when moving stuff
 cy.on('position', 'node', function (event) {
