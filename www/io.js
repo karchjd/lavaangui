@@ -1,54 +1,31 @@
-function saveGraph() {
-    // Get the graph data
-    var graphData = cy.json();
-
-    // Convert it to a JSON string
-    var graphDataString = JSON.stringify(graphData);
-
-    // Create a blob object representing the data as bytes
-    var blob = new Blob([graphDataString], { type: 'application/json' });
-
-    // Create a link element
+document.getElementById("saveDiagramMenuItem").addEventListener('click', function () {
+    var json = cy.json();
+    var str = JSON.stringify(json);
+    var blob = new Blob([str], {type: "application/json;charset=utf-8"});
     var url = URL.createObjectURL(blob);
+
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'graphData.json';
-
-    // Append the link to the body, trigger the click event, and remove it
-    document.body.appendChild(a);
+    a.download = 'diagram.json';
     a.click();
-    document.body.removeChild(a);
-}
+});
 
-function loadGraph(event) {
-    // Get the file the user uploaded
-    var file = event.target.files[0];
+document.getElementById("loadDiagramMenuItem").addEventListener('click', function () {
+    var input = document.createElement('input');
+    input.type = 'file';
 
-    // Read the file
-    var reader = new FileReader();
-    reader.onload = function (e) {
-        console.log('File content:', e.target.result); // Logging the file content
+    input.onchange = e => { 
+        var file = e.target.files[0]; 
 
-        try {
-            // Parse the file data as JSON
-            var graphData = JSON.parse(e.target.result);
-            console.log('Parsed graph data:', graphData); // Logging the parsed data
+        var reader = new FileReader();
+        reader.readAsText(file,'UTF-8');
 
-            // Clear the current graph
-            cy.elements().remove();
-
-            // Load the graph data
-            cy.add(graphData.elements); // Adding elements instead of setting the entire JSON
-
-            // Apply a layout to the loaded graph
-            var layout = cy.layout({
-                name: 'grid', // Changing layout to grid for demonstration
-                fit: true
-            });
-            layout.run();
-        } catch (error) {
-            console.error('Error parsing/loading the graph data:', error);
+        reader.onload = readerEvent => {
+            var content = readerEvent.target.result; 
+            var json = JSON.parse(content);
+            cy.json(json);
         }
-    };
-    reader.readAsText(file);
-}
+    }
+
+    input.click();
+});
