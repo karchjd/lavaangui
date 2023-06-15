@@ -126,7 +126,7 @@ var cy = cytoscape({
             selector: 'edge.hasEst',
             style: {
                 'label': function(edge) {
-                    return edge.data('value');
+                    return edge.data('est');
                 }
             }
         },

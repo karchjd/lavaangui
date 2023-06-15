@@ -10,9 +10,9 @@ function containsObject(list, obj) {
 
 function addTerms(node, edge) {
     let node_label;
-    if(node== undefined){
+    if (node == undefined) {
         node_label = "1";
-    }else{
+    } else {
         node_label = node.data('label');
     }
     let premultiplier = false;
@@ -45,7 +45,7 @@ function addTerms(node, edge) {
 function createSyntax(run) {
     var syntax = "";
     var R_script = "";
-    if(!run){
+    if (!run) {
         if (loadedFileName == undefined) {
             loadedFileName = "YOUR_DATA.csv"
         }
@@ -63,7 +63,7 @@ function createSyntax(run) {
             return edge.hasClass('directed') && edge.source().id() == latentNode.id()
         });
         if (connectedEdges.length > 0) {
-            if (!shown){
+            if (!shown) {
                 syntax += "# measurement model" + '\n '
                 shown = true;
             }
@@ -93,7 +93,7 @@ function createSyntax(run) {
         }
     };
 
-    if(reg_nodes.length > 0){
+    if (reg_nodes.length > 0) {
         syntax += '\n' + "# regressions" + '\n'
         for (var i = 0; i < reg_nodes.length; i++) {
             var targetNode = reg_nodes[i];
@@ -113,7 +113,7 @@ function createSyntax(run) {
             }
         }
     }
-  
+
 
     // covariances
     cov_edges = cy.edges(function (edge) { return edge.hasClass("undirected") || edge.hasClass("loop") })
@@ -156,6 +156,18 @@ $("#run").click(function () {
 });
 
 function tolavaan(run) {
+    if (run) {
+         var nodes = cy.nodes(function (node) {
+            return node.hasClass("observed-variable")
+        });
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            if (!node.hasClass("linked")) {
+                alert("Observed variable " + node.data('label') + " is not linked to data. Cannot run.")
+                return
+            }
+        }
+    }
     R_script = createSyntax(run)
     Shiny.setInputValue("run", run);
     Shiny.setInputValue("R_script", R_script);
@@ -198,7 +210,7 @@ function findEdge(lhs, op, rhs) {
 Shiny.addCustomMessageHandler('lav_results', function (lav_result) {
     for (let i = 0; i < lav_result.lhs.length; i++) {
         edge = findEdge(lav_result.lhs[i], lav_result.op[i], lav_result.rhs[i]);
-        edge.data('value', lav_result.est[i].toFixed(2))
+        edge.data('est', lav_result.est[i].toFixed(2))
         edge.data('p-value', lav_result.pvalue[i].toFixed(2))
         edge.data('se', lav_result.se[i].toFixed(2))
         edge.addClass('hasEst')
