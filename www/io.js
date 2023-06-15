@@ -1,3 +1,13 @@
+function isEmpty(cytoscapeInstance) {
+    return cytoscapeInstance.elements().length == 0;
+}
+// Attach click event handler to load data menu item
+$("#newDiagramMenuItem").on("click", function () {
+    if (isEmpty(cy) || confirm('Are you sure you want to create a new model? This will delete the current model.')) {
+        cy.elements().remove();
+    }
+});
+
 // Attach click event handler to save diagram menu item
 $("#saveDiagramMenuItem").on('click', function () {
     // Convert diagram data to JSON string
@@ -14,6 +24,7 @@ $("#saveDiagramMenuItem").on('click', function () {
 
 // Attach click event handler to load diagram menu item
 $("#loadDiagramMenuItem").on('click', function () {
+    if (isEmpty(cy) || confirm('Are you sure you want to load a model? This will delete the current model.')) {
     // Create file input element
     let $input = $('<input>').attr({type: 'file', accept: '.json'});
 
@@ -45,6 +56,7 @@ $("#loadDiagramMenuItem").on('click', function () {
 
     // Trigger the file input click action
     $input.click();
+}
 });
 
 // Attach click event handler to load data menu item
@@ -52,3 +64,6 @@ $("#loadDataMenuItem").on("click", function () {
     // Trigger the file input click action
     $("#fileInput").click();
 });
+
+
+
