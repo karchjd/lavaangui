@@ -1,44 +1,57 @@
-document.getElementById("saveDiagramMenuItem").addEventListener('click', function () {
+// Initialize loading mode variable
+let loadingmode = false;
+
+// Attach click event handler to save diagram menu item
+$("#saveDiagramMenuItem").on('click', function () {
+    // Convert diagram data to JSON string
     var json = cy.json();
     var str = JSON.stringify(json);
+    
+    // Create a new Blob object using the JSON string
     var blob = new Blob([str], {type: "application/json;charset=utf-8"});
     var url = URL.createObjectURL(blob);
 
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'diagram.json';
-    a.click();
+    // Create and trigger download link for the JSON data
+    $('<a>').attr({href: url, download: 'diagram.json'})[0].click();
 });
 
-let loadingmode = false;
-document.getElementById("loadDiagramMenuItem").addEventListener('click', function () {
-    var input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json'
+// Attach click event handler to load diagram menu item
+$("#loadDiagramMenuItem").on('click', function () {
+    // Create file input element
+    var $input = $('<input>').attr({type: 'file', accept: '.json'});
 
-    input.onchange = e => { 
-        var file = e.target.files[0]; 
-
+    // Attach change event handler to the file input element
+    $input.on('change', function (e) {
+        // Read the selected file
+        var file = e.target.files[0];
         var reader = new FileReader();
-        reader.readAsText(file,'UTF-8');
+        reader.readAsText(file, 'UTF-8');
 
-        reader.onload = readerEvent => {
-            var content = readerEvent.target.result; 
+        // Handle file content after it's read
+        reader.onload = function (readerEvent) {
+            // Parse file content as JSON
+            var content = readerEvent.target.result;
             var json = JSON.parse(content);
+
+            // Set loading mode, update diagram and perform checks
             loadingmode = true;
             cy.json(json);
             cy.style(myStyle);
-            nodes = cy.nodes()
-            for (i = 0; i < nodes.length; i++) {
-                console.log(nodes[i].data('label'))
-                checkNodeLoop(nodes[i].id())
+            var nodes = cy.nodes();
+            for (var i = 0; i < nodes.length; i++) {
+                console.log(nodes[i].data('label'));
+                checkNodeLoop(nodes[i].id());
             }
             loadingmode = false;
         }
-    }
-    input.click();
+    });
+
+    // Trigger the file input click action
+    $input.click();
 });
 
-document.getElementById("loadDataMenuItem").addEventListener("click", function() {
-    document.getElementById("fileInput").click();
+// Attach click event handler to load data menu item
+$("#loadDataMenuItem").on("click", function () {
+    // Trigger the file input click action
+    $("#fileInput").click();
 });
