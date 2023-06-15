@@ -156,10 +156,16 @@ function tolavaan(run) {
                 return
             }
         }
+        const edges = cy.edges()
+        for (var i = 0; i < edges.length; i++) {
+            edges[i].removeData('est');
+            edges[i].removeClass('hasEst');
+        }
     }
     R_script = createSyntax(run)
     Shiny.setInputValue("run", run);
     Shiny.setInputValue("R_script", R_script);
+    Shiny.setInputValue("runCounter", appState.increaseRun())
 }
 
 function findEdge(lhs, op, rhs) {

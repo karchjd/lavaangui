@@ -8,6 +8,11 @@ server <- function(input, output, session) {
     read.csv(input$fileInput$datapath)
   })
   
+  counter <- reactive({
+    req(input$runCounter)
+    input$runCounter
+  })
+  
   observeEvent(data(), {
     session$sendCustomMessage(type = "columnNames", message = colnames(data()))
     session$sendCustomMessage("fname", input$fileInput$name)
@@ -18,6 +23,7 @@ server <- function(input, output, session) {
       if(input$run){
         data <- data()
         eval(parse(text = R_script()))
+        counter <- counter()
         session$sendCustomMessage("lav_results", parameterestimates(result))
         parameterestimates(result)
       }else{

@@ -169,6 +169,7 @@ const appState = {
     columnNamesGlobal: null,
     loadedFileName: null,
     loadingMode: false,
+    runCounter: 0,
     setColumnNamesGlobal: function(value) {
       this.columnNamesGlobal = value;
     },
@@ -186,6 +187,9 @@ const appState = {
     },
     isLoadingMode: function() {
       return this.loadingMode;
+    },
+    increaseRun: function() {
+        return this.runCounter++;;
     }
   };
   
