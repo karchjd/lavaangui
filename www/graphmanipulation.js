@@ -209,6 +209,18 @@ function isNode(str) {
     return pattern.test(str);
 }
 
+
+// ceck for collision when adding
+cy.on('add', 'node', function (event) {
+    var node = event.target;
+    if (node.hasClass('observed-variable')) {
+        if (columnNamesGlobal && columnNamesGlobal.includes(node.data('label'))) {
+            node.addClass('linked');
+            alert('Variable connected with data set');
+        }
+    }
+});
+
 // ceck for collision when adding
 cy.on('add', 'edge', function (event) {
     var edge = event.target;
