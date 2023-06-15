@@ -1,11 +1,11 @@
 
 Shiny.addCustomMessageHandler('columnNames', function (columnNames) {
   applyLinkedClass(columnNames);
-  appState.setColumnNamesGlobal(columnNamesGlobal);
+  appState.setColumnNamesGlobal(columnNames);
 });
 
 Shiny.addCustomMessageHandler('fname', function (fname) {
-  appState.getLoadedFileName(fname);
+  appState.setLoadedFileName(fname);
 });
 
 function applyLinkedClass(columnNames) {

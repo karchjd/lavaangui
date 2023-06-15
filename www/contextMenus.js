@@ -306,7 +306,8 @@ cy.contextMenus({
                         node.data('label', newLabel);
 
                         if (node.hasClass('observed-variable')) {
-                            if (columnNamesGlobal && columnNamesGlobal.includes(newLabel)) {
+                            const columnNames = appState.getColumnNamesGlobal()
+                            if (columnNames && columnNames.includes(newLabel)) {
                                 node.addClass('linked');
                                 alert('Variable connected with data set');
                             } else if (node.hasClass('linked')) {

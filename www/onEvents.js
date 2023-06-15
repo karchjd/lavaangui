@@ -2,7 +2,7 @@ cy.on('add', 'node', function (event) {
     const node = event.target;
     if (node.hasClass('observed-variable')) {
         columnNames =  appState.getColumnNamesGlobal();
-        if (columnNames && columnNamesGlobal.includes(node.data('label'))) {
+        if (columnNames && columnNames.includes(node.data('label'))) {
             node.addClass('linked');
             if (!appState.isLoadingMode()) {
                 alert('Variable connected with data set');
@@ -12,13 +12,12 @@ cy.on('add', 'node', function (event) {
 });
 
 cy.on('add', 'edge', function (event) {
-    if (!appState.isLoadingMode) {
+    if (!appState.isLoadingMode()) {
         const edge = event.target;
         const sourceNodeId = edge.source().id();
         const targetNodeId = edge.target().id();
         edge.addClass('free');
         edge.addClass('nolabel');
-
         if (sourceNodeId !== targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)) {
             checkNodeLoop(sourceNodeId);
             checkNodeLoop(targetNodeId);
