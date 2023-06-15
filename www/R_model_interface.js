@@ -55,7 +55,7 @@ function createSyntax(run) {
 
     // measurement model
     var latentNodes = cy.nodes(function (node) { return node.hasClass('latent-variable') });
-
+    var shown = false;
     for (var i = 0; i < latentNodes.length; i++) {
         var latentNode = latentNodes[i];
         var nodeNames = "";
@@ -63,8 +63,10 @@ function createSyntax(run) {
             return edge.hasClass('directed') && edge.source().id() == latentNode.id()
         });
         if (connectedEdges.length > 0) {
-            syntax += "# measurement model" + '\n '
-
+            if (!shown){
+                syntax += "# measurement model" + '\n '
+                shown = true;
+            }
             for (var j = 0; j < connectedEdges.length; j++) {
                 var node = connectedEdges[j].target();
                 if (j > 0) {
@@ -140,7 +142,7 @@ function createSyntax(run) {
     }
 
 
-    R_script += "model = '" + syntax + "'" + "\n "
+    R_script += "model = '\n" + syntax + "'" + "\n "
     R_script += "result <- sem(model, data)" + "\n "
     return R_script
 };
