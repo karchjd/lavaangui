@@ -2,15 +2,14 @@ myStyle = [
     {
         selector: 'node',
         style: {
-            'width': '80',
-            'height': '80',
+            'width': '80', // Set the width of the nodes to 80
+            'height': '80', // Set the height of the nodes to 80
             'background-color': 'white',
             'border-color': 'grey',
-            'border-width': '2px',
-            'label': 'data(id)',
+            'border-width': '2px', // Set border width of nodes to 2 pixels
+            'label': 'data(label)', // Use the 'label' property from the data for the node's label
             'text-valign': 'center',
-            'text-halign': 'center',
-            'label': 'data(label)'
+            'text-halign': 'center'
         }
     },
     {
@@ -130,8 +129,10 @@ myStyle = [
         }
     }
 ]
+
+// Initialize the Cytoscape instance
 var cy = cytoscape({
-    container: document.getElementById('cy'),
+    container: $('#cy'), 
     elements: [],
     autoungrabify: false,
     autolock: false,
@@ -143,8 +144,9 @@ cy.nodeEditing({
     autoRemoveResizeToContentCue: true,
 });
 
+// Set cursor style to initial when resizing ends
 cy.on("nodeediting.resizeend", function (e, type) {
-    document.body.style.cursor = 'initial';
+    $('body').css('cursor', 'initial'); 
 });
 
 var layout = cy.layout({ name: 'grid' });
