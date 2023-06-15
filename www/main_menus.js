@@ -46,9 +46,7 @@ document.getElementById("help-menu-item").addEventListener('click', function(eve
 });
 
 
-document.getElementById("loadDataMenuItem").addEventListener("click", function() {
-    document.getElementById("fileInput").click();
-});
+
 
 function handleItemChange(item) {
     // Build the string based on selected items

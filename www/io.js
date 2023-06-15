@@ -14,6 +14,7 @@ let loadingmode = false;
 document.getElementById("loadDiagramMenuItem").addEventListener('click', function () {
     var input = document.createElement('input');
     input.type = 'file';
+    input.accept = '.json'
 
     input.onchange = e => { 
         var file = e.target.files[0]; 
@@ -36,4 +37,8 @@ document.getElementById("loadDiagramMenuItem").addEventListener('click', functio
         }
     }
     input.click();
+});
+
+document.getElementById("loadDataMenuItem").addEventListener("click", function() {
+    document.getElementById("fileInput").click();
 });
