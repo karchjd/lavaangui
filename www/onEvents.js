@@ -1,27 +1,24 @@
-// checks after adding a node
 cy.on('add', 'node', function (event) {
-    var node = event.target;
+    const node = event.target;
     if (node.hasClass('observed-variable')) {
         if (columnNamesGlobal && columnNamesGlobal.includes(node.data('label'))) {
             node.addClass('linked');
-            if(!appState.isLoadingMode()){
+            if (!appState.isLoadingMode) {
                 alert('Variable connected with data set');
             }
         }
     }
 });
 
-// checks afer adding an edge
 cy.on('add', 'edge', function (event) {
-    if (!appState.isLoadingMode()) {
-        var edge = event.target;
-        var sourceNodeId = edge.source().id();
-        var targetNodeId = edge.target().id();
+    if (!appState.isLoadingMode) {
+        const edge = event.target;
+        const sourceNodeId = edge.source().id();
+        const targetNodeId = edge.target().id();
         edge.addClass('free');
         edge.addClass('nolabel');
 
         if (sourceNodeId !== targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)) {
-            // Call your function for both nodes
             checkNodeLoop(sourceNodeId);
             checkNodeLoop(targetNodeId);
             edge.addClass('directed');
@@ -37,8 +34,8 @@ cy.on('add', 'edge', function (event) {
         }
 
         if (edge.hasClass('directed') && (edge.source().hasClass('constant'))) {
-            t_node = edge.target()
-            conConstant = t_node.connectedEdges(function (edge) { return edge.source().hasClass('constant') })
+            const t_node = edge.target();
+            const conConstant = t_node.connectedEdges(edge => edge.source().hasClass('constant'));
             if (conConstant.length > 1) {
                 cy.remove(edge);
             }
@@ -52,69 +49,59 @@ cy.on('add', 'edge', function (event) {
     }
 });
 
-// check for collision when moving stuff
 cy.on('position', 'node', function (event) {
-    var node = event.target; // Get the node whose position changed
-    var newPosition = node.position(); // Get the new position of the node
+    const node = event.target;
+    const connectedNodes = node.neighborhood().nodes();
 
-    // Retrieve the connected nodes
-    var connectedNodes = node.neighborhood().nodes();
-
-    // Apply the checkNodeLoop function to each connected node
-    connectedNodes.forEach(function (connectedNode) {
-        var connectedNodeId = connectedNode.id();
+    connectedNodes.forEach(connectedNode => {
+        const connectedNodeId = connectedNode.id();
         checkNodeLoop(connectedNodeId);
     });
 });
 
 function checkNodeLoop(nodeID) {
-    action = countEdgesConnectedToNodeSides(nodeID);
+    const action = countEdgesConnectedToNodeSides(nodeID);
     moveLoopNode(nodeID, action);
 }
 
 function countEdgesConnectedToNodeSides(nodeId) {
-    var node = cy.getElementById(nodeId);
+    const node = cy.getElementById(nodeId);
     if (node.length === 0) {
-        console.log("Node with ID " + nodeId + " does not exist.");
+        console.error(`Node with ID ${nodeId} does not exist.`);
         return;
     }
 
-    var topCount = 0;
-    var bottomCount = 0;
+    let topCount = 0;
+    let bottomCount = 0;
 
-    var nodePosition = node.position();
-    var nodeHeight = node.height();
+    const nodePosition = node.position();
+    const nodeHeight = node.height();
 
-    node.connectedEdges().forEach(function (edge) {
-        var source = edge.source();
-        var target = edge.target();
-        var otherNode = source.id() === node.id() ? target : source;
+    node.connectedEdges().forEach(edge => {
+        const source = edge.source();
+        const target = edge.target();
+        const otherNode = source.id() === node.id() ? target : source;
+        const otherNodePosition = otherNode.position();
         if (node.id() !== otherNode.id()) {
-            var otherNodePosition = otherNode.position();
             if (otherNodePosition.y < nodePosition.y - nodeHeight / 2) {
-                // This edge connects to the top of the node
                 topCount++;
             } else if (otherNodePosition.y > nodePosition.y + nodeHeight / 2) {
-                // This edge connects to the bottom of the node
                 bottomCount++;
-            } else if (otherNodePosition.y == nodePosition.y) {
-                console.log('kacke dampft')
             }
         }
     });
-    if (topCount > 0 && bottomCount == 0) {
-        return "bottom"
-    }
 
-    if (topCount == 0 && bottomCount > 0) {
-        return "top"
+    if (topCount > 0 && bottomCount === 0) {
+        return "bottom";
     }
-
-    if (topCount == 0 && bottomCount > 0) {
-        return "keep"
+    if (topCount === 0 && bottomCount > 0) {
+        return "top";
     }
-
+    return "keep";
 }
+
+// Rest of the functions remain unchanged
+
 
 function moveLoopNode(nodeId, action) {
     var node = cy.getElementById(nodeId);
