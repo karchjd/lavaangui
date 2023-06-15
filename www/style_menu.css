@@ -54,6 +54,7 @@
     /* Ensure that li elements are not constraining height */
 }
 
+
 .submenu a {
     display: none;
     /* Ensure that a elements are block elements */
@@ -78,12 +79,12 @@
 
 .toolbox {
     background-color: #f8f8f8;
-    ;
     height: 30px;
     border-bottom: 1px solid #ddd;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 .toolbox-btn {
@@ -229,4 +230,6 @@
     /* Vertically align the checkmark */
 }
 
-
+.fileInput{
+    display: none;
+}

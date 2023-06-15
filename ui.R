@@ -17,12 +17,14 @@ ui <- fluidPage(
   ),
   useShinyjs(),
   HTML(rawHTML),
+  fileInput("fileInput", multiple = FALSE, accept = ".csv", label = NULL),
   tags$script(src="init.js"),
   tags$script(src="io.js"),
   tags$script(src="graphmanipulation.js"),
   tags$script(src="context_menus.js"),
   tags$script(src="main_menus.js"),
-  tags$script(src="R_interface.js")
+  tags$script(src="R_model_interface.js"),
+  tags$script(src="R_data_interface.js")
 )
 
 shinyUI(ui)

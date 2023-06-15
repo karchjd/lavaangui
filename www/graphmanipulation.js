@@ -40,7 +40,15 @@ $('#cy').mousemove(function(event) { // Assuming 'cy' is the id of the Cytoscape
     };
 });
 
-document.addEventListener('keydown', function (event) {
+// Grab the container div and make it focusable
+var cyContainer = document.getElementById("cy");
+cyContainer.setAttribute('tabindex', '0');
+
+// Focus the container so it can receive keyboard events
+cyContainer.focus();
+
+// Add keydown event listeners to the div
+cyContainer.addEventListener('keydown', function (event) {
     // Check if the Command key was pressed
     if (event.key === 'Meta' || event.key === 'Control') {
         eh.enableDrawMode();
@@ -76,13 +84,27 @@ document.addEventListener('keydown', function (event) {
 });
 
 
-// Listen for keyup event
-document.addEventListener('keyup', function (event) {
+
+// Grab the container div and make it focusable
+var cyContainer = document.getElementById("cy");
+cyContainer.setAttribute('tabindex', '0');
+
+// Focus the container so it can receive keyboard events
+cyContainer.focus();
+
+// Add keydown event listeners to the div
+cyContainer.addEventListener('keydown', function (event) {
+    // ... existing keydown event code
+});
+
+// Add keyup event listeners to the div
+cyContainer.addEventListener('keyup', function (event) {
     // Check if the Command key was released
     if (event.key === 'Meta' || event.key === 'Control') {
         eh.disableDrawMode();
     }
 });
+
 
 addNode('observed-variable');
 addNode('observed-variable');

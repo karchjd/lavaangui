@@ -133,16 +133,16 @@ cy.contextMenus({
                 // Regular expression to check for strings that start with a letter
                 // and contain only alphanumeric characters (a-z, A-Z, 0-9)
                 var regex = /^[a-zA-Z][a-zA-Z0-9]*$/;
-                
+
                 // Ask the user for a value
                 var value = prompt("Please enter a label:");
-        
+
                 // Validate the input
                 while (value !== null && !regex.test(value)) {
                     // Show an error message and ask for a new string
                     value = prompt("Invalid input. Please enter a label that starts with a letter and contains only alphanumeric characters:");
                 }
-        
+
                 // Store the label in the edge's data if it's not null
                 if (value !== null) {
                     edge.data('label', value);
@@ -165,7 +165,7 @@ cy.contextMenus({
             },
             hasTrailingDivider: true
         },
-        
+
         {
             id: 'remove-edge',
             content: 'Delete edge',
@@ -197,27 +197,106 @@ cy.contextMenus({
             onClickFunction: function (event) {
                 var node = event.target || event.cyTarget;
                 var currentLabel = node.data('label');
-                var newLabel = prompt('Enter the new label for the node:', currentLabel);
-                var available = document.getElementById("selectedVariables").options;
-                document.getElementById("selectedVariables").options
 
-                if (newLabel !== null) {
-                    var isLabelAvailable = false;
-                    for (var i = 0; i < available.length; i++) {
-                        if (available[i].value === newLabel) {
-                            isLabelAvailable = true;
-                            break;
-                        }
-                    }
-                    node.data('label', newLabel);
-                    node.style('label', newLabel);
-                    if (isLabelAvailable && node.hasClass('observed-variable')) {
-                        node.addClass('linked');
-                        alert('Variable connected with data set to the user');
-                    }
+                // Create a backdrop
+                var backdrop = document.createElement('div');
+                backdrop.style.position = 'fixed';
+                backdrop.style.top = 0;
+                backdrop.style.left = 0;
+                backdrop.style.width = '100vw';
+                backdrop.style.height = '100vh';
+                backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // semi-transparent
+                backdrop.style.zIndex = 1000; // ensure it's on top
+
+                // Create a modal
+                var modal = document.createElement('div');
+                modal.style.position = 'fixed';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.backgroundColor = 'white';
+                modal.style.padding = '20px';
+                modal.style.border = '1px solid #ccc';
+                modal.style.zIndex = 1001; // ensure it's above the backdrop
+
+                var select = false;
+                // Add select box if columnNamesGlobal is defined
+                if (typeof columnNamesGlobal !== 'undefined' && node.hasClass('observed-variable')) {
+                    select = true;
+                    // Add label for the select box
+                    var selectLabel = document.createElement('label');
+                    selectLabel.textContent = "Available Variables";
+                    selectLabel.setAttribute('for', 'variables-select');
+                    selectLabel.style.marginRight = '10px'; // Add margin to the right side of the label
+                    modal.appendChild(selectLabel);
+
+                    var selectBox = document.createElement('select');
+                    selectBox.id = 'variables-select';
+                       // Get all current node labels
+    var currentLabels = cy.nodes().map(node => node.data('label'));
+
+    columnNamesGlobal.forEach(function (columnName) {
+        // Only add as option if not already a node label
+        if (!currentLabels.includes(columnName)) {
+            var option = document.createElement('option');
+            option.value = columnName;
+            option.textContent = columnName;
+            selectBox.appendChild(option);
+        }
+    });
+                    modal.appendChild(selectBox);
+                    var lineBreak = document.createElement('br');
+                    modal.appendChild(lineBreak);
                 }
+
+                var inputLabel = document.createElement('label');
+                inputLabel.style.marginRight = '10px'; // Add margin to the right side of the label
+                inputLabel.textContent = "New label";
+                inputLabel.setAttribute('for', 'new-label-input');
+                modal.appendChild(inputLabel);
+
+                // Add input field under the select box
+                var inputField = document.createElement('input');
+                inputField.type = 'text';
+                inputField.value = ""; // set the default value as empty
+                modal.appendChild(inputField);
+
+
+                // Create a submit button
+                var submitButton = document.createElement('button');
+                submitButton.textContent = 'Submit';
+                modal.appendChild(submitButton);
+
+                // Add the backdrop and modal to the document
+                document.body.appendChild(backdrop);
+                document.body.appendChild(modal);
+
+                // Handle the submit button click
+                submitButton.addEventListener('click', function () {
+                    if(inputField.value !== '' || select){
+                        var newLabel
+                        if(inputField.value !== ''){
+                            newLabel = inputField.value;
+                        }else{
+                            newLabel = selectBox.value;
+                        }
+                        node.data('label', newLabel);
+    
+                        if (node.hasClass('observed-variable')) {
+                            if (columnNamesGlobal && columnNamesGlobal.includes(newLabel)) {
+                                node.addClass('linked');
+                                alert('Variable connected with data set');
+                            } else if (node.hasClass('linked')) {
+                                node.removeClass('linked');
+                                alert('Variable disconnected');
+                            }
+                        }    
+                    }
+                    // Remove the modal and backdrop from the document
+                    document.body.removeChild(modal);
+                    document.body.removeChild(backdrop);
+                });
             },
-            hasTrailingDivider: true
         },
         {
             id: 'remove-node',

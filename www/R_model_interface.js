@@ -1,4 +1,4 @@
-function containsObject(obj, list) {
+function containsObject(list, obj) {
     var i;
     for (i = 0; i < list.length; i++) {
         if (list[i] === obj) {
@@ -79,7 +79,7 @@ function createSyntax() {
     reg_edges = cy.edges(function (edge) {
         res = edge.hasClass("directed") &&
             !edge.source().hasClass("constant") &&
-            !(edge.source().hasClass("latent-variable") && edge.target().hasClass("observed-variable"));
+            !edge.source().hasClass("latent-variable");
         return res;
     })
     reg_nodes = [];
@@ -89,24 +89,27 @@ function createSyntax() {
         }
     };
 
-    for (var i = 0; i < reg_nodes.length; i++) {
-        var targetNode = reg_nodes[i];
-        var connectedEdges = targetNode.connectedEdges(function (edge) {
-            return edge.hasClass('directed') && edge.target().id() == targetNode.id()
-        });
-        if (connectedEdges.length > 0) {
-            var nodeNames = "";
-            syntax += '\n' + "# regressions" + '\n'
-            for (var j = 0; j < connectedEdges.length; j++) {
-                var node = connectedEdges[j].source();
-                if (j > 0) {
-                    nodeNames += " + ";
+    if(reg_nodes.length > 0){
+        syntax += '\n' + "# regressions" + '\n'
+        for (var i = 0; i < reg_nodes.length; i++) {
+            var targetNode = reg_nodes[i];
+            var connectedEdges = targetNode.connectedEdges(function (edge) {
+                return edge.hasClass('directed') && edge.target().id() == targetNode.id()
+            });
+            if (connectedEdges.length > 0) {
+                var nodeNames = "";
+                for (var j = 0; j < connectedEdges.length; j++) {
+                    var node = connectedEdges[j].source();
+                    if (j > 0) {
+                        nodeNames += " + ";
+                    }
+                    nodeNames += addTerms(node, connectedEdges[j]);
                 }
-                nodeNames += addTerms(node, connectedEdges[j]);
+                syntax += targetNode.data('label') + ' ~ ' + nodeNames + '\n ';
             }
-            syntax += targetNode.data('label') + ' ~ ' + nodeNames + '\n ';
         }
     }
+  
 
     // covariances
     cov_edges = cy.edges(function (edge) { return edge.hasClass("undirected") || edge.hasClass("loop") })
