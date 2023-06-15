@@ -10,6 +10,7 @@ document.getElementById("saveDiagramMenuItem").addEventListener('click', functio
     a.click();
 });
 
+let loadingmode = false;
 document.getElementById("loadDiagramMenuItem").addEventListener('click', function () {
     var input = document.createElement('input');
     input.type = 'file';
@@ -23,10 +24,16 @@ document.getElementById("loadDiagramMenuItem").addEventListener('click', functio
         reader.onload = readerEvent => {
             var content = readerEvent.target.result; 
             var json = JSON.parse(content);
+            loadingmode = true;
             cy.json(json);
             cy.style(myStyle);
+            nodes = cy.nodes()
+            for (i = 0; i < nodes.length; i++) {
+                console.log(nodes[i].data('label'))
+                checkNodeLoop(nodes[i].id())
+            }
+            loadingmode = false;
         }
     }
-
     input.click();
 });

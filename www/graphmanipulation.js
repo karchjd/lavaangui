@@ -6,41 +6,41 @@ function addNode(nodeType, position) {
 
     // Check if position is provided, if not, use random position
     var finalPosition = position ? position : { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 };
-  
+
     cy.add({
         group: 'nodes',
         data: { id: nodeId, label: label },
         classes: nodeType,
         position: finalPosition
     });
-    
-    if(nodeType !== "constant"){
+
+    if (nodeType !== "constant") {
         var edgeId = 'edge' + edgeIdCounter++;
-    cy.add({
-        group: 'edges',
-        data: {
-            id: edgeId,
-            source: nodeId,
-            target: nodeId,
-            label: ''
-        },
-        classes: 'loop free nolabel'
-    });
-    } 
+        cy.add({
+            group: 'edges',
+            data: {
+                id: edgeId,
+                source: nodeId,
+                target: nodeId,
+                label: ''
+            },
+            classes: 'loop free nolabel'
+        });
+    }
 }
 
 // First, let's keep track of the last known mouse position within the Cytoscape container.
 var lastMousePosition = { x: 0, y: 0 };
 
 // Adding a mousemove event listener to the Cytoscape container.
-$('#cy').mousemove(function(event) { // Assuming 'cy' is the id of the Cytoscape container.
+$('#cy').mousemove(function (event) { // Assuming 'cy' is the id of the Cytoscape container.
     lastMousePosition = {
         x: event.offsetX,
         y: event.offsetY
     };
 });
 
-document.getElementById("cy").addEventListener("mouseover", function() {
+document.getElementById("cy").addEventListener("mouseover", function () {
     this.focus();
 });
 
@@ -61,7 +61,7 @@ cyContainer.addEventListener('keydown', function (event) {
     if (event.key === 'Backspace') {
         var selectedElements = cy.$(':selected');
 
-        selectedElements.forEach(function(element) {
+        selectedElements.forEach(function (element) {
             if (element.isNode()) {
                 element.remove();
             } else if (element.isEdge()) {
@@ -223,40 +223,42 @@ cy.on('add', 'node', function (event) {
 
 // ceck for collision when adding
 cy.on('add', 'edge', function (event) {
-    var edge = event.target;
-    var sourceNodeId = edge.source().id();
-    var targetNodeId = edge.target().id();
-    edge.addClass('free');
-    edge.addClass('nolabel');
+    if (!loadingmode) {
+        var edge = event.target;
+        var sourceNodeId = edge.source().id();
+        var targetNodeId = edge.target().id();
+        edge.addClass('free');
+        edge.addClass('nolabel');
 
-    if (sourceNodeId !== targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)) {
-        // Call your function for both nodes
-        checkNodeLoop(sourceNodeId);
-        checkNodeLoop(targetNodeId);
-        edge.addClass('directed');
-    }else if (sourceNodeId === targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)){
-        edge.addClass('loop');
-    }
-    if ((edge.hasClass('undirected') || edge.hasClass('loop')) && (edge.source().hasClass('constant') || edge.target().hasClass('constant'))){
-        cy.remove(edge);
-    }
-
-    if(edge.hasClass('directed') && (edge.target().hasClass('constant'))){
-        cy.remove(edge);
-    }
-
-    if(edge.hasClass('directed') && (edge.source().hasClass('constant'))){
-        t_node = edge.target()
-        conConstant = t_node.connectedEdges(function(edge){return edge.source().hasClass('constant')})
-        if(conConstant.length > 1){
+        if (sourceNodeId !== targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)) {
+            // Call your function for both nodes
+            checkNodeLoop(sourceNodeId);
+            checkNodeLoop(targetNodeId);
+            edge.addClass('directed');
+        } else if (sourceNodeId === targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)) {
+            edge.addClass('loop');
+        }
+        if ((edge.hasClass('undirected') || edge.hasClass('loop')) && (edge.source().hasClass('constant') || edge.target().hasClass('constant'))) {
             cy.remove(edge);
         }
-    }
 
-    if(edge.hasClass('directed') && (edge.source().hasClass('constant'))){
-        edge.data('isMean', "1");
-    }else{
-        edge.data('isMean', "0");
+        if (edge.hasClass('directed') && (edge.target().hasClass('constant'))) {
+            cy.remove(edge);
+        }
+
+        if (edge.hasClass('directed') && (edge.source().hasClass('constant'))) {
+            t_node = edge.target()
+            conConstant = t_node.connectedEdges(function (edge) { return edge.source().hasClass('constant') })
+            if (conConstant.length > 1) {
+                cy.remove(edge);
+            }
+        }
+
+        if (edge.hasClass('directed') && (edge.source().hasClass('constant'))) {
+            edge.data('isMean', "1");
+        } else {
+            edge.data('isMean', "0");
+        }
     }
 });
 
@@ -275,16 +277,16 @@ cy.on('position', 'node', function (event) {
     });
 });
 
-$("#add-latent-variable").click(function() {
+$("#add-latent-variable").click(function () {
     addNode("latent-variable");
-  });
+});
 
-  // Button click event for "Create Observed Variable"
-  $("#add-manifest-variable").click(function() {
+// Button click event for "Create Observed Variable"
+$("#add-manifest-variable").click(function () {
     addNode("observed-variable");
-  });
+});
 
-  // Button click event for "Create Constant Variable"
-  $("#add-constant-variable").click(function() {
+// Button click event for "Create Constant Variable"
+$("#add-constant-variable").click(function () {
     addNode("constant");
-  });
+});
