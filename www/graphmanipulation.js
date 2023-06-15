@@ -40,6 +40,10 @@ $('#cy').mousemove(function(event) { // Assuming 'cy' is the id of the Cytoscape
     };
 });
 
+document.getElementById("cy").addEventListener("mouseover", function() {
+    this.focus();
+});
+
 // Grab the container div and make it focusable
 var cyContainer = document.getElementById("cy");
 cyContainer.setAttribute('tabindex', '0');
