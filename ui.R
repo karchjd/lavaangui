@@ -26,6 +26,3 @@ ui <- fluidPage(
   tags$script(src="R_model_interface.js"),
   tags$script(src="R_data_interface.js")
 )
-
-shinyUI(ui)
-  rawHTML <-  paste(readLines("main.html"), collapse="\n")

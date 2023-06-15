@@ -1,11 +1,8 @@
 server <- function(input, output, session) { 
   library(lavaan)
-  node0 <- rnorm(100)
-  node1 <- rnorm(100)
-  node2 <- node0 + node1 + rnorm(100)
-  the_data <- data.frame(node0 = node0, node1 = node1, node2 = node2)
   
   R_script <- reactive({input$R_script}) 
+  
   data <- reactive({
     req(input$fileInput)
     read.csv(input$fileInput$datapath)
