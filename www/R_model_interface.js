@@ -46,8 +46,8 @@ function createSyntax(run) {
     var syntax = "";
     var R_script = "";
     if(!run){
-        if (loadedFileName === "") {
-            loadedFileName === "YOUR_DATA.csv"
+        if (loadedFileName == undefined) {
+            loadedFileName = "YOUR_DATA.csv"
         }
         R_script += "library(lavaan)" + "\n";
         R_script += "data <- read.csv(" + loadedFileName + ")" + "\n";
