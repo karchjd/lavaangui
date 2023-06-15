@@ -24,7 +24,7 @@ ui <- fluidPage(
   tags$script(src="onEvents.js"),
   tags$script(src="contextMenus.js"),
   tags$script(src="toolbar.js"),
-  tags$script(src="main_menus.js"),
+  tags$script(src="mainMenus.js"),
   tags$script(src="R_model_interface.js"),
   tags$script(src="R_data_interface.js")
 )
