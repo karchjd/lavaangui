@@ -23,6 +23,7 @@ myStyle = [
         selector: 'node.latent-variable',
         style: {
             'shape': 'ellipse',
+            'border-color': 'black',
         }
     },
     {
@@ -33,8 +34,6 @@ myStyle = [
             'text-valign': 'center',
             'text-margin-y': '10px',
             'border-color': 'black',
-
-
         }
     },
     {
@@ -86,7 +85,7 @@ myStyle = [
         selector: 'edge.undirected',
         style: {
             'curve-style': 'unbundled-bezier',
-            'control-point-distances': [50],
+            'control-point-distances': [100],
             'control-point-weights': [0.5],
             'target-arrow-shape': 'triangle',
             'source-arrow-shape': 'triangle'
@@ -142,10 +141,6 @@ var cy = cytoscape({
 cy.nodeEditing({
     resizeToContentCueImage: 'resizeCue.svg',
     autoRemoveResizeToContentCue: true,
-});
-
-cy.on("nodeediting.resizestart", function (e, type) {
-    console.log(type);
 });
 
 cy.on("nodeediting.resizeend", function (e, type) {
