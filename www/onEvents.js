@@ -4,14 +4,16 @@ cy.on('add', 'node', function (event) {
     if (node.hasClass('observed-variable')) {
         if (columnNamesGlobal && columnNamesGlobal.includes(node.data('label'))) {
             node.addClass('linked');
-            alert('Variable connected with data set');
+            if(!appState.isLoadingMode()){
+                alert('Variable connected with data set');
+            }
         }
     }
 });
 
 // checks afer adding an edge
 cy.on('add', 'edge', function (event) {
-    if (!loadingmode) {
+    if (!appState.isLoadingMode()) {
         var edge = event.target;
         var sourceNodeId = edge.source().id();
         var targetNodeId = edge.target().id();

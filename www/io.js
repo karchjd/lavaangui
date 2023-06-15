@@ -34,7 +34,7 @@ $("#loadDiagramMenuItem").on('click', function () {
             var json = JSON.parse(content);
 
             // Set loading mode, update diagram and perform checks
-            loadingmode = true;
+            appState.setLoadingMode(true)
             cy.json(json);
             cy.style(myStyle);
             var nodes = cy.nodes();
@@ -42,7 +42,7 @@ $("#loadDiagramMenuItem").on('click', function () {
                 console.log(nodes[i].data('label'));
                 checkNodeLoop(nodes[i].id());
             }
-            loadingmode = false;
+            appState.setLoadingMode(false)
         }
     });
 

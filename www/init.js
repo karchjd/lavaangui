@@ -162,3 +162,13 @@ var eh = cy.edgehandles({
         return !cy.elements('edge[source = "' + sourceNode.id() + '"][target = "' + targetNode.id() + '"]').length;
     }
 });
+
+const appState = {
+    loadingMode: false,
+    setLoadingMode: function(value) {
+        this.loadingMode = value;
+    },
+    isLoadingMode: function() {
+        return this.loadingMode;
+    }
+};
