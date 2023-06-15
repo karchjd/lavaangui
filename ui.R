@@ -12,8 +12,10 @@ ui <- fluidPage(
     tags$script(src="https://unpkg.com/cytoscape-context-menus@3.0.1"),
     tags$script(src="https://unpkg.com/cytoscape-node-editing@latest"),
     tags$link(href="https://unpkg.com/cytoscape-context-menus@3.0.1/cytoscape-context-menus.css", rel="stylesheet", type="text/css"),
-    tags$link(href="style.css", rel="stylesheet", type="text/css"),
-    tags$link(href="style_menu.css", rel="stylesheet", type="text/css")
+    tags$link(href="styleContextMenus.css", rel="stylesheet", type="text/css"),
+    tags$link(href="styleMainMenu.css", rel="stylesheet", type="text/css"),
+    tags$link(href="styleMainWindows.css", rel="stylesheet", type="text/css"),
+    tags$link(href="styleToolbar.css", rel="stylesheet", type="text/css"),
   ),
   useShinyjs(),
   HTML(rawHTML),

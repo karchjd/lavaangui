@@ -1,0 +1,97 @@
+.menu {
+    background-color: #f8f8f8;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 30px;
+}
+
+.menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.menu ul li {
+    position: relative;
+}
+
+
+.menu>ul>li>a {
+    display: block;
+    padding: 8px 20px;
+    /* Increased horizontal padding */
+    text-decoration: none;
+    color: #333;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.menu>ul>li:hover>a {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    width: auto;
+    /* Set the width to auto */
+    white-space: nowrap;
+    /* Prevent text from wrapping */
+}
+
+
+.submenu li {
+    display: none;
+    height: auto;
+    /* Ensure that li elements are not constraining height */
+}
+
+
+.submenu a {
+    display: none;
+    /* Ensure that a elements are block elements */
+    padding: 12px 24px;
+    color: #333;
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.submenu a:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+
+.checkmark-container {
+    display: block;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+
+.checkmark-container label {
+    font-weight: normal;
+    display: inline;
+    /* Make sure the label is displayed inline */
+    vertical-align: middle;
+}
+
+.checkmark {
+    display: inline-block;
+    width: 12px;
+    margin-right: 5px;
+    vertical-align: middle;
+    /* Vertically align the checkmark */
+}
+
+.fileInput{
+    display: none;
+}
