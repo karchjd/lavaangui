@@ -4,7 +4,7 @@ cy.on('add', 'node', function (event) {
         columnNames =  appState.getColumnNamesGlobal();
         if (columnNames && columnNamesGlobal.includes(node.data('label'))) {
             node.addClass('linked');
-            if (!appState.isLoadingMode) {
+            if (!appState.isLoadingMode()) {
                 alert('Variable connected with data set');
             }
         }
