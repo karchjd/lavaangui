@@ -24,6 +24,7 @@ document.getElementById("loadDiagramMenuItem").addEventListener('click', functio
             var content = readerEvent.target.result; 
             var json = JSON.parse(content);
             cy.json(json);
+            cy.style(myStyle);
         }
     }
 

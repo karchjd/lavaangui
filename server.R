@@ -22,7 +22,7 @@ server <- function(input, output, session) {
         data <- data()
         eval(parse(text = R_script()))
         session$sendCustomMessage("lav_results", parameterestimates(result))
-        fitMeasures(fit)
+        parameterestimates(result)
       }else{
         cat(R_script())
       }

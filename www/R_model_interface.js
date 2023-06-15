@@ -60,7 +60,7 @@ function createSyntax(run) {
         var latentNode = latentNodes[i];
         var nodeNames = "";
         var connectedEdges = latentNode.connectedEdges(function (edge) {
-            return edge.hasClass('directed') && edge.source().id() == latentNode.id()
+            return edge.hasClass('directed') && (edge.source().id() == latentNode.id())
         });
         if (connectedEdges.length > 0) {
             if (!shown) {
@@ -208,11 +208,13 @@ function findEdge(lhs, op, rhs) {
 
 //save all results in data attributes of the correct edges
 Shiny.addCustomMessageHandler('lav_results', function (lav_result) {
+    console.log('results received')
     for (let i = 0; i < lav_result.lhs.length; i++) {
         edge = findEdge(lav_result.lhs[i], lav_result.op[i], lav_result.rhs[i]);
         edge.data('est', lav_result.est[i].toFixed(2))
-        edge.data('p-value', lav_result.pvalue[i].toFixed(2))
-        edge.data('se', lav_result.se[i].toFixed(2))
+        console.log(lav_result.est[i].toFixed(2))
         edge.addClass('hasEst')
+        // edge.data('p-value', lav_result.pvalue[i].toFixed(2))
+        // edge.data('se', lav_result.se[i].toFixed(2))
     }
 });
