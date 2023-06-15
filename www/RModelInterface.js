@@ -1,6 +1,5 @@
 function containsObject(list, obj) {
-    var i;
-    for (i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
         if (list[i] === obj) {
             return true;
         }
@@ -43,23 +42,23 @@ function addTerms(node, edge) {
 }
 
 function createSyntax(run) {
-    var syntax = "";
-    var R_script = "";
+    let syntax = "";
+    let R_script = "";
     if (!run) {
-        if (loadedFileName == undefined) {
+        if (appState.getLoadedFileName() == null) {
             loadedFileName = "YOUR_DATA.csv"
         }
         R_script += "library(lavaan)" + "\n";
-        R_script += "data <- read.csv(" + loadedFileName + ")" + "\n";
+        R_script += "data <- read.csv(" + appState.getLoadedFileName() + ")" + "\n";
     }
 
     // measurement model
-    var latentNodes = cy.nodes(function (node) { return node.hasClass('latent-variable') });
-    var shown = false;
-    for (var i = 0; i < latentNodes.length; i++) {
-        var latentNode = latentNodes[i];
-        var nodeNames = "";
-        var connectedEdges = latentNode.connectedEdges(function (edge) {
+    const latentNodes = cy.nodes(function (node) { return node.hasClass('latent-variable') });
+    let shown = false;
+    for (let i = 0; i < latentNodes.length; i++) {
+        const latentNode = latentNodes[i];
+        let nodeNames = "";
+        const connectedEdges = latentNode.connectedEdges(function (edge) {
             return edge.hasClass('directed') && (edge.source().id() == latentNode.id())
         });
         if (connectedEdges.length > 0) {
@@ -67,8 +66,8 @@ function createSyntax(run) {
                 syntax += "# measurement model" + '\n '
                 shown = true;
             }
-            for (var j = 0; j < connectedEdges.length; j++) {
-                var node = connectedEdges[j].target();
+            for (let j = 0; j < connectedEdges.length; j++) {
+                const node = connectedEdges[j].target();
                 if (j > 0) {
                     nodeNames += " + ";
                 }
@@ -87,7 +86,7 @@ function createSyntax(run) {
         return res;
     })
     reg_nodes = [];
-    for (var i = 0; i < reg_edges.length; i++) {
+    for (let i = 0; i < reg_edges.length; i++) {
         if (!containsObject(reg_nodes, reg_edges[i].target())) {
             reg_nodes.push(reg_edges[i].target())
         }
@@ -95,13 +94,13 @@ function createSyntax(run) {
 
     if (reg_nodes.length > 0) {
         syntax += '\n' + "# regressions" + '\n'
-        for (var i = 0; i < reg_nodes.length; i++) {
-            var targetNode = reg_nodes[i];
-            var connectedEdges = targetNode.connectedEdges(function (edge) {
+        for (let i = 0; i < reg_nodes.length; i++) {
+            const targetNode = reg_nodes[i];
+            const connectedEdges = targetNode.connectedEdges(function (edge) {
                 return edge.hasClass('directed') && edge.target().id() == targetNode.id()
             });
             if (connectedEdges.length > 0) {
-                var nodeNames = "";
+                let nodeNames = "";
                 for (var j = 0; j < connectedEdges.length; j++) {
                     var node = connectedEdges[j].source();
                     if (j > 0) {
@@ -118,9 +117,9 @@ function createSyntax(run) {
     // covariances
     cov_edges = cy.edges(function (edge) { return edge.hasClass("undirected") || edge.hasClass("loop") })
     if (cov_edges.length > 0) {
-        var nodeNames = "";
+        let nodeNames = "";
         syntax += '\n' + "# residual (co)variances" + '\n'
-        for (var i = 0; i < cov_edges.length; i++) {
+        for (let i = 0; i < cov_edges.length; i++) {
             node1 = cov_edges[i].source().data('label');
             node2 = cov_edges[i].target().data('label');
             syntax += node1 + ' ~~ ' + addTerms(cov_edges[i].target(), cov_edges[i]) + '\n ';
@@ -131,7 +130,7 @@ function createSyntax(run) {
     constant_nodes = cy.nodes(function (node) { return node.hasClass('constant') });
     for (let i = 0; i < constant_nodes.length; i++) {
         c_node = constant_nodes[i];
-        var connectedEdges = c_node.connectedEdges();
+        const connectedEdges = c_node.connectedEdges();
         if (connectedEdges.length > 0) {
             syntax += "# intercepts" + '\n '
             for (var j = 0; j < connectedEdges.length; j++) {
@@ -140,28 +139,18 @@ function createSyntax(run) {
             }
         }
     }
-
-
     R_script += "model = '\n" + syntax + "'" + "\n "
     R_script += "result <- sem(model, data)" + "\n "
     return R_script
 };
 
-$("#ctrScript").click(function () {
-    tolavaan(false);
-});
-
-$("#run").click(function () {
-    tolavaan(true);
-});
-
 function tolavaan(run) {
     if (run) {
-         var nodes = cy.nodes(function (node) {
+         const nodes = cy.nodes(function (node) {
             return node.hasClass("observed-variable")
         });
         for (var i = 0; i < nodes.length; i++) {
-            var node = nodes[i];
+            const node = nodes[i];
             if (!node.hasClass("linked")) {
                 alert("Observed variable " + node.data('label') + " is not linked to data. Cannot run.")
                 return
@@ -196,8 +185,8 @@ function findEdge(lhs, op, rhs) {
         }
     }
 
-    correct_edge = cy.edges(function (edge) {
-        res = edge.source().data('label') == source && edge.target().data('label') == target
+    const correct_edge = cy.edges(function (edge) {
+        let res = edge.source().data('label') == source && edge.target().data('label') == target
         if (directed == "undirected") {
             res = res || (edge.source().data('label') == target && edge.target().data('label') == source)
         }
@@ -208,11 +197,9 @@ function findEdge(lhs, op, rhs) {
 
 //save all results in data attributes of the correct edges
 Shiny.addCustomMessageHandler('lav_results', function (lav_result) {
-    console.log('results received')
     for (let i = 0; i < lav_result.lhs.length; i++) {
         edge = findEdge(lav_result.lhs[i], lav_result.op[i], lav_result.rhs[i]);
         edge.data('est', lav_result.est[i].toFixed(2))
-        console.log(lav_result.est[i].toFixed(2))
         edge.addClass('hasEst')
         // edge.data('p-value', lav_result.pvalue[i].toFixed(2))
         // edge.data('se', lav_result.se[i].toFixed(2))

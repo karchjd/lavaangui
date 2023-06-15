@@ -1,4 +1,3 @@
-
 $("#add-latent-variable").click(function () {
     addNode("latent-variable");
 });
@@ -11,4 +10,12 @@ $("#add-manifest-variable").click(function () {
 // Button click event for "Create Constant Variable"
 $("#add-constant-variable").click(function () {
     addNode("constant");
+});
+
+$("#ctrScript").click(function () {
+    tolavaan(false);
+});
+
+$("#run").click(function () {
+    tolavaan(true);
 });
