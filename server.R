@@ -19,6 +19,7 @@ server <- function(input, output, session) {
   output$lavaan_syntax_R <- renderPrint({
     if(!is.null(R_script())){
       if(input$run){
+        data <- data()
         eval(parse(text = R_script()))
         session$sendCustomMessage("lav_results", parameterestimates(result))
         fitMeasures(fit)

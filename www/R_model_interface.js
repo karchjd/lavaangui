@@ -42,14 +42,16 @@ function addTerms(node, edge) {
     return formula
 }
 
-function createSyntax() {
+function createSyntax(run) {
     var syntax = "";
-    if (loadedFileName === "") {
-        loadedFileName === "YOUR_DATA.csv"
+    var R_script = "";
+    if(!run){
+        if (loadedFileName === "") {
+            loadedFileName === "YOUR_DATA.csv"
+        }
+        R_script += "library(lavaan)" + "\n";
+        R_script += "data <- read.csv(" + loadedFileName + ")" + "\n";
     }
-
-    var R_script = "library(lavaan)" + "\n";
-    R_script = "data <- read.csv('data.csv')" + "\n";
 
     // measurement model
     var latentNodes = cy.nodes(function (node) { return node.hasClass('latent-variable') });
@@ -139,26 +141,22 @@ function createSyntax() {
 
 
     R_script += "model = '" + syntax + "'" + "\n "
-
-    //fixed part
     R_script += "result <- sem(model, data)" + "\n "
-    // summary(result, fit.measures=TRUE);
-    console.log(R_script)
     return R_script
 };
 
 $("#ctrScript").click(function () {
-    run(false);
+    tolavaan(false);
 });
 
 $("#run").click(function () {
-    run(true);
+    tolavaan(true);
 });
 
-function run(run) {
-    R_script = createSyntax()
-    Shiny.setInputValue("R_script", R_script);
+function tolavaan(run) {
+    R_script = createSyntax(run)
     Shiny.setInputValue("run", run);
+    Shiny.setInputValue("R_script", R_script);
 }
 
 function findEdge(lhs, op, rhs) {
