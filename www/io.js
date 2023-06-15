@@ -4,12 +4,12 @@ let loadingmode = false;
 // Attach click event handler to save diagram menu item
 $("#saveDiagramMenuItem").on('click', function () {
     // Convert diagram data to JSON string
-    var json = cy.json();
-    var str = JSON.stringify(json);
+    let json = cy.json();
+    let str = JSON.stringify(json);
     
     // Create a new Blob object using the JSON string
-    var blob = new Blob([str], {type: "application/json;charset=utf-8"});
-    var url = URL.createObjectURL(blob);
+    let blob = new Blob([str], {type: "application/json;charset=utf-8"});
+    let url = URL.createObjectURL(blob);
 
     // Create and trigger download link for the JSON data
     $('<a>').attr({href: url, download: 'diagram.json'})[0].click();
@@ -18,27 +18,27 @@ $("#saveDiagramMenuItem").on('click', function () {
 // Attach click event handler to load diagram menu item
 $("#loadDiagramMenuItem").on('click', function () {
     // Create file input element
-    var $input = $('<input>').attr({type: 'file', accept: '.json'});
+    let $input = $('<input>').attr({type: 'file', accept: '.json'});
 
     // Attach change event handler to the file input element
     $input.on('change', function (e) {
         // Read the selected file
-        var file = e.target.files[0];
-        var reader = new FileReader();
+        let file = e.target.files[0];
+        let reader = new FileReader();
         reader.readAsText(file, 'UTF-8');
 
         // Handle file content after it's read
         reader.onload = function (readerEvent) {
             // Parse file content as JSON
-            var content = readerEvent.target.result;
-            var json = JSON.parse(content);
+            let content = readerEvent.target.result;
+            let json = JSON.parse(content);
 
             // Set loading mode, update diagram and perform checks
             appState.setLoadingMode(true)
             cy.json(json);
             cy.style(myStyle);
-            var nodes = cy.nodes();
-            for (var i = 0; i < nodes.length; i++) {
+            let nodes = cy.nodes();
+            for (let i = 0; i < nodes.length; i++) {
                 console.log(nodes[i].data('label'));
                 checkNodeLoop(nodes[i].id());
             }
