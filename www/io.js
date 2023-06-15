@@ -1,6 +1,3 @@
-// Initialize loading mode variable
-let loadingmode = false;
-
 // Attach click event handler to save diagram menu item
 $("#saveDiagramMenuItem").on('click', function () {
     // Convert diagram data to JSON string
