@@ -1,7 +1,7 @@
 var nodeIdCounter = 0;
 var edgeIdCounter = 0;
 
-// adding new nodes via mouse, toolbar, or hotkey
+// Adding new nodes via mouse, toolbar, or hotkey
 function addNode(nodeType, position) {
     var nodeId = 'node' + nodeIdCounter++;
     var label = 'x' + nodeIdCounter;
@@ -31,39 +31,35 @@ function addNode(nodeType, position) {
     }
 }
 
-// keyboard and mouse actions
+// Keyboard and mouse actions
 
+// Grab the container div, make it focusable and focus it
+var $cyContainer = $("#cy").attr('tabindex', '0').focus();
 
-// Grab the container div and make it focusable
-var cyContainer = document.getElementById("cy");
-cyContainer.setAttribute('tabindex', '0');
-
-// Focus the container so it can receive keyboard events
-cyContainer.focus();
-
-// keep track of mouse position
+// Keep track of mouse position
 var lastMousePosition = { x: 0, y: 0 };
-$('#cy').mousemove(function (event) { 
+$('#cy').mousemove(function (event) {
     lastMousePosition = {
         x: event.offsetX,
         y: event.offsetY
     };
 });
 
-document.getElementById("cy").addEventListener("mouseover", function () {
-    this.focus();
+// Focus the container when mouse is over it
+$cyContainer.on("mouseover", function () {
+    $(this).focus();
 });
 
-// keyboard events
-cyContainer.addEventListener('keydown', function (event) {
+// Keyboard events
+$cyContainer.on('keydown', function (event) {
     // Check if the Command key was pressed
     if (event.key === 'Meta' || event.key === 'Control') {
         eh.enableDrawMode();
     }
 
+    // Handle Backspace key
     if (event.key === 'Backspace') {
         var selectedElements = cy.$(':selected');
-
         selectedElements.forEach(function (element) {
             if (element.isNode()) {
                 element.remove();
@@ -73,6 +69,7 @@ cyContainer.addEventListener('keydown', function (event) {
         });
     }
 
+    // Handle 'l', 'o', 'c' keys
     if (['l', 'o', 'c'].includes(event.key.toLowerCase())) {
         var nodeType;
         switch (event.key.toLowerCase()) {
@@ -90,8 +87,7 @@ cyContainer.addEventListener('keydown', function (event) {
     }
 });
 
-
-cyContainer.addEventListener('keyup', function (event) {
+$cyContainer.on('keyup', function (event) {
     // Check if the Command key was released
     if (event.key === 'Meta' || event.key === 'Control') {
         eh.disableDrawMode();
