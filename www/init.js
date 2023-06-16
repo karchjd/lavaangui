@@ -115,7 +115,7 @@ myStyle = [
         }
     },
     {
-        selector: 'edge.hasEst',
+        selector: 'edge.hasEst.free, edge.hasEst.forcefree',
         style: {
             'label': function(edge) {
                 return edge.data('est');
