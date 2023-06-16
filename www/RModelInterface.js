@@ -82,7 +82,7 @@ function createSyntax(run) {
     reg_edges = cy.edges(function (edge) {
         res = edge.hasClass("directed") &&
             !edge.source().hasClass("constant") &&
-            !edge.source().hasClass("latent-variable");
+            !(edge.source().hasClass("latent-variable") && edge.target().hasClass("observed-variable"));
         return res;
     })
     reg_nodes = [];
