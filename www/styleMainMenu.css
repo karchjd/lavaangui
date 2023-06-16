@@ -95,3 +95,11 @@
 .fileInput{
     display: none;
 }
+
+.divider::before {
+    content: "";
+    display: block;
+    border-bottom: 1px solid #000; /* Set the color and thickness of the divider */
+    margin: 8px 0; /* Optional: Set the margin to give space above and below the divider */
+}
+

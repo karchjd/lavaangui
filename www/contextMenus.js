@@ -4,12 +4,12 @@ cy.contextMenus({
 
     menuItems: [
         {
-            id: 'add-constant',
-            content: 'Add Constant Variable',
+            id: 'add-observed',
+            content: 'Add Observed Variable',
             coreAsWell: true,
             onClickFunction: function (event) {
                 const position = event.position || event.cyPosition;
-                addNode('constant', position);
+                addNode('observed-variable', position);
             }
         },
         {
@@ -22,57 +22,69 @@ cy.contextMenus({
             }
         },
         {
-            id: 'add-observed',
-            content: 'Add Observed Variable',
+            id: 'add-constant',
+            content: 'Add Constant Variable',
             coreAsWell: true,
             onClickFunction: function (event) {
                 const position = event.position || event.cyPosition;
-                addNode('observed-variable', position);
+                addNode('constant', position);
             }
         },
+        
 
         //edge menus
 
         {
-            id: 'revert-arrow',
-            content: 'Revert Direction',
-            selector: 'edge[isMean="0"].directed',
+            id: 'label-para',
+            content: 'Set Label',
+            selector: 'edge',
             onClickFunction: function (event) {
                 const edge = event.target || event.cyTarget;
-                const sourceId = edge.source().id();
-                const targetId = edge.target().id();
-                ur.do("move", {
-                    eles: edge,
-                    location: {
-                        source: targetId,
-                        target: sourceId
-                    }
-                });
+                // Check for strings that start with a letter
+                // and contain only alphanumeric characters (a-z, A-Z, 0-9)
+                const regex = /^[a-zA-Z][a-zA-Z0-9]*$/;
+
+                // Ask the user for a value
+                let value = prompt("Please enter a label:");
+
+                // Validate the input
+                while (value !== null && !regex.test(value)) {
+                    // Show an error message and ask for a new string
+                    value = prompt("Invalid input. Please enter a label that starts with a letter and contains only alphanumeric characters:");
+                }
+
+                // Store the label in the edge's data if it's not null
+                if (value !== null) {
+                    edge.data('label', value);
+                    edge.addClass("label");
+                    edge.removeClass('nolabel')
+                    console.log(value)
+                }
             },
             hasTrailingDivider: false
         },
         {
-            id: 'set-undirected',
-            content: 'Set Undirected',
-            selector: 'edge[isMean="0"].directed',
+            id: 'label-remove',
+            content: 'Remove Label',
+            selector: 'edge.label',
             onClickFunction: function (event) {
                 const edge = event.target || event.cyTarget;
-                edge.removeClass("directed")
-                edge.addClass("undirected")
+                edge.removeClass('label')
+                edge.addClass('nolabel')
+                edge.data('label', undefined);
             },
             hasTrailingDivider: false
         },
 
         {
-            id: 'set-arrow',
-            content: 'Set Directed',
-            selector: 'edge.undirected',
+            id: 'remove-edge',
+            content: 'Delete edge',
+            selector: 'edge',
             onClickFunction: function (event) {
                 const edge = event.target || event.cyTarget;
-                edge.removeClass("undirected")
-                edge.addClass("directed")
+                edge.remove()
             },
-            hasTrailingDivider: false
+            hasTrailingDivider: true
         },
         {
             id: 'fix-para',
@@ -116,73 +128,54 @@ cy.contextMenus({
                 edge.removeClass('fixed');
                 edge.addClass('forcefree');
             },
+            hasTrailingDivider: true
+        },
+        
+
+        {
+            id: 'revert-arrow',
+            content: 'Revert Direction',
+            selector: 'edge[isMean="0"].directed',
+            onClickFunction: function (event) {
+                const edge = event.target || event.cyTarget;
+                const sourceId = edge.source().id();
+                const targetId = edge.target().id();
+                ur.do("move", {
+                    eles: edge,
+                    location: {
+                        source: targetId,
+                        target: sourceId
+                    }
+                });
+            },
             hasTrailingDivider: false
         },
         {
-            id: 'label-para',
-            content: 'Set Label',
-            selector: 'edge',
+            id: 'set-undirected',
+            content: 'Set Undirected',
+            selector: 'edge[isMean="0"].directed',
             onClickFunction: function (event) {
                 const edge = event.target || event.cyTarget;
-                // Check for strings that start with a letter
-                // and contain only alphanumeric characters (a-z, A-Z, 0-9)
-                const regex = /^[a-zA-Z][a-zA-Z0-9]*$/;
-
-                // Ask the user for a value
-                let value = prompt("Please enter a label:");
-
-                // Validate the input
-                while (value !== null && !regex.test(value)) {
-                    // Show an error message and ask for a new string
-                    value = prompt("Invalid input. Please enter a label that starts with a letter and contains only alphanumeric characters:");
-                }
-
-                // Store the label in the edge's data if it's not null
-                if (value !== null) {
-                    edge.data('label', value);
-                    edge.addClass("label");
-                    edge.removeClass('nolabel')
-                    console.log(value)
-                }
-            },
-            hasTrailingDivider: true
-        },
-        {
-            id: 'label-remove',
-            content: 'Remove Label',
-            selector: 'edge.label',
-            onClickFunction: function (event) {
-                const edge = event.target || event.cyTarget;
-                edge.removeClass('label')
-                edge.addClass('nolabel')
-                edge.data('label', undefined);
+                edge.removeClass("directed")
+                edge.addClass("undirected")
             },
             hasTrailingDivider: true
         },
 
         {
-            id: 'remove-edge',
-            content: 'Delete edge',
-            selector: 'edge',
+            id: 'set-arrow',
+            content: 'Set Directed',
+            selector: 'edge.undirected',
             onClickFunction: function (event) {
                 const edge = event.target || event.cyTarget;
-                edge.remove()
+                edge.removeClass("undirected")
+                edge.addClass("directed")
             },
             hasTrailingDivider: true
         },
+        
 
         //node menus
-        {
-            id: 'change-latent',
-            content: 'Change to Latent',
-            selector: 'node.observed-variable',
-            onClickFunction: function (event) {
-                const node = event.target || event.cyTarget;
-                node.removeClass('observed-variable');
-                node.addClass('latent-variable')
-            },
-            hasTrailingDivider: false
-        },
         {
             id: 'rename-node',
             content: 'Rename Variable',
@@ -334,8 +327,20 @@ cy.contextMenus({
                 const node = event.target || event.cyTarget;
                 node.remove();
             },
+            hasTrailingDivider: true
+        },
+        {
+            id: 'change-latent',
+            content: 'Change to Latent',
+            selector: 'node.observed-variable',
+            onClickFunction: function (event) {
+                const node = event.target || event.cyTarget;
+                node.removeClass('observed-variable');
+                node.addClass('latent-variable')
+            },
             hasTrailingDivider: false
         },
+        
         {
             id: 'change-observed',
             content: 'Change to Observed',
