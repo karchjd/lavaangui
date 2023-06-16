@@ -59,7 +59,7 @@ function createSyntax(run) {
         const latentNode = latentNodes[i];
         let nodeNames = "";
         const connectedEdges = latentNode.connectedEdges(function (edge) {
-            return edge.hasClass('directed') && (edge.source().id() == latentNode.id())
+            return edge.hasClass('directed') && (edge.source().id() == latentNode.id() && edge.target().hasClass('observed-variable'))
         });
         if (connectedEdges.length > 0) {
             if (!shown) {
