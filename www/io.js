@@ -10,8 +10,13 @@ $("#newDiagramMenuItem").on("click", function () {
 
 // Attach click event handler to save diagram menu item
 $("#saveDiagramMenuItem").on('click', function () {
+
+    //remove link with data set
+    let cy_save = cy;
+    cy_save.nodes().removeClass('linked');
+
     // Convert diagram data to JSON string
-    let json = cy.json();
+    let json = cy_save.json();
     let str = JSON.stringify(json);
     
     // Create a new Blob object using the JSON string
