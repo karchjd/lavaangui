@@ -115,10 +115,18 @@ myStyle = [
         }
     },
     {
-        selector: 'edge.hasEst.free, edge.hasEst.forcefree',
+        selector: 'edge.hasEst.free.nolabel, edge.hasEst.forcefree.nolabel',
         style: {
             'label': function(edge) {
                 return edge.data('est');
+            }
+        }
+    },
+    {
+        selector: 'edge.hasEst.free.label, edge.hasEst.forcefree.label',
+        style: {
+            'label': function(edge) {
+                return edge.data('label') + '=' + edge.data('est');
             }
         }
     },
