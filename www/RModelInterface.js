@@ -140,7 +140,7 @@ function createSyntax(run) {
         }
     }
     R_script += "model = '\n" + syntax + "'" + "\n "
-    R_script += "result <- sem(model, data)" + "\n "
+    R_script += "result <- sem(model, data)"
     return R_script
 };
 
