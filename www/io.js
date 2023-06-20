@@ -55,7 +55,9 @@ $("#loadDiagramMenuItem").on('click', function () {
                 console.log(nodes[i].data('label'));
                 checkNodeLoop(nodes[i].id());
             }
-            appState.setLoadingMode(false)
+            if(appState.getColumnNamesGlobal() != null){
+                applyLinkedClass(appState.getColumnNamesGlobal() , false)
+            }
         }
     });
 

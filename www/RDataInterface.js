@@ -1,6 +1,6 @@
 
 Shiny.addCustomMessageHandler('columnNames', function (columnNames) {
-  applyLinkedClass(columnNames);
+  applyLinkedClass(columnNames, true);
   appState.setColumnNamesGlobal(columnNames);
 });
 
@@ -8,7 +8,7 @@ Shiny.addCustomMessageHandler('fname', function (fname) {
   appState.setLoadedFileName(fname);
 });
 
-function applyLinkedClass(columnNames) {
+function applyLinkedClass(columnNames, apply) {
   const nodes = cy.nodes(function (node) {
     return node.hasClass("observed-variable")
   });
@@ -17,9 +17,13 @@ function applyLinkedClass(columnNames) {
     for (var i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       const label = node.data("label");
-      node.removeClass("linked")
+      if(apply){
+        node.removeClass("linked")
+      }
       if (columnNames.includes(label)) {
-        node.addClass("linked");
+        if(apply){
+          node.addClass("linked");
+        }
       } else {
         all_linked = false;
       }
