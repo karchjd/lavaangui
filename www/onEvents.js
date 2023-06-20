@@ -25,6 +25,7 @@ cy.on('add', 'edge', function (event) {
         } else if (sourceNodeId === targetNodeId && isNode(sourceNodeId) && isNode(targetNodeId)) {
             edge.addClass('loop');
         }
+        //removers
         if ((edge.hasClass('undirected') || edge.hasClass('loop')) && (edge.source().hasClass('constant') || edge.target().hasClass('constant'))) {
             cy.remove(edge);
         }
