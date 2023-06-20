@@ -25,7 +25,9 @@ server <- function(input, output, session) {
         eval(parse(text = R_script()))
         counter <- counter()
         session$sendCustomMessage("lav_results", parameterestimates(result))
-        parameterestimates(result)
+        sum_model <- summary(result)
+        sum_model$pe <- NULL
+        print(sum_model)
       }else{
         cat(R_script())
       }
