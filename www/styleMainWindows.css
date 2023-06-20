@@ -25,5 +25,7 @@ html {
   text-align: left;
   background-color: lightgrey;
   padding: 0px;
-
+  max-height: 80vh; 
+  overflow-y: auto; 
 }
+
