@@ -97,12 +97,16 @@ cy.contextMenus({
                 const value = prompt("Please enter a value:");
 
                 // Store the value in the edge's data
-                if (value !== null) {
-                    edge.data('value', value);
+                if (value !== null) { // submit was pressed
+                    if(!isNaN(Number(value))){ //provided value is a number
+                        edge.data('value', value);
+                        edge.removeClass('free');
+                        edge.removeClass('forcefree')
+                        edge.addClass('fixed');
+                    }else{
+                        alert("Provided value: " + value + " is not a number. Please provide a number")
+                    }
                 }
-                edge.removeClass('free');
-                edge.removeClass('forcefree')
-                edge.addClass('fixed');
             },
             hasTrailingDivider: false
         },
