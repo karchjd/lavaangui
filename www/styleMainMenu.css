@@ -166,3 +166,7 @@
 .input-group{
     display: none;
 }
+
+#fileInput_progress{
+    display: none;
+}
