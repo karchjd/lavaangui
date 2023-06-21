@@ -9,7 +9,7 @@ server <- function(input, output, session) {
     # Start the download
     shinyjs::click("downloadData")
   })
-
+  
   # Define the download handler function
   output$downloadData <- downloadHandler(
     filename = function() {
@@ -39,12 +39,12 @@ server <- function(input, output, session) {
   data <- reactive({
     req(input$fileInput)
     if(is.null(input$fileInput$content)){
-      read.csv(input$fileInput$datapath) 
+      list(df = read.csv(input$fileInput$datapath), name = input$fileInput$name)  
     } else{
       content <- input$fileInput$content
       decoded <- base64enc::base64decode(content)
       # Read content into a data frame
-      read.csv(textConnection(rawToChar(decoded)))  
+      list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")  
     }
   })
   
@@ -54,15 +54,15 @@ server <- function(input, output, session) {
   })
   
   observeEvent(data(), {
-    session$sendCustomMessage(type = "columnNames", message = colnames(data()))
-    session$sendCustomMessage("fname", input$fileInput$name)
-    session$sendCustomMessage("file", data())
+    df <- data()
+    session$sendCustomMessage(type = "columnNames", message = colnames(df$df))
+    session$sendCustomMessage("fname", message = df$name)
   })
   
   output$lavaan_syntax_R <- renderPrint({
     if (!is.null(R_script())) {
       if (input$run) {
-        data <- data()
+        data <- data()$df
         
         # Capture warnings using tryCatch
         result <- tryCatch(
@@ -85,6 +85,7 @@ server <- function(input, output, session) {
           session$sendCustomMessage("lav_results", parameterestimates(result))
           sum_model <- summary(result)
           sum_model$pe <- NULL
+          print(sum_model)
         }
       } else {
         cat(R_script())
