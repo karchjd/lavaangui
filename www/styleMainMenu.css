@@ -158,3 +158,11 @@
     opacity: 0.5;
     pointer-events: none;
 }
+
+#downloadData{
+    display: none;
+}
+
+.input-group{
+    display: none;
+}
