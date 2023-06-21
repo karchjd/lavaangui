@@ -2,6 +2,7 @@
 Shiny.addCustomMessageHandler('columnNames', function (columnNames) {
   applyLinkedClass(columnNames, true);
   appState.setColumnNamesGlobal(columnNames);
+  appState.setDataAvail(true)
 });
 
 Shiny.addCustomMessageHandler('fname', function (fname) {

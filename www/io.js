@@ -121,5 +121,13 @@ $("#loadModelDataMenuItem").on("click", function () {
     $input.click();
 });
 
+$("#removeDataItem").on("click", function () {
+    appState.setDataAvail(false)
+    alert("Data removed");
+});
+
+
+
+
 
 

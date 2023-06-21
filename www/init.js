@@ -173,31 +173,3 @@ var eh = cy.edgehandles({
     }
 });
 
-const appState = {
-    columnNamesGlobal: null,
-    loadedFileName: null,
-    loadingMode: false,
-    runCounter: 0,
-    setColumnNamesGlobal: function(value) {
-      this.columnNamesGlobal = value;
-    },
-    getColumnNamesGlobal: function() {
-      return this.columnNamesGlobal;
-    },
-    setLoadedFileName: function(value) {
-      this.loadedFileName = value;
-    },
-    getLoadedFileName: function() {
-      return this.loadedFileName;
-    },
-    setLoadingMode: function(value) {
-      this.loadingMode = value;
-    },
-    isLoadingMode: function() {
-      return this.loadingMode;
-    },
-    increaseRun: function() {
-        return this.runCounter++;;
-    }
-  };
-  

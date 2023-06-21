@@ -24,6 +24,7 @@ ui <- fluidPage(
   downloadButton("downloadData", "Download Model and Data"),
   tags$script(src="init.js"),
   tags$script(src="io.js"),
+  tags$script(src="appState.js"),
   tags$script(src="graphManipulation.js"),
   tags$script(src="onEvents.js"),
   tags$script(src="contextMenus.js"),

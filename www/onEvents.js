@@ -9,7 +9,17 @@ cy.on('add', 'node', function (event) {
             }
         }
     }
+    if (appState.modelEmpty && cy.nodes().length > 0){
+        appState.setModelEmpty(false);
+    }
 });
+
+cy.on('remove', 'node', function (event) {
+    if(cy.nodes().length == 0){
+        appState.setModelEmpty(true);
+    }
+});
+
 
 cy.on('add', 'edge', function (event) {
     if (!appState.isLoadingMode()) {
