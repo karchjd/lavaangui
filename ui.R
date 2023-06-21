@@ -11,6 +11,7 @@ ui <- fluidPage(
     tags$script(src="https://cdn.rawgit.com/konvajs/konva/1.6.3/konva.min.js"),
     tags$script(src="https://unpkg.com/cytoscape-context-menus@3.0.1"),
     tags$script(src="https://unpkg.com/cytoscape-node-editing@latest"),
+    tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.5.0/jszip.min.js"),
     tags$link(href="https://unpkg.com/cytoscape-context-menus@3.0.1/cytoscape-context-menus.css", rel="stylesheet", type="text/css"),
     tags$link(href="styleContextMenus.css", rel="stylesheet", type="text/css"),
     tags$link(href="styleMainMenu.css", rel="stylesheet", type="text/css"),

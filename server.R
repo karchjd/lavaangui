@@ -38,7 +38,14 @@ server <- function(input, output, session) {
   
   data <- reactive({
     req(input$fileInput)
-    read.csv(input$fileInput$datapath)
+    if(is.null(input$fileInput$content)){
+      read.csv(input$fileInput$datapath) 
+    } else{
+      content <- input$fileInput$content
+      decoded <- base64enc::base64decode(content)
+      # Read content into a data frame
+      read.csv(textConnection(rawToChar(decoded)))  
+    }
   })
   
   counter <- reactive({

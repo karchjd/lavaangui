@@ -39,6 +39,22 @@ $("#saveModelDataMenuItem").on('click', function () {
     Shiny.setInputValue('triggerDownload', Math.random());
 });
 
+function loadModel(content){
+    let json = JSON.parse(content);
+    // Set loading mode, update diagram and perform checks
+    appState.setLoadingMode(true)
+    cy.json(json);
+    cy.style(myStyle);
+    let nodes = cy.nodes();
+    for (let i = 0; i < nodes.length; i++) {
+        console.log(nodes[i].data('label'));
+        checkNodeLoop(nodes[i].id());
+    }
+    if(appState.getColumnNamesGlobal() != null){
+        applyLinkedClass(appState.getColumnNamesGlobal() , false)
+    }
+}
+
 // Attach click event handler to load diagram menu item
 $("#loadDiagramMenuItem").on('click', function () {
     if (isEmpty(cy) || confirm('Are you sure you want to load a model? This will delete the current model.')) {
@@ -56,20 +72,7 @@ $("#loadDiagramMenuItem").on('click', function () {
         reader.onload = function (readerEvent) {
             // Parse file content as JSON
             let content = readerEvent.target.result;
-            let json = JSON.parse(content);
-
-            // Set loading mode, update diagram and perform checks
-            appState.setLoadingMode(true)
-            cy.json(json);
-            cy.style(myStyle);
-            let nodes = cy.nodes();
-            for (let i = 0; i < nodes.length; i++) {
-                console.log(nodes[i].data('label'));
-                checkNodeLoop(nodes[i].id());
-            }
-            if(appState.getColumnNamesGlobal() != null){
-                applyLinkedClass(appState.getColumnNamesGlobal() , false)
-            }
+            loadModel(content)
         }
     });
 
@@ -82,6 +85,40 @@ $("#loadDiagramMenuItem").on('click', function () {
 $("#loadDataMenuItem").on("click", function () {
     // Trigger the file input click action
     $("#fileInput").click();
+});
+
+$("#loadModelDataMenuItem").on("click", function () {
+    // Create file input element
+    let $input = $('<input>').attr({type: 'file', accept: '.zip'});
+
+    // Attach change event handler to the file input element
+    $input.on('change', function (e) {
+        // Read the selected file
+        let file = e.target.files[0];
+        let reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+
+        // Handle file content after it's read
+        reader.onload = function (readerEvent) {
+            // Use JSZip to unzip the file content
+            JSZip.loadAsync(readerEvent.target.result).then(function(zip) {
+                // Apply loadModel to model.json file within the zip
+                zip.file("model.json").async("text").then(function(content) {
+                    loadModel(content);
+                });
+                
+                 // Send data.csv file to the shiny server
+                 zip.file("data.csv").async("base64").then(function(content) {
+                    // Send the content of the file as a base64 string
+                    Shiny.setInputValue("fileInput", {content: content});
+                });
+
+            });
+        }
+    });
+
+    // Trigger the file input click action
+    $input.click();
 });
 
 
