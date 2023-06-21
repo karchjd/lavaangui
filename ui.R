@@ -20,6 +20,7 @@ ui <- fluidPage(
   useShinyjs(),
   HTML(rawHTML),
   fileInput("fileInput", multiple = FALSE, accept = ".csv", label = NULL),
+  downloadButton("downloadData", "Download Model and Data"),
   tags$script(src="init.js"),
   tags$script(src="io.js"),
   tags$script(src="graphManipulation.js"),

@@ -1,7 +1,26 @@
 server <- function(input, output, session) {
   library(lavaan)
   
-  R_script <- reactive({ input$R_script })
+  R_script <- reactive({input$R_script })
+  
+  observe({
+    req(input$triggerDownload)
+    # Start the download
+    shinyjs::click("downloadData")
+  })
+
+  # Define the download handler function
+  output$downloadData <- downloadHandler(
+    # Specify the file name
+    filename = function() {
+      paste("model-", Sys.Date(), ".json", sep="")
+    },
+    
+    # Define the content of the file
+    content = function(file) {
+      writeLines(input$model, file)
+    }
+  )
   
   data <- reactive({
     req(input$fileInput)
@@ -16,6 +35,7 @@ server <- function(input, output, session) {
   observeEvent(data(), {
     session$sendCustomMessage(type = "columnNames", message = colnames(data()))
     session$sendCustomMessage("fname", input$fileInput$name)
+    session$sendCustomMessage("file", data())
   })
   
   output$lavaan_syntax_R <- renderPrint({

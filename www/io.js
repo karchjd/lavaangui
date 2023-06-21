@@ -8,23 +8,35 @@ $("#newDiagramMenuItem").on("click", function () {
     }
 });
 
+function jsonModel(){
+     //remove link with data set
+     let cy_save = cy;
+     cy_save.nodes().removeClass('linked');
+ 
+     // Convert diagram data to JSON string
+     const json = cy_save.json();
+     const str = JSON.stringify(json);
+     return str
+}
+
 // Attach click event handler to save diagram menu item
 $("#saveDiagramMenuItem").on('click', function () {
 
-    //remove link with data set
-    let cy_save = cy;
-    cy_save.nodes().removeClass('linked');
-
-    // Convert diagram data to JSON string
-    let json = cy_save.json();
-    let str = JSON.stringify(json);
-    
+    const str = jsonModel();
     // Create a new Blob object using the JSON string
     let blob = new Blob([str], {type: "application/json;charset=utf-8"});
     let url = URL.createObjectURL(blob);
 
     // Create and trigger download link for the JSON data
     $('<a>').attr({href: url, download: 'diagram.json'})[0].click();
+});
+
+// Attach click event handler to save diagram menu item
+$("#saveModelDataMenuItem").on('click', function () {
+
+    const str = jsonModel();
+    Shiny.setInputValue("model", str);
+    Shiny.setInputValue('triggerDownload', Math.random());
 });
 
 // Attach click event handler to load diagram menu item
