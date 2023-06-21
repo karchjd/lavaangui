@@ -1,5 +1,6 @@
 server <- function(input, output, session) {
   library(lavaan)
+  library(zip)
   
   R_script <- reactive({input$R_script })
   
@@ -11,14 +12,27 @@ server <- function(input, output, session) {
 
   # Define the download handler function
   output$downloadData <- downloadHandler(
-    # Specify the file name
     filename = function() {
-      paste("model-", Sys.Date(), ".json", sep="")
+      paste("lavaangui-", Sys.Date(), ".zip", sep="")
     },
     
     # Define the content of the file
     content = function(file) {
-      writeLines(input$model, file)
+      # Create a temporary directory
+      tempDir <- tempdir()
+      
+      # Define the names of the JSON and CSV files
+      jsonFile <- file.path(tempDir, "model.json")
+      csvFile <- file.path(tempDir, "data.csv")
+      
+      
+      writeLines(input$model, jsonFile) 
+      
+      # Write the data frame to the CSV file (replace my_data with your data frame)
+      write.csv(data(), csvFile, row.names = FALSE)
+      
+      # Create a zip archive of the directory containing the JSON and CSV files
+      zip::zip(zipfile = file, files = c("model.json", "data.csv"), root = tempDir)
     }
   )
   
