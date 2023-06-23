@@ -66,13 +66,24 @@ function createSyntax(run) {
                 syntax += "# measurement model" + '\n '
                 shown = true;
             }
+            
+
+            const sortedIndices = connectedEdges
+                .map((edge, index) => ({
+                    index,
+                    x: edge.target().position().x
+                }))
+                .sort((a, b) => b.x - a.x)
+                .map(item => item.index);
+            console.log(sortedIndices)
+
             for (let j = 0; j < connectedEdges.length; j++) {
                 const node = connectedEdges[j].target();
                 if (j > 0) {
                     nodeNames += " + ";
                 }
 
-                nodeNames += addTerms(node, connectedEdges[j]);
+                nodeNames += addTerms(node, connectedEdges[sortedIndices[j]]);
             }
             syntax += latentNode.data('label') + ' =~ ' + nodeNames + '\n ';
         }
@@ -146,7 +157,7 @@ function createSyntax(run) {
 
 function tolavaan(run) {
     if (run) {
-         const nodes = cy.nodes(function (node) {
+        const nodes = cy.nodes(function (node) {
             return node.hasClass("observed-variable")
         });
         for (var i = 0; i < nodes.length; i++) {
@@ -168,7 +179,7 @@ function tolavaan(run) {
     Shiny.setInputValue("runCounter", appState.increaseRun())
 }
 
-function findEdge(lhs, op, rhs) {
+function getEdge(lhs, op, rhs){
     let directed;
     let source;
     let target;
@@ -190,11 +201,16 @@ function findEdge(lhs, op, rhs) {
             directed = "directed";
         }
     }
+    return { directed: directed, source: source, target: target };
+}
+
+function findEdge(lhs, op, rhs) {
+    const goal_edge = getEdge(lhs, op, rhs);
 
     const correct_edge = cy.edges(function (edge) {
-        let res = edge.source().data('label') == source && edge.target().data('label') == target
-        if (directed == "undirected") {
-            res = res || (edge.source().data('label') == target && edge.target().data('label') == source)
+        let res = edge.source().data('label') == goal_edge.source && edge.target().data('label') == goal_edge.target
+        if (goal_edge.directed == "undirected") {
+            res = res || (edge.source().data('label') == goal_edge.target && edge.target().data('label') == goal_edge.source)
         }
         return res;
     })
@@ -204,22 +220,67 @@ function findEdge(lhs, op, rhs) {
 //save all results in data attributes of the correct edges
 Shiny.addCustomMessageHandler('lav_results', function (lav_result) {
     for (let i = 0; i < lav_result.lhs.length; i++) {
-        edge = findEdge(lav_result.lhs[i], lav_result.op[i], lav_result.rhs[i]);
+        const edge = findEdge(lav_result.lhs[i], lav_result.op[i], lav_result.rhs[i]);
         //lavaan estimated the edge
-        if(lav_result.se[i] !== 0){
+        if (lav_result.se[i] !== 0) {
             edge.data('est', lav_result.est[i].toFixed(2))
             edge.addClass('hasEst')
             edge.data('p-value', lav_result.pvalue[i].toFixed(2))
-             edge.data('se', lav_result.se[i].toFixed(2))
-        //lavaan did fix the edge
-        }else if((Math.abs(lav_result.est[i] - 1) < 1e-9)){
+            edge.data('se', lav_result.se[i].toFixed(2))
+            //lavaan did fix the edge
+        } else if ((Math.abs(lav_result.est[i] - 1) < 1e-9)) {
             edge.addClass('fixed')
             edge.removeClass('free')
             edge.data('value', 1)
-        }else{
+        } else {
             console.error("should never happen")
         }
-    }        
+    }
 });
 
-cy.edges(function(edge) {return edge.source().data('label') == 'dem60'})
+cy.edges(function (edge) { return edge.source().data('label') == 'dem60' })
+
+
+function importNode(type, label){
+    addNode(type, undefined, label)
+}
+
+function importEdge(edge_paras){
+    const targetID = cy.nodes(function(node){return node.data('label') == edge_paras.target}).data('id');
+    const sourceID = cy.nodes(function(node){return node.data('label') == edge_paras.source}).data('id');
+    console.log(edge_paras.directed)
+    const edge = cy.add({
+        group: 'edges',
+        data: {
+          id: 'edge' + edgeIdCounter++,
+          source: sourceID,
+          target: targetID
+        }
+      });
+      edge.addClass(edge_paras.directed)
+}
+
+//save all results in data attributes of the correct edges
+Shiny.addCustomMessageHandler('model', function (model) {
+    const observed = model.obs
+    for (let i = 0; i < observed.length; i++) {
+        importNode('observed-variable', observed[i]);
+    } 
+    
+    const latent = model.latent
+    for (let i = 0; i < latent.length; i++) {
+        importNode('latent-variable', latent[i]);
+    } 
+
+    const edges = model.pars
+    for (let i = 0; i < edges.lhs.length; i++) {
+        const edge_paras = getEdge(edges.lhs[i], edges.op[i], edges.rhs[i]);
+        importEdge(edge_paras);
+    } 
+    const layout = {
+        name: 'breadthfirst',
+        spacingFactor: '0.6',
+        fit : false
+    }
+    cy.layout(layout).run()
+});
