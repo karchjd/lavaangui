@@ -1,27 +1,25 @@
 server <- function(input, output, session) {
   library(lavaan)
   library(zip)
+  
   imported <- FALSE
-  print(model)
-  if((!imported) && (exists('model'))){
+  if ((!imported) && (exists("model"))) {
     session$sendCustomMessage("model", message = model)
     imported <- TRUE
   }
   
-  R_script <- reactive({input$R_script })
-  
   data <- reactive({
     req(input$fileInput)
-    if(is.null(input$fileInput$content)){
-      list(df = read.csv(input$fileInput$datapath), name = input$fileInput$name)  
-    } else{
+    if (is.null(input$fileInput$content)) {
+      list(df = read.csv(input$fileInput$datapath), name = input$fileInput$name)
+    } else {
       content <- input$fileInput$content
       decoded <- base64enc::base64decode(content)
       # Read content into a data frame
-      list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")  
+      list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
     }
   })
-  
+
   observeEvent(data(), {
     df <- data()
     session$sendCustomMessage(type = "columnNames", message = colnames(df$df))
@@ -29,36 +27,35 @@ server <- function(input, output, session) {
   })
   
   output$lavaan_syntax_R <- renderPrint({
-    if (!is.null(R_script())) {
-      if (input$run) {
-        data <- data()$df
-        
-        # Capture warnings using tryCatch
-        result <- tryCatch(
-          {
-            eval(parse(text = R_script()))
-          },
-          warning = function(w) {
-            # Print the warnings
-            print(paste("Warning:", w))
-          },
-          error = function(e) {
-            # Print the errors
-            print(paste("Error:", e))
-          }
-        )
-        
-        # Check if there were no errors
-        if (inherits(result, 'lavaan')) {
-          counter <- counter()
-          session$sendCustomMessage("lav_results", parameterestimates(result))
-          sum_model <- summary(result)
-          sum_model$pe <- NULL
-          print(sum_model)
+    req(input$R_script)
+    if (input$run) {
+      data <- data()$df
+      
+      # Capture warnings using tryCatch
+      result <- tryCatch(
+        {
+          eval(parse(text = input$R_script))
+        },
+        warning = function(w) {
+          # Print the warnings
+          print(paste("Warning:", w))
+        },
+        error = function(e) {
+          # Print the errors
+          print(paste("Error:", e))
         }
-      } else {
-        cat(R_script())
+      )
+      
+      # Check if there were no errors
+      if (inherits(result, "lavaan")) {
+        counter <- counter()
+        session$sendCustomMessage("lav_results", parameterestimates(result))
+        sum_model <- summary(result)
+        sum_model$pe <- NULL
+        print(sum_model)
       }
+    } else {
+      cat(input$R_script)
     }
   })
   
@@ -71,7 +68,7 @@ server <- function(input, output, session) {
   # Define the download handler function
   output$downloadData <- downloadHandler(
     filename = function() {
-      paste("lavaangui-", Sys.Date(), ".zip", sep="")
+      paste("lavaangui-", Sys.Date(), ".zip", sep = "")
     },
     
     # Define the content of the file
@@ -84,7 +81,7 @@ server <- function(input, output, session) {
       csvFile <- file.path(tempDir, "data.csv")
       
       
-      writeLines(input$model, jsonFile) 
+      writeLines(input$model, jsonFile)
       
       # Write the data frame to the CSV file (replace my_data with your data frame)
       write.csv(data(), csvFile, row.names = FALSE)
@@ -99,5 +96,4 @@ server <- function(input, output, session) {
     req(input$runCounter)
     input$runCounter
   })
-  
 }
