@@ -13,6 +13,7 @@ ui <- fluidPage(
     tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.5.0/jszip.min.js"),
     tags$script(src="https://unpkg.com/dagre@0.8.2/dist/dagre.min.js"),
     tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.3/bootbox.min.js"),
+    tags$script(src="https://cdn.jsdelivr.net/npm/cytoscape-grid-guide@2.3.3/cytoscape-grid-guide.min.js"),
     tags$script(src="cytoscape-dagre.js"),
     tags$link(href="https://unpkg.com/cytoscape-context-menus@3.0.1/cytoscape-context-menus.css", rel="stylesheet", type="text/css"),
     tags$link(href="styleContextMenus.css", rel="stylesheet", type="text/css"),
