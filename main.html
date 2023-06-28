@@ -1,62 +1,73 @@
-<nav class="menu">
-  <ul>
-    <li>
-      <a href="#">File</a>
-      <ul class="submenu">
-        <li id="newDiagramMenuItem"><a href="#">New Model</a></li>
-        <li id="loadDiagramMenuItem"><a href="#">Load Model</a></li>
-        <li id="loadDataMenuItem"><a href="#">Load Data</a></li>
-        <li id="loadModelDataMenuItem"><a href="#">Load Model and Data</a></li>
-        <li id="saveDiagramMenuItem" , class="divider">
-          <a href="#">Download Model</a>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+            >File <b class="caret"></b
+          ></a>
+          <ul class="dropdown-menu">
+            <li id="newDiagramMenuItem"><a href="#">New Model</a></li>
+            <li id="loadDiagramMenuItem"><a href="#">Load Model</a></li>
+            <li id="loadDataMenuItem"><a href="#">Load Data</a></li>
+            <li id="loadModelDataMenuItem">
+              <a href="#">Load Model and Data</a>
+            </li>
+            <li class="divider"></li>
+            <li id="saveDiagramMenuItem"><a href="#">Download Model</a></li>
+            <li id="saveModelDataMenuItem">
+              <a href="#">Download Model and Data</a>
+            </li>
+            <li class="divider"></li>
+            <li id="removeDataItem"><a href="#">Remove Data</a></li>
+          </ul>
         </li>
-        <li id="saveModelDataMenuItem">
-          <a href="#">Download Model and Data</a>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+            >Edit <b class="caret"></b
+          ></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Cut</a></li>
+            <li><a href="#">Copy</a></li>
+            <li><a href="#">Paste</a></li>
+          </ul>
         </li>
-        <li id="removeDataItem" , class="divider">
-          <a href="#">Remove Data</a>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+            >Lavaan <b class="caret"></b
+          ></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Option 1</a></li>
+            <li><a href="#">Option 2</a></li>
+          </ul>
         </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+            >View <b class="caret"></b
+          ></a>
+          <ul class="dropdown-menu">
+            <li class="checkmark-container" data-selected="false">
+              <span class="checkmark"></span>
+              <a href="#">Show Estimate</a>
+            </li>
+            <li class="checkmark-container" data-selected="false">
+              <span class="checkmark"></span>
+              <a href="#">Show pvalue</a>
+            </li>
+            <li class="checkmark-container" data-selected="false">
+              <span class="checkmark"></span>
+              <a href="#">Show standard error</a>
+            </li>
+            <li class="checkmark-container" data-selected="false">
+              <span class="checkmark"></span>
+              <a href="#">Show confidence interval</a>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#" id="help-menu-item">Help</a></li>
       </ul>
-    </li>
-    <li>
-      <a href="#">Edit</a>
-      <ul class="submenu">
-        <li><a href="#">Cut</a></li>
-        <li><a href="#">Copy</a></li>
-        <li><a href="#">Paste</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#">Lavaan</a>
-      <ul class="submenu">
-        <li><a href="#">Option 1</a></li>
-        <li><a href="#">Option 2</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#">View</a>
-      <ul class="submenu">
-        <!-- New checkmark items -->
-        <li class="checkmark-container" data-selected="false">
-          <span class="checkmark"></span>
-          <label for="showEstimate">Show Estimate</label>
-        </li>
-        <li class="checkmark-container" data-selected="false">
-          <span class="checkmark"></span>
-          <label for="showPValue">Show pvalue</label>
-        </li>
-        <li class="checkmark-container" data-selected="false">
-          <span class="checkmark"></span>
-          <label for="showStandardError">Show standard error</label>
-        </li>
-        <li class="checkmark-container" data-selected="false">
-          <span class="checkmark"></span>
-          <label for="showConfidenceInterval">Show confidence interval</label>
-        </li>
-      </ul>
-    </li>
-    <li><a href="#" id="help-menu-item">Help</a></li>
-  </ul>
+    </div>
+  </div>
 </nav>
 
 <div id="help-modal" class="modal">

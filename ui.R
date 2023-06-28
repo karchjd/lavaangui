@@ -21,6 +21,7 @@ ui <- fluidPage(
     tags$link(href="styleToolbar.css", rel="stylesheet", type="text/css"),
   ),
   useShinyjs(),
+  shinyFeedback::useShinyFeedback(),
   HTML(rawHTML),
   fileInput("fileInput", multiple = FALSE, accept = ".csv", label = NULL),
   downloadButton("downloadData", "Download Model and Data"),
