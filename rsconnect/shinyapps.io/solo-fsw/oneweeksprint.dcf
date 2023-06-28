@@ -1,0 +1,14 @@
+name: oneweeksprint
+title: oneweeksprint
+username:
+account: solo-fsw
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9353845
+bundleId: 7379683
+url: https://solo-fsw.shinyapps.io/oneweeksprint/
+when: 1687523907.31978
+lastSyncTime: 1687523907.31979
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: examples
