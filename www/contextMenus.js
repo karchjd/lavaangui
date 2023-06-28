@@ -158,6 +158,25 @@ cy.contextMenus({
       hasTrailingDivider: true,
     },
 
+    {
+      id: "change-curve",
+      content: "Change Curvature",
+      selector: "edge.undirected",
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        bootbox.prompt({
+          title:
+            "Please enter new value. Larger absolute values result in more curvature. Positive values revert the curvature.",
+          inputType: "number",
+          value: parseInt(edge.style().controlPointDistances),
+          callback: function (value) {
+            edge.style("controlPointDistances", value);
+          },
+        });
+      },
+      hasTrailingDivider: false,
+    },
+
     //node menus
     {
       id: "rename-node",

@@ -84,7 +84,7 @@ myStyle = [
     selector: "edge.undirected",
     style: {
       "curve-style": "unbundled-bezier",
-      "control-point-distances": [100],
+      "control-point-distances": [-100],
       "control-point-weights": [0.5],
       "target-arrow-shape": "triangle",
       "source-arrow-shape": "triangle",
