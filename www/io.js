@@ -139,3 +139,20 @@ $("#removeDataItem").on("click", function () {
   appState.setDataAvail(false);
   bootbox.alert("Data removed");
 });
+
+function startDownload(object, fileEnding) {
+  let a = document.createElement("a");
+  a.href = object;
+  a.download = "model." + fileEnding;
+  a.click();
+}
+
+$("#exportJPGMenuItem").on("click", function (e) {
+  e.preventDefault();
+  startDownload(cy.jpg(), "jpg");
+});
+
+$("#exportPNGMenuItem").on("click", function (e) {
+  e.preventDefault();
+  startDownload(cy.png(), "png");
+});
