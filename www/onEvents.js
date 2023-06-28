@@ -5,7 +5,7 @@ cy.on("add", "node", function (event) {
     if (columnNames && columnNames.includes(node.data("label"))) {
       node.addClass("linked");
       if (!appState.isLoadingMode()) {
-        alert("Variable connected with data set");
+        bootbox.alert("Variable connected with data set");
       }
     }
   }

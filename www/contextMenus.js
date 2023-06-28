@@ -38,28 +38,14 @@ cy.contextMenus({
       selector: "edge",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
-        // Check for strings that start with a letter
-        // and contain only alphanumeric characters (a-z, A-Z, 0-9)
-        const regex = /^[a-zA-Z][a-zA-Z0-9]*$/;
-
-        // Ask the user for a value
-        let value = prompt("Please enter a label:");
-
-        // Validate the input
-        while (value !== null && !regex.test(value)) {
-          // Show an error message and ask for a new string
-          value = prompt(
-            "Invalid input. Please enter a label that starts with a letter and contains only alphanumeric characters:"
-          );
-        }
-
-        // Store the label in the edge's data if it's not null
-        if (value !== null) {
-          edge.data("label", value);
-          edge.addClass("label");
-          edge.removeClass("nolabel");
-          console.log(value);
-        }
+        bootbox.prompt({
+          title: "Please enter a label",
+          callback: function (result) {
+            edge.data("label", result);
+            edge.addClass("label");
+            edge.removeClass("nolabel");
+          },
+        });
       },
       hasTrailingDivider: false,
     },
@@ -92,27 +78,16 @@ cy.contextMenus({
       selector: "edge.free, edge.forcefree",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
-
-        // Ask the user for a value
-        const value = prompt("Please enter a value:");
-
-        // Store the value in the edge's data
-        if (value !== null) {
-          // submit was pressed
-          if (!isNaN(Number(value))) {
-            //provided value is a number
+        bootbox.prompt({
+          title: "Please enter a value",
+          inputType: "number",
+          callback: function (value) {
             edge.data("value", value);
             edge.removeClass("free");
             edge.removeClass("forcefree");
             edge.addClass("fixed");
-          } else {
-            alert(
-              "Provided value: " +
-                value +
-                " is not a number. Please provide a number"
-            );
-          }
-        }
+          },
+        });
       },
       hasTrailingDivider: false,
     },
@@ -312,10 +287,10 @@ cy.contextMenus({
               const columnNames = appState.getColumnNamesGlobal();
               if (columnNames && columnNames.includes(newLabel)) {
                 node.addClass("linked");
-                alert("Variable connected with data set");
+                bootbox.alert("Variable connected with data set");
               } else if (node.hasClass("linked")) {
                 node.removeClass("linked");
-                alert("Variable disconnected");
+                bootbox.alert("Variable disconnected");
               }
             }
           }

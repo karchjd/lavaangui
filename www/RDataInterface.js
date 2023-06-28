@@ -29,7 +29,7 @@ function applyLinkedClass(columnNames, apply) {
       }
     }
     if (all_linked) {
-      alert("All observed variables were linked with data");
+      bootbox.alert("All observed variables were linked with data");
     }
   }
 }

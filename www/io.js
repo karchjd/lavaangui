@@ -3,13 +3,15 @@ function isEmpty(cytoscapeInstance) {
 }
 // Attach click event handler to load data menu item
 $("#newDiagramMenuItem").on("click", function () {
-  if (
-    isEmpty(cy) ||
-    confirm(
-      "Are you sure you want to create a new model? This will delete the current model."
-    )
-  ) {
-    cy.elements().remove();
+  if (!isEmpty(cy)) {
+    bootbox.confirm(
+      "Are you sure you want to create a new model? This will delete the current model.",
+      function (result) {
+        if (result) {
+          cy.elements().remove();
+        }
+      }
+    );
   }
 });
 
@@ -60,32 +62,31 @@ function loadModel(content) {
 
 // Attach click event handler to load diagram menu item
 $("#loadDiagramMenuItem").on("click", function () {
-  if (
-    isEmpty(cy) ||
-    confirm(
-      "Are you sure you want to load a model? This will delete the current model."
-    )
-  ) {
-    // Create file input element
-    let $input = $("<input>").attr({ type: "file", accept: ".json" });
+  if (isEmpty(cy)) {
+    bootbox.confirm(
+      "Are you sure you want to load a model? This will delete the current model.",
+      function (result) {
+        let $input = $("<input>").attr({ type: "file", accept: ".json" });
 
-    // Attach change event handler to the file input element
-    $input.on("change", function (e) {
-      // Read the selected file
-      let file = e.target.files[0];
-      let reader = new FileReader();
-      reader.readAsText(file, "UTF-8");
+        // Attach change event handler to the file input element
+        $input.on("change", function (e) {
+          // Read the selected file
+          let file = e.target.files[0];
+          let reader = new FileReader();
+          reader.readAsText(file, "UTF-8");
 
-      // Handle file content after it's read
-      reader.onload = function (readerEvent) {
-        // Parse file content as JSON
-        let content = readerEvent.target.result;
-        loadModel(content);
-      };
-    });
+          // Handle file content after it's read
+          reader.onload = function (readerEvent) {
+            // Parse file content as JSON
+            let content = readerEvent.target.result;
+            loadModel(content);
+          };
+        });
 
-    // Trigger the file input click action
-    $input.click();
+        // Trigger the file input click action
+        $input.click();
+      }
+    );
   }
 });
 
@@ -136,5 +137,5 @@ $("#loadModelDataMenuItem").on("click", function () {
 
 $("#removeDataItem").on("click", function () {
   appState.setDataAvail(false);
-  alert("Data removed");
+  bootbox.alert("Data removed");
 });

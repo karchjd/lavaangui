@@ -182,7 +182,7 @@ function tolavaan(run) {
     for (var i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       if (!node.hasClass("linked")) {
-        alert(
+        bootbox.alert(
           "Observed variable " +
             node.data("label") +
             " is not linked to data. Cannot run."
