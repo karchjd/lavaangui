@@ -147,16 +147,6 @@ var cy = cytoscape({
   style: myStyle,
 });
 
-cy.nodeEditing({
-  resizeToContentCueImage: "resizeCue.svg",
-  autoRemoveResizeToContentCue: true,
-});
-
-// Set cursor style to initial when resizing ends
-cy.on("nodeediting.resizeend", function (e, type) {
-  $("body").css("cursor", "initial");
-});
-
 var layout = cy.layout({ name: "grid" });
 
 // Initialize edgehandles extension
