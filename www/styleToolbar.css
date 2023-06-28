@@ -1,6 +1,6 @@
 .toolbox {
   background-color: #f8f8f8;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid #ddd;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,15 +9,10 @@
 
 #toolbox-up {
   height: 30px;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
 }
 
 #toolbox-below {
-  background-color: #f8f8f8;
   height: 50px;
-  border: 1px solid #ddd;
-  gap: 10px;
 }
 
 .toolbox-btn {

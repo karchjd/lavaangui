@@ -17,7 +17,7 @@
   color: #777;
 }
 
-*/ #downloadData {
+#downloadData {
   display: none;
 }
 
@@ -27,4 +27,9 @@
 
 #fileInput_progress {
   display: none;
+}
+
+.navbar-default {
+  margin-bottom: 0;
+  border: 1px solid #ddd;
 }
