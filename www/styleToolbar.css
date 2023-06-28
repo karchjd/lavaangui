@@ -1,24 +1,22 @@
 .toolbox {
   background-color: #f8f8f8;
-  height: 30px;
   border-bottom: 1px solid #ddd;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
 }
 
-.toolbox-below {
+#toolbox-up {
+  height: 30px;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+#toolbox-below {
   background-color: #f8f8f8;
   height: 50px;
   border: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
   gap: 10px;
 }
 
@@ -80,25 +78,4 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-.button-below {
-  background-color: #f8f8f8;
-  color: black;
-  border: none;
-  padding: 8px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 5px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.button-below:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-}
-
-.button-below:focus {
-  outline: none;
-  box-shadow: 0px 0px 0px 3px rgba(128, 128, 128, 0.4);
 }

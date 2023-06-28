@@ -129,7 +129,7 @@
   </div>
 </nav>
 
-<div class="toolbox">
+<div class="toolbox" id="toolbox-up">
   <button
     class="toolbox-btn"
     id="add-manifest-variable"
@@ -152,7 +152,11 @@
   <div id="lavaan_syntax_R" class="shiny-html-output"></div>
 </div>
 
-<div class="toolbox-below">
-  <button id="ctrScript" class="button-below">Create Script</button>
-  <button id="run" class="button-below">Run lavaan</button>
+<div class="toolbox" id="toolbox-below">
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-default" id="ctrScript">
+      Create Script
+    </button>
+    <button type="button" class="btn btn-default" id="run">Run lavaan</button>
+  </div>
 </div>
