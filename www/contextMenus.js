@@ -34,16 +34,18 @@ cy.contextMenus({
 
     {
       id: "label-para",
-      content: "Set Label",
+      content: "Give Label",
       selector: "edge",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
           title: "Please enter a label",
           callback: function (result) {
-            edge.data("label", result);
-            edge.addClass("label");
-            edge.removeClass("nolabel");
+            if (result !== null) {
+              edge.data("label", result);
+              edge.addClass("label");
+              edge.removeClass("nolabel");
+            }
           },
         });
       },
@@ -82,10 +84,12 @@ cy.contextMenus({
           title: "Please enter a value",
           inputType: "number",
           callback: function (value) {
-            edge.data("value", value);
-            edge.removeClass("free");
-            edge.removeClass("forcefree");
-            edge.addClass("fixed");
+            if (value !== null) {
+              edge.data("value", value);
+              edge.removeClass("free");
+              edge.removeClass("forcefree");
+              edge.addClass("fixed");
+            }
           },
         });
       },
@@ -170,7 +174,9 @@ cy.contextMenus({
           inputType: "number",
           value: parseInt(edge.style().controlPointDistances),
           callback: function (value) {
-            edge.style("controlPointDistances", value);
+            if (value !== null) {
+              edge.style("controlPointDistances", value);
+            }
           },
         });
       },
