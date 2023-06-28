@@ -1,105 +1,104 @@
 .toolbox {
-    background-color: #f8f8f8;
-    height: 30px;
-    border-bottom: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+  background-color: #f8f8f8;
+  height: 30px;
+  border-bottom: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .toolbox-below {
-    background-color: #f8f8f8;
-    height: 50px;
-    border: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    gap: 10px;
+  background-color: #f8f8f8;
+  height: 50px;
+  border: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
 }
 
 .toolbox-btn {
-    margin: 0 5px;
-    padding: 8px 16px;
-    cursor: pointer;
-    height: 30px;
-    width: 30px;
-    position: relative;
-    border: none;
-    background: none;
+  margin: 0 5px;
+  padding: 8px 16px;
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+  position: relative;
+  border: none;
+  background: none;
 }
 
 .toolbox-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #add-latent-variable::before {
-    width: 20px;
-    height: 20px;
-    background-color: white;
-    border: 2px solid black;
-    border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 50%;
 }
 
 #add-manifest-variable::before {
-    width: 20px;
-    height: 20px;
-    background-color: white;
-    border: 2px solid black;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 2px solid black;
 }
 
 #add-constant-variable::before {
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 21px solid black;
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 21px solid black;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #add-constant-variable::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-left: 11.5px solid transparent; /* Approximately half of 23.09px */
-    border-right: 11.5px solid transparent;
-    border-bottom: 20px solid white; /* Same height as the manifest variable */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 11.5px solid transparent; /* Approximately half of 23.09px */
+  border-right: 11.5px solid transparent;
+  border-bottom: 20px solid white; /* Same height as the manifest variable */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-
 .button-below {
-    background-color: #f8f8f8;
-    color: black;
-    border: none;
-    padding: 8px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-  }
-  
-  .button-below:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    cursor: pointer;
-  }
-  
-  .button-below:focus {
-    outline: none;
-    box-shadow: 0px 0px 0px 3px rgba(128, 128, 128, 0.4);
+  background-color: #f8f8f8;
+  color: black;
+  border: none;
+  padding: 8px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.button-below:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.button-below:focus {
+  outline: none;
+  box-shadow: 0px 0px 0px 3px rgba(128, 128, 128, 0.4);
 }
