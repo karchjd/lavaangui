@@ -4,62 +4,20 @@
   border-bottom: 1px solid #000; /* Set the color and thickness of the divider */
   margin: 8px 0; /* Optional: Set the margin to give space above and below the divider */
 }
-
-/* Style the modal dialog */
-.modal {
-  justify-content: center;
-  z-index: 10;
-  width: 100%;
-  height: 100%;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-  background-color: #fefefe;
-  padding: 20px;
-  border: 1px solid #888;
-  max-width: 800px; /* Increase the maximum width as desired */
-  max-height: 80vh; /* Adjust the maximum height as desired */
-  overflow-y: auto;
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-}
-
 .help-item {
+  display: inline-block;
   margin-bottom: 10px;
 }
 
 .help-item strong {
-  display: inline-block;
   width: 150px;
 }
 
 .help-item span {
-  display: inline-block;
   color: #777;
 }
 
-.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-#downloadData {
+*/ #downloadData {
   display: none;
 }
 
