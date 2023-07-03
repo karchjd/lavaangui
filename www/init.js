@@ -221,4 +221,6 @@ var options = {
   parentSpacing: -1, // -1 to set paddings of parents to gridSpacing
 };
 
-cy.gridGuide(options); //
+cy.gridGuide(options);
+
+$(".selectpicker").selectpicker();

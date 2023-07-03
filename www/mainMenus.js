@@ -53,3 +53,11 @@ function handleItemChange(item) {
   // Set the content of the output element to the generated string
   console.log(outputString);
 }
+
+$(".checkbox-menu").on("change", "input[type='checkbox']", function () {
+  $(this).closest("li").toggleClass("active", this.checked);
+});
+
+$(document).on("click", ".allow-focus", function (e) {
+  e.stopPropagation();
+});
