@@ -1,5 +1,6 @@
 <script>
-  import Graph from "./Graph/Graph.svelte";
+  import InitGraph from "./Graph/InitGraph.svelte";
+  import Graph from "./Graph/MountGraph.svelte";
   import MenuTop from "./MenuTop/MenuTop.svelte";
   import Navbar from "./MenuTop/Navbar.svelte";
   import Results from "./Results/Results.svelte";
@@ -7,16 +8,15 @@
   import ToolbarTop from "./Toolbars/ToolbarTop.svelte";
 </script>
 
+<InitGraph />
 <MenuTop />
-
 <ToolbarTop />
-
-<!-- 
 <div>
   <Graph />
   <Results />
 </div>
-<ToolbarDown />  -->
+
+<!-- <ToolbarDown /> -->
 
 <style>
   div {

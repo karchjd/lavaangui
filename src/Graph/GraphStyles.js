@@ -1,57 +1,153 @@
 export default [
   {
-    selector: 'node',
+    selector: "node",
     style: {
-      'width': '50',
-      'height': '50',
-      'font-size': '18',
-      'font-weight': 'bold',
-      'content': `data(label)`,
-      'text-valign': 'center',
-      'text-wrap': 'wrap',
-      'text-max-width': '140',
-      'background-color': 'gold',
-      'border-color': 'orange',
-      'border-width': '3',
-      'color': 'darkred'
-    }
+      width: "80", // Set the width of the nodes to 80
+      height: "80", // Set the height of the nodes to 80
+      "background-color": "white",
+      "border-color": "grey",
+      "border-width": "2px", // Set border width of nodes to 2 pixels
+      label: "data(label)", // Use the 'label' property from the data for the node's label
+      "text-valign": "center",
+      "text-halign": "center",
+    },
   },
   {
-    selector: 'node:selected',
+    selector: "node.observed-variable",
     style: {
-      'background-color': 'darkred',
-      color: 'white',
-      'border-color': 'darkred',
-      'line-color': '#0e76ba',
-      'target-arrow-color': '#0e76ba'
-    }
+      shape: "rectangle",
+    },
   },
   {
-    selector: 'edge',
+    selector: "node.latent-variable",
     style: {
-      'curve-style': 'bezier',
-      'color': 'darkred',
-      'text-background-color': '#ffffff',
-      'text-background-opacity': '1',
-      'text-background-padding': '3',
-      'width': '3',
-      'target-arrow-shape': 'triangle',
-      'line-color': 'darkred',
-      'target-arrow-color': 'darkred',
-      'font-weight': 'bold'
-    }
+      shape: "ellipse",
+      "border-color": "black",
+    },
   },
   {
-    selector: 'edge[label]',
+    selector: "node.constant",
     style: {
-      'content': `data(label)`,
-    }
+      shape: "triangle",
+      label: "1",
+      "text-valign": "center",
+      "text-margin-y": "10px",
+      "border-color": "black",
+    },
   },
   {
-    selector: 'edge.label',
+    selector: "node.linked",
     style: {
-      'line-color': 'orange',
-      'target-arrow-color': 'orange'
-    }
-  }
-]
+      "border-color": "black",
+    },
+  },
+  {
+    selector: "edge",
+    style: {
+      width: 3,
+      "line-color": "#000",
+      "target-arrow-color": "#000", // Set target arrow color to black
+      "source-arrow-color": "#000", // Set target arrow color to black
+      "target-arrow-shape": "triangle",
+      "curve-style": "bezier",
+      "text-valign": "center",
+      "text-halign": "center",
+      "text-wrap": "wrap",
+      "text-max-width": 80,
+      "font-size": "14px",
+      "z-index": 10,
+      color: "#000",
+      "text-outline-color": "#fff",
+      "text-outline-width": "2px",
+      "text-background-color": "#fff",
+      "text-background-opacity": 1,
+      "text-background-padding": "4px",
+    },
+  },
+  {
+    selector: "edge.loop",
+    style: {
+      "curve-style": "unbundled-bezier",
+      "control-point-distances": [50],
+      "control-point-weights": [0.5],
+      "loop-direction": "0", // -Math.PI / 2 in radians to position at top
+      "loop-sweep": "0.8", // rounding of the loop, in radians
+      "target-arrow-shape": "triangle",
+      "source-arrow-shape": "triangle",
+      "target-arrow-fill": "filled",
+      "source-arrow-fill": "filled",
+      "target-arrow-color": "#000",
+      "source-arrow-color": "#000",
+    },
+  },
+  {
+    selector: "edge.undirected",
+    style: {
+      "curve-style": "unbundled-bezier",
+      "control-point-distances": [-100],
+      "control-point-weights": [0.5],
+      "target-arrow-shape": "triangle",
+      "source-arrow-shape": "triangle",
+    },
+  },
+  {
+    selector: "edge.free.label, edge.forcefree.label",
+    style: {
+      label: function (edge) {
+        return edge.data("label");
+      },
+    },
+  },
+  {
+    selector: "edge.fixed.label",
+    style: {
+      label: function (edge) {
+        return edge.data("label") + "@" + edge.data("value");
+      },
+    },
+  },
+  {
+    selector: "edge.fixed.nolabel",
+    style: {
+      label: function (edge) {
+        return "@" + edge.data("value");
+      },
+    },
+  },
+  {
+    selector: "edge.hasEst.free.nolabel, edge.hasEst.forcefree.nolabel",
+    style: {
+      label: function (edge) {
+        return edge.data("est");
+      },
+    },
+  },
+  {
+    selector: "edge.hasEst.free.label, edge.hasEst.forcefree.label",
+    style: {
+      label: function (edge) {
+        return edge.data("label") + "=" + edge.data("est");
+      },
+    },
+  },
+  {
+    selector: "edge.forcefree",
+    style: {
+      "line-color": "blue",
+    },
+  },
+  {
+    selector: "edge:selected",
+    style: {
+      "line-color": "red",
+      "target-arrow-color": "red",
+      "source-arrow-color": "red",
+    },
+  },
+  {
+    selector: "node:selected",
+    style: {
+      "border-color": "red",
+    },
+  },
+];

@@ -2,11 +2,11 @@ let nodeIdCounter = 0;
 let edgeIdCounter = 0;
 
 // Adding new nodes via mouse, toolbar, or hotkey
-function addNode(nodeType, position, label) {
+export function addNode(cy, nodeType, position) {
   let nodeId = "node" + nodeIdCounter++;
-  if (label == undefined) {
+  // if (label == undefined) {
     let label = "x" + nodeIdCounter;
-  }
+  // }
 
   // Check if position is provided, if not, use random position
   let finalPosition = position
@@ -19,6 +19,7 @@ function addNode(nodeType, position, label) {
     classes: nodeType,
     position: finalPosition,
   });
+  console.log(nodeIdCounter)
 
   // if (nodeType !== "constant") {
   //     let edgeId = 'edge' + edgeIdCounter++;
@@ -35,65 +36,65 @@ function addNode(nodeType, position, label) {
   // }
 }
 
-// Keyboard and mouse actions
+// // Keyboard and mouse actions
 
-// Grab the container div, make it focusable and focus it
-let $cyContainer = $("#cy").attr("tabindex", "0").focus();
+// // Grab the container div, make it focusable and focus it
+// let $cyContainer = $("#cy").attr("tabindex", "0").focus();
 
-// Keep track of mouse position
-let lastMousePosition = { x: 0, y: 0 };
-$("#cy").mousemove(function (event) {
-  lastMousePosition = {
-    x: event.offsetX,
-    y: event.offsetY,
-  };
-});
+// // Keep track of mouse position
+// let lastMousePosition = { x: 0, y: 0 };
+// $("#cy").mousemove(function (event) {
+//   lastMousePosition = {
+//     x: event.offsetX,
+//     y: event.offsetY,
+//   };
+// });
 
-// Focus the container when mouse is over it
-$cyContainer.on("mouseover", function () {
-  $(this).focus();
-});
+// // Focus the container when mouse is over it
+// $cyContainer.on("mouseover", function () {
+//   $(this).focus();
+// });
 
-// Keyboard events
-$cyContainer.on("keydown", function (event) {
-  // Check if the Command key was pressed
-  if (event.key === "Meta" || event.key === "Control") {
-    eh.enableDrawMode();
-  }
+// // Keyboard events
+// $cyContainer.on("keydown", function (event) {
+//   // Check if the Command key was pressed
+//   if (event.key === "Meta" || event.key === "Control") {
+//     eh.enableDrawMode();
+//   }
 
-  // Handle Backspace key
-  if (event.key === "Backspace") {
-    let selectedElements = cy.$(":selected");
-    selectedElements.forEach(function (element) {
-      if (element.isNode()) {
-        element.remove();
-      } else if (element.isEdge()) {
-        element.remove();
-      }
-    });
-  }
+//   // Handle Backspace key
+//   if (event.key === "Backspace") {
+//     let selectedElements = cy.$(":selected");
+//     selectedElements.forEach(function (element) {
+//       if (element.isNode()) {
+//         element.remove();
+//       } else if (element.isEdge()) {
+//         element.remove();
+//       }
+//     });
+//   }
 
-  // Handle 'l', 'o', 'c' keys
-  if (["l", "o", "c"].includes(event.key.toLowerCase())) {
-    let nodeType;
-    switch (event.key.toLowerCase()) {
-      case "l":
-        nodeType = "latent-variable";
-        break;
-      case "o":
-        nodeType = "observed-variable";
-        break;
-      case "c":
-        nodeType = "constant";
-        break;
-    }
-    addNode(nodeType, lastMousePosition); // Use the last known mouse position within Cytoscape container.
-  }
-});
+//   // Handle 'l', 'o', 'c' keys
+//   if (["l", "o", "c"].includes(event.key.toLowerCase())) {
+//     let nodeType;
+//     switch (event.key.toLowerCase()) {
+//       case "l":
+//         nodeType = "latent-variable";
+//         break;
+//       case "o":
+//         nodeType = "observed-variable";
+//         break;
+//       case "c":
+//         nodeType = "constant";
+//         break;
+//     }
+//     addNode(nodeType, lastMousePosition); // Use the last known mouse position within Cytoscape container.
+//   }
+// });
 
-$cyContainer.on("keyup", function (event) {
-  // Check if the Command key was released
-  if (event.key === "Meta" || event.key === "Control") {
-    eh.disableDrawMode();
-  }
-});
+// $cyContainer.on("keyup", function (event) {
+//   // Check if the Command key was released
+//   if (event.key === "Meta" || event.key === "Control") {
+//     eh.disableDrawMode();
+//   }
+// });
