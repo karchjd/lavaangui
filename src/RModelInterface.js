@@ -246,29 +246,29 @@ function findEdge(lhs, op, rhs) {
 }
 
 //save all results in data attributes of the correct edges
-Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
-  for (let i = 0; i < lav_result.lhs.length; i++) {
-    const edge = findEdge(
-      lav_result.lhs[i],
-      lav_result.op[i],
-      lav_result.rhs[i]
-    );
-    //lavaan estimated the edge
-    if (lav_result.se[i] !== 0) {
-      edge.data("est", lav_result.est[i].toFixed(2));
-      edge.addClass("hasEst");
-      edge.data("p-value", lav_result.pvalue[i].toFixed(2));
-      edge.data("se", lav_result.se[i].toFixed(2));
-      //lavaan did fix the edge
-    } else if (Math.abs(lav_result.est[i] - 1) < 1e-9) {
-      edge.addClass("fixed");
-      edge.removeClass("free");
-      edge.data("value", 1);
-    } else {
-      console.error("should never happen");
-    }
-  }
-});
+// Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
+//   for (let i = 0; i < lav_result.lhs.length; i++) {
+//     const edge = findEdge(
+//       lav_result.lhs[i],
+//       lav_result.op[i],
+//       lav_result.rhs[i]
+//     );
+//     //lavaan estimated the edge
+//     if (lav_result.se[i] !== 0) {
+//       edge.data("est", lav_result.est[i].toFixed(2));
+//       edge.addClass("hasEst");
+//       edge.data("p-value", lav_result.pvalue[i].toFixed(2));
+//       edge.data("se", lav_result.se[i].toFixed(2));
+//       //lavaan did fix the edge
+//     } else if (Math.abs(lav_result.est[i] - 1) < 1e-9) {
+//       edge.addClass("fixed");
+//       edge.removeClass("free");
+//       edge.data("value", 1);
+//     } else {
+//       console.error("should never happen");
+//     }
+//   }
+// });
 
 cy.edges(function (edge) {
   return edge.source().data("label") == "dem60";
@@ -302,26 +302,26 @@ function importEdge(edge_paras) {
 }
 
 //save all results in data attributes of the correct edges
-Shiny.addCustomMessageHandler("model", function (model) {
-  const observed = model.obs;
-  for (let i = 0; i < observed.length; i++) {
-    importNode("observed-variable", observed[i]);
-  }
+// Shiny.addCustomMessageHandler("model", function (model) {
+//   const observed = model.obs;
+//   for (let i = 0; i < observed.length; i++) {
+//     importNode("observed-variable", observed[i]);
+//   }
 
-  const latent = model.latent;
-  for (let i = 0; i < latent.length; i++) {
-    importNode("latent-variable", latent[i]);
-  }
+//   const latent = model.latent;
+//   for (let i = 0; i < latent.length; i++) {
+//     importNode("latent-variable", latent[i]);
+//   }
 
-  const edges = model.pars;
-  for (let i = 0; i < edges.lhs.length; i++) {
-    const edge_paras = getEdge(edges.lhs[i], edges.op[i], edges.rhs[i]);
-    importEdge(edge_paras);
-  }
-  const layout = {
-    name: "breadthfirst",
-    spacingFactor: "0.6",
-    fit: false,
-  };
-  cy.layout(layout).run();
-});
+//   const edges = model.pars;
+//   for (let i = 0; i < edges.lhs.length; i++) {
+//     const edge_paras = getEdge(edges.lhs[i], edges.op[i], edges.rhs[i]);
+//     importEdge(edge_paras);
+//   }
+//   const layout = {
+//     name: "breadthfirst",
+//     spacingFactor: "0.6",
+//     fit: false,
+//   };
+//   cy.layout(layout).run();
+// });

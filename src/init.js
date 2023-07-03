@@ -223,4 +223,3 @@ var options = {
 
 cy.gridGuide(options);
 
-$(".selectpicker").selectpicker();

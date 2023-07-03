@@ -1,12 +1,12 @@
-Shiny.addCustomMessageHandler("columnNames", function (columnNames) {
-  applyLinkedClass(columnNames, true);
-  appState.setColumnNamesGlobal(columnNames);
-  appState.setDataAvail(true);
-});
+// Shiny.addCustomMessageHandler("columnNames", function (columnNames) {
+//   applyLinkedClass(columnNames, true);
+//   appState.setColumnNamesGlobal(columnNames);
+//   appState.setDataAvail(true);
+// });
 
-Shiny.addCustomMessageHandler("fname", function (fname) {
-  appState.setLoadedFileName(fname);
-});
+// Shiny.addCustomMessageHandler("fname", function (fname) {
+//   appState.setLoadedFileName(fname);
+// });
 
 function applyLinkedClass(columnNames, apply) {
   const nodes = cy.nodes(function (node) {
