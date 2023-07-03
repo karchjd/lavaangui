@@ -1,12 +1,23 @@
-<div class="toolbox" id="toolbox-up">
+<div class="toolbox">
   <button id="add-manifest-variable" title="Create Observed Variable" />
   <button id="add-latent-variable" title="Create Latent Variable" />
   <button id="add-constant-variable" title="Create Constant Variable" />
 </div>
 
 <style>
+  .toolbox {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
   div {
+    margin-top: 30px;
     height: 30px;
+    z-index: 1000;
   }
 
   button {
@@ -20,7 +31,7 @@
     background: none;
   }
 
-  button {
+  button::before {
     content: "";
     position: absolute;
     top: 50%;
