@@ -1,0 +1,9 @@
+.toolbar {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+

@@ -1,4 +1,5 @@
-import './menus.css'
+import './MenuTop/menus.css'
+import './Toolbars/toolbar.css'
 import App from './App.svelte'
 
 const app = new App({

@@ -1,6 +1,7 @@
 function isEmpty(cytoscapeInstance) {
   return cytoscapeInstance.elements().length == 0;
 }
+
 // Attach click event handler to load data menu item
 $("#newDiagramMenuItem").on("click", function () {
   if (!isEmpty(cy)) {

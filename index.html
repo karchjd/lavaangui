@@ -36,105 +36,10 @@
       type="text/css"
     />
     <link href="src/styleContextMenus.css" rel="stylesheet" type="text/css" />
-    <link href="src/styleMainMenu.css" rel="stylesheet" type="text/css" />
-    <link href="src/styleMainWindows.css" rel="stylesheet" type="text/css" />
-    <link href="src/styleToolbar.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <div class="modal fade" tabindex="-1" role="dialog" id="help">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">Help</h4>
-          </div>
-          <div class="modal-body" id="help-content">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Command</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Hold command/ctrl</td>
-                  <td>Draw directed arrows</td>
-                </tr>
-                <tr>
-                  <td>Hold space</td>
-                  <td>
-                    Draw undirected arrows (currently disabled because of bug)
-                  </td>
-                </tr>
-                <tr>
-                  <td>Backspace</td>
-                  <td>Delete selected elements</td>
-                </tr>
-                <tr>
-                  <td>o</td>
-                  <td>Create observed variable at mouse location</td>
-                </tr>
-                <tr>
-                  <td>l</td>
-                  <td>Create latent variable at mouse location</td>
-                </tr>
-                <tr>
-                  <td>c</td>
-                  <td>Create constant variable at mouse location</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
-
-    <div class="toolbox" id="toolbox-up">
-      <button
-        class="toolbox-btn"
-        id="add-manifest-variable"
-        title="Create Observed Variable"
-      ></button>
-      <button
-        class="toolbox-btn"
-        id="add-latent-variable"
-        title="Create Latent Variable"
-      ></button>
-      <button
-        class="toolbox-btn"
-        id="add-constant-variable"
-        title="Create Constant Variable"
-      ></button>
-    </div>
-
-    <div class="container">
-      <div id="cy" tabindex="0"></div>
-      <div id="lavaan_syntax_R" class="shiny-html-output"></div>
-    </div>
-
-    <div class="toolbox" id="toolbox-below">
-      <div class="btn-group" role="group">
-        <button type="button" class="btn btn-default" id="ctrScript">
-          Create Script
-        </button>
-        <button type="button" class="btn btn-default" id="run">
-          Run lavaan
-        </button>
-      </div>
-    </div>
 
     <script src="src/init.js"></script>
     <script src="src/io.js"></script>

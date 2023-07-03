@@ -3,11 +3,9 @@
   //   import ViewMenu from "./ViewMenu.svelte";
 </script>
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <ul class="nav navbar-nav">
-      <!-- <ViewMenu />
-      <LavaanEstMenu /> -->
+<nav class="navbar navbar-default navbar-fixed-top navbar-left">
+  <div class="container">
+    <ul class="nav navbar-nav navbar-left">
       <slot />
     </ul>
   </div>
