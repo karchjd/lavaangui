@@ -1,22 +1,26 @@
 <script>
   import GridGuides from "./Graph/GridGuides.svelte";
-  import InitGraph from "./Graph/InitGraph.svelte";
+  import Init from "./Graph/Init.svelte";
   import Graph from "./Graph/MountGraphSimple.svelte";
+  import OnEvents from "./Graph/OnEvents.svelte";
   import MenuTop from "./MenuTop/MenuTop.svelte";
   import Navbar from "./MenuTop/Navbar.svelte";
   import Results from "./Results/Results.svelte";
   import ToolbarDown from "./Toolbars/ToolbarBelow.svelte";
   import ToolbarTop from "./Toolbars/ToolbarTop.svelte";
+  import Debug from "./Debug.svelte";
 </script>
 
-<InitGraph />
+<Init />
 <MenuTop />
 <ToolbarTop />
 <div>
   <Graph />
   <GridGuides />
   <Results />
+  <OnEvents />
 </div>
+<Debug />
 
 <!-- <ToolbarDown /> -->
 

@@ -58,7 +58,6 @@
     if (event.key === "Meta" || event.key === "Control") {
       eh.disableDrawMode();
       makeNodesGrabbable();
-      o;
     }
   }
 
