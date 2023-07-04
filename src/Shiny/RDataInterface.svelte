@@ -1,4 +1,5 @@
 <script>
+  import { construct_svelte_component } from "svelte/internal";
   import { appState } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass";
 
@@ -6,7 +7,7 @@
     return typeof Shiny === "object" && Shiny !== null;
   }
 
-  if (isShiny) {
+  if (isShiny()) {
     console.log("handlers added");
     Shiny.addCustomMessageHandler("columnNames", function (columnNames) {
       console.log("in handler");
