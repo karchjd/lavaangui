@@ -26,59 +26,7 @@
     }
   });
 
-  cy.on("add", "edge", function (event) {
-    if (!$appState.loadingMode) {
-      const edge = event.target;
-      const sourceNodeId = edge.source().id();
-      const targetNodeId = edge.target().id();
-      edge.addClass("free");
-      edge.addClass("nolabel");
-      if (
-        sourceNodeId !== targetNodeId &&
-        isNode(sourceNodeId) &&
-        isNode(targetNodeId)
-      ) {
-        checkNodeLoop(sourceNodeId);
-        checkNodeLoop(targetNodeId);
-        edge.addClass("directed");
-      } else if (
-        sourceNodeId === targetNodeId &&
-        isNode(sourceNodeId) &&
-        isNode(targetNodeId)
-      ) {
-        edge.addClass("loop");
-      }
-      //removers
-      if (
-        (edge.hasClass("undirected") || edge.hasClass("loop")) &&
-        (edge.source().hasClass("constant") ||
-          edge.target().hasClass("constant"))
-      ) {
-        cy.remove(edge);
-      }
-
-      if (edge.hasClass("directed") && edge.target().hasClass("constant")) {
-        cy.remove(edge);
-      }
-
-      if (edge.hasClass("directed") && edge.source().hasClass("constant")) {
-        const t_node = edge.target();
-        const conConstant = t_node.connectedEdges((edge) =>
-          edge.source().hasClass("constant")
-        );
-        if (conConstant.length > 1) {
-          cy.remove(edge);
-        }
-      }
-
-      if (edge.hasClass("directed") && edge.source().hasClass("constant")) {
-        edge.data("isMean", "1");
-      } else {
-        edge.data("isMean", "0");
-      }
-    }
-  });
-
+  
   cy.on("position", "node", function (event) {
     const node = event.target;
     const connectedNodes = node.neighborhood().nodes();
@@ -88,10 +36,4 @@
       checkNodeLoop(connectedNodeId);
     });
   });
-
-  function isNode(str) {
-    // Regular expression pattern to match strings of form "node" followed by one or more digits
-    const pattern = /^node\d+$/;
-    return pattern.test(str);
-  }
 </script>
