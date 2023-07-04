@@ -8,7 +8,7 @@
 //   appState.setLoadedFileName(fname);
 // });
 
-function applyLinkedClass(columnNames, apply) {
+export function applyLinkedClass(columnNames, apply) {
   const nodes = cy.nodes(function (node) {
     return node.hasClass("observed-variable");
   });

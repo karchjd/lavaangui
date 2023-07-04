@@ -1,21 +1,3 @@
-function isEmpty(cytoscapeInstance) {
-  return cytoscapeInstance.elements().length == 0;
-}
-
-// Attach click event handler to load data menu item
-$("#newDiagramMenuItem").on("click", function () {
-  if (!isEmpty(cy)) {
-    bootbox.confirm(
-      "Are you sure you want to create a new model? This will delete the current model.",
-      function (result) {
-        if (result) {
-          cy.elements().remove();
-        }
-      }
-    );
-  }
-});
-
 function jsonModel() {
   //remove link with data set
   let cy_save = cy;
