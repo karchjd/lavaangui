@@ -7,8 +7,6 @@
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
   import GraphStyles from "../Graph/GraphStyles.js";
 
-  let cy = get(cyStore);
-
   function newModel() {
     if (!$appState.modelEmpty) {
       bootbox.confirm(
@@ -119,6 +117,7 @@
 
   function jsonModel() {
     //remove link with data set
+    const cy = get(cyStore);
     let cy_save = cy;
     cy_save.nodes().removeClass("linked");
 
@@ -145,9 +144,10 @@
   }
 
   function removeData() {
+    const cy = get(cyStore);
     $appState.dataAvail = false;
     bootbox.alert("Data removed");
-    cy_save.nodes().removeClass("linked");
+    cy.nodes().removeClass("linked");
   }
 
   function startDownload(object, fileEnding) {

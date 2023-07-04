@@ -35,3 +35,4 @@ dist-ssr
 *.sln
 *.sw?
 www/assets/
+www/index.html
