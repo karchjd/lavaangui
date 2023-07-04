@@ -9,6 +9,7 @@
   import ToolbarDown from "./Toolbars/ToolbarBelow.svelte";
   import ToolbarTop from "./Toolbars/ToolbarTop.svelte";
   import Debug from "./Debug.svelte";
+  import ContextMenus from "./Graph/ContextMenus.svelte";
 </script>
 
 <Init />
@@ -17,6 +18,7 @@
 <div>
   <Graph />
   <GridGuides />
+  <ContextMenus />
   <Results />
   <OnEvents />
 </div>

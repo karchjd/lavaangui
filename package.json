@@ -16,6 +16,7 @@
   "dependencies": {
     "bootbox": "^6.0.0",
     "cytoscape": "^3.25.0",
+    "cytoscape-context-menus": "^4.1.0",
     "cytoscape-edgehandles": "^4.0.1",
     "cytoscape-grid-guide": "^2.3.3",
     "shiny": "^1.0.0",

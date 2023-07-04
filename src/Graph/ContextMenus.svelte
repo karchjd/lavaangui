@@ -1,7 +1,15 @@
-cy.contextMenus({
-  //core menus
+<script>
+  import { cyStore } from "../stores.js";
+  import { get } from "svelte/store";
+  let cy = get(cyStore);
+  import cytoscape from "cytoscape";
+  import contextMenus from "cytoscape-context-menus";
+  import { onMount } from "svelte";
 
-  menuItems: [
+  // register extension
+  cytoscape.use(contextMenus);
+
+  let menu = [
     {
       id: "add-observed",
       content: "Add Observed Variable",
@@ -128,12 +136,9 @@ cy.contextMenus({
         const edge = event.target || event.cyTarget;
         const sourceId = edge.source().id();
         const targetId = edge.target().id();
-        ur.do("move", {
-          eles: edge,
-          location: {
-            source: targetId,
-            target: sourceId,
-          },
+        edge.move({
+          source: targetId,
+          target: sourceId,
         });
       },
       hasTrailingDivider: false,
@@ -360,5 +365,9 @@ cy.contextMenus({
         node.addClass("observed-variable");
       },
     },
-  ],
-});
+  ];
+  onMount(() => {
+    // Initialize the Cytoscape instance
+    cy.contextMenus({ menuItems: menu });
+  });
+</script>
