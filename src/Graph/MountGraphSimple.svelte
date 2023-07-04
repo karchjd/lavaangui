@@ -49,9 +49,16 @@
     }
   }
 
+  function makeNodesGrabbable() {
+    cy.autoungrabify(false);
+    cy.nodes().grabify();
+  }
+
   function handleKeyUp() {
     if (event.key === "Meta" || event.key === "Control") {
       eh.disableDrawMode();
+      makeNodesGrabbable();
+      o;
     }
   }
 
@@ -61,8 +68,8 @@
   }
 
   function handleMouseOut() {
-    document.removeEventListener("keyup", handleKeyDown, false);
-    document.removeEventListener("keydown", handleKeyUp, false);
+    document.removeEventListener("keydown", handleKeyDown, false);
+    document.removeEventListener("keyup", handleKeyUp, false);
   }
 
   function handleMousemove(event) {
