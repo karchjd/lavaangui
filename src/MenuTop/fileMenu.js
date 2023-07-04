@@ -1,8 +1,10 @@
-import bootbox from "bootbox";
 import Shiny from "shiny";
+import { cyStore, appState } from "../stores.js";
+import { get } from "svelte/store";
+let cy = get(cyStore);
   
 export function newModel () {
-    if (!isEmpty(cy)) {
+    if (!$) {
       bootbox.confirm(
         "Are you sure you want to create a new model? This will delete the current model.",
         function (result) {

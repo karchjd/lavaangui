@@ -1,8 +1,28 @@
 <script>
+  import Shiny from "shiny";
+  import { cyStore, appState } from "../stores.js";
+  import { get } from "svelte/store";
+  // import "bootstrap";
+
+  let cy = get(cyStore);
+
+  function newModel() {
+    if (!$appState.modelEmpty) {
+      bootbox.confirm(
+        "Are you sure you want to create a new model? This will delete the current model.",
+        function (result) {
+          if (result) {
+            cy.elements().remove();
+          }
+        }
+      );
+    }
+  }
+
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
   function nothing() {}
   let menuItems = [
-    { name: "New Model", action: nothing, divider: false },
+    { name: "New Model", action: newModel, divider: false },
     { name: "Load Model", action: nothing, divider: false },
     { name: "Load Data", action: nothing, divider: false },
     { name: "Load Model and Data", action: nothing, divider: true },

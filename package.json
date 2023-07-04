@@ -14,7 +14,8 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
-    "bootbox": "^6.0.0",
+    "bootbox": "^5.5.3",
+    "bootstrap": "^3.4.1",
     "cytoscape": "^3.25.0",
     "cytoscape-context-menus": "^4.1.0",
     "cytoscape-edgehandles": "^4.0.1",
