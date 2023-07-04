@@ -20,6 +20,7 @@
     "cytoscape-context-menus": "^4.1.0",
     "cytoscape-edgehandles": "^4.0.1",
     "cytoscape-grid-guide": "^2.3.3",
+    "cytoscape-panzoom": "^2.5.3",
     "jszip": "^3.10.1",
     "shiny": "^1.0.0",
     "vite-require": "^0.2.3"

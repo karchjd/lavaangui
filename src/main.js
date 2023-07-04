@@ -1,9 +1,10 @@
-import './MenuTop/menus.css'
-import './Toolbars/toolbar.css'
-import App from './App.svelte'
+import "./MenuTop/menus.css";
+import "./Toolbars/toolbar.css";
+import "./Graph/Zoom.css";
+import App from "./App.svelte";
 
 const app = new App({
-  target: document.getElementById('app'),
-})
+  target: document.getElementById("app"),
+});
 
-export default app
+export default app;

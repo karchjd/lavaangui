@@ -12,6 +12,7 @@
   import ToolbarBelow from "./Toolbars/ToolbarBelow.svelte";
   import RDataInterface from "./Shiny/RDataInterface.svelte";
   import DownloadModelData from "./Shiny/DownloadModelData.svelte";
+  import Zoom from "./Graph/Zoom.svelte";
 </script>
 
 <Init />
@@ -20,6 +21,7 @@
 <div>
   <Graph />
   <GridGuides />
+  <Zoom />
   <ContextMenus />
   <OnEvents />
   <Results />
