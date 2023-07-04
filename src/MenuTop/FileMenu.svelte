@@ -114,6 +114,7 @@
         });
       };
     });
+    input.click();
   }
 
   function jsonModel() {
