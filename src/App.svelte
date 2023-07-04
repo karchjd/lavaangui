@@ -10,6 +10,7 @@
   import ToolbarTop from "./Toolbars/ToolbarTop.svelte";
   import Debug from "./Debug.svelte";
   import ContextMenus from "./Graph/ContextMenus.svelte";
+  import DataInput from "./Shiny/DataInput.svelte";
 </script>
 
 <Init />
@@ -23,6 +24,7 @@
   <Results />
 </div>
 <Debug />
+<DataInput />
 
 <!-- <ToolbarDown /> -->
 

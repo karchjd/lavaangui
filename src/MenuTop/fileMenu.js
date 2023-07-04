@@ -2,6 +2,7 @@ import Shiny from "shiny";
 import { cyStore, appState } from "../stores.js";
 import { get } from "svelte/store";
 let cy = get(cyStore);
+import GraphStyles from "../Graph/GraphStyles.js";
   
 export function newModel () {
     if (!$) {
@@ -48,7 +49,7 @@ export function newModel () {
     // Set loading mode, update diagram and perform checks
     appState.setLoadingMode(true);
     cy.json(json);
-    cy.style(myStyle);
+    cy.style(GraphStyles);
     let nodes = cy.nodes();
     for (let i = 0; i < nodes.length; i++) {
       console.log(nodes[i].data("label"));
