@@ -165,20 +165,20 @@
     startDownload(cy.jpg(), "jpg");
   }
 
-  let menuItems = [
-    { name: "New Model", action: newModel, divider: false },
-    { name: "Load Model", action: loadModel, divider: false },
-    { name: "Load Data", action: loadData, divider: false },
+  $: menuItems = [
+    { name: "New Model", action: newModel},
+    { name: "Load Model", action: loadModel},
+    { name: "Load Data", action: loadData},
     { name: "Load Model and Data", action: loadModelData, divider: true },
-    { name: "Download Model", action: downloadModel, divider: false },
+    { name: "Download Model", action: downloadModel, disable: $appState.modelEmpty},
+    { name: "Remove Data", action: removeData, disable: !$appState.dataAvail},
     {
-      name: "Download Model and Data",
+      name: "Download Model and Data", disable: $appState.modelEmpty || !$appState.dataAvail,
       action: downloadModelData,
       divider: true,
     },
-    { name: "Remove Data", action: removeData, divider: false },
-    { name: "Export Model to PNG", action: exportPNG, divider: false },
-    { name: "Export Model to JPG", action: exportJPG, divider: false },
+    { name: "Export Model to PNG", disable: $appState.modelEmpty, action: exportPNG},
+    { name: "Export Model to JPG", disable: $appState.modelEmpty, action: exportJPG},
   ];
 </script>
 

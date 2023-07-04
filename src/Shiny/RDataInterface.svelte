@@ -8,9 +8,7 @@
   }
 
   if (isShiny()) {
-    console.log("handlers added");
     Shiny.addCustomMessageHandler("columnNames", function (columnNames) {
-      console.log("in handler");
       applyLinkedClass(columnNames, true);
       $appState.columnNames = columnNames;
       $appState.dataAvail = true;

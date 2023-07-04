@@ -5,9 +5,11 @@
 </script>
 
 <Dropdown {name}>
-  {#each menuItems as { name, action, divider }}
-    <li><a href="#" on:click={action}>{name}</a></li>
-    {#if divider}
+  {#each menuItems as item}
+    <li class:disabled={item.disable}>
+      <a href="#" on:click={item.action}>{item.name}</a>
+    </li>
+    {#if item.divider}
       <li class="divider" />
     {/if}
   {/each}
