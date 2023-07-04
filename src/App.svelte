@@ -1,6 +1,6 @@
 <script>
   import InitGraph from "./Graph/InitGraph.svelte";
-  import Graph from "./Graph/MountGraph.svelte";
+  import Graph from "./Graph/MountGraphSimple.svelte";
   import MenuTop from "./MenuTop/MenuTop.svelte";
   import Navbar from "./MenuTop/Navbar.svelte";
   import Results from "./Results/Results.svelte";
