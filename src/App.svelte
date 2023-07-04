@@ -1,4 +1,5 @@
 <script>
+  import GridGuides from "./Graph/GridGuides.svelte";
   import InitGraph from "./Graph/InitGraph.svelte";
   import Graph from "./Graph/MountGraphSimple.svelte";
   import MenuTop from "./MenuTop/MenuTop.svelte";
@@ -13,6 +14,7 @@
 <ToolbarTop />
 <div>
   <Graph />
+  <GridGuides />
   <Results />
 </div>
 
