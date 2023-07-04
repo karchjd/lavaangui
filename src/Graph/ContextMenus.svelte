@@ -1,5 +1,5 @@
 <script>
-  import { cyStore } from "../stores.js";
+  import { cyStore, appState } from "../stores.js";
   import { get } from "svelte/store";
   let cy = get(cyStore);
   import cytoscape from "cytoscape";
@@ -314,7 +314,7 @@
             node.data("label", newLabel);
 
             if (node.hasClass("observed-variable")) {
-              const columnNames = appState.getColumnNamesGlobal();
+              const columnNames = $appState.getColumnNamesGlobal();
               if (columnNames && columnNames.includes(newLabel)) {
                 node.addClass("linked");
                 bootbox.alert("Variable connected with data set");
@@ -371,3 +371,15 @@
     cy.contextMenus({ menuItems: menu });
   });
 </script>
+
+<style>
+  cy-context-menus-cxt-menu {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* This adds a shadow to the menu */
+    border-radius: 8px;
+    /* This makes the edges of the menu rounded */
+    overflow: hidden;
+    /* This is necessary so that the inner items don't spill out of the rounded corners */
+    background-color: #ffffff;
+  }
+</style>

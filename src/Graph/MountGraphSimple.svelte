@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { addNode } from "../graphmanipulation.js";
+  import { addNode } from "./graphmanipulation.js";
   import { cyStore, ehStore } from "../stores.js";
   import { get } from "svelte/store";
 

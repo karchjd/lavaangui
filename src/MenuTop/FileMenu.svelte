@@ -1,9 +1,8 @@
 <script>
-  import Shiny from "shiny";
   import { cyStore, appState } from "../stores.js";
   import { get } from "svelte/store";
-  import { checkNodeLoop } from "../checkNodeLoop.js";
-  import { applyLinkedClass } from "../RDataInterface.js";
+  import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
+  import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
   import GraphStyles from "../Graph/GraphStyles.js";
@@ -165,7 +164,6 @@
     startDownload(cy.jpg(), "jpg");
   }
 
-  function nothing() {}
   let menuItems = [
     { name: "New Model", action: newModel, divider: false },
     { name: "Load Model", action: loadModel, divider: false },

@@ -4,13 +4,13 @@
   import Graph from "./Graph/MountGraphSimple.svelte";
   import OnEvents from "./Graph/OnEvents.svelte";
   import MenuTop from "./MenuTop/MenuTop.svelte";
-  import Navbar from "./MenuTop/Navbar.svelte";
-  import Results from "./Results/Results.svelte";
-  import ToolbarDown from "./Toolbars/ToolbarBelow.svelte";
+  import Results from "./Shiny/Results.svelte";
   import ToolbarTop from "./Toolbars/ToolbarTop.svelte";
   import Debug from "./Debug.svelte";
   import ContextMenus from "./Graph/ContextMenus.svelte";
   import DataInput from "./Shiny/DataInput.svelte";
+  import ToolbarBelow from "./Toolbars/ToolbarBelow.svelte";
+  import RDataInterface from "./Shiny/RDataInterface.svelte";
 </script>
 
 <Init />
@@ -25,8 +25,8 @@
 </div>
 <Debug />
 <DataInput />
-
-<!-- <ToolbarDown /> -->
+<RDataInterface />
+<ToolbarBelow />
 
 <style>
   div {

@@ -1,7 +1,7 @@
 <script>
   import { cyStore, appState } from "../stores.js";
   import { get } from "svelte/store";
-  import { checkNodeLoop } from "../checkNodeLoop.js";
+  import { checkNodeLoop } from "./checkNodeLoop.js";
   let cy = get(cyStore);
 
   cy.on("add", "node", function (event) {

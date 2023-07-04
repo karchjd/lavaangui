@@ -1,7 +1,7 @@
 <script>
   import { cyStore } from "../stores.js";
   import { get } from "svelte/store";
-  import { addNode } from "../graphmanipulation.js";
+  import { addNode } from "../Graph/graphmanipulation.js";
   let cy = get(cyStore);
 </script>
 

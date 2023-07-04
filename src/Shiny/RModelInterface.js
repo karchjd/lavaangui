@@ -1,3 +1,6 @@
+import { get } from "svelte/store";
+import { appState, cyStore } from "../stores";
+
 function containsObject(list, obj) {
   for (let i = 0; i < list.length; i++) {
     if (list[i] === obj) {
@@ -41,15 +44,19 @@ function addTerms(node, edge) {
   return formula;
 }
 
-function createSyntax(run) {
+export function createSyntax(run) {
+  let cy = get(cyStore);
   let syntax = "";
   let R_script = "";
+  let loadedFileName;
   if (!run) {
-    if (appState.getLoadedFileName() == null) {
+    if (get(appState).loadedFileName == null) {
       loadedFileName = "YOUR_DATA.csv";
+    }else{
+      loadedFileName = get(appState).loadedFileName
     }
     R_script += "library(lavaan)" + "\n";
-    R_script += "data <- read.csv(" + appState.getLoadedFileName() + ")" + "\n";
+    R_script += "data <- read.csv(" + get(appState).loadedFileName + ")" + "\n";
   }
 
   // measurement model
@@ -95,8 +102,8 @@ function createSyntax(run) {
   }
 
   // regression
-  reg_edges = cy.edges(function (edge) {
-    res =
+  let reg_edges = cy.edges(function (edge) {
+    let res =
       edge.hasClass("directed") &&
       !edge.source().hasClass("constant") &&
       !(
@@ -105,7 +112,7 @@ function createSyntax(run) {
       );
     return res;
   });
-  reg_nodes = [];
+  let reg_nodes = [];
   for (let i = 0; i < reg_edges.length; i++) {
     if (!containsObject(reg_nodes, reg_edges[i].target())) {
       reg_nodes.push(reg_edges[i].target());
@@ -136,22 +143,22 @@ function createSyntax(run) {
   }
 
   // covariances
-  cov_edges = cy.edges(function (edge) {
+  let cov_edges = cy.edges(function (edge) {
     return edge.hasClass("undirected") || edge.hasClass("loop");
   });
   if (cov_edges.length > 0) {
     let nodeNames = "";
     syntax += "\n" + "# residual (co)variances" + "\n";
     for (let i = 0; i < cov_edges.length; i++) {
-      node1 = cov_edges[i].source().data("label");
-      node2 = cov_edges[i].target().data("label");
+      let node1 = cov_edges[i].source().data("label");
+      let node2 = cov_edges[i].target().data("label");
       syntax +=
         node1 + " ~~ " + addTerms(cov_edges[i].target(), cov_edges[i]) + "\n ";
     }
   }
 
   // mean structure
-  constant_nodes = cy.nodes(function (node) {
+  const constant_nodes = cy.nodes(function (node) {
     return node.hasClass("constant");
   });
   for (let i = 0; i < constant_nodes.length; i++) {
@@ -174,33 +181,6 @@ function createSyntax(run) {
   return R_script;
 }
 
-function tolavaan(run) {
-  if (run) {
-    const nodes = cy.nodes(function (node) {
-      return node.hasClass("observed-variable");
-    });
-    for (var i = 0; i < nodes.length; i++) {
-      const node = nodes[i];
-      if (!node.hasClass("linked")) {
-        bootbox.alert(
-          "Observed variable " +
-            node.data("label") +
-            " is not linked to data. Cannot run."
-        );
-        return;
-      }
-    }
-    const edges = cy.edges();
-    for (var i = 0; i < edges.length; i++) {
-      edges[i].removeData("est");
-      edges[i].removeClass("hasEst");
-    }
-  }
-  R_script = createSyntax(run);
-  Shiny.setInputValue("run", run);
-  Shiny.setInputValue("R_script", R_script);
-  Shiny.setInputValue("runCounter", appState.increaseRun());
-}
 
 function getEdge(lhs, op, rhs) {
   let directed;
@@ -229,7 +209,7 @@ function getEdge(lhs, op, rhs) {
 
 function findEdge(lhs, op, rhs) {
   const goal_edge = getEdge(lhs, op, rhs);
-
+  cy = get(cyStore);
   const correct_edge = cy.edges(function (edge) {
     let res =
       edge.source().data("label") == goal_edge.source &&
@@ -245,34 +225,40 @@ function findEdge(lhs, op, rhs) {
   return correct_edge;
 }
 
-//save all results in data attributes of the correct edges
-// Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
-//   for (let i = 0; i < lav_result.lhs.length; i++) {
-//     const edge = findEdge(
-//       lav_result.lhs[i],
-//       lav_result.op[i],
-//       lav_result.rhs[i]
-//     );
-//     //lavaan estimated the edge
-//     if (lav_result.se[i] !== 0) {
-//       edge.data("est", lav_result.est[i].toFixed(2));
-//       edge.addClass("hasEst");
-//       edge.data("p-value", lav_result.pvalue[i].toFixed(2));
-//       edge.data("se", lav_result.se[i].toFixed(2));
-//       //lavaan did fix the edge
-//     } else if (Math.abs(lav_result.est[i] - 1) < 1e-9) {
-//       edge.addClass("fixed");
-//       edge.removeClass("free");
-//       edge.data("value", 1);
-//     } else {
-//       console.error("should never happen");
-//     }
-//   }
-// });
+function isShiny() {
+  return (typeof Shiny === "object" && Shiny !== null); 
+}
 
-cy.edges(function (edge) {
-  return edge.source().data("label") == "dem60";
+
+if(isShiny()){
+  console.log("should not happen")
+  // save all results in data attributes of the correct edges
+Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
+  for (let i = 0; i < lav_result.lhs.length; i++) {
+    const edge = findEdge(
+      lav_result.lhs[i],
+      lav_result.op[i],
+      lav_result.rhs[i]
+    );
+    //lavaan estimated the edge
+    if (lav_result.se[i] !== 0) {
+      edge.data("est", lav_result.est[i].toFixed(2));
+      edge.addClass("hasEst");
+      edge.data("p-value", lav_result.pvalue[i].toFixed(2));
+      edge.data("se", lav_result.se[i].toFixed(2));
+      //lavaan did fix the edge
+    } else if (Math.abs(lav_result.est[i] - 1) < 1e-9) {
+      edge.addClass("fixed");
+      edge.removeClass("free");
+      edge.data("value", 1);
+    } else {
+      console.error("should never happen");
+    }
+  }
 });
+}
+
+
 
 function importNode(type, label) {
   addNode(type, undefined, label);
@@ -301,7 +287,7 @@ function importEdge(edge_paras) {
   edge.addClass(edge_paras.directed);
 }
 
-//save all results in data attributes of the correct edges
+//import model
 // Shiny.addCustomMessageHandler("model", function (model) {
 //   const observed = model.obs;
 //   for (let i = 0; i < observed.length; i++) {
