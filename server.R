@@ -1,6 +1,7 @@
 server <- function(input, output, session) {
   library(lavaan)
   library(zip)
+  shinyjs::useShinyjs(html = TRUE)
   
   imported <- FALSE
   if ((!imported) && (exists("model"))) {

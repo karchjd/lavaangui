@@ -11,6 +11,7 @@
   import DataInput from "./Shiny/DataInput.svelte";
   import ToolbarBelow from "./Toolbars/ToolbarBelow.svelte";
   import RDataInterface from "./Shiny/RDataInterface.svelte";
+  import DownloadModelData from "./Shiny/DownloadModelData.svelte";
 </script>
 
 <Init />
@@ -23,10 +24,11 @@
   <OnEvents />
   <Results />
 </div>
+<ToolbarBelow />
 <Debug />
 <DataInput />
 <RDataInterface />
-<ToolbarBelow />
+<DownloadModelData />
 
 <style>
   div {
