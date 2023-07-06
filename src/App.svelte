@@ -13,6 +13,7 @@
   import RDataInterface from "./Shiny/RDataInterface.svelte";
   import DownloadModelData from "./Shiny/DownloadModelData.svelte";
   import Zoom from "./Graph/Zoom.svelte";
+  import BendEdges from "./Graph/BendEdges.svelte";
 </script>
 
 <Init />
@@ -23,6 +24,7 @@
   <GridGuides />
   <Zoom />
   <ContextMenus />
+  <BendEdges/>
   <OnEvents />
   <Results />
 </div>
