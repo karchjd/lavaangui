@@ -6,7 +6,7 @@
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
   import GraphStyles from "../Graph/GraphStyles.js";
-  import { resetCounters, setCounter} from "../Graph/graphmanipulation.js";
+  import { resetCounters} from "../Graph/graphmanipulation.js";
 
   function newModel() {
     if (!$appState.modelEmpty) {
@@ -30,7 +30,6 @@
     cy.style(GraphStyles);
     let nodes = cy.nodes();
     for (let i = 0; i < nodes.length; i++) {
-      console.log(nodes[i].data("label"));
       checkNodeLoop(nodes[i].id());
     }
     if ($appState.columnNames != null) {
@@ -58,7 +57,6 @@
 
     // Trigger the file input click action
     input.click();
-    setCounter();
   }
 
   function loadModel() {

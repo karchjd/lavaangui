@@ -1,5 +1,6 @@
 import { cyStore } from "../stores.js";
 import { get } from "svelte/store";
+import { v4 as uuidv4 } from "uuid";
 
 let obCounter;
 let latentCounter;
@@ -9,20 +10,14 @@ let nodeIdCounter;
 export function resetCounters() {
   obCounter = 1;
   latentCounter = 1;
-  nodeIdCounter = 0;
 }
 
 resetCounters();
 
-export function setCounter() {
-  let cy = get(cyStore);
-  nodeIdCounter = cy.nodes().length + 1;
-  console.log(nodeIdCounter);
-}
 // Adding new nodes via mouse, toolbar, or hotkey
 export function addNode(nodeType, position) {
   let cy = get(cyStore);
-  let nodeId = "node" + nodeIdCounter++;
+  let nodeId = uuidv4();
   let label;
   if (nodeType == "observed-variable") {
     label = "x" + obCounter++;
