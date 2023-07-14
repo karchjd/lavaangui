@@ -6,6 +6,7 @@
   import contextMenus from "cytoscape-context-menus";
   import 'cytoscape-context-menus/cytoscape-context-menus.css';
   import { onMount } from "svelte";
+  import { addNode } from "./graphmanipulation.js";
 
   // register extension
   cytoscape.use(contextMenus);

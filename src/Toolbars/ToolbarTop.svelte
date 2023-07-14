@@ -1,8 +1,5 @@
 <script>
-  import { cyStore } from "../stores.js";
-  import { get } from "svelte/store";
   import { addNode } from "../Graph/graphmanipulation.js";
-  let cy = get(cyStore);
 </script>
 
 <div class="toolbox">
@@ -10,21 +7,21 @@
     id="add-manifest-variable"
     title="Create Observed Variable"
     on:click={() => {
-      addNode(cy, "observed-variable");
+      addNode("observed-variable");
     }}
   />
   <button
     id="add-latent-variable"
     title="Create Latent Variable"
     on:click={() => {
-      addNode(cy, "latent-variable");
+      addNode("latent-variable");
     }}
   />
   <button
     id="add-constant-variable"
     title="Create Constant Variable"
     on:click={() => {
-      addNode(cy, "constant");
+      addNode("constant");
     }}
   />
 </div>
