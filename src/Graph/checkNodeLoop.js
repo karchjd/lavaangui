@@ -74,9 +74,3 @@ function moveLoopEdge(selfEdge, action) {
     }
   }
 }
-
-export function isNode(str) {
-  // Regular expression pattern to match strings of form "node" followed by one or more digits
-  const pattern = /^node\d+$/;
-  return pattern.test(str);
-}

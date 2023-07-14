@@ -87,11 +87,11 @@
     m.y = event.offsetY;
   }
 
-  cy.on("add", "edge", function (event) {
-    if (!$appState.loadingMode) {
-      const edge = event.target;
-      const sourceNodeId = edge.source().id();
-      const targetNodeId = edge.target().id();
+ 
+ cy.on('ehcomplete', (event, sourceNode, targetNode, addedEdge) => {
+      const edge = addedEdge;
+      const sourceNodeId = sourceNode.id();
+      const targetNodeId = targetNode.id();
       edge.addClass("free");
       edge.addClass("nolabel");
       if (
@@ -116,7 +116,7 @@
       //removers
       if (
         (edge.hasClass("undirected") || edge.hasClass("loop")) &&
-        (edge.source().hasClass("constant") ||
+        (sourceNode.hasClass("constant") ||
           edge.target().hasClass("constant"))
       ) {
         cy.remove(edge);
@@ -126,22 +126,21 @@
         cy.remove(edge);
       }
 
-      if (edge.hasClass("directed") && edge.source().hasClass("constant")) {
+      if (edge.hasClass("directed") && targetNode.hasClass("constant")) {
         const t_node = edge.target();
         const conConstant = t_node.connectedEdges((edge) =>
-          edge.source().hasClass("constant")
+        sourceNode.hasClass("constant")
         );
         if (conConstant.length > 1) {
           cy.remove(edge);
         }
       }
 
-      if (edge.hasClass("directed") && edge.source().hasClass("constant")) {
+      if (edge.hasClass("directed") && sourceNode.hasClass("constant")) {
         edge.data("isMean", "1");
       } else {
         edge.data("isMean", "0");
       }
-    }
   });
 
   function isNode(str) {
