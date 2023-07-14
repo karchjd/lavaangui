@@ -95,9 +95,7 @@
       edge.addClass("free");
       edge.addClass("nolabel");
       if (
-        sourceNodeId !== targetNodeId &&
-        isNode(sourceNodeId) &&
-        isNode(targetNodeId)
+        sourceNodeId !== targetNodeId
       ) {
         if(spaceKeyDown){
           edge.addClass("undirected");
@@ -106,11 +104,7 @@
         }
         checkNodeLoop(sourceNodeId);
         checkNodeLoop(targetNodeId);
-      } else if (
-        sourceNodeId === targetNodeId &&
-        isNode(sourceNodeId) &&
-        isNode(targetNodeId)
-      ) {
+      } else {
         edge.addClass("loop");
       }
       //removers
@@ -143,11 +137,7 @@
       }
   });
 
-  function isNode(str) {
-  // Regular expression pattern to match strings of form "node" followed by one or more digits
-  const pattern = /^node\d+$/;
-  return pattern.test(str);
-}
+
 
 
 </script>
