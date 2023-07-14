@@ -53,7 +53,7 @@
           nodeType = "constant";
           break;
       }
-      addNode(cy, nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
+      addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
     }
   }
 
