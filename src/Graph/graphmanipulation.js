@@ -1,16 +1,23 @@
 import { cyStore } from "../stores.js";
 import { get } from "svelte/store";
 
+let obCounter = 1;
+let latentCounter = 1;
+// let edgeIdCounter = 0;
 let nodeIdCounter = 0;
-let edgeIdCounter = 0;
 
 // Adding new nodes via mouse, toolbar, or hotkey
 export function addNode(nodeType, position) {
   let cy = get(cyStore);
   let nodeId = "node" + nodeIdCounter++;
-  // if (label == undefined) {
-  let label = "x" + nodeIdCounter;
-  // }
+  let label;
+  if (nodeType == "observed-variable") {
+    label = "x" + obCounter++;
+  } else if (nodeType == "latent-variable") {
+    label = "f" + latentCounter++;
+  } else {
+    label = "hallo";
+  }
 
   // Check if position is provided, if not, use random position
   let finalPosition = position
