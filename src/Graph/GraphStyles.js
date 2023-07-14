@@ -67,17 +67,16 @@ export default [
   {
     selector: "edge.loop",
     style: {
-      "curve-style": "unbundled-bezier",
-      "control-point-distances": [50],
-      "control-point-weights": [0.5],
-      "loop-direction": "0", // -Math.PI / 2 in radians to position at top
-      "loop-sweep": "0.8", // rounding of the loop, in radians
+      "curve-style": "bezier",
+      "loop-direction": 0, // -Math.PI / 2 in radians to position at top
+      "loop-sweep": 1, // rounding of the loop, in radians
       "target-arrow-shape": "triangle",
       "source-arrow-shape": "triangle",
       "target-arrow-fill": "filled",
       "source-arrow-fill": "filled",
       "target-arrow-color": "#000",
       "source-arrow-color": "#000",
+      "control-point-step-size": 50,
     },
   },
   {
