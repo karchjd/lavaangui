@@ -137,6 +137,12 @@ export default [
     },
   },
   {
+    selector: "edge.fromLav",
+    style: {
+      "line-color": "green",
+    },
+  },
+  {
     selector: "edge:selected",
     style: {
       "line-color": "red",

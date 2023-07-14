@@ -52,8 +52,8 @@ export function createSyntax(run) {
   if (!run) {
     if (get(appState).loadedFileName == null) {
       loadedFileName = "YOUR_DATA.csv";
-    }else{
-      loadedFileName = get(appState).loadedFileName
+    } else {
+      loadedFileName = get(appState).loadedFileName;
     }
     R_script += "library(lavaan)" + "\n";
     R_script += "data <- read.csv(" + get(appState).loadedFileName + ")" + "\n";
@@ -181,7 +181,6 @@ export function createSyntax(run) {
   return R_script;
 }
 
-
 function getEdge(lhs, op, rhs) {
   let directed;
   let source;
@@ -226,39 +225,60 @@ function findEdge(lhs, op, rhs) {
 }
 
 function isShiny() {
-  return (typeof Shiny === "object" && Shiny !== null); 
+  return typeof Shiny === "object" && Shiny !== null;
 }
 
-
-if(isShiny()){
-  console.log("should not happen")
+if (isShiny()) {
+  console.log("should not happen");
   // save all results in data attributes of the correct edges
-Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
-  for (let i = 0; i < lav_result.lhs.length; i++) {
-    const edge = findEdge(
-      lav_result.lhs[i],
-      lav_result.op[i],
-      lav_result.rhs[i]
-    );
-    //lavaan estimated the edge
-    if (lav_result.se[i] !== 0) {
-      edge.data("est", lav_result.est[i].toFixed(2));
-      edge.addClass("hasEst");
-      edge.data("p-value", lav_result.pvalue[i].toFixed(2));
-      edge.data("se", lav_result.se[i].toFixed(2));
-      //lavaan did fix the edge
-    } else if (Math.abs(lav_result.est[i] - 1) < 1e-9) {
-      edge.addClass("fixed");
-      edge.removeClass("free");
-      edge.data("value", 1);
-    } else {
-      console.error("should never happen");
+  Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
+    cy = get(cyStore);
+    for (let i = 0; i < lav_result.lhs.length; i++) {
+      const edge = findEdge(
+        lav_result.lhs[i],
+        lav_result.op[i],
+        lav_result.rhs[i]
+      );
+      //TODO assert edge lenght not bigger 1
+      //edge found
+      if (edge.length == 0) {
+        const edge = getEdge(
+          lav_result.lhs[i],
+          lav_result.op[i],
+          lav_result.rhs[i]
+        );
+        console.log(edge);
+        const sourceId = cy
+          .nodes(function (node) {
+            return node.data("label") == edge.source;
+          })[0]
+          .id();
+        const targetId = cy
+          .nodes(function (node) {
+            return node.data("label") == edge.target;
+          })[0]
+          .id();
+        cy.add({
+          groups: "edges",
+          data: { source: sourceId, target: targetId },
+          classes: edge.directed + "fromLav",
+        });
+      }
+      if (lav_result.se[i] !== 0) {
+        edge.data("est", lav_result.est[i].toFixed(2));
+        edge.addClass("hasEst");
+        edge.data("p-value", lav_result.pvalue[i].toFixed(2));
+        edge.data("se", lav_result.se[i].toFixed(2));
+        //lavaan did fix the edge
+      } else if (Math.abs(lav_result.est[i] - 1) < 1e-9) {
+        edge.addClass("fixed");
+        edge.removeClass("free");
+        edge.data("value", 1);
+        edge.addClass("fromLav");
+      }
     }
-  }
-});
+  });
 }
-
-
 
 function importNode(type, label) {
   addNode(type, undefined, label);

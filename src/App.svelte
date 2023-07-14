@@ -1,7 +1,7 @@
 <script>
   import GridGuides from "./Graph/GridGuides.svelte";
   import Init from "./Graph/Init.svelte";
-  import Graph from "./Graph/MountGraphSimple.svelte";
+  import Graph from "./Graph/MountGraph.svelte";
   import OnEvents from "./Graph/OnEvents.svelte";
   import MenuTop from "./MenuTop/MenuTop.svelte";
   import Results from "./Shiny/Results.svelte";
@@ -13,7 +13,6 @@
   import RDataInterface from "./Shiny/RDataInterface.svelte";
   import DownloadModelData from "./Shiny/DownloadModelData.svelte";
   import Zoom from "./Graph/Zoom.svelte";
-  import BendEdges from "./Graph/BendEdges.svelte";
 </script>
 
 <Init />
@@ -24,7 +23,6 @@
   <GridGuides />
   <Zoom />
   <ContextMenus />
-  <BendEdges/>
   <OnEvents />
   <Results />
 </div>
