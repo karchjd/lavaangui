@@ -64,7 +64,7 @@
       bootbox.confirm(
         "Are you sure you want to load a model? This will delete the current model.",
         function (result) {
-          if (confirm) {
+          if (result) {
             uploadModel();
           }
         }
