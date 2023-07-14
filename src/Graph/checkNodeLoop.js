@@ -43,12 +43,6 @@ function countEdgesConnectedToNodeSides(nodeId) {
 
 function moveLoopNode(nodeId, action) {
   var node = cy.getElementById(nodeId);
-
-  if (node.length === 0) {
-    console.log("Node with ID " + nodeId + " does not exist.");
-    return;
-  }
-
   var loopEdge = null;
 
   node.connectedEdges().forEach(function (edge) {

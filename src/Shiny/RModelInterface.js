@@ -87,7 +87,6 @@ export function createSyntax(run) {
         }))
         .sort((a, b) => b.x - a.x)
         .map((item) => item.index);
-      console.log(sortedIndices);
 
       for (let j = 0; j < connectedEdges.length; j++) {
         const node = connectedEdges[j].target();
@@ -229,7 +228,6 @@ function isShiny() {
 }
 
 if (isShiny()) {
-  console.log("should not happen");
   // save all results in data attributes of the correct edges
   Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
     cy = get(cyStore);
@@ -247,7 +245,6 @@ if (isShiny()) {
           lav_result.op[i],
           lav_result.rhs[i]
         );
-        console.log(edge);
         const sourceId = cy
           .nodes(function (node) {
             return node.data("label") == edge.source;
@@ -295,7 +292,6 @@ function importEdge(edge_paras) {
       return node.data("label") == edge_paras.source;
     })
     .data("id");
-  console.log(edge_paras.directed);
   const edge = cy.add({
     group: "edges",
     data: {

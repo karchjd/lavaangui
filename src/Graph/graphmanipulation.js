@@ -13,6 +13,12 @@ export function resetCounters() {
 }
 
 resetCounters();
+
+export function setCounter() {
+  let cy = get(cyStore);
+  nodeIdCounter = cy.nodes().length + 1;
+  console.log(nodeIdCounter);
+}
 // Adding new nodes via mouse, toolbar, or hotkey
 export function addNode(nodeType, position) {
   let cy = get(cyStore);
@@ -37,7 +43,6 @@ export function addNode(nodeType, position) {
     classes: nodeType,
     position: finalPosition,
   });
-  console.log(nodeIdCounter);
 
   // if (nodeType !== "constant") {
   //     let edgeId = 'edge' + edgeIdCounter++;

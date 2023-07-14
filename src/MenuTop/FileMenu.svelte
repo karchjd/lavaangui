@@ -6,7 +6,7 @@
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
   import GraphStyles from "../Graph/GraphStyles.js";
-  import { resetCounters } from "../Graph/graphmanipulation.js";
+  import { resetCounters, setCounter} from "../Graph/graphmanipulation.js";
 
   function newModel() {
     if (!$appState.modelEmpty) {
@@ -58,6 +58,7 @@
 
     // Trigger the file input click action
     input.click();
+    setCounter();
   }
 
   function loadModel() {
