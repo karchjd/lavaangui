@@ -1,11 +1,18 @@
 import { cyStore } from "../stores.js";
 import { get } from "svelte/store";
 
-let obCounter = 1;
-let latentCounter = 1;
+let obCounter;
+let latentCounter;
 // let edgeIdCounter = 0;
-let nodeIdCounter = 0;
+let nodeIdCounter;
 
+export function resetCounters() {
+  obCounter = 1;
+  latentCounter = 1;
+  nodeIdCounter = 0;
+}
+
+resetCounters();
 // Adding new nodes via mouse, toolbar, or hotkey
 export function addNode(nodeType, position) {
   let cy = get(cyStore);

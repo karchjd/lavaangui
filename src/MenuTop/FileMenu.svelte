@@ -6,6 +6,7 @@
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
   import GraphStyles from "../Graph/GraphStyles.js";
+  import { resetCounters } from "../Graph/graphmanipulation.js";
 
   function newModel() {
     if (!$appState.modelEmpty) {
@@ -14,6 +15,7 @@
         function (result) {
           if (result) {
             cy.elements().remove();
+            resetCounters();
           }
         }
       );
