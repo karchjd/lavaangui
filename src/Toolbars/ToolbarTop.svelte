@@ -1,9 +1,25 @@
 <script>
   import { addNode } from "../Graph/graphmanipulation.js";
+  import { appState } from "../stores";
+  let state = {};
+
+let unsubscribe = appState.subscribe(newState => {
+  console.log('state change')
+  state = newState;
+});
+
 </script>
 
 <div class="toolbox navbar-fixed-top ">
-  <button
+  <div id="data">
+  {#if state.dataAvail}
+    <p> {state.loadedFileName} is loaded</p>
+  {:else}
+    <p>No Data loaded</p>
+  {/if}
+ </div>
+  <div id="buttons">
+    <button
     id="add-manifest-variable"
     title="Create Observed Variable"
     on:click={() => {
@@ -24,13 +40,31 @@
       addNode("constant");
     }}
   />
+  </div>
 </div>
+  
 
 <style>
-  div {
+  .toolbox {
     margin-top: 50px;
     height: 30px;
     z-index: 1000;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+  }
+
+  #buttons{
+    margin: 0 auto; 
+  }
+
+  #data{
+    margin-left:10px;
+    margin-bottom: 0px;
+    padding: 1px;
+    background-color: white;
+    border: solid 1px black;
+    height:20px;
   }
 
   button {
