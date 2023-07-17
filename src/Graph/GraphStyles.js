@@ -114,7 +114,8 @@ export default [
     },
   },
   {
-    selector: "edge.hasEst.free.nolabel, edge.hasEst.forcefree.nolabel",
+    selector:
+      "edge.hasEst.free.nolabel, edge.hasEst.forcefree.nolabel, edge.hasEst.fromLav",
     style: {
       label: function (edge) {
         return edge.data("est");
@@ -138,7 +139,7 @@ export default [
   {
     selector: "edge.fromLav",
     style: {
-      "line-color": "green",
+      "line-style": "dashed",
     },
   },
   {

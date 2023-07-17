@@ -232,46 +232,51 @@ if (isShiny()) {
   Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
     cy = get(cyStore);
     for (let i = 0; i < lav_result.lhs.length; i++) {
-      const edge = findEdge(
+      let existingEdge = findEdge(
         lav_result.lhs[i],
         lav_result.op[i],
         lav_result.rhs[i]
       );
       //TODO assert edge lenght not bigger 1
-      //edge found
-      if (edge.length == 0) {
-        const edge = getEdge(
+      //edge not, needs to be addedfound
+      if (existingEdge.length == 0) {
+        const desiredEdge = getEdge(
           lav_result.lhs[i],
           lav_result.op[i],
           lav_result.rhs[i]
         );
         const sourceId = cy
           .nodes(function (node) {
-            return node.data("label") == edge.source;
+            return node.data("label") == desiredEdge.source;
           })[0]
           .id();
         const targetId = cy
           .nodes(function (node) {
-            return node.data("label") == edge.target;
+            return node.data("label") == desiredEdge.target;
           })[0]
           .id();
         cy.add({
           groups: "edges",
-          data: { source: sourceId, target: targetId },
-          classes: edge.directed + "fromLav",
+          data: {
+            source: sourceId,
+            target: targetId,
+            est: lav_result.est[i].toFixed(2),
+            p_value: lav_result.pvalue[i].toFixed(2),
+            se: lav_result.se[i].toFixed(2),
+          },
+          classes: desiredEdge.directed + " fromLav" + " hasEst",
         });
-      }
-      if (lav_result.se[i] !== 0) {
-        edge.data("est", lav_result.est[i].toFixed(2));
-        edge.addClass("hasEst");
-        edge.data("p-value", lav_result.pvalue[i].toFixed(2));
-        edge.data("se", lav_result.se[i].toFixed(2));
+      } else if (lav_result.se[i] !== 0) {
+        existingEdge.data("est", lav_result.est[i].toFixed(2));
+        existingEdge.addClass("hasEst");
+        existingEdge.data("p_value", lav_result.pvalue[i].toFixed(2));
+        existingEdge.data("se", lav_result.se[i].toFixed(2));
         //lavaan did fix the edge
       } else if (Math.abs(lav_result.est[i] - 1) < 1e-9) {
-        edge.addClass("fixed");
-        edge.removeClass("free");
-        edge.data("value", 1);
-        edge.addClass("fromLav");
+        existingEdge.addClass("fixed");
+        existingEdge.removeClass("free");
+        existingEdge.data("value", 1);
+        existingEdge.addClass("fromLav");
       }
     }
   });
