@@ -85,11 +85,11 @@ export function createSyntax(run) {
           index,
           x: edge.target().position().x,
         }))
-        .sort((a, b) => b.x - a.x)
+        .sort((a, b) => a.x - b.x)
         .map((item) => item.index);
 
       for (let j = 0; j < connectedEdges.length; j++) {
-        const node = connectedEdges[j].target();
+        const node = connectedEdges[sortedIndices[j]].target();
         if (j > 0) {
           nodeNames += " + ";
         }
