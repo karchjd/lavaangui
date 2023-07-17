@@ -2,3 +2,9 @@
   <i class="fas fa-download" role="presentation" aria-label="download icon"></i>
   Download Model and Data
 </a>
+
+<style>
+  #downloadData{
+    display: none;
+  } 
+</style>

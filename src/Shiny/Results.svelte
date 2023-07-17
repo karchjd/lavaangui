@@ -7,7 +7,7 @@
     text-align: left;
     background-color: lightgrey;
     padding: 0px;
-    max-height: 88vh;
+    max-height: 91.8vh;
     overflow-y: auto;
     padding: 0px;
     margin: 0px;

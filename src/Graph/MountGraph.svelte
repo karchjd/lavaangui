@@ -158,6 +158,6 @@
     width: 70%;
     height: 100%;
     padding: 0px;
-    margin: 0px;
+    margin-top: 100px;
   }
 </style>

@@ -2,7 +2,7 @@
   import { addNode } from "../Graph/graphmanipulation.js";
 </script>
 
-<div class="toolbox">
+<div class="toolbox navbar-fixed-top ">
   <button
     id="add-manifest-variable"
     title="Create Observed Variable"
@@ -37,7 +37,7 @@
   }
 
   div {
-    margin-top: 30px;
+    margin-top: 50px;
     height: 30px;
     z-index: 1000;
   }

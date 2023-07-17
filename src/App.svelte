@@ -35,7 +35,7 @@
 <style>
   div {
     display: flex;
-    height: 88vh;
+    height: 91.8vh;
     width: 100%;
     border: 1px solid lightgrey;
     padding: 0px;

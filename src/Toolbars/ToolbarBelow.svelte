@@ -30,9 +30,7 @@
     Shiny.setInputValue("runCounter", $appState.runCounter);
   }
 </script>
-
-'
-<div class="toolbar">
+<div class="toolbox navbar-fixed-bottom">
   <div class="btn-group" role="group">
     <button
       type="button"
@@ -58,5 +56,15 @@
 <style>
   div {
     height: 50px;
+    padding: 0px;
+  }
+  .toolbox {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    vertical-align: bottom;
   }
 </style>
