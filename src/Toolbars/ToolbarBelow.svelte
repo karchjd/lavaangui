@@ -58,13 +58,10 @@
     height: 50px;
     padding: 0px;
   }
-  .toolbox {
-    background-color: #f8f8f8;
-    border: 1px solid #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    vertical-align: bottom;
-  }
+
+  .btn-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>

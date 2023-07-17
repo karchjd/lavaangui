@@ -27,15 +27,6 @@
 </div>
 
 <style>
-  .toolbox {
-    background-color: #f8f8f8;
-    border: 1px solid #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-
   div {
     margin-top: 50px;
     height: 30px;
