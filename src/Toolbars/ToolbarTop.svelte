@@ -4,7 +4,6 @@
   let state = {};
 
 let unsubscribe = appState.subscribe(newState => {
-  console.log('state change')
   state = newState;
 });
 

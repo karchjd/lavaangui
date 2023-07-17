@@ -14,7 +14,6 @@
 
     function updateVisibility(menuItems){
         const cy = get(cyStore);
-        console.log("update")
         if(menuItems[0].checked && menuItems[1].checked){
             cy.elements("."+ menuItems[0].class).show();
             cy.elements("."+ menuItems[1].class).show();

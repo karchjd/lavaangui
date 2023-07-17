@@ -10,8 +10,8 @@
       let columnNames = $appState.columnNames;
       if (columnNames && columnNames.includes(node.data("label"))) {
         node.addClass("linked");
-        if ($appState.loadingMode) {
-          bootbox.alert("Variable connected with data set");
+        if (!$appState.loadingMode) {
+          bootbox.alert("Variable linked with data set");
         }
       }
     }

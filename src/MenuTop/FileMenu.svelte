@@ -34,7 +34,7 @@
     $appState.loadingMode = true;
     cy.json(json);
     cy.style(GraphStyles);
-    if ($appState.columnNames != null) {
+    if ($appState.dataAvail) {
       applyLinkedClass($appState.columnNames, false);
     }
   }

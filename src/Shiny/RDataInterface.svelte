@@ -1,6 +1,5 @@
 <script>
-  import { construct_svelte_component } from "svelte/internal";
-  import { appState } from "../stores";
+import { appState } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass";
 
   function isShiny() {
@@ -8,12 +7,14 @@
   }
 
   if (isShiny()) {
+    //sent by server when data is loaded
     Shiny.addCustomMessageHandler("columnNames", function (columnNames) {
       applyLinkedClass(columnNames, true);
-      $appState.columnNames = columnNames;
       $appState.dataAvail = true;
+      $appState.columnNames = columnNames;
     });
 
+    //sent by server when data is loaded
     Shiny.addCustomMessageHandler("fname", function (fname) {
       $appState.loadedFileName = fname;
     });
