@@ -39,5 +39,15 @@ var defaults = {
 onMount(() => {
     // Initialize the Cytoscape instance
     cy.panzoom( defaults );
+    cy.on('zoom', function(event){
+  var newZoomLevel = cy.zoom();
+  
+  if(newZoomLevel < defaults.minZoom){
+    cy.zoom(defaults.minZoom);
+  }
+  else if(newZoomLevel > defaults.maxZoom){
+    cy.zoom(defaults.maxZoom);
+  }
+});
   });
 </script>
