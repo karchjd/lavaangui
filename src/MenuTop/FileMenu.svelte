@@ -14,24 +14,26 @@
         "Are you sure you want to create a new model? This will delete the current model.",
         function (result) {
           if (result) {
-            cy.elements().remove();
-            resetCounters();
+            reset();
           }
         }
       );
     }
   }
 
+  function reset(){
+    cy.elements().remove();
+    resetCounters();
+    document.getElementById('lavaan_syntax_R').innerText = '';
+  }
+
   function parseModel(content) {
+    reset();
     let json = JSON.parse(content);
     // Set loading mode, update diagram and perform checks
     $appState.loadingMode = true;
     cy.json(json);
     cy.style(GraphStyles);
-    let nodes = cy.nodes();
-    for (let i = 0; i < nodes.length; i++) {
-      checkNodeLoop(nodes[i].id());
-    }
     if ($appState.columnNames != null) {
       applyLinkedClass($appState.columnNames, false);
     }
