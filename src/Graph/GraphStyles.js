@@ -137,7 +137,7 @@ export default [
     },
   },
   {
-    selector: "edge.fromLav",
+    selector: "edge.fromLav, edge.byLav",
     style: {
       "line-style": "dashed",
     },

@@ -20,7 +20,7 @@ function addTerms(node, edge) {
   }
   let premultiplier = false;
   let formula;
-  if (edge.hasClass("fixed")) {
+  if (edge.hasClass("fixed") && !edge.hasClass("byLav")) {
     formula = edge.data("value") + "*" + node_label;
     premultiplier = true;
   } else if (edge.hasClass("forcefree")) {
@@ -282,7 +282,7 @@ if (isShiny()) {
         existingEdge.addClass("fixed");
         existingEdge.removeClass("free");
         existingEdge.data("value", 1);
-        existingEdge.addClass("fromLav");
+        existingEdge.addClass("byLav");
       }
     }
   });
