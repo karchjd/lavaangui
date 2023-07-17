@@ -85,7 +85,7 @@ server <- function(input, output, session) {
       writeLines(input$model, jsonFile)
       
       # Write the data frame to the CSV file (replace my_data with your data frame)
-      write.csv(data(), csvFile, row.names = FALSE)
+      write.csv(data()$df, csvFile, row.names = FALSE)
       
       # Create a zip archive of the directory containing the JSON and CSV files
       zip::zip(zipfile = file, files = c("model.json", "data.csv"), root = tempDir)
