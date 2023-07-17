@@ -144,7 +144,10 @@ export function createSyntax(run) {
 
   // covariances
   let cov_edges = cy.edges(function (edge) {
-    return edge.hasClass("undirected") || edge.hasClass("loop");
+    return (
+      (edge.hasClass("undirected") || edge.hasClass("loop")) &&
+      !edge.hasClass("fromLav")
+    );
   });
   if (cov_edges.length > 0) {
     let nodeNames = "";
