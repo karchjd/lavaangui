@@ -1,5 +1,6 @@
 import { get } from "svelte/store";
 import { appState, cyStore } from "../stores";
+import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
 
 function containsObject(list, obj) {
   for (let i = 0; i < list.length; i++) {
@@ -266,6 +267,8 @@ if (isShiny()) {
           },
           classes: desiredEdge.directed + " fromLav" + " hasEst",
         });
+        checkNodeLoop(sourceId);
+        checkNodeLoop(targetId);
       } else if (lav_result.se[i] !== 0) {
         existingEdge.data("est", lav_result.est[i].toFixed(2));
         existingEdge.addClass("hasEst");
