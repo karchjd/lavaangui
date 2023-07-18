@@ -279,13 +279,18 @@ if (isShiny()) {
             return node.data("label") == desiredEdge.target;
           })[0]
           .id();
+        let p_value = lav_result.pvalue[i];
+        if (lav_result.pvalue[i] !== null) {
+          debugger;
+          p_value = p_value.toFixed(2);
+        }
         cy.add({
           groups: "edges",
           data: {
             source: sourceId,
             target: targetId,
             est: lav_result.est[i].toFixed(2),
-            p_value: lav_result.pvalue[i].toFixed(2),
+            p_value: p_value,
             se: lav_result.se[i].toFixed(2),
           },
           classes: desiredEdge.directed + " fromLav" + " hasEst" + " free",
