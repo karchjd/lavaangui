@@ -110,13 +110,12 @@
       //removers
       if (
         (edge.hasClass("undirected") || edge.hasClass("loop")) &&
-        (sourceNode.hasClass("constant") ||
-          edge.target().hasClass("constant"))
+        (sourceNode.hasClass("constant") || targetNode.hasClass("constant"))
       ) {
         cy.remove(edge);
       }
 
-      if (edge.hasClass("directed") && edge.target().hasClass("constant")) {
+      if (edge.hasClass("directed") && targetNode.hasClass("constant")) {
         cy.remove(edge);
       }
 
