@@ -120,7 +120,7 @@
         cy.remove(edge);
       }
 
-      if (edge.hasClass("directed") && targetNode.hasClass("constant")) {
+      if (edge.hasClass("directed") && sourceNode.hasClass("constant")) {
         const t_node = edge.target();
         const conConstant = t_node.connectedEdges((edge) =>
         sourceNode.hasClass("constant")
