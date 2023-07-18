@@ -102,7 +102,7 @@
               edge.removeClass("forcefree");
               edge.removeClass("fromLav")
               edge.removeClass("byLav")
-              edge.removeClass("hastEst")
+              edge.removeClass("hasEst")
               edge.addClass("fixed");
             }
           },

@@ -301,7 +301,10 @@ if (isShiny()) {
         existingEdge.data("p_value", lav_result.pvalue[i].toFixed(2));
         existingEdge.data("se", lav_result.se[i].toFixed(2));
         //lavaan did fix the edge
-      } else if (Math.abs(lav_result.est[i] - 1) < 1e-9) {
+      } else if (
+        Math.abs(lav_result.est[i] - 1) < 1e-9 &&
+        !existingEdge.hasClass("fixed")
+      ) {
         existingEdge.addClass("fixed");
         existingEdge.removeClass("free");
         existingEdge.data("value", 1);
