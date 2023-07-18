@@ -236,7 +236,7 @@ function findEdge(lhs, op, rhs) {
           (edge.source().data("label") == goal_edge.target &&
             edge.target().data("label") == goal_edge.source);
       }
-      // normal case, constant involved
+      // abnormal case, constant involved
     } else {
       res =
         edge.source().hasClass("constant") &&
@@ -288,7 +288,7 @@ if (isShiny()) {
             p_value: lav_result.pvalue[i].toFixed(2),
             se: lav_result.se[i].toFixed(2),
           },
-          classes: desiredEdge.directed + " fromLav" + " hasEst",
+          classes: desiredEdge.directed + " fromLav" + " hasEst" + " free",
         });
         checkNodeLoop(sourceId);
         checkNodeLoop(targetId);

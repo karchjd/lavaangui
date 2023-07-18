@@ -99,6 +99,7 @@
               edge.data("value", value);
               edge.removeClass("free");
               edge.removeClass("forcefree");
+              edge.removeClass("fromLav")
               edge.addClass("fixed");
             }
           },
@@ -114,6 +115,7 @@
         var edge = event.target || event.cyTarget;
         edge.removeClass("fixed");
         edge.removeClass("forcefree");
+        edge.removeClass("fromLav")
         edge.addClass("free");
       },
       hasTrailingDivider: false,
@@ -126,6 +128,7 @@
         const edge = event.target || event.cyTarget;
         edge.removeClass("free");
         edge.removeClass("fixed");
+        edge.removeClass("fromLav")
         edge.addClass("forcefree");
       },
       hasTrailingDivider: true,
