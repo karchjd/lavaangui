@@ -55,6 +55,7 @@
               edge.data("label", result);
               edge.addClass("label");
               edge.removeClass("nolabel");
+              edge.removeClass("fromLav");
             }
           },
         });
