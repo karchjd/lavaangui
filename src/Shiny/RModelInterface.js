@@ -56,7 +56,6 @@ export function createSyntax(run) {
   let R_script = "";
   if (!run) {
     R_script += "library(lavaan)" + "\n";
-    console.log(appSt.dataAvail);
     if (appSt.dataAvail) {
       R_script += "data <- read.csv(" + appSt.loadedFileName + ")" + "\n";
     } else {
@@ -221,7 +220,6 @@ function getEdge(lhs, op, rhs) {
 
 function findEdge(lhs, op, rhs) {
   const goal_edge = getEdge(lhs, op, rhs);
-  console.log(goal_edge);
   cy = get(cyStore);
   const correct_edge = cy.edges(function (edge) {
     let res;
@@ -242,7 +240,7 @@ function findEdge(lhs, op, rhs) {
         edge.source().hasClass("constant") &&
         edge.target().data("label") == goal_edge.target;
     }
-    return res;
+    return res && !edge.hasClass("fromLav");
   });
   return correct_edge;
 }
@@ -255,6 +253,7 @@ if (isShiny()) {
   // save all results in data attributes of the correct edges
   Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
     cy = get(cyStore);
+    cy.edges(".fromLav").remove();
     for (let i = 0; i < lav_result.lhs.length; i++) {
       let existingEdge = findEdge(
         lav_result.lhs[i],
@@ -281,7 +280,6 @@ if (isShiny()) {
           .id();
         let p_value = lav_result.pvalue[i];
         if (lav_result.pvalue[i] !== null) {
-          debugger;
           p_value = p_value.toFixed(2);
         }
         cy.add({
