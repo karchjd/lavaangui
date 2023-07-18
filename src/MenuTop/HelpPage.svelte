@@ -30,12 +30,12 @@
           <tbody>
             <tr>
               <td>Hold command/ctrl</td>
-              <td>Draw directed arrows</td>
+              <td>Draw directed arrows / active box selection</td>
             </tr>
             <tr>
               <td>Hold space</td>
               <td>
-                Draw undirected arrows (currently disabled because of bug)
+                Draw undirected arrows
               </td>
             </tr>
             <tr>

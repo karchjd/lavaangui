@@ -12,6 +12,8 @@
     style: GraphStyles,
   });
 
+  cy.boxSelectionEnabled(true);
+
   cyStore.set(cy);
   ehStore.set(
     cy.edgehandles({
