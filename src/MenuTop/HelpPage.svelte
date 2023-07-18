@@ -4,7 +4,7 @@
   }
 </script>
 
-<li><a href="#" id="help-menu-item" on:click={showHelp}>Help</a></li>
+<li><a href={'#'} id="help-menu-item" on:click={showHelp}>Help</a></li>
 <div class="modal fade" tabindex="-1" role="dialog" id="help">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

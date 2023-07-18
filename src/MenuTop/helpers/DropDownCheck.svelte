@@ -44,19 +44,9 @@
     position: relative;
   }
   
-  li.active label {
-    background-color: #cbcbff;
-    font-weight:bold;
-  }
-  
   li label:hover,
   li label:focus {
     background-color: #f5f5f5;
-  }
-  
-  li.active label:hover,
-  li.active label:focus {
-    background-color: #b8b8ff;
   }
 </style>
   

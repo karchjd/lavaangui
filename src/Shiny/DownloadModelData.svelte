@@ -1,8 +1,10 @@
-<a id="downloadData" class="btn btn-default shiny-download-link " href="" target="_blank" download>
+<a id="downloadData" class="btn btn-default shiny-download-link " href={'#'} target="_blank" download>
   <i class="fas fa-download" role="presentation" aria-label="download icon"></i>
   Download
 </a>
 
 <style>
-
+  #downloadData{
+    visibility: hidden;
+  }
 </style>
