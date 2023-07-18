@@ -291,7 +291,12 @@ if (isShiny()) {
             p_value: p_value,
             se: lav_result.se[i].toFixed(2),
           },
-          classes: desiredEdge.directed + " fromLav" + " hasEst" + " free",
+          classes:
+            desiredEdge.directed +
+            " fromLav" +
+            " hasEst" +
+            " free" +
+            " nolabel",
         });
         checkNodeLoop(sourceId);
         checkNodeLoop(targetId);
