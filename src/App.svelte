@@ -13,32 +13,23 @@
   import RDataInterface from "./Shiny/RDataInterface.svelte";
   import DownloadModelData from "./Shiny/DownloadModelData.svelte";
   import Zoom from "./Graph/Zoom.svelte";
+  import MainContainer from "./Graph/MainContainer.svelte";
 </script>
 
 <Init />
 <MenuTop />
-<ToolbarTop />
-<div>
+<MainContainer>
   <Graph />
   <GridGuides />
   <Zoom />
   <ContextMenus />
   <OnEvents />
   <Results />
-</div>
+</MainContainer>
 <ToolbarBelow />
 <Debug />
 <DataInput />
 <RDataInterface />
 <DownloadModelData />
 
-<style>
-  div {
-    display: flex;
-    height: 91.8vh;
-    width: 100%;
-    border: 1px solid lightgrey;
-    padding: 0px;
-    margin: 0px;
-  }
-</style>
+

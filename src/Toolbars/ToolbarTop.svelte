@@ -9,7 +9,7 @@ let unsubscribe = appState.subscribe(newState => {
 
 </script>
 
-<div class="toolbox navbar-fixed-top ">
+<div class="toolbox">
   <div id="data">
   {#if state.dataAvail}
     <p> {state.loadedFileName} is loaded</p>
@@ -45,9 +45,7 @@ let unsubscribe = appState.subscribe(newState => {
 
 <style>
   .toolbox {
-    margin-top: 50px;
     height: 30px;
-    z-index: 1000;
     display: flex;
     justify-content: space-between; 
     align-items: center; 
