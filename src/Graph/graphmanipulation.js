@@ -24,7 +24,7 @@ export function addNode(nodeType, position) {
   } else if (nodeType == "latent-variable") {
     label = "f" + latentCounter++;
   } else {
-    label = "hallo";
+    label = undefined;
   }
 
   // Check if position is provided, if not, use random position

@@ -54,6 +54,7 @@ server <- function(input, output, session) {
         sum_model <- summary(result)
         sum_model$pe <- NULL
         print(sum_model)
+        print(parameterEstimates(result))
       }
     } else {
       cat(input$R_script)

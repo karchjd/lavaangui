@@ -170,7 +170,7 @@ export function createSyntax(run) {
     return node.hasClass("constant");
   });
   for (let i = 0; i < constant_nodes.length; i++) {
-    c_node = constant_nodes[i];
+    const c_node = constant_nodes[i];
     const connectedEdges = c_node.connectedEdges();
     if (connectedEdges.length > 0) {
       syntax += "# intercepts" + "\n ";
@@ -184,6 +184,7 @@ export function createSyntax(run) {
       }
     }
   }
+
   R_script += "model = '\n" + syntax + "'" + "\n ";
   R_script += "result <- sem(model, data)";
   return R_script;
@@ -198,6 +199,10 @@ function getEdge(lhs, op, rhs) {
     directed = "directed";
     source = lhs;
     target = rhs;
+  } else if (op == "~1") {
+    source = 1;
+    target = lhs;
+    directed = "directed";
   } else {
     target = lhs;
     source = rhs;
@@ -216,16 +221,26 @@ function getEdge(lhs, op, rhs) {
 
 function findEdge(lhs, op, rhs) {
   const goal_edge = getEdge(lhs, op, rhs);
+  console.log(goal_edge);
   cy = get(cyStore);
   const correct_edge = cy.edges(function (edge) {
-    let res =
-      edge.source().data("label") == goal_edge.source &&
-      edge.target().data("label") == goal_edge.target;
-    if (goal_edge.directed == "undirected") {
+    let res;
+    // normal case, constant not involved
+    if (goal_edge.source != 1) {
       res =
-        res ||
-        (edge.source().data("label") == goal_edge.target &&
-          edge.target().data("label") == goal_edge.source);
+        edge.source().data("label") == goal_edge.source &&
+        edge.target().data("label") == goal_edge.target;
+      if (goal_edge.directed == "undirected") {
+        res =
+          res ||
+          (edge.source().data("label") == goal_edge.target &&
+            edge.target().data("label") == goal_edge.source);
+      }
+      // normal case, constant involved
+    } else {
+      res =
+        edge.source().hasClass("constant") &&
+        edge.target().data("label") == goal_edge.target;
     }
     return res;
   });
