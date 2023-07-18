@@ -1,10 +1,11 @@
-<div id="lavaan_syntax_R" class="shiny-html-output">
-</div>
+<pre id="lavaan_syntax_R" class="shiny-html-output">
+</pre>
 
 <style>
-  div {
+  pre {
     white-space: pre-wrap;
     width: 30%;
+    min-width: 30%;
     text-align: left;
     background-color: lightgrey;
     padding: 0px;

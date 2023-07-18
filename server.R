@@ -51,10 +51,9 @@ server <- function(input, output, session) {
       if (inherits(result, "lavaan")) {
         counter <- counter()
         session$sendCustomMessage("lav_results", parameterestimates(result))
-        sum_model <- summary(result)
+        sum_model <- summary(result, fit.measures = TRUE)
         sum_model$pe <- NULL
-        print(sum_model)
-        print(parameterEstimates(result))
+        sum_model
       }
     } else {
       cat(input$R_script)
