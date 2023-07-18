@@ -5,7 +5,6 @@
   import OnEvents from "./Graph/OnEvents.svelte";
   import MenuTop from "./MenuTop/MenuTop.svelte";
   import Results from "./Shiny/Results.svelte";
-  import ToolbarTop from "./Toolbars/ToolbarTop.svelte";
   import Debug from "./Debug.svelte";
   import ContextMenus from "./Graph/ContextMenus.svelte";
   import DataInput from "./Shiny/DataInput.svelte";
