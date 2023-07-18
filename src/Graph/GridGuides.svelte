@@ -25,12 +25,12 @@
 
     // Guidelines
     guidelinesStackOrder: 4, // z-index of guidelines
-    guidelinesTolerance: 0.5, // Tolerance distance for rendered positions of nodes' interaction.
+    guidelinesTolerance: 2, // Tolerance distance for rendered positions of nodes' interaction.
     guidelinesStyle: {
       // Set ctx properties of line. Properties are here:
       strokeStyle: "#8b7d6b", // color of geometric guidelines
       geometricGuidelineRange: 400, // range of geometric guidelines
-      range: 100, // max range of distribution guidelines
+      range: 400, // max range of distribution guidelines
       minDistRange: 10, // min range for distribution guidelines
       distGuidelineOffset: 10, // shift amount of distribution guidelines
       horizontalDistColor: "#ff0000", // color of horizontal distribution alignment
