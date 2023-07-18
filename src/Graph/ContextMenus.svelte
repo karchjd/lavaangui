@@ -56,6 +56,7 @@
               edge.addClass("label");
               edge.removeClass("nolabel");
               edge.removeClass("fromLav");
+              edge.removeClass("byLav")
             }
           },
         });
@@ -100,6 +101,8 @@
               edge.removeClass("free");
               edge.removeClass("forcefree");
               edge.removeClass("fromLav")
+              edge.removeClass("byLav")
+              edge.removeClass("hastEst")
               edge.addClass("fixed");
             }
           },
@@ -110,12 +113,13 @@
     {
       id: "free-para",
       content: "Free Parameter",
-      selector: "edge.fixed, edge.forcefree",
+      selector: "edge.fixed, edge.forcefree, edge.fromLav",
       onClickFunction: function (event) {
         var edge = event.target || event.cyTarget;
         edge.removeClass("fixed");
         edge.removeClass("forcefree");
         edge.removeClass("fromLav")
+        edge.removeClass("byLav")
         edge.addClass("free");
       },
       hasTrailingDivider: false,
@@ -129,6 +133,7 @@
         edge.removeClass("free");
         edge.removeClass("fixed");
         edge.removeClass("fromLav")
+        edge.removeClass("byLav")
         edge.addClass("forcefree");
       },
       hasTrailingDivider: true,

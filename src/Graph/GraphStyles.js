@@ -90,7 +90,7 @@ export default [
     },
   },
   {
-    selector: "edge.free.label, edge.forcefree.label",
+    selector: "edge.label, edge.label",
     style: {
       label: function (edge) {
         return edge.data("label");
@@ -114,8 +114,7 @@ export default [
     },
   },
   {
-    selector:
-      "edge.hasEst.free.nolabel, edge.hasEst.forcefree.nolabel, edge.hasEst.fromLav",
+    selector: "edge.hasEst",
     style: {
       label: function (edge) {
         return edge.data("est");
@@ -123,7 +122,7 @@ export default [
     },
   },
   {
-    selector: "edge.hasEst.free.label, edge.hasEst.forcefree.label",
+    selector: "edge.hasEst.label",
     style: {
       label: function (edge) {
         return edge.data("label") + "=" + edge.data("est");
