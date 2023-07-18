@@ -1,12 +1,9 @@
 <script>
 import { appState } from "../stores";
-  import { applyLinkedClass } from "./applyLinkedClass";
+import { applyLinkedClass } from "./applyLinkedClass";
+import {serverAvail} from "./RModelInterface.js"
 
-  function isShiny() {
-    return typeof Shiny === "object" && Shiny !== null;
-  }
-
-  if (isShiny()) {
+  if (serverAvail()) {
     //sent by server when data is loaded
     Shiny.addCustomMessageHandler("columnNames", function (columnNames) {
       applyLinkedClass(columnNames, true);

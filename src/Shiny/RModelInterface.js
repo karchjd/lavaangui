@@ -2,6 +2,10 @@ import { get } from "svelte/store";
 import { appState, cyStore } from "../stores";
 import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
 
+export function serverAvail() {
+  return typeof Shiny === "object" && Shiny !== null;
+}
+
 function containsObject(list, obj) {
   for (let i = 0; i < list.length; i++) {
     if (list[i] === obj) {
@@ -47,17 +51,18 @@ function addTerms(node, edge) {
 
 export function createSyntax(run) {
   let cy = get(cyStore);
+  let appSt = get(appState);
   let syntax = "";
   let R_script = "";
-  let loadedFileName;
   if (!run) {
-    if (get(appState).loadedFileName == null) {
-      loadedFileName = "YOUR_DATA.csv";
-    } else {
-      loadedFileName = get(appState).loadedFileName;
-    }
     R_script += "library(lavaan)" + "\n";
-    R_script += "data <- read.csv(" + get(appState).loadedFileName + ")" + "\n";
+    console.log(appSt.dataAvail);
+    if (appSt.dataAvail) {
+      R_script += "data <- read.csv(" + appSt.loadedFileName + ")" + "\n";
+    } else {
+      R_script +=
+        "#make sure your data is loaded into the 'data' variable" + "\n";
+    }
   }
 
   // measurement model

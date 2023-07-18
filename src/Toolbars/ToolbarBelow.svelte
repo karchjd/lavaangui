@@ -1,6 +1,9 @@
 <script>
   import { createSyntax } from "../Shiny/RModelInterface";
   import { appState } from "../stores";
+  import {serverAvail} from "../Shiny/RModelInterface.js"
+
+
   function tolavaan(run) {
     if (run) {
       const nodes = cy.nodes(function (node) {
@@ -24,10 +27,16 @@
       }
     }
     let R_script = createSyntax(run);
-    Shiny.setInputValue("run", run);
-    Shiny.setInputValue("R_script", R_script);
+    if(serverAvail()){
+      Shiny.setInputValue("run", run);
+    Shiny.setInputValue("R_script", R_script); 
     $appState.runCounter = $appState.runCounter + 1;
     Shiny.setInputValue("runCounter", $appState.runCounter);
+    }else{
+      document.getElementById("lavaan_syntax_R").innerText = R_script;
+    }
+    
+    
   }
 </script>
 <div class="toolbox navbar-fixed-bottom">
