@@ -33,7 +33,7 @@ function addTerms(node, edge) {
   }
 
   if (edge.hasClass("label")) {
-    label = edge.data("label");
+    const label = edge.data("label");
     if (!premultiplier) {
       formula = label + "*" + node_label;
     } else {

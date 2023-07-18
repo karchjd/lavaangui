@@ -106,7 +106,7 @@ export default [
     },
   },
   {
-    selector: "edge.fixed.nolabel",
+    selector: "edge.fixed",
     style: {
       label: function (edge) {
         return "@" + edge.data("value");
