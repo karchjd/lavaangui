@@ -80,6 +80,8 @@
   function handleMouseOut() {
     document.removeEventListener("keydown", handleKeyDown, false);
     document.removeEventListener("keyup", handleKeyUp, false);
+    eh.disableDrawMode();
+    spaceKeyDown = false;
   }
 
   function handleMousemove(event) {
