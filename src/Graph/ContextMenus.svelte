@@ -11,6 +11,7 @@
   // register extension
   cytoscape.use(contextMenus);
 
+
   let menu = [
     {
       id: "add-observed",
@@ -44,13 +45,17 @@
 
     {
       id: "label-para",
-      content: "Give Label",
+      content: "Add/Change Label",
       selector: "edge",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
           title: "Please enter a label",
           callback: function (result) {
+            if (result == ""){
+              bootbox.alert("Provide a label");
+              return false;
+            } 
             if (result !== null) {
               edge.data("label", result);
               edge.addClass("label");
@@ -99,7 +104,7 @@
             if (value == ""){
               bootbox.alert("Provide a value");
               return false;
-            }
+            } 
             if (value !== null) {
               edge.data("value", value);
               edge.removeClass("free");
@@ -194,6 +199,10 @@
           inputType: "number",
           value: parseInt(edge.style().controlPointDistances),
           callback: function (value) {
+            if (value == ""){
+              bootbox.alert("Provide a value");
+              return false;
+            } 
             if (value !== null) {
               edge.style("controlPointDistances", value);
             }
@@ -213,6 +222,10 @@
         bootbox.prompt({
           title: "Please enter a label",
           callback: function (result) {
+            if (result == ""){
+              bootbox.alert("Provide a label");
+              return false;
+            } 
             if (result !== null) {
               node.data("label", result);
             }
