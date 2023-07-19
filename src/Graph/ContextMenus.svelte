@@ -96,6 +96,10 @@
           title: "Please enter a value",
           inputType: "number",
           callback: function (value) {
+            if (value == ""){
+              bootbox.alert("Provide a value");
+              return false;
+            }
             if (value !== null) {
               edge.data("value", value);
               edge.removeClass("free");
@@ -186,7 +190,7 @@
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
           title:
-            "Please enter new value. Larger absolute values result in more curvature. Positive values revert the curvature.",
+            "Please enter new value. Larger absolute values result in more curvature. Switching the sign also reverts the curvature.",
           inputType: "number",
           value: parseInt(edge.style().controlPointDistances),
           callback: function (value) {
