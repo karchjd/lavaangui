@@ -195,7 +195,7 @@
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
           title:
-            "Please enter new value. Larger absolute values result in more curvature. Switching the sign also reverts the curvature.",
+            "Please enter new value. Larger absolute values result in more curvature. Switching the sign reverts the curvature.",
           inputType: "number",
           value: parseInt(edge.style().controlPointDistances),
           callback: function (value) {

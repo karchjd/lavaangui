@@ -1,0 +1,14 @@
+name: semgui
+title: semgui
+username:
+account: solo-fsw
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9501099
+bundleId: 7491266
+url: https://solo-fsw.shinyapps.io/semgui/
+when: 1690215561.95644
+lastSyncTime: 1690215561.95645
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .vite/deps_temp_b9b56b3a/package.json|.vite/deps_temp_d27f94f3/package.json|index.html|jsconfig.json|package-lock.json|package.json|plot_interactive.R|restart.R|svelte.config.js|vite.config.js|www/.DS_Store|examples|node_modules|src

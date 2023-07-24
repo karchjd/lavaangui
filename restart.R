@@ -4,6 +4,7 @@ library(shiny)
 system("npm run build")
 
 # move frontend to www
-unlink("www",recursive = TRUE)
-file.rename("dist","www")
+files <- list.files(path = "dist", full.names = TRUE)
+file.rename(from = files, to = paste0("www/", basename(files)))
 runApp(launch.browser = TRUE)
+  
