@@ -11,7 +11,28 @@
   // register extension
   cytoscape.use(contextMenus);
 
+  function isValidName(str) {
+    // The regex breakdown:
+    // ^: Asserts the start of a line.
+    // [a-zA-Z]: Matches any single uppercase or lowercase letter.
+    // [a-zA-Z0-9]*: Matches zero or more letters or digits.
+    // $: Asserts the end of a line.
+    const regex = /^[a-zA-Z][a-zA-Z0-9]*$/;
+    return regex.test(str);
+}
 
+function validLabel(str){
+  if (str == ""){
+    bootbox.alert("Provide a label");
+    return false;
+  } 
+  
+  if (!isValidName(str)){
+    bootbox.alert("Provide a valid label");
+    return false;
+  }
+  return true;
+}
   let menu = [
     {
       id: "add-observed",
@@ -52,10 +73,10 @@
         bootbox.prompt({
           title: "Please enter a label",
           callback: function (result) {
-            if (result == ""){
-              bootbox.alert("Provide a label");
+            if (!validLabel(result)){
               return false;
-            } 
+            }
+
             if (result !== null) {
               edge.data("label", result);
               edge.addClass("label");
@@ -222,10 +243,10 @@
         bootbox.prompt({
           title: "Please enter a label",
           callback: function (result) {
-            if (result == ""){
-              bootbox.alert("Provide a label");
+            if (!validLabel(result)){
               return false;
-            } 
+            }
+
             if (result !== null) {
               node.data("label", result);
             }
