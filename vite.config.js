@@ -7,5 +7,5 @@ export default defineConfig({
   build: {
     minify: true,
   },
-  base: "",
+  //base: "",
 });
