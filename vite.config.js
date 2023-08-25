@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [svelte()],
   build: {
     minify: true,
+    outDir: "www",
   },
   //base: "",
 });
