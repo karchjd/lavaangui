@@ -53,7 +53,8 @@ server <- function(input, output, session) {
         session$sendCustomMessage("lav_results", parameterestimates(result))
         sum_model <- summary(result, fit.measures = TRUE)
         sum_model$pe <- NULL
-        sum_model
+        #sum_model
+        parameterestimates(result)
       }
     } else {
       cat(input$R_script)
