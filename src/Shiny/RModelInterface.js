@@ -1,6 +1,7 @@
 import { get } from "svelte/store";
 import { appState, cyStore } from "../stores";
 import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
+import { addNode } from "../Graph/graphmanipulation";
 
 export function serverAvail() {
   return typeof Shiny === "object" && Shiny !== null;
@@ -64,6 +65,7 @@ export function createSyntax(run) {
     }
   }
 
+  cy.elements('.fromLav').remove();
   // measurement model
   const latentNodes = cy.nodes(function (node) {
     return node.hasClass("latent-variable");
@@ -185,9 +187,27 @@ export function createSyntax(run) {
   }
 
   R_script += "model = '\n" + syntax + "'" + "\n ";
-  R_script += "result <- sem(model, data)";
+  R_script += "result <- lavaan(model, data, " + produceLavaanOptions(appSt);
   return R_script;
 }
+
+function produceLavaanOptions(appSt){
+  return "meanstructure = " + boolToString(appSt.meanStruc) + ", int.ov.free = " + boolToString(appSt.intOvFree) + ", int.lv.free = " + boolToString(appSt.intLvFree) + 
+  ", auto.fix.first = TRUE, auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, auto.efa = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE)"
+}
+
+function boolToString(boolValue) {
+  if (boolValue == true || boolValue == "true") {
+    return "TRUE";
+  } else if (boolValue == false || boolValue == "false") {
+    return "FALSE";
+  } else if (boolValue == "default"){
+    return "\"default\""
+  }
+  console.log(boolValue)
+  throw new Error("Should not happen");
+}
+
 
 function getEdge(lhs, op, rhs) {
   let directed;
@@ -249,11 +269,43 @@ function isShiny() {
   return typeof Shiny === "object" && Shiny !== null;
 }
 
+function getConstNodePosition(cy) {
+  let totalX = 0;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  let nodeCount = cy.nodes().length;
+
+  cy.nodes().forEach(node => {
+    let position = node.position();
+    
+    // Accumulate x-values to calculate average later
+    totalX += position.x;
+    
+    // Find maximum x-value
+    if (position.x > maxX) {
+      maxX = position.x;
+    }
+    
+    // Find maximum y-value
+    if (position.y > maxY) {
+      maxY = position.y;
+    }
+  });
+
+  let middleX = totalX / nodeCount;
+  let newY = maxY + 100; // 50 units below the lowest node. Adjust as needed.
+
+  return { x: middleX, y: newY };
+}
+
+
 if (isShiny()) {
   // save all results in data attributes of the correct edges
   Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
     cy = get(cyStore);
     cy.edges(".fromLav").remove();
+    let const_added = false;
+    let added_const_id;
     for (let i = 0; i < lav_result.lhs.length; i++) {
       let existingEdge = findEdge(
         lav_result.lhs[i],
@@ -268,11 +320,24 @@ if (isShiny()) {
           lav_result.op[i],
           lav_result.rhs[i]
         );
-        const sourceId = cy
+        let sourceId;
+        if (desiredEdge.source !== 1){
+          sourceId = cy
           .nodes(function (node) {
             return node.data("label") == desiredEdge.source;
           })[0]
           .id();
+        }else{
+          if(!const_added){
+            added_const_id = addNode("constant", getConstNodePosition(cy));
+            const_added = true;
+            const added_node = cy.nodes(function (node){
+              return node.id() == added_const_id
+            })[0]
+            added_node.addClass("fromLav")
+          }
+          sourceId = added_const_id;
+        }
         const targetId = cy
           .nodes(function (node) {
             return node.data("label") == desiredEdge.target;

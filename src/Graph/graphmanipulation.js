@@ -39,6 +39,7 @@ export function addNode(nodeType, position) {
     position: finalPosition,
   });
 
+  return nodeId;
   // if (nodeType !== "constant") {
   //     let edgeId = 'edge' + edgeIdCounter++;
   //     cy.add({

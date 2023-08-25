@@ -11,6 +11,9 @@ function createCustomStore() {
     runCounter: 0,
     modelEmpty: true,
     dataAvail: false,
+    meanStruc: "default",
+    intOvFree: true,
+    intLvFree: false,
   });
 
   return {

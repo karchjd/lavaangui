@@ -1,12 +1,12 @@
 <script>
   export let name;
   export let checked;
-  export let divider;
+  export let disable;
 </script>
 
 <li>
-  <label>
-    <input type="checkbox" class="check-box" bind:checked />
+  <label class={disable ? "disabled-label" : ""}>
+    <input type="checkbox" class="check-box" bind:checked disabled={disable} />
     {#if checked}
       <span class="glyphicon glyphicon-ok check-mark" aria-hidden="true" />
     {:else}
@@ -18,9 +18,6 @@
     {name}
   </label>
 </li>
-{#if divider}
-  <li class="divider" />
-{/if}
 
 <style>
   input[type="checkbox"] {
@@ -47,5 +44,13 @@
   li label:hover,
   li label:focus {
     background-color: #f5f5f5;
+  }
+
+  .disabled-label {
+    color: #aaa; /* Grayed out text */
+  }
+
+  .disabled-label:hover {
+    cursor: not-allowed; /* Forbidden sign cursor */
   }
 </style>
