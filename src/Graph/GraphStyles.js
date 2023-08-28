@@ -88,6 +88,11 @@ export default [
       "target-arrow-shape": "triangle",
       "source-arrow-shape": "triangle",
     },
+  },{
+    selector: "edge.undirected.fromLav",
+    style: {
+      "control-point-distances": [100],
+    },
   },
   {
     selector: "edge.label, edge.label",
