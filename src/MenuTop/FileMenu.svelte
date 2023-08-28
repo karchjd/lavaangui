@@ -1,12 +1,12 @@
 <script>
-  import { cyStore, appState } from "../stores.js";
+  import { cyStore, appState, modelOptions } from "../stores.js";
   import { get } from "svelte/store";
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
   import GraphStyles from "../Graph/GraphStyles.js";
-  import { resetCounters} from "../Graph/graphmanipulation.js";
+  import { resetCounters } from "../Graph/graphmanipulation.js";
 
   function newModel() {
     if (!$appState.modelEmpty) {
@@ -18,24 +18,37 @@
           }
         }
       );
-    }else{
+    } else {
       reset();
     }
   }
 
-  function reset(){
+  function reset() {
     cy.elements().remove();
     resetCounters();
-    document.getElementById('lavaan_syntax_R').innerText = '';
+    document.getElementById("lavaan_syntax_R").innerText = "";
   }
 
   function parseModel(content) {
     reset();
-    let json = JSON.parse(content);
+
+    let combinedData = JSON.parse(content);
+
+    // for backwards compatibility, remove eventually
+    let json;
+    if ("model" in combinedData && "modelOpt" in combinedData) {
+      json = JSON.parse(combinedData.model);
+      const modelOpt = JSON.parse(combinedData.modelOpt);
+      $modelOptions = modelOpt;
+      console.log(modelOpt);
+    } else {
+      json = combinedData;
+    }
     // Set loading mode, update diagram and perform checks
     $appState.loadingMode = true;
     cy.json(json);
     cy.style(GraphStyles);
+
     if ($appState.dataAvail) {
       applyLinkedClass($appState.columnNames, false);
     }
@@ -128,14 +141,19 @@
 
     // Convert diagram data to JSON string
     const json = cy_save.json();
-    const str = JSON.stringify(json);
-    return str;
+    const model = JSON.stringify(json);
+    const modelOpt = JSON.stringify($modelOptions);
+    const combinedData = JSON.stringify({ model, modelOpt });
+    return combinedData;
   }
 
   function downloadModel() {
-    const str = jsonModel();
+    const combinedData = jsonModel();
+
     // Create a new Blob object using the JSON string
-    let blob = new Blob([str], { type: "application/json;charset=utf-8" });
+    let blob = new Blob([combinedData], {
+      type: "application/json;charset=utf-8",
+    });
     let url = URL.createObjectURL(blob);
 
     // Create and trigger download link for the JSON data
@@ -171,19 +189,32 @@
   }
 
   $: menuItems = [
-    { name: "New Model", action: newModel},
-    { name: "Load Model", action: loadModel},
-    { name: "Load Data", action: loadData},
+    { name: "New Model", action: newModel },
+    { name: "Load Model", action: loadModel },
+    { name: "Load Data", action: loadData },
     { name: "Load Model and Data", action: loadModelData, divider: true },
-    { name: "Download Model", action: downloadModel, disable: $appState.modelEmpty},
-    { name: "Remove Data", action: removeData, disable: !$appState.dataAvail},
     {
-      name: "Download Model and Data", disable: $appState.modelEmpty || !$appState.dataAvail,
+      name: "Download Model",
+      action: downloadModel,
+      disable: $appState.modelEmpty,
+    },
+    { name: "Remove Data", action: removeData, disable: !$appState.dataAvail },
+    {
+      name: "Download Model and Data",
+      disable: $appState.modelEmpty || !$appState.dataAvail,
       action: downloadModelData,
       divider: true,
     },
-    { name: "Export Model to PNG", disable: $appState.modelEmpty, action: exportPNG},
-    { name: "Export Model to JPG", disable: $appState.modelEmpty, action: exportJPG},
+    {
+      name: "Export Model to PNG",
+      disable: $appState.modelEmpty,
+      action: exportPNG,
+    },
+    {
+      name: "Export Model to JPG",
+      disable: $appState.modelEmpty,
+      action: exportJPG,
+    },
   ];
 </script>
 

@@ -192,8 +192,12 @@ export function createSyntax(run) {
 }
 
 function produceLavaanOptions(){
-  const modelOpt get(modelOptions)
-  return "meanstructure = " + boolToString(modelOpt.meanStruc) + ", int.ov.free = " + boolToString(modelOptions.intOvFree) + ", int.lv.free = " + boolToString(modelOptions.intLvFree) + 
+  const modelOpt = get(modelOptions);
+  debugger;
+  const meanStruc = boolToString(modelOpt.meanStruc);
+  const ovFree = boolToString(modelOpt.intOvFree);
+  const lvFree = boolToString(modelOpt.intLvFree);
+  return "meanstructure = " + meanStruc + ", int.ov.free = " + ovFree  + ", int.lv.free = " + lvFree + 
   ", auto.fix.first = TRUE, auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, auto.efa = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE)"
 }
 
