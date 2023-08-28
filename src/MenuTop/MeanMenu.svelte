@@ -2,13 +2,14 @@
   import Dropdown from "./helpers/Dropdown.svelte";
   import CheckItem from "./helpers/CheckItem.svelte";
   import { modelOptions } from "../stores.js";
+  import RadioItem from "./helpers/RadioItem.svelte";
+
   let name = "Mean Options";
   let structureRadios = [
     { name: "Automatic", value: "default" },
     { name: "Yes", value: "true" },
     { name: "No", value: "false" },
   ];
-  $: console.log($modelOptions.intLvFree);
   $: disabledInts = $modelOptions.meanStruc === "false";
 </script>
 
@@ -17,27 +18,11 @@
     <a tabindex="-1" href="#">Model Means?</a>
     <ul class="dropdown-menu">
       {#each structureRadios as item}
-        <li>
-          <label>
-            <input
-              type="radio"
-              name="meanStruc"
-              value={item.value}
-              bind:group={$modelOptions.meanStruc}
-            />
-            {#if $modelOptions.meanStruc === item.value}<span
-                class="glyphicon glyphicon-ok check-mark"
-                aria-hidden="true"
-              />
-            {:else}
-              <span
-                class="glyphicon glyphicon-ok check-mark invisible"
-                aria-hidden="true"
-              />
-            {/if}
-            {item.name}
-          </label>
-        </li>
+        <RadioItem
+          name={item.name}
+          value={item.value}
+          bind:group={$modelOptions.meanStruc}
+        />
       {/each}
     </ul>
     <CheckItem
@@ -100,32 +85,5 @@
     -webkit-border-radius: 6px 0 6px 6px;
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
-  }
-
-  li label {
-    display: block;
-    padding: 3px 10px;
-    clear: both;
-    font-weight: normal;
-    line-height: 1.42857143;
-    color: #333;
-    white-space: nowrap;
-    margin: 0;
-    transition: background-color 0.4s ease;
-  }
-
-  input[type="radio"] {
-    display: none;
-  }
-
-  li input {
-    margin: 0px 5px;
-    top: 2px;
-    position: relative;
-  }
-
-  li label:hover,
-  li label:focus {
-    background-color: #f5f5f5;
   }
 </style>

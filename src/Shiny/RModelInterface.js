@@ -360,6 +360,8 @@ if (isShiny()) {
             est: lav_result.est[i].toFixed(2),
             p_value: p_value,
             se: lav_result.se[i].toFixed(2),
+            ciLow: lav_result["ci.lower"][i].toFixed(2),
+            ciHigh: lav_result["ci.upper"][i].toFixed(2), 
           },
           classes:
             desiredEdge.directed +
@@ -375,6 +377,8 @@ if (isShiny()) {
         existingEdge.addClass("hasEst");
         existingEdge.data("p_value", lav_result.pvalue[i].toFixed(2));
         existingEdge.data("se", lav_result.se[i].toFixed(2));
+        existingEdge.data("ciLow", lav_result["ci.lower"][i].toFixed(2));
+        existingEdge.data("ciHigh", lav_result["ci.upper"][i].toFixed(2));
         //lavaan did fix the edge
       } else if (
         Math.abs(lav_result.est[i] - 1) < 1e-9 &&

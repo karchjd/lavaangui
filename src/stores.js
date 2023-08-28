@@ -6,7 +6,8 @@ export const ehStore = writable(0);
 export const modelOptions = writable({
   meanStruc: "default",
   intOvFree: true,
-  intLvFree: false
+  intLvFree: false,
+  view: "est"
 });
 
 function createCustomStore() {
