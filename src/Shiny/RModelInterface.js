@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { appState, cyStore } from "../stores";
+import { appState, cyStore, modelOptions } from "../stores";
 import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
 import { addNode } from "../Graph/graphmanipulation";
 
@@ -187,12 +187,13 @@ export function createSyntax(run) {
   }
 
   R_script += "model = '\n" + syntax + "'" + "\n ";
-  R_script += "result <- lavaan(model, data, " + produceLavaanOptions(appSt);
+  R_script += "result <- lavaan(model, data, " + produceLavaanOptions();
   return R_script;
 }
 
-function produceLavaanOptions(appSt){
-  return "meanstructure = " + boolToString(appSt.meanStruc) + ", int.ov.free = " + boolToString(appSt.intOvFree) + ", int.lv.free = " + boolToString(appSt.intLvFree) + 
+function produceLavaanOptions(){
+  const modelOpt get(modelOptions)
+  return "meanstructure = " + boolToString(modelOpt.meanStruc) + ", int.ov.free = " + boolToString(modelOptions.intOvFree) + ", int.lv.free = " + boolToString(modelOptions.intLvFree) + 
   ", auto.fix.first = TRUE, auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, auto.efa = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE)"
 }
 

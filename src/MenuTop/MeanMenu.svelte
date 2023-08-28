@@ -1,15 +1,15 @@
 <script>
   import Dropdown from "./helpers/Dropdown.svelte";
   import CheckItem from "./helpers/CheckItem.svelte";
-  import { appState } from "../stores.js";
+  import { modelOptions } from "../stores.js";
   let name = "Mean Options";
   let structureRadios = [
     { name: "Automatic", value: "default" },
     { name: "Yes", value: "true" },
     { name: "No", value: "false" },
   ];
-  $: console.log($appState.intLvFree);
-  $: disabledInts = $appState.meanStruc === "false";
+  $: console.log($modelOptions.intLvFree);
+  $: disabledInts = $modelOptions.meanStruc === "false";
 </script>
 
 <Dropdown {name}>
@@ -23,9 +23,9 @@
               type="radio"
               name="meanStruc"
               value={item.value}
-              bind:group={$appState.meanStruc}
+              bind:group={$modelOptions.meanStruc}
             />
-            {#if $appState.meanStruc === item.value}<span
+            {#if $modelOptions.meanStruc === item.value}<span
                 class="glyphicon glyphicon-ok check-mark"
                 aria-hidden="true"
               />
@@ -42,12 +42,12 @@
     </ul>
     <CheckItem
       name="Add intercepts for all observed variables"
-      bind:checked={$appState.intOvFree}
+      bind:checked={$modelOptions.intOvFree}
       bind:disable={disabledInts}
     />
     <CheckItem
       name="Add intercepts for all latent variables"
-      bind:checked={$appState.intLvFree}
+      bind:checked={$modelOptions.intLvFree}
       bind:disable={disabledInts}
     />
   </li>
