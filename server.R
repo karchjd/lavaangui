@@ -20,7 +20,7 @@ server <- function(input, output, session) {
       list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
     }
   })
-
+  
   observeEvent(data(), {
     df <- data()
     session$sendCustomMessage(type = "columnNames", message = colnames(df$df))
@@ -28,38 +28,41 @@ server <- function(input, output, session) {
   })
   
   output$lavaan_syntax_R <- renderPrint({
-    req(input$R_script)
-    if (input$run) {
-      data <- data()$df
-      
-      # Capture warnings using tryCatch
-      result <- tryCatch(
-        {
-          eval(parse(text = input$R_script))
-        },
-        warning = function(w) {
-          # Print the warnings
-          print(paste("Warning:", w))
-        },
-        error = function(e) {
-          # Print the errors
-          print(paste("Error:", e))
-        }
-      )
-      
-      # Check if there were no errors
-      if (inherits(result, "lavaan")) {
-        counter <- counter()
-        session$sendCustomMessage("lav_results", parameterestimates(result))
-        sum_model <- summary(result, fit.measures = TRUE)
-        sum_model$pe <- NULL
-        #sum_model
-        parameterestimates(result)
+    req(input$fromJavascript)
+    fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
+    data <- data()$df
+    model <- eval(parse(text = fromJavascript$syntax))
+    lavaanify_string <- paste0("lavaanify(model, ", fromJavascript$options)
+    model_parsed <- eval(parse(text = lavaanify_string))
+    
+    
+    lavaan_string <- paste0("lavaan(model, data, ", fromJavascript$options)
+    # Capture warnings using tryCatch
+    result <- tryCatch(
+      {
+        eval(parse(text = lavaan_string))
+      },
+      warning = function(w) {
+        # Print the warnings
+        print(paste("Warning:", w))
+      },
+      error = function(e) {
+        # Print the errors
+        print(paste("Error:", e))
       }
-    } else {
-      cat(input$R_script)
+    )
+    
+    # Check if there were no errors
+    if (inherits(result, "lavaan")) {
+      counter <- counter()
+      session$sendCustomMessage("lav_results", parameterestimates(result))
+      sum_model <- summary(result, fit.measures = TRUE)
+      sum_model$pe <- NULL
+      #sum_model
+      parameterestimates(result)
     }
-  })
+  }
+  )
   
   observe({
     req(input$triggerDownload)
@@ -98,4 +101,4 @@ server <- function(input, output, session) {
     req(input$runCounter)
     input$runCounter
   })
-}
+  }

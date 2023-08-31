@@ -65,7 +65,7 @@ export function createSyntax(run) {
     }
   }
 
-  cy.elements('.fromLav').remove();
+  cy.elements(".fromLav").remove();
   // measurement model
   const latentNodes = cy.nodes(function (node) {
     return node.hasClass("latent-variable");
@@ -185,20 +185,38 @@ export function createSyntax(run) {
       }
     }
   }
+  syntax = "'\n" + syntax + "'" + "\n ";
+  const lavOptions = produceLavaanOptions();
 
-  R_script += "model = '\n" + syntax + "'" + "\n ";
-  R_script += "result <- lavaan(model, data, " + produceLavaanOptions();
-  return R_script;
+  R_script += "model <-" + syntax;
+  R_script += "result <- lavaan(model, data, " + lavOptions;
+  if (!run) {
+    return R_script;
+  } else {
+    const for_R = {
+      options: lavOptions,
+      syntax: syntax,
+      run: run,
+    };
+    return for_R;
+  }
 }
 
-function produceLavaanOptions(){
+function produceLavaanOptions() {
   const modelOpt = get(modelOptions);
   debugger;
   const meanStruc = boolToString(modelOpt.meanStruc);
   const ovFree = boolToString(modelOpt.intOvFree);
   const lvFree = boolToString(modelOpt.intLvFree);
-  return "meanstructure = " + meanStruc + ", int.ov.free = " + ovFree  + ", int.lv.free = " + lvFree + 
-  ", auto.fix.first = TRUE, auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, auto.efa = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE)"
+  return (
+    "meanstructure = " +
+    meanStruc +
+    ", int.ov.free = " +
+    ovFree +
+    ", int.lv.free = " +
+    lvFree +
+    ", auto.fix.first = TRUE, auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, auto.efa = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE)"
+  );
 }
 
 function boolToString(boolValue) {
@@ -206,13 +224,12 @@ function boolToString(boolValue) {
     return "TRUE";
   } else if (boolValue == false || boolValue == "false") {
     return "FALSE";
-  } else if (boolValue == "default"){
-    return "\"default\""
+  } else if (boolValue == "default") {
+    return '"default"';
   }
-  console.log(boolValue)
+  console.log(boolValue);
   throw new Error("Should not happen");
 }
-
 
 function getEdge(lhs, op, rhs) {
   let directed;
@@ -280,17 +297,17 @@ function getConstNodePosition(cy) {
   let maxY = Number.NEGATIVE_INFINITY;
   let nodeCount = cy.nodes().length;
 
-  cy.nodes().forEach(node => {
+  cy.nodes().forEach((node) => {
     let position = node.position();
-    
+
     // Accumulate x-values to calculate average later
     totalX += position.x;
-    
+
     // Find maximum x-value
     if (position.x > maxX) {
       maxX = position.x;
     }
-    
+
     // Find maximum y-value
     if (position.y > maxY) {
       maxY = position.y;
@@ -302,7 +319,6 @@ function getConstNodePosition(cy) {
 
   return { x: middleX, y: newY };
 }
-
 
 if (isShiny()) {
   // save all results in data attributes of the correct edges
@@ -326,20 +342,20 @@ if (isShiny()) {
           lav_result.rhs[i]
         );
         let sourceId;
-        if (desiredEdge.source !== 1){
+        if (desiredEdge.source !== 1) {
           sourceId = cy
-          .nodes(function (node) {
-            return node.data("label") == desiredEdge.source;
-          })[0]
-          .id();
-        }else{
-          if(!const_added){
+            .nodes(function (node) {
+              return node.data("label") == desiredEdge.source;
+            })[0]
+            .id();
+        } else {
+          if (!const_added) {
             added_const_id = addNode("constant", getConstNodePosition(cy));
             const_added = true;
-            const added_node = cy.nodes(function (node){
-              return node.id() == added_const_id
-            })[0]
-            added_node.addClass("fromLav")
+            const added_node = cy.nodes(function (node) {
+              return node.id() == added_const_id;
+            })[0];
+            added_node.addClass("fromLav");
           }
           sourceId = added_const_id;
         }
@@ -361,7 +377,7 @@ if (isShiny()) {
             p_value: p_value,
             se: lav_result.se[i].toFixed(2),
             ciLow: lav_result["ci.lower"][i].toFixed(2),
-            ciHigh: lav_result["ci.upper"][i].toFixed(2), 
+            ciHigh: lav_result["ci.upper"][i].toFixed(2),
           },
           classes:
             desiredEdge.directed +

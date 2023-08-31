@@ -24,6 +24,7 @@
     "cytoscape-panzoom": "^2.5.3",
     "jszip": "^3.10.1",
     "konva": "^7.2.5",
+    "prettier-plugin-svelte": "^3.0.3",
     "shiny": "^1.0.0",
     "uuid": "^9.0.0",
     "vite-require": "^0.2.3"

@@ -1,8 +1,7 @@
 <script>
   import { createSyntax } from "../Shiny/RModelInterface";
   import { appState } from "../stores";
-  import {serverAvail} from "../Shiny/RModelInterface.js"
-
+  import { serverAvail } from "../Shiny/RModelInterface.js";
 
   function tolavaan(run) {
     if (run) {
@@ -26,19 +25,18 @@
         edges[i].removeClass("hasEst");
       }
     }
-    let R_script = createSyntax(run);
-    if(serverAvail()){
-      Shiny.setInputValue("run", run);
-    Shiny.setInputValue("R_script", R_script); 
-    $appState.runCounter = $appState.runCounter + 1;
-    Shiny.setInputValue("runCounter", $appState.runCounter);
-    }else{
-      document.getElementById("lavaan_syntax_R").innerText = R_script;
+    let for_R = createSyntax(run);
+
+    if (run && serverAvail()) {
+      Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
+      $appState.runCounter = $appState.runCounter + 1;
+      Shiny.setInputValue("runCounter", $appState.runCounter);
+    } else {
+      document.getElementById("lavaan_syntax_R").innerText = for_R;
     }
-    
-    
   }
 </script>
+
 <div class="toolbox navbar-fixed-bottom">
   <div class="btn-group" role="group">
     <button
@@ -69,8 +67,8 @@
   }
 
   .btn-group {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 </style>
