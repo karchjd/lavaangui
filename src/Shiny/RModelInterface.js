@@ -204,7 +204,6 @@ export function createSyntax(run) {
 
 function produceLavaanOptions() {
   const modelOpt = get(modelOptions);
-  debugger;
   const meanStruc = boolToString(modelOpt.meanStruc);
   const ovFree = boolToString(modelOpt.intOvFree);
   const lvFree = boolToString(modelOpt.intLvFree);
@@ -262,7 +261,7 @@ function getEdge(lhs, op, rhs) {
 
 function findEdge(lhs, op, rhs) {
   const goal_edge = getEdge(lhs, op, rhs);
-  cy = get(cyStore);
+  let cy = get(cyStore);
   const correct_edge = cy.edges(function (edge) {
     let res;
     // normal case, constant not involved
@@ -320,9 +319,91 @@ function getConstNodePosition(cy) {
   return { x: middleX, y: newY };
 }
 
+function assert(condition, message) {
+  if (!condition) {
+    throw new Error(message || "Assertion failed");
+  }
+}
+
 if (isShiny()) {
+  Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
+    cy = get(cyStore);
+    cy.edges(".fromLav").remove();
+    let const_added = false;
+    let added_const_id;
+    for (let i = 0; i < lav_model.lhs.length; i++) {
+      let existingEdge = findEdge(
+        lav_model.lhs[i],
+        lav_model.op[i],
+        lav_model.rhs[i]
+      );
+      if (lav_model.user[i] == 1) {
+        //If it is a user row make sure the path is in, otherwise throw an error
+        assert(existingEdge.length == 1);
+        //fix it if it is fixed
+        if (lav_model.free[i] == 0 && !existingEdge.hasClass("fixed")) {
+          existingEdge.addClass("fixed");
+          existingEdge.removeClass("free");
+          existingEdge.data("value", lav_model.ustart[i]);
+          existingEdge.addClass("byLav");
+        }
+      } else {
+        assert(existingEdge.length == 0);
+        const desiredEdge = getEdge(
+          lav_model.lhs[i],
+          lav_model.op[i],
+          lav_model.rhs[i]
+        );
+        let sourceId;
+        if (desiredEdge.source !== 1) {
+          sourceId = cy
+            .nodes(function (node) {
+              return node.data("label") == desiredEdge.source;
+            })[0]
+            .id();
+        } else {
+          //added edge is constant
+          if (lav_model.free[i] == 0 && lav_model.ustart[i] == 0) {
+            continue;
+          }
+          if (!const_added) {
+            added_const_id = addNode("constant", getConstNodePosition(cy));
+            const_added = true;
+            const added_node = cy.nodes(function (node) {
+              return node.id() == added_const_id;
+            })[0];
+            added_node.addClass("fromLav");
+          }
+          sourceId = added_const_id;
+        }
+        const targetId = cy
+          .nodes(function (node) {
+            return node.data("label") == desiredEdge.target;
+          })[0]
+          .id();
+
+        const edge = cy.add({
+          groups: "edges",
+          data: {
+            source: sourceId,
+            target: targetId,
+          },
+          classes: desiredEdge.directed + " fromLav" + " nolabel",
+        });
+        if (lav_model.free[i] == 0) {
+          existingEdge.addClass("fixed");
+          existingEdge.data("value", lav_model.ustart[i]);
+        } else {
+          existingEdge.addClass("free");
+        }
+        checkNodeLoop(sourceId);
+        checkNodeLoop(targetId);
+      }
+    }
+  });
+
   // save all results in data attributes of the correct edges
-  Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
+  Shiny.addCustomMessageHandler("lav_resultssss", function (lav_result) {
     cy = get(cyStore);
     cy.edges(".fromLav").remove();
     let const_added = false;

@@ -34,6 +34,7 @@ server <- function(input, output, session) {
     model <- eval(parse(text = fromJavascript$syntax))
     lavaanify_string <- paste0("lavaanify(model, ", fromJavascript$options)
     model_parsed <- eval(parse(text = lavaanify_string))
+    session$sendCustomMessage("lav_model", model_parsed)
     
     
     lavaan_string <- paste0("lavaan(model, data, ", fromJavascript$options)
@@ -59,7 +60,7 @@ server <- function(input, output, session) {
       sum_model <- summary(result, fit.measures = TRUE)
       sum_model$pe <- NULL
       #sum_model
-      parameterestimates(result)
+      partable(result)
     }
   }
   )
