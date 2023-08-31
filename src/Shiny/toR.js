@@ -59,7 +59,6 @@ export function createSyntax(run) {
     }
   }
 
-  cy.elements(".fromLav").remove();
   // measurement model
   const latentNodes = cy.nodes(function (node) {
     return node.hasClass("latent-variable");

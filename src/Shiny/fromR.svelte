@@ -116,9 +116,7 @@
 
     // parses model
     Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
-      cy.edges(".fromLav").remove();
       cy = get(cyStore);
-      cy.edges(".fromLav").remove();
       let const_added = false;
       let added_const_id;
       for (let i = 0; i < lav_model.lhs.length; i++) {

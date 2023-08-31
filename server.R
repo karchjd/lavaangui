@@ -29,6 +29,7 @@ server <- function(input, output, session) {
   
   output$lavaan_syntax_R <- renderPrint({
     req(input$fromJavascript)
+    counter <- counter() #to invalidate cache
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     data <- data()$df
     model <- eval(parse(text = fromJavascript$syntax))
@@ -36,31 +37,32 @@ server <- function(input, output, session) {
     model_parsed <- eval(parse(text = lavaanify_string))
     session$sendCustomMessage("lav_model", model_parsed)
     
-    
-    lavaan_string <- paste0("lavaan(model, data, ", fromJavascript$options)
-    # Capture warnings using tryCatch
-    result <- tryCatch(
-      {
-        eval(parse(text = lavaan_string))
-      },
-      warning = function(w) {
-        # Print the warnings
-        print(paste("Warning:", w))
-      },
-      error = function(e) {
-        # Print the errors
-        print(paste("Error:", e))
+    if(fromJavascript$mode == 2){
+      lavaan_string <- paste0("lavaan(model, data, ", fromJavascript$options)
+      # Capture warnings using tryCatch
+      result <- tryCatch(
+        {
+          eval(parse(text = lavaan_string))
+        },
+        warning = function(w) {
+          # Print the warnings
+          print(paste("Warning:", w))
+        },
+        error = function(e) {
+          # Print the errors
+          print(paste("Error:", e))
+        }
+      )
+      
+      # Check if there were no errors
+      if (inherits(result, "lavaan")) {
+        session$sendCustomMessage("lav_results", parameterestimates(result))
+        sum_model <- summary(result, fit.measures = TRUE)
+        sum_model$pe <- NULL
+        #sum_model
+        partable(result)
       }
-    )
-    
-    # Check if there were no errors
-    if (inherits(result, "lavaan")) {
-      counter <- counter()
-      session$sendCustomMessage("lav_results", parameterestimates(result))
-      sum_model <- summary(result, fit.measures = TRUE)
-      sum_model$pe <- NULL
-      #sum_model
-      partable(result)
+      
     }
   }
   )

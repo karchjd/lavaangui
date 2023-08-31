@@ -6,8 +6,8 @@
     return typeof Shiny === "object" && Shiny !== null;
   }
 
-  function tolavaan(run) {
-    if (run) {
+  function tolavaan(mode) {
+    if (mode == 2) {
       const nodes = cy.nodes(function (node) {
         return node.hasClass("observed-variable");
       });
@@ -22,15 +22,17 @@
           return;
         }
       }
-      const edges = cy.edges();
-      for (var i = 0; i < edges.length; i++) {
-        edges[i].removeData("est");
-        edges[i].removeClass("hasEst");
-      }
     }
-    let for_R = createSyntax(run);
+    cy.elements(".fromLav").remove();
+    const edges = cy.edges();
+    for (var i = 0; i < edges.length; i++) {
+      edges[i].removeData("est");
+      edges[i].removeClass("hasEst");
+    }
+    let for_R = createSyntax(mode > 0);
 
-    if (run && serverAvail()) {
+    if (mode > 0 && serverAvail()) {
+      for_R.mode = mode;
       Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
       $appState.runCounter = $appState.runCounter + 1;
       Shiny.setInputValue("runCounter", $appState.runCounter);
@@ -46,7 +48,7 @@
       type="button"
       class="btn btn-default"
       on:click={() => {
-        tolavaan(false);
+        tolavaan(0);
       }}
     >
       Create Script
@@ -55,7 +57,16 @@
       type="button"
       class="btn btn-default"
       on:click={() => {
-        tolavaan(true);
+        tolavaan(1);
+      }}
+    >
+      Show Full Model
+    </button>
+    <button
+      type="button"
+      class="btn btn-default"
+      on:click={() => {
+        tolavaan(2);
       }}
     >
       Run lavaan
