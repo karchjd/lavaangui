@@ -1,7 +1,10 @@
 <script>
-  import { createSyntax } from "../Shiny/RModelInterface";
   import { appState } from "../stores";
-  import { serverAvail } from "../Shiny/RModelInterface.js";
+  import { createSyntax } from "../Shiny/toR";
+
+  function serverAvail() {
+    return typeof Shiny === "object" && Shiny !== null;
+  }
 
   function tolavaan(run) {
     if (run) {

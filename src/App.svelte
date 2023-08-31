@@ -9,7 +9,7 @@
   import ContextMenus from "./Graph/ContextMenus.svelte";
   import DataInput from "./Shiny/DataInput.svelte";
   import ToolbarBelow from "./Toolbars/ToolbarBelow.svelte";
-  import RDataInterface from "./Shiny/RDataInterface.svelte";
+  import FromR from "./Shiny/fromR.svelte";
   import DownloadModelData from "./Shiny/DownloadModelData.svelte";
   import Zoom from "./Graph/Zoom.svelte";
   import MainContainer from "./Graph/MainContainer.svelte";
@@ -28,7 +28,5 @@
 <ToolbarBelow />
 <Debug />
 <DataInput />
-<RDataInterface />
+<FromR />
 <DownloadModelData />
-
-
