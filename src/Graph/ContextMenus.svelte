@@ -4,7 +4,7 @@
   let cy = get(cyStore);
   import cytoscape from "cytoscape";
   import contextMenus from "cytoscape-context-menus";
-  import 'cytoscape-context-menus/cytoscape-context-menus.css';
+  import "cytoscape-context-menus/cytoscape-context-menus.css";
   import { onMount } from "svelte";
   import { addNode } from "./graphmanipulation.js";
 
@@ -19,20 +19,20 @@
     // $: Asserts the end of a line.
     const regex = /^[a-zA-Z][a-zA-Z0-9]*$/;
     return regex.test(str);
-}
-
-function validLabel(str){
-  if (str == ""){
-    bootbox.alert("Provide a label");
-    return false;
-  } 
-  
-  if (!isValidName(str)){
-    bootbox.alert("Provide a valid label");
-    return false;
   }
-  return true;
-}
+
+  function validLabel(str) {
+    if (str == "") {
+      bootbox.alert("Provide a label");
+      return false;
+    }
+
+    if (!isValidName(str)) {
+      bootbox.alert("Provide a valid label");
+      return false;
+    }
+    return true;
+  }
   let menu = [
     {
       id: "add-observed",
@@ -67,13 +67,13 @@ function validLabel(str){
     {
       id: "label-para",
       content: "Add/Change Label",
-      selector: "edge",
+      selector: "edge.fromUser",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
           title: "Please enter a label",
           callback: function (result) {
-            if (!validLabel(result)){
+            if (!validLabel(result)) {
               return false;
             }
 
@@ -82,7 +82,7 @@ function validLabel(str){
               edge.addClass("label");
               edge.removeClass("nolabel");
               edge.removeClass("fromLav");
-              edge.removeClass("byLav")
+              edge.removeClass("byLav");
             }
           },
         });
@@ -105,7 +105,7 @@ function validLabel(str){
     {
       id: "remove-edge",
       content: "Delete edge",
-      selector: "edge",
+      selector: "edge.fromUser",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.remove();
@@ -115,24 +115,24 @@ function validLabel(str){
     {
       id: "fix-para",
       content: "Fix Parameter",
-      selector: "edge.free, edge.forcefree",
+      selector: "edge.free.fromUser, edge.forcefree.fromUser",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
           title: "Please enter a value",
           inputType: "number",
           callback: function (value) {
-            if (value == ""){
+            if (value == "") {
               bootbox.alert("Provide a value");
               return false;
-            } 
+            }
             if (value !== null) {
               edge.data("value", value);
               edge.removeClass("free");
               edge.removeClass("forcefree");
-              edge.removeClass("fromLav")
-              edge.removeClass("byLav")
-              edge.removeClass("hasEst")
+              edge.removeClass("fromLav");
+              edge.removeClass("byLav");
+              edge.removeClass("hasEst");
               edge.addClass("fixed");
             }
           },
@@ -143,13 +143,13 @@ function validLabel(str){
     {
       id: "free-para",
       content: "Free Parameter",
-      selector: "edge.fixed, edge.forcefree, edge.fromLav",
+      selector: "edge.fixed.fromUser, edge.forcefree.fromUser",
       onClickFunction: function (event) {
         var edge = event.target || event.cyTarget;
         edge.removeClass("fixed");
         edge.removeClass("forcefree");
-        edge.removeClass("fromLav")
-        edge.removeClass("byLav")
+        edge.removeClass("fromLav");
+        edge.removeClass("byLav");
         edge.addClass("free");
       },
       hasTrailingDivider: false,
@@ -157,13 +157,13 @@ function validLabel(str){
     {
       id: "free-force-para",
       content: "Force Parameter Free",
-      selector: "edge.free, edge.fixed",
+      selector: "edge.free.fromUser, edge.fixed.fromUser",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.removeClass("free");
         edge.removeClass("fixed");
-        edge.removeClass("fromLav")
-        edge.removeClass("byLav")
+        edge.removeClass("fromLav");
+        edge.removeClass("byLav");
         edge.addClass("forcefree");
       },
       hasTrailingDivider: true,
@@ -172,7 +172,7 @@ function validLabel(str){
     {
       id: "revert-arrow",
       content: "Revert Direction",
-      selector: 'edge[isMean="0"].directed',
+      selector: 'edge[isMean="0"].directed.fromUser',
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         const sourceId = edge.source().id();
@@ -187,7 +187,7 @@ function validLabel(str){
     {
       id: "set-undirected",
       content: "Set Undirected",
-      selector: 'edge[isMean="0"].directed',
+      selector: 'edge[isMean="0"].directed.fromUser',
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.removeClass("directed");
@@ -199,7 +199,7 @@ function validLabel(str){
     {
       id: "set-arrow",
       content: "Set Directed",
-      selector: "edge.undirected",
+      selector: "edge.undirected.fromUser",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.removeClass("undirected");
@@ -220,15 +220,27 @@ function validLabel(str){
           inputType: "number",
           value: parseInt(edge.style().controlPointDistances),
           callback: function (value) {
-            if (value == ""){
+            if (value == "") {
               bootbox.alert("Provide a value");
               return false;
-            } 
+            }
             if (value !== null) {
               edge.style("controlPointDistances", value);
             }
           },
         });
+      },
+      hasTrailingDivider: false,
+    },
+
+    {
+      id: "change-fromUser",
+      content: " Explicitly Include in Model",
+      selector: "edge",
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.removeClass("fromLav");
+        edge.addClass("fromUser");
       },
       hasTrailingDivider: false,
     },
@@ -243,7 +255,7 @@ function validLabel(str){
         bootbox.prompt({
           title: "Please enter a label",
           callback: function (result) {
-            if (!validLabel(result)){
+            if (!validLabel(result)) {
               return false;
             }
 
@@ -251,8 +263,8 @@ function validLabel(str){
               node.data("label", result);
             }
           },
-        })
-      }
+        });
+      },
     },
     {
       id: "remove-node",
