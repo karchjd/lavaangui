@@ -1,5 +1,5 @@
 <script>
-  import { cyStore } from "../stores.js";
+  import { cyStore } from "./stores.js";
   import { get } from "svelte/store";
 
   let cy = get(cyStore);

@@ -102,6 +102,21 @@
   }
 
   function loadModelData() {
+    if (!$appState.modelEmpty) {
+      bootbox.confirm(
+        "Are you sure you want to load a model? This will delete the current model.",
+        function (result) {
+          if (result) {
+            uploadModelData();
+          }
+        }
+      );
+    } else {
+      uploadModelData();
+    }
+  }
+
+  function uploadModelData() {
     // Create file input element
     let input = window.$("<input>").attr({ type: "file", accept: ".zip" });
 
