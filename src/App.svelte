@@ -13,6 +13,7 @@
   import DownloadModelData from "./Shiny/DownloadModelData.svelte";
   import Zoom from "./Graph/Zoom.svelte";
   import MainContainer from "./Graph/MainContainer.svelte";
+  import DuckTapeFixes from "./DuckTapeFixes.svelte";
 </script>
 
 <Init />
@@ -30,3 +31,4 @@
 <DataInput />
 <FromR />
 <DownloadModelData />
+<DuckTapeFixes />
