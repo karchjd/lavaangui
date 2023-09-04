@@ -33,8 +33,9 @@ server <- function(input, output, session) {
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     data <- data()$df
     model <- eval(parse(text = fromJavascript$syntax))
-    lavaanify_string <- paste0("lavaanify(model, ", fromJavascript$options)
-    model_parsed <- eval(parse(text = lavaanify_string))
+    lavaan_parse_string <- paste0("lavaan(model, ", fromJavascript$options)
+    lavaan_model <- eval(parse(text = lavaan_parse_string))
+    model_parsed <- parTable(lavaan_model)
     session$sendCustomMessage("lav_model", model_parsed)
     
     if(fromJavascript$mode == 2){
