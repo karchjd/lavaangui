@@ -9,6 +9,7 @@ server <- function(input, output, session) {
     imported <- TRUE
   }
   
+  ## load the data
   data <- reactive({
     req(input$fileInput)
     if (is.null(input$fileInput$content)) {
@@ -21,24 +22,29 @@ server <- function(input, output, session) {
     }
   })
   
+  ## let javascript know about variable names and file name
   observeEvent(data(), {
     df <- data()
     session$sendCustomMessage(type = "columnNames", message = colnames(df$df))
     session$sendCustomMessage("fname", message = df$name)
   })
   
+  ## run lavaan, send results to javascript, show results output windows
   output$lavaan_syntax_R <- renderPrint({
     req(input$fromJavascript)
     counter <- counter() #to invalidate cache
+    
+    ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
-    data <- data()$df
     model <- eval(parse(text = fromJavascript$syntax))
     lavaan_parse_string <- paste0("lavaan(model, ", fromJavascript$options)
     lavaan_model <- eval(parse(text = lavaan_parse_string))
     model_parsed <- parTable(lavaan_model)
     session$sendCustomMessage("lav_model", model_parsed)
     
+    ## obtain estimates and send to javascript
     if(fromJavascript$mode == 2){
+      data <- data()$df
       lavaan_string <- paste0("lavaan(model, data, ", fromJavascript$options)
       # Capture warnings using tryCatch
       result <- tryCatch(
@@ -71,6 +77,7 @@ server <- function(input, output, session) {
   }
   )
   
+  ## download stuff, still needed?
   observe({
     req(input$triggerDownload)
     # Start the download

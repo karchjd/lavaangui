@@ -36,7 +36,7 @@
       Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
       $appState.runCounter = $appState.runCounter + 1;
       Shiny.setInputValue("runCounter", $appState.runCounter);
-    } else {
+    } else if (mode == 0) {
       document.getElementById("lavaan_syntax_R").innerText = for_R;
     }
   }
