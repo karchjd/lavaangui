@@ -1,6 +1,8 @@
 server <- function(input, output, session) {
   library(lavaan)
   library(zip)
+  library(reader)
+  library(tools)
   shinyjs::useShinyjs(html = TRUE)
   
   imported <- FALSE
@@ -9,16 +11,42 @@ server <- function(input, output, session) {
     imported <- TRUE
   }
   
+  read_auto <- function(filepath) {
+    # Determine file extension
+    file_ext <- tools::file_ext(filepath)
+    
+    # Load appropriate package and read data based on file extension
+    switch(file_ext,
+           csv = {
+             library(readr, quietly = TRUE)
+             data <- readr::read_csv(filepath)
+           },
+           xlsx = {
+             library(readxl, quietly = TRUE)
+             data <- readxl::read_excel(filepath)
+           },
+           sav = {
+             library(haven, quietly = TRUE)
+             data <- haven::read_sav(filepath)
+           },
+           rds = {
+             data <- readRDS(filepath)
+           },
+           stop("Unsupported or unhandled file format.")
+    )
+    return(data)
+  }
+  
   ## load the data
   data <- reactive({
     req(input$fileInput)
     if (is.null(input$fileInput$content)) {
-      list(df = read.csv(input$fileInput$datapath), name = input$fileInput$name)
+      list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name)
     } else {
       content <- input$fileInput$content
       decoded <- base64enc::base64decode(content)
       # Read content into a data frame
-      list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
+      list(df = read_auto(textConnection(rawToChar(decoded))), name = "data.csv")
     }
   })
   

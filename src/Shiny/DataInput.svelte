@@ -13,7 +13,7 @@
           name="fileInput"
           type="file"
           style="position: absolute !important; top: -99999px !important; left: -99999px !important;"
-          accept=".csv"
+          accept=".csv,.sav, .xlsx, .rds"
         />
       </span>
     </label>
