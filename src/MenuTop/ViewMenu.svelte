@@ -92,7 +92,7 @@
     <CheckItem
       bind:name={item.name}
       bind:checked={item.checked}
-      disable="false"
+      disable={false}
     />
   {/each}
   <li class="divider" />
