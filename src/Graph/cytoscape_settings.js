@@ -1,4 +1,4 @@
-export default [
+export const graphStyles = [
   {
     selector: "node",
     style: {
@@ -161,3 +161,32 @@ export default [
     },
   },
 ];
+
+export const graphSettings = {
+    autoungrabify: false,
+    autolock: false,
+    style: graphStyles,
+    minZoom: 0.2,
+    maxZoom: 5,
+};
+
+export const ehSettings = {
+  preview: false, // disables the ghost edge preview
+  hoverDelay: 150, // time spend over a target node before it's considered a hover
+  handleNodes: "node", // selector/filter for whether edges can be made from a given node
+  snap: true, // when enabled, the edge can be drawn by just moving close to a target node (can be confusing on compound graphs because you don't need to actually start on the node itself to start drawing)
+  handleColor: "#ff0000", // bright red
+  handleSize: 10, // increase the size
+  canConnect: function (sourceNode, targetNode) {
+        // Allow connection if it doesn't create a parallel edge
+        return !cy.elements(
+          'edge[source = "' +
+            sourceNode.id() +
+            '"][target = "' +
+            targetNode.id() +
+            '"]'
+        ).length;
+      },
+};
+ 
+

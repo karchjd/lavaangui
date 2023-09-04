@@ -5,7 +5,7 @@
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
-  import GraphStyles from "../Graph/GraphStyles.js";
+  import { graphSettings, graphStyles } from "../Graph/cytoscape_settings.js";
   import { resetCounters } from "../Graph/graphmanipulation.js";
 
   function newModel() {
@@ -24,6 +24,7 @@
   }
 
   function reset() {
+    let cy = get(cyStore);
     cy.elements().remove();
     resetCounters();
     document.getElementById("lavaan_syntax_R").innerText = "";
@@ -33,7 +34,7 @@
     reset();
 
     let combinedData = JSON.parse(content);
-
+    let cy = get(cyStore);
     // for backwards compatibility, remove eventually
     let json;
     if ("model" in combinedData && "modelOpt" in combinedData) {
@@ -47,7 +48,11 @@
     // Set loading mode, update diagram and perform checks
     $appState.loadingMode = true;
     cy.json(json);
-    cy.style(GraphStyles);
+    cy.style(graphStyles);
+    cy.minZoom(graphSettings.minZoom);
+    cy.maxZoom(graphSettings.maxZoom);
+    cy.autolock(graphSettings.autolock);
+    cy.autoungrabify(graphSettings.autoungrabify);
 
     if ($appState.dataAvail) {
       applyLinkedClass($appState.columnNames, false);
