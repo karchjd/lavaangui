@@ -10,6 +10,8 @@
     autoungrabify: false,
     autolock: false,
     style: GraphStyles,
+    minZoom: 0.2,
+    maxZoom: 5,
   });
 
   cy.boxSelectionEnabled(true);
