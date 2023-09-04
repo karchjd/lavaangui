@@ -207,7 +207,7 @@ function produceLavaanOptions() {
     ovFree +
     ", int.lv.free = " +
     lvFree +
-    ", auto.fix.first = TRUE, auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, auto.efa = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE)"
+    ", auto.fix.first = TRUE, auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, auto.efa = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE, fixed.x = FALSE)"
   );
 }
 
