@@ -1,5 +1,5 @@
 <script>
-  import { appState } from "../stores";
+  import { appState, dataInfo } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass.js";
   import { get } from "svelte/store";
   import { cyStore } from "../stores";
@@ -103,18 +103,15 @@
 
   if (serverAvail()) {
     //sent by server when data is loaded
-    Shiny.addCustomMessageHandler("columnNames", function (columnNames) {
-      applyLinkedClass(columnNames, true);
+    Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
       $appState.dataAvail = true;
-      $appState.columnNames = columnNames;
+      debugger;
+      applyLinkedClass(data_info.columns, true);
+      $dataInfo = data_info;
+      debugger;
     });
 
-    //sent by server when data is loaded
-    Shiny.addCustomMessageHandler("fname", function (fname) {
-      $appState.loadedFileName = fname;
-    });
-
-    // parses model
+    // parse model
     Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
       cy = get(cyStore);
       let const_added = false;

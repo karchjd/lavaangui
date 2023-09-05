@@ -1,67 +1,60 @@
 <script>
   import { addNode } from "../Graph/graphmanipulation.js";
   import { appState } from "../stores";
+  import DataInfo from "./DataInfo.svelte";
   let state = {};
 
-let unsubscribe = appState.subscribe(newState => {
-  state = newState;
-});
-
+  let unsubscribe = appState.subscribe((newState) => {
+    state = newState;
+  });
 </script>
 
 <div class="toolbox">
-  <div id="data">
-  {#if state.dataAvail}
-    <p> {state.loadedFileName} is loaded</p>
-  {:else}
-    <p>No Data loaded</p>
-  {/if}
- </div>
+  <DataInfo />
   <div id="buttons">
     <button
-    id="add-manifest-variable"
-    title="Create Observed Variable"
-    on:click={() => {
-      addNode("observed-variable");
-    }}
-  />
-  <button
-    id="add-latent-variable"
-    title="Create Latent Variable"
-    on:click={() => {
-      addNode("latent-variable");
-    }}
-  />
-  <button
-    id="add-constant-variable"
-    title="Create Constant Variable"
-    on:click={() => {
-      addNode("constant");
-    }}
-  />
+      id="add-manifest-variable"
+      title="Create Observed Variable"
+      on:click={() => {
+        addNode("observed-variable");
+      }}
+    />
+    <button
+      id="add-latent-variable"
+      title="Create Latent Variable"
+      on:click={() => {
+        addNode("latent-variable");
+      }}
+    />
+    <button
+      id="add-constant-variable"
+      title="Create Constant Variable"
+      on:click={() => {
+        addNode("constant");
+      }}
+    />
   </div>
 </div>
-  
 
 <style>
   .toolbox {
     height: 30px;
     display: flex;
-    justify-content: space-between; 
-    align-items: center; 
+    justify-content: space-between;
+    align-items: center;
   }
 
-  #buttons{
-    margin: 0 auto; 
+  #buttons {
+    margin: 0 auto;
   }
 
-  #data{
-    margin-left:10px;
+  #data {
+    margin-left: 10px;
     margin-bottom: 0px;
     padding: 1px;
     background-color: white;
     border: solid 1px black;
-    height:20px;
+    height: 20px;
   }
 
   button {

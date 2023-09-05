@@ -14,8 +14,10 @@
   import Zoom from "./Graph/Zoom.svelte";
   import MainContainer from "./Graph/MainContainer.svelte";
   import DuckTapeFixes from "./DuckTapeFixes.svelte";
+  import DataInfoModal from "./Toolbars/DataInfoModal.svelte";
 </script>
 
+<DataInfoModal />
 <Init />
 <MenuTop />
 <MainContainer>

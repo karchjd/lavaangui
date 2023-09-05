@@ -3,6 +3,7 @@ server <- function(input, output, session) {
   library(zip)
   library(reader)
   library(tools)
+  library(vtable)
   shinyjs::useShinyjs(html = TRUE)
   
   imported <- FALSE
@@ -46,15 +47,25 @@ server <- function(input, output, session) {
       content <- input$fileInput$content
       decoded <- base64enc::base64decode(content)
       # Read content into a data frame
-      list(df = read_auto(textConnection(rawToChar(decoded))), name = "data.csv")
+      list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
     }
   })
   
   ## let javascript know about variable names and file name
+  ## needed?
   observeEvent(data(), {
-    df <- data()
-    session$sendCustomMessage(type = "columnNames", message = colnames(df$df))
-    session$sendCustomMessage("fname", message = df$name)
+    df <- data()$df
+    
+    sum_table <- paste0(capture.output(sumtable(data()$df, out = "htmlreturn", title = "")), collapse = "")
+    remove_string <- "<table class=\"headtab\"> <tr><td style=\"text-align:left\">sumtable {vtable}</td> <td style=\"text-align:right\">Summary Statistics</td></tr></table> <h1>  </h1>"
+    sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
+    remove_string <- "<title>Summary Statistics</title>"
+    sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
+    
+        
+    data_info <- list(name = data()$name, columns = colnames(df),
+                            summary =  sum_table)
+    session$sendCustomMessage(type = "dataInfo", message = data_info)
   })
   
   ## run lavaan, send results to javascript, show results output windows
