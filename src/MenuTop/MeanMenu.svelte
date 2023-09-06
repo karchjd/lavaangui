@@ -15,7 +15,7 @@
 
 <Dropdown {name}>
   <li class="dropdown-submenu">
-    <a tabindex="-1" href="#">Model Means?</a>
+    <a tabindex="-1" href={"#"}>Model Means?</a>
     <ul class="dropdown-menu">
       {#each structureRadios as item}
         <RadioItem
@@ -73,17 +73,5 @@
 
   .dropdown-submenu:hover > a:after {
     border-left-color: #fff;
-  }
-
-  .dropdown-submenu.pull-left {
-    float: none;
-  }
-
-  .dropdown-submenu.pull-left > .dropdown-menu {
-    left: -100%;
-    margin-left: 10px;
-    -webkit-border-radius: 6px 0 6px 6px;
-    -moz-border-radius: 6px 0 6px 6px;
-    border-radius: 6px 0 6px 6px;
   }
 </style>

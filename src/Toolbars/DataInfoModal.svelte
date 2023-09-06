@@ -158,20 +158,12 @@
 </div>
 
 <style>
-  p {
-    font-size: smaller;
-  }
   table {
     border: 0px;
     border-collapse: collapse;
     font-size: smaller;
     table-layout: fixed;
     margin-left: 0%;
-    margin-right: auto;
-  }
-  .headtab {
-    width: 100%;
-    margin-left: auto;
     margin-right: auto;
   }
   th {
