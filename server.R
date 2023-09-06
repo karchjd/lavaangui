@@ -68,7 +68,6 @@ server <- function(input, output, session) {
     
     data_info <- list(name = data$name, columns = colnames(df),
                       summary = create_summary(data$df))
-    cat(data_info$summary, file = stderr())
     session$sendCustomMessage(type = "dataInfo", message = data_info)
     return(data)
     })
@@ -78,9 +77,9 @@ server <- function(input, output, session) {
   })
                
   data <- reactive({
-    local_data = data();
+    local_data = data_content()
     if(!is.null(input$newnames)){
-      names(local_data$df) <- input$newnames;
+      names(local_data$df) <- jsonlite::fromJSON(input$newnames);
     }
     return(local_data)
   })

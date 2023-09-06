@@ -261,6 +261,15 @@
 
             if (result !== null) {
               node.data("label", result);
+              let columnNames = $appState.columnNames;
+              if (columnNames && columnNames.includes(node.data("label"))) {
+                node.addClass("linked");
+                if (!$appState.loadingMode) {
+                  bootbox.alert("Variable linked with data set");
+                }
+              } else {
+                node.removeClass("linked");
+              }
             }
           },
         });
@@ -284,6 +293,7 @@
         const node = event.target || event.cyTarget;
         node.removeClass("observed-variable");
         node.addClass("latent-variable");
+        node.removeClass("linked");
       },
       hasTrailingDivider: false,
     },
@@ -296,6 +306,13 @@
         const node = event.target || event.cyTarget;
         node.removeClass("latent-variable");
         node.addClass("observed-variable");
+        let columnNames = $appState.columnNames;
+        if (columnNames && columnNames.includes(node.data("label"))) {
+          node.addClass("linked");
+          if (!$appState.loadingMode) {
+            bootbox.alert("Variable linked with data set");
+          }
+        }
       },
     },
   ];

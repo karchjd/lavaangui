@@ -46,13 +46,10 @@
   });
 
   let unsubscribe3 = columnNamesSTore.subscribe((newState) => {
-    if (
-      state.dataAvail &&
-      state.columnNames !== undefined &&
-      state.ids !== undefined
-    ) {
-      if (!arraysAreEqual(state.columnNames, state.ids)) {
-        Shiny.setInputValue("newnames", JSON.stringify(newState.columns));
+    if (state.dataAvail && newState !== undefined && state.ids !== undefined) {
+      if (!arraysAreEqual(newState, state.ids)) {
+        Shiny.setInputValue("newnames", JSON.stringify(newState));
+        console.log("sent new names to R");
       }
     }
   });
@@ -127,7 +124,7 @@
             <th style="width: 11%; text-align: right">Max</th>
           </tr>
           {#if summaryAvail}
-            {#each state.columnNames as variable, i}
+            {#each $appState.columnNames as variable, i}
               {@const tdsAfter = getTdsAfterId(state.ids[i])}
               <tr>
                 <td style="width: 22%; text-align: left"
