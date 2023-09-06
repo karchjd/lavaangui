@@ -1,12 +1,5 @@
 <script>
   import { appState } from "../stores";
-  let state;
-  let name;
-
-  let unsubscribe = appState.subscribe((newState) => {
-    state = newState;
-    name = newState.loadFileName;
-  });
 
   function showInfo() {
     window.$("#data-modal").modal();
@@ -16,14 +9,25 @@
 </script>
 
 <div id="data">
-  {#if state.dataAvail}
+  {#if $appState.dataAvail}
     <a
       href={"#"}
       on:click={showInfo}
       data-toggle="tooltip"
-      title="View Summary Statistics">{name} is loaded</a
+      title="View Summary Statistics">{$appState.loadFileName} is loaded</a
     >
   {:else}
     <p>No Data loaded</p>
   {/if}
 </div>
+
+<style>
+  #data {
+    margin-left: 10px;
+    margin-bottom: 0px;
+    padding: 1px;
+    background-color: white;
+    border: solid 1px black;
+    height: 20px;
+  }
+</style>

@@ -7,6 +7,7 @@ export default defineConfig({
   build: {
     minify: false,
     outDir: "www",
+    sourcemap: true,
   },
   //base: "",
 });

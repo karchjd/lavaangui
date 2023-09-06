@@ -104,9 +104,11 @@
   if (serverAvail()) {
     //sent by server when data is loaded
     Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
-      $appState.dataAvail = true;
       applyLinkedClass(data_info.columns, true);
-      $appState.columnNames = data_info.columns;
+      $appState.columnNames = [...data_info.columns];
+      $appState.ids = [...data_info.columns];
+      $appState.loadFileName = data_info.name;
+      $appState.dataAvail = true;
       $dataInfo = data_info.summary;
     });
 

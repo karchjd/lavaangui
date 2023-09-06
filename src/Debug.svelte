@@ -6,7 +6,6 @@
 
   const unsubscribe = appState.subscribe((state) => {
     window.appState = state;
-    window.dataInfo = dataInfo;
   });
 
   const unsubscribe2 = dataInfo.subscribe((state) => {

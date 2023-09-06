@@ -2,6 +2,7 @@
   import { appState, dataInfo, columnNamesSTore } from "../stores";
   let state;
   let summary;
+  let summaryAvail = false;
 
   let unsubscribe = appState.subscribe((newState) => {
     state = newState;
@@ -23,22 +24,33 @@
   }
 
   let unsubscribe2 = dataInfo.subscribe((newState) => {
-    if (state.dataAvail) {
+    if (
+      state.dataAvail &&
+      state.columnNames !== undefined &&
+      state.ids !== undefined
+    ) {
       if (arraysAreEqual(state.columnNames, state.ids)) {
         summary = newState;
         parser = new DOMParser();
         doc = parser.parseFromString(summary, "text/html");
         tds = Array.from(doc.querySelectorAll("td"));
+        summaryAvail = true;
       } else {
         throw new Error(
           "Columnnames and ids where not the same after dataInfo was updated, should never happene"
         );
       }
+    } else {
+      summaryAvail = false;
     }
   });
 
   let unsubscribe3 = columnNamesSTore.subscribe((newState) => {
-    if (state.dataAvail) {
+    if (
+      state.dataAvail &&
+      state.columnNames !== undefined &&
+      state.ids !== undefined
+    ) {
       if (!arraysAreEqual(state.columnNames, state.ids)) {
         Shiny.setInputValue("newnames", JSON.stringify(newState.columns));
       }
@@ -103,46 +115,44 @@
         <h4 class="modal-title">Data Information</h4>
       </div>
       <div class="modal-body" id="data-content">
-        <body>
-          <table>
-            <tr>
-              <th style="width: 22%; text-align: left">Variable</th>
-              <th style="width: 11%; text-align: right">N</th>
-              <th style="width: 11%; text-align: right">Mean</th>
-              <th style="width: 11%; text-align: right">Std. Dev.</th>
-              <th style="width: 11%; text-align: right">Min</th>
-              <th style="width: 11%; text-align: right">Pctl. 25</th>
-              <th style="width: 11%; text-align: right">Pctl. 75</th>
-              <th style="width: 11%; text-align: right">Max</th>
-            </tr>
-            {#if state.dataAvail}
-              {#each $dataInfo.columns as variable, i}
-                {@const tdsAfter = getTdsAfterId($dataInfo.ids[i])}
-                <tr>
-                  <td style="width: 22%; text-align: left"
-                    ><input bind:value={variable} />
+        <table>
+          <tr>
+            <th style="width: 22%; text-align: left">Variable</th>
+            <th style="width: 11%; text-align: right">N</th>
+            <th style="width: 11%; text-align: right">Mean</th>
+            <th style="width: 11%; text-align: right">Std. Dev.</th>
+            <th style="width: 11%; text-align: right">Min</th>
+            <th style="width: 11%; text-align: right">Pctl. 25</th>
+            <th style="width: 11%; text-align: right">Pctl. 75</th>
+            <th style="width: 11%; text-align: right">Max</th>
+          </tr>
+          {#if summaryAvail}
+            {#each state.columnNames as variable, i}
+              {@const tdsAfter = getTdsAfterId(state.ids[i])}
+              <tr>
+                <td style="width: 22%; text-align: left"
+                  ><input bind:value={variable} />
+                </td>
+                {#each tdsAfter.tdsAfterId as variable_info}
+                  <td style="width: 11%; text-align: right">
+                    {variable_info}
                   </td>
-                  {#each tdsAfter.tdsAfterId as variable_info}
-                    <td style="width: 11%; text-align: right">
-                      {variable_info}
-                    </td>
-                  {/each}
-                </tr>
-                {#if tdsAfter.rowsAfterId}
-                  {#each tdsAfter.rowsAfterId as row}
-                    <tr>
-                      {#each row as cell}
-                        <td style="width: 11%; text-align: right">
-                          {cell}
-                        </td>
-                      {/each}
-                    </tr>
-                  {/each}
-                {/if}
-              {/each}
-            {/if}
-          </table>
-        </body>
+                {/each}
+              </tr>
+              {#if tdsAfter.rowsAfterId}
+                {#each tdsAfter.rowsAfterId as row}
+                  <tr>
+                    {#each row as cell}
+                      <td style="width: 11%; text-align: right">
+                        {cell}
+                      </td>
+                    {/each}
+                  </tr>
+                {/each}
+              {/if}
+            {/each}
+          {/if}
+        </table>
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 <script>
-  import { cyStore, appState, modelOptions } from "../stores.js";
+  import { cyStore, appState, modelOptions, dataInfo } from "../stores.js";
   import { get } from "svelte/store";
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
@@ -189,6 +189,10 @@
   function removeData() {
     const cy = get(cyStore);
     $appState.dataAvail = false;
+    $appState.columnNames = null;
+    $appState.loadFileName = null;
+    $appState.ids = null;
+    $dataInfo = null;
     bootbox.alert("Data removed");
     cy.nodes().removeClass("linked");
   }

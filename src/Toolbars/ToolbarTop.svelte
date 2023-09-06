@@ -48,15 +48,6 @@
     margin: 0 auto;
   }
 
-  #data {
-    margin-left: 10px;
-    margin-bottom: 0px;
-    padding: 1px;
-    background-color: white;
-    border: solid 1px black;
-    height: 20px;
-  }
-
   button {
     margin: 0 5px;
     padding: 8px 16px;
