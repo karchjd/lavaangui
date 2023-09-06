@@ -106,10 +106,8 @@
     Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
       $appState.dataAvail = true;
       applyLinkedClass(data_info.columns, true);
-      dataInfo.set({
-        ...data_info,
-        ids: [...data_info.columns], // Shallow copy
-      });
+      $appState.columnNames = data_info.columns;
+      $dataInfo = data_info.summary;
     });
 
     // parse model

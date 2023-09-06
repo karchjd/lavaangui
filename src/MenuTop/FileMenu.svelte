@@ -1,5 +1,5 @@
 <script>
-  import { cyStore, appState, modelOptions, dataInfo } from "../stores.js";
+  import { cyStore, appState, modelOptions } from "../stores.js";
   import { get } from "svelte/store";
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
@@ -55,7 +55,7 @@
     cy.autoungrabify(graphSettings.autoungrabify);
 
     if ($appState.dataAvail) {
-      applyLinkedClass($dataInfo.columns, false);
+      applyLinkedClass($appState.columnNames, false);
     }
   }
 

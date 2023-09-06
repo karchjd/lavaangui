@@ -4,7 +4,6 @@
   import { appState, dataInfo } from "./stores.js";
   window.cy = get(cyStore);
 
-  let columnNames = null;
   const unsubscribe = appState.subscribe((state) => {
     window.appState = state;
     window.dataInfo = dataInfo;

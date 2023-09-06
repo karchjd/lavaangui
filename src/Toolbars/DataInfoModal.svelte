@@ -1,6 +1,5 @@
 <script>
-  import { validate_store } from "svelte/internal";
-  import { appState, dataInfo } from "../stores";
+  import { appState, dataInfo, columnNamesSTore } from "../stores";
   let state;
   let summary;
 
@@ -25,21 +24,26 @@
 
   let unsubscribe2 = dataInfo.subscribe((newState) => {
     if (state.dataAvail) {
-      debugger;
-      if (arraysAreEqual(newState.columns, newState.ids)) {
-        summary = newState.summary;
+      if (arraysAreEqual(state.columnNames, state.ids)) {
+        summary = newState;
         parser = new DOMParser();
         doc = parser.parseFromString(summary, "text/html");
         tds = Array.from(doc.querySelectorAll("td"));
       } else {
-        Shiny.setInputValue("newnames", JSON.stringify(newState.columns));
+        throw new Error(
+          "Columnnames and ids where not the same after dataInfo was updated, should never happene"
+        );
       }
     }
   });
 
-  function showInfo() {
-    window.$("#data-modal").modal();
-  }
+  let unsubscribe3 = columnNamesSTore.subscribe((newState) => {
+    if (state.dataAvail) {
+      if (!arraysAreEqual(state.columnNames, state.ids)) {
+        Shiny.setInputValue("newnames", JSON.stringify(newState.columns));
+      }
+    }
+  });
 
   function getTdsAfterId(id) {
     let found = false;

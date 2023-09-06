@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable, derived } from "svelte/store";
 
 export const cyStore = writable(0);
 export const ehStore = writable(0);
@@ -18,9 +18,9 @@ function createCustomStore() {
     runCounter: 0,
     modelEmpty: true,
     dataAvail: false,
-    meanStruc: "default",
-    intOvFree: true,
-    intLvFree: false,
+    columnNames: null,
+    loadFileName: null,
+    ids: null,
   });
 
   return {
@@ -34,6 +34,7 @@ function createCustomStore() {
             ...newState,
             columnNames: null,
             loadedFileName: null,
+            ids: null
           };
         }
         // If dataAvail is true, accept new values for columnNames and loadedFileName
@@ -62,3 +63,6 @@ function createCustomStore() {
 }
 
 export const appState = createCustomStore();
+
+export const columnNamesSTore = derived(appState, $appState => $appState.columnNames);
+

@@ -26,7 +26,6 @@
     }
   });
 
-  
   cy.on("position", "node", function (event) {
     const node = event.target;
     const connectedNodes = node.neighborhood().nodes();

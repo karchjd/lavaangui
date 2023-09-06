@@ -3,6 +3,9 @@ import { get } from "svelte/store";
 
 
 export function applyLinkedClass(columnNames, apply) {
+  if(columnNames == null){
+    throw new Error("Columnnames may not be null.");
+  }
     cy = get(cyStore);
     const nodes = cy.nodes(function (node) {
       return node.hasClass("observed-variable");
