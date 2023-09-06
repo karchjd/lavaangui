@@ -193,7 +193,6 @@
     $appState.loadFileName = null;
     $appState.ids = null;
     $dataInfo = null;
-    bootbox.alert("Data removed");
     cy.nodes().removeClass("linked");
   }
 
