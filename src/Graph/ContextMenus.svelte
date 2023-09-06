@@ -252,25 +252,65 @@
       selector: "node.latent-variable, node.observed-variable",
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
-        bootbox.prompt({
-          title: "Please enter a label",
-          callback: function (result) {
-            if (!validLabel(result)) {
-              return false;
-            }
+        const columnNames = $appState.columnNames;
 
-            if (result !== null) {
-              node.data("label", result);
-              let columnNames = $appState.columnNames;
-              if (columnNames && columnNames.includes(node.data("label"))) {
-                node.addClass("linked");
-                if (!$appState.loadingMode) {
-                  bootbox.alert("Variable linked with data set");
+        let dropdownOptions;
+        if ($appState.dataAvail) {
+          // Prepare options for the dropdown
+          dropdownOptions = columnNames
+            .map((name) => `<option value="${name}">${name}</option>`)
+            .join("");
+        }
+
+        const dropdownHTML = $appState.dataAvail
+          ? `
+      <label>Or select from existing labels:</label>
+      <select class="form-control" id="label-dropdown">
+        <option value="">--Select--</option>
+        ${dropdownOptions}
+      </select>
+    `
+          : "";
+
+        bootbox.dialog({
+          title: "Rename Variable",
+          message: `
+        <div>
+          <label>Enter a label:</label>
+          <input type="text" class="form-control" id="new-label">
+          ${dropdownHTML}
+        </div>
+      `,
+          buttons: {
+            cancel: {
+              label: "Cancel",
+              className: "btn-default",
+            },
+            confirm: {
+              label: "Rename",
+              className: "btn-primary",
+              callback: function () {
+                const inputLabel = document.getElementById("new-label").value;
+                const selectedLabel = $appState.dataAvail
+                  ? document.getElementById("label-dropdown").value
+                  : "";
+
+                const result = inputLabel || selectedLabel;
+
+                if (!validLabel(result)) {
+                  return false;
                 }
-              } else {
-                node.removeClass("linked");
-              }
-            }
+
+                if (result) {
+                  node.data("label", result);
+                  if (columnNames && columnNames.includes(node.data("label"))) {
+                    node.addClass("linked");
+                  } else {
+                    node.removeClass("linked");
+                  }
+                }
+              },
+            },
           },
         });
       },

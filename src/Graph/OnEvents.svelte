@@ -10,9 +10,6 @@
       let columnNames = $appState.columnNames;
       if (columnNames && columnNames.includes(node.data("label"))) {
         node.addClass("linked");
-        if (!$appState.loadingMode) {
-          bootbox.alert("Variable linked with data set");
-        }
       }
     }
     if ($appState.modelEmpty && cy.nodes().length > 0) {
