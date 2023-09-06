@@ -1,5 +1,7 @@
 <script>
   import { appState, dataInfo, columnNamesSTore } from "../stores";
+  import { applyLinkedClass } from "../Shiny/applyLinkedClass";
+
   let state;
   let summary;
   let summaryAvail = false;
@@ -49,7 +51,7 @@
     if (state.dataAvail && newState !== undefined && state.ids !== undefined) {
       if (!arraysAreEqual(newState, state.ids)) {
         Shiny.setInputValue("newnames", JSON.stringify(newState));
-        console.log("sent new names to R");
+        applyLinkedClass(newState, true);
       }
     }
   });
