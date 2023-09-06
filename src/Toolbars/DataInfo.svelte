@@ -14,7 +14,8 @@
       href={"#"}
       on:click={showInfo}
       data-toggle="tooltip"
-      title="View Summary Statistics">{$appState.loadFileName} is loaded</a
+      title="View Summary Statistics / Rename Variables"
+      >{$appState.loadFileName} is loaded</a
     >
   {:else}
     <p>No Data loaded</p>
