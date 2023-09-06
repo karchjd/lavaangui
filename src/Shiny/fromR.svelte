@@ -105,10 +105,11 @@
     //sent by server when data is loaded
     Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
       $appState.dataAvail = true;
-      debugger;
       applyLinkedClass(data_info.columns, true);
-      $dataInfo = data_info;
-      debugger;
+      dataInfo.set({
+        ...data_info,
+        ids: [...data_info.columns], // Shallow copy
+      });
     });
 
     // parse model

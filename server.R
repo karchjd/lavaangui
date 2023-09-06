@@ -6,6 +6,19 @@ server <- function(input, output, session) {
   library(vtable)
   shinyjs::useShinyjs(html = TRUE)
   
+  library(rvest)
+  library(xml2)
+  
+  create_summary <- function(df){
+    sum_table <- paste0(capture.output(sumtable(df, out = "htmlreturn", title = "")), collapse = "")
+    remove_string <- "<table class=\"headtab\"> <tr><td style=\"text-align:left\">sumtable {vtable}</td> <td style=\"text-align:right\">Summary Statistics</td></tr></table> <h1>  </h1>"
+    sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
+    remove_string <- "<title>Summary Statistics</title>"
+    sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
+    sum_table
+  }
+  
+  
   imported <- FALSE
   if ((!imported) && (exists("model"))) {
     session$sendCustomMessage("model", message = model)
@@ -38,35 +51,40 @@ server <- function(input, output, session) {
     return(data)
   }
   
-  ## load the data
-  data <- reactive({
-    req(input$fileInput)
-    if (is.null(input$fileInput$content)) {
-      list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name)
-    } else {
-      content <- input$fileInput$content
-      decoded <- base64enc::base64decode(content)
-      # Read content into a data frame
-      list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
-    }
-  })
   
-  ## let javascript know about variable names and file name
-  ## needed?
-  observeEvent(data(), {
-    df <- data()$df
+  
+  data_content <- reactive({
+      req(input$fileInput)
+      if (is.null(input$fileInput$content)) {
+        data <- list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name)
+      } else {
+        content <- input$fileInput$content
+        decoded <- base64enc::base64decode(content)
+        # Read content into a data frame
+        data <- list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
+      }
     
-    sum_table <- paste0(capture.output(sumtable(data()$df, out = "htmlreturn", title = "")), collapse = "")
-    remove_string <- "<table class=\"headtab\"> <tr><td style=\"text-align:left\">sumtable {vtable}</td> <td style=\"text-align:right\">Summary Statistics</td></tr></table> <h1>  </h1>"
-    sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
-    remove_string <- "<title>Summary Statistics</title>"
-    sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
+    df <- data$df
     
-        
-    data_info <- list(name = data()$name, columns = colnames(df),
-                            summary =  sum_table)
+    data_info <- list(name = data$name, columns = colnames(df),
+                      summary = create_summary(data$df))
+    cat(data_info$summary, file = stderr())
     session$sendCustomMessage(type = "dataInfo", message = data_info)
+    return(data)
+    })
+  
+  observeEvent(data_content(), {
+    
   })
+               
+  data <- reactive({
+    local_data = data();
+    if(!is.null(input$newnames)){
+      names(local_data$df) <- input$newnames;
+    }
+    return(local_data)
+  })
+
   
   ## run lavaan, send results to javascript, show results output windows
   output$lavaan_syntax_R <- renderPrint({
@@ -154,4 +172,4 @@ server <- function(input, output, session) {
     req(input$runCounter)
     input$runCounter
   })
-  }
+}
