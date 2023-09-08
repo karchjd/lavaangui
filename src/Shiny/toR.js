@@ -207,8 +207,18 @@ function produceLavaanOptions() {
     ovFree +
     ", int.lv.free = " +
     lvFree +
+    ", estimator = " +
+    addQuotes(modelOpt.estimator) +
+    ", se = " +
+    addQuotes(modelOpt.se) +
+    ", missing = " +
+    addQuotes(modelOpt.missing) +
     ", auto.fix.first = TRUE, auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, auto.efa = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE, fixed.x = FALSE)"
   );
+}
+
+function addQuotes(inputString) {
+  return '"' + inputString + '"';
 }
 
 function boolToString(boolValue) {

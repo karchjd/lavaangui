@@ -80,7 +80,7 @@ server <- function(input, output, session) {
     local_data = data_content()
     if(!is.null(input$newnames)){
       names(local_data$df) <- jsonlite::fromJSON(input$newnames);
-    }
+    } 
     return(local_data)
   })
 

@@ -30,6 +30,14 @@
     document.getElementById("lavaan_syntax_R").innerText = "";
   }
 
+  function mergeExistingProperties(target, source) {
+    for (let key in source) {
+      if (source.hasOwnProperty(key) && source[key] !== undefined) {
+        target[key] = source[key];
+      }
+    }
+  }
+
   function parseModel(content) {
     reset();
 
@@ -40,7 +48,7 @@
     if ("model" in combinedData && "modelOpt" in combinedData) {
       json = JSON.parse(combinedData.model);
       const modelOpt = JSON.parse(combinedData.modelOpt);
-      $modelOptions = modelOpt;
+      mergeExistingProperties($modelOptions, modelOpt);
       console.log(modelOpt);
     } else {
       json = combinedData;

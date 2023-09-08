@@ -4,6 +4,7 @@
   import FileMenu from "./FileMenu.svelte";
   import ViewMenu from "./ViewMenu.svelte";
   import MeanMenu from "./MeanMenu.svelte";
+  import EstimationMenu from "./EstimationMenu.svelte";
 </script>
 
 <HelpPage />
@@ -11,5 +12,6 @@
   <FileMenu />
   <ViewMenu />
   <MeanMenu />
+  <EstimationMenu />
   <HelpPage />
 </Navbar>

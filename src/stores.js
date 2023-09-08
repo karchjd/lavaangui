@@ -7,7 +7,11 @@ export let modelOptions = writable({
   meanStruc: "default",
   intOvFree: true,
   intLvFree: false,
-  view: "est"
+  view: "est",
+  estimator: "ML",
+  se: "standard",
+  missing: "listwise",
+  n_boot: 1000,
 });
 
 export let appState = writable({
@@ -22,5 +26,7 @@ export let appState = writable({
 
 export let dataInfo = writable(0);
 
-export const columnNamesSTore = derived(appState, $appState => $appState.columnNames);
-
+export const columnNamesSTore = derived(
+  appState,
+  ($appState) => $appState.columnNames
+);
