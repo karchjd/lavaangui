@@ -15,9 +15,11 @@
   import MainContainer from "./Graph/MainContainer.svelte";
   import DuckTapeFixes from "./DuckTapeFixes.svelte";
   import DataInfoModal from "./Toolbars/DataInfoModal.svelte";
+  import EstimationWait from "./Shiny/EstimationWait.svelte";
 </script>
 
 <DataInfoModal />
+<EstimationWait />
 <Init />
 <MenuTop />
 <MainContainer>

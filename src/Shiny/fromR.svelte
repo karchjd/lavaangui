@@ -190,6 +190,7 @@
 
     // save all results in data attributes of the correct edges
     Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
+      $appState.fitting = false;
       cy = get(cyStore);
       for (let i = 0; i < lav_result.lhs.length; i++) {
         let existingEdge = findEdge(

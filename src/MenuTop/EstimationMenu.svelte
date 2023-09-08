@@ -35,8 +35,9 @@
           const parsedValue = parseInt(result, 10);
           if (Number.isInteger(parsedValue) && parsedValue > 0) {
             $modelOptions.n_boot = parsedValue;
+            return true;
           } else {
-            // Handle invalid input. For example:
+            return false;
             bootbox.alert("Please enter a positive whole number.");
           }
         }
