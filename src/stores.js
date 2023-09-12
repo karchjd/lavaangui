@@ -15,6 +15,7 @@ export let modelOptions = writable({
 });
 
 export let appState = writable({
+  fitting: false,
   loadingMode: false,
   runCounter: 0,
   modelEmpty: true,
@@ -30,3 +31,8 @@ export const columnNamesSTore = derived(
   appState,
   ($appState) => $appState.columnNames
 );
+
+export const alertStore = writable({
+  type: "alert-success",
+  message: "",
+});

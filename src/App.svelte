@@ -16,6 +16,7 @@
   import DuckTapeFixes from "./DuckTapeFixes.svelte";
   import DataInfoModal from "./Toolbars/DataInfoModal.svelte";
   import EstimationWait from "./Shiny/EstimationWait.svelte";
+  import Alert from "./Toolbars/Alert.svelte";
 </script>
 
 <DataInfoModal />
@@ -30,6 +31,7 @@
   <OnEvents />
   <Results />
 </MainContainer>
+<Alert />
 <ToolbarBelow />
 <Debug />
 <DataInput />

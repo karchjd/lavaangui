@@ -1,9 +1,8 @@
 <script>
   import { appState } from "../stores";
-  function abort(){
+  function abort() {
     Shiny.setInputValue("abort", true);
   }
-
 </script>
 
 {#if $appState.fitting}
@@ -11,7 +10,6 @@
     <button class="btn btn-lg btn-warning">
       <span class="glyphicon glyphicon-refresh spinning" /> Fitting...
     </button>
-    < button onclick:abort()>Abort</button>
   </div>
 {/if}
 
