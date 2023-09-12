@@ -33,6 +33,18 @@ export const columnNamesSTore = derived(
 );
 
 export const alertStore = writable({
-  type: "alert-success",
+  type: "info",
   message: "",
+  key: 0, // this is used to force re-renders
 });
+
+// Update function
+export function setAlert(type, message) {
+  alertStore.update((currentAlert) => {
+    return {
+      type,
+      message,
+      key: currentAlert.key + 1,
+    };
+  });
+}

@@ -1,4 +1,4 @@
-import { cyStore, alertStore } from "../stores";
+import { cyStore, setAlert } from "../stores";
 import { get } from "svelte/store";
 
 function serverAvail() {
@@ -29,9 +29,6 @@ export function applyLinkedClass(columnNames, apply) {
         all_linked = false;
       }
     }
-    alertStore.set({
-      type: "success",
-      message: "All observed variables linked.",
-    });
+    setAlert("success", "All observed variables linked.");
   }
 }

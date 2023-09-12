@@ -1,5 +1,5 @@
 <script>
-  import { cyStore, appState, alertStore } from "../stores.js";
+  import { cyStore, appState, setAlert } from "../stores.js";
   import { get } from "svelte/store";
   let cy = get(cyStore);
   import cytoscape from "cytoscape";
@@ -305,16 +305,13 @@
                   node.data("label", result);
                   if (columnNames && columnNames.includes(node.data("label"))) {
                     node.addClass("linked");
-                    alertStore.set({
-                      type: "success",
-                      message: `Variable ${node.data("label")} linked to data`,
-                    });
+                    setAlert(
+                      "success",
+                      `Variable ${node.data("label")} linked to data`
+                    );
                   } else {
                     node.removeClass("linked");
-                    alertStore.set({
-                      type: "info",
-                      message: `Variable ${node.data("label")} unlinked`,
-                    });
+                    setAlert("info", `Variable ${node.data("label")} unlinked`);
                   }
                 }
               },

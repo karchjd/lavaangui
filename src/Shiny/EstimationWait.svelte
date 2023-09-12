@@ -1,8 +1,5 @@
 <script>
   import { appState } from "../stores";
-  function abort() {
-    Shiny.setInputValue("abort", true);
-  }
 </script>
 
 {#if $appState.fitting}

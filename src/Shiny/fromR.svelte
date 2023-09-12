@@ -1,5 +1,5 @@
 <script>
-  import { appState, dataInfo } from "../stores";
+  import { appState, dataInfo, setAlert } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass.js";
   import { get } from "svelte/store";
   import { cyStore } from "../stores";
@@ -190,7 +190,6 @@
 
     // save all results in data attributes of the correct edges
     Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
-      $appState.fitting = false;
       cy = get(cyStore);
       for (let i = 0; i < lav_result.lhs.length; i++) {
         let existingEdge = findEdge(
@@ -198,12 +197,10 @@
           lav_result.op[i],
           lav_result.rhs[i]
         );
-        console.log("in lav_results");
         if (existingEdge.length != 1) {
           debugger;
         }
         if (existingEdge.hasClass("free")) {
-          console.log("in free");
           existingEdge.data("est", lav_result.est[i].toFixed(2));
           existingEdge.addClass("hasEst");
           existingEdge.data("p_value", lav_result.pvalue[i].toFixed(2));
@@ -212,6 +209,8 @@
           existingEdge.data("ciHigh", lav_result["ci.upper"][i].toFixed(2));
         }
       }
+      $appState.fitting = false;
+      setAlert("success", "Succesfully fitted model");
     });
   }
 
