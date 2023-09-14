@@ -203,17 +203,17 @@ function produceLavaanOptions() {
   return (
     "meanstructure = " +
     meanStruc +
-    ", int.ov.free = " +
+    ",\n\t\t int.ov.free = " +
     ovFree +
     ", int.lv.free = " +
     lvFree +
-    ", estimator = " +
+    ", \n\t\t estimator = " +
     addQuotes(modelOpt.estimator) +
     ", se = " +
     addQuotes(modelOpt.se) +
-    ", missing = " +
+    ", \n\t\t missing = " +
     addQuotes(modelOpt.missing) +
-    ", auto.fix.first = TRUE, auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE, auto.efa = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.cov.y = TRUE, fixed.x = FALSE)"
+    ", auto.fix.first = TRUE,\n\t\t auto.fix.single = TRUE, auto.var = TRUE, \n\t\t auto.cov.lv.x = TRUE, auto.efa = TRUE, \n\t\t auto.th = TRUE, auto.delta = TRUE,  \n\t\t auto.cov.y = TRUE, fixed.x = FALSE)"
   );
 }
 

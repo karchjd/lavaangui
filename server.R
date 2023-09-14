@@ -91,13 +91,13 @@ server <- function(input, output, session) {
   
   getResults <- function(result){
     session$sendCustomMessage("lav_results", parameterestimates(result))
-    partable(result)
-    #sum_model <- summary(result, fit.measures = TRUE)
-    # sum_model$pe <- NULL
+    # partable(result)
+    sum_model <- summary(result, fit.measures = TRUE)
+    sum_model$pe <- NULL
+    sum_model
   }
   
   observeEvent(input$runCounter, {
-    cat("running", file = stderr())
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     model <- eval(parse(text = fromJavascript$syntax))
@@ -114,8 +114,7 @@ server <- function(input, output, session) {
       fut <- future_promise({
         original_function <- lavaan:::lav_model_objective
         original_function_string <- deparse(original_function)
-        new_function <- append(original_function_string, "print(\"eval\")", after = 3) 
-        new_function <- append(new_function, "if (file.exists(abort_file)) {print(\"checking\"); quit()}", after = 4)
+        new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
         new_function <- eval(parse(text = new_function))
         
         environment(new_function) <- asNamespace('lavaan')
@@ -145,7 +144,7 @@ server <- function(input, output, session) {
   ## run lavaan, send results to javascript, show results output windows
   output$lavaan_syntax_R <- renderPrint({
     req(to_render())
-    to_render()
+    print(to_render())
   })
   
   observeEvent(input$abort,{

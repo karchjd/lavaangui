@@ -114,6 +114,7 @@
 
     // parse model
     Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
+      $appState.result = "model";
       cy = get(cyStore);
       let const_added = false;
       let added_const_id;
@@ -197,6 +198,7 @@
 
     // save all results in data attributes of the correct edges
     Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
+      debugger;
       cy = get(cyStore);
       for (let i = 0; i < lav_result.lhs.length; i++) {
         let existingEdge = findEdge(
@@ -217,6 +219,7 @@
         }
       }
       $appState.fitting = false;
+      $appState.result = "estimates_sucess";
       setAlert("success", "Succesfully fitted model");
     });
   }

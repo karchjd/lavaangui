@@ -23,6 +23,7 @@ export let appState = writable({
   columnNames: null,
   loadFileName: null,
   ids: null,
+  result: "none",
 });
 
 export let dataInfo = writable(0);

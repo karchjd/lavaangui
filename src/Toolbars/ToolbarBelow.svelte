@@ -30,13 +30,12 @@
       edges[i].removeClass("hasEst");
     }
     let for_R = createSyntax(mode > 0);
-
+    $appState.result = "script";
     if (mode > 0 && serverAvail()) {
       for_R.mode = mode;
       Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
       $appState.runCounter = $appState.runCounter + 1;
       Shiny.setInputValue("runCounter", $appState.runCounter);
-      console.log(`sent ${$appState.runCounter} to R`);
       if (mode == 2) {
         $appState.fitting = true;
       }
