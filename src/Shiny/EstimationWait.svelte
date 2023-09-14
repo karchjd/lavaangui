@@ -2,22 +2,29 @@
   import { appState } from "../stores";
   function abort() {
     Shiny.setInputValue("abort", true);
-    console.log("we want to abort");
   }
 </script>
 
 {#if $appState.fitting}
   <div class="center-screen">
-    <button class="btn btn-lg btn-warning">
+    <button
+      class="btn btn-lg btn-secondary fixed-width disabled-button"
+      id="fitting-button"
+      disabled
+    >
       <span class="glyphicon glyphicon-refresh spinning" /> Fitting...
     </button>
-    <button class="btn btn-lg" on:click={abort}
-      >Abort(discard model and data)</button
+    <button class="btn btn-lg btn-default fixed-width" on:click={abort}
+      >Cancel</button
     >
   </div>
 {/if}
 
 <style>
+  .fixed-width {
+    width: 150px; /* Adjust the width as needed */
+  }
+
   .glyphicon.spinning {
     animation: spin 1s infinite linear;
     -webkit-animation: spin2 1s infinite linear;
