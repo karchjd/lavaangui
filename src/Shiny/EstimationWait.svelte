@@ -1,5 +1,9 @@
 <script>
   import { appState } from "../stores";
+  function abort() {
+    Shiny.setInputValue("abort", true);
+    console.log("we want to abort");
+  }
 </script>
 
 {#if $appState.fitting}
@@ -7,6 +11,9 @@
     <button class="btn btn-lg btn-warning">
       <span class="glyphicon glyphicon-refresh spinning" /> Fitting...
     </button>
+    <button class="btn btn-lg" on:click={abort}
+      >Abort(discard model and data)</button
+    >
   </div>
 {/if}
 

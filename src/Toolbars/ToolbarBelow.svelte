@@ -36,6 +36,7 @@
       Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
       $appState.runCounter = $appState.runCounter + 1;
       Shiny.setInputValue("runCounter", $appState.runCounter);
+      console.log(`sent ${$appState.runCounter} to R`);
       if (mode == 2) {
         $appState.fitting = true;
       }

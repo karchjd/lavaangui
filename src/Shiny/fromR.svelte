@@ -188,6 +188,13 @@
       }
     });
 
+    Shiny.addCustomMessageHandler("lav_failed", function (failCode) {
+      $appState.fitting = false;
+      if (failCode == "stopped") {
+        setAlert("danger", "Fitting stopped by user");
+      }
+    });
+
     // save all results in data attributes of the correct edges
     Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
       cy = get(cyStore);
