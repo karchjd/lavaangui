@@ -31,6 +31,7 @@
     width: 30%;
     min-width: 30%;
     background-color: lightgrey;
+    height: 100%;
   }
 
   h4 {
@@ -40,14 +41,12 @@
     white-space: pre; /* Changed from pre-wrap to pre */
     width: 100%;
     min-width: 100%;
-    min-height: 100%;
     text-align: left;
     background-color: lightgrey;
-    max-height: 84.8vh;
+    max-height: 85.3vh;
     overflow-y: auto;
     overflow-x: auto; /* Added this line */
     padding: 0px;
     margin: 0px;
-    border: none;
   }
 </style>

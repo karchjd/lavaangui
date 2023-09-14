@@ -40,7 +40,8 @@
         $appState.fitting = true;
       }
     } else if (mode == 0) {
-      document.getElementById("lavaan_syntax_R").innerText = for_R;
+      document.getElementById("lavaan_syntax_R").innerText =
+        for_R + for_R + for_R + for_R;
     }
   }
 </script>

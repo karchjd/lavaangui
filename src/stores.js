@@ -49,3 +49,5 @@ export function setAlert(type, message) {
     };
   });
 }
+
+setAlert("info", "Greetings")
