@@ -5,6 +5,9 @@ server <- function(input, output, session) {
   library(tools)
   library(vtable)
   shinyjs::useShinyjs(html = TRUE)
+  library(future)
+  library(promises)
+  plan(multisession)
   
   library(rvest)
   library(xml2)

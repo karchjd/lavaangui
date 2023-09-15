@@ -62,6 +62,7 @@ export const graphStyles = [
       "text-background-color": "#fff",
       "text-background-opacity": 1,
       "text-background-padding": "4px",
+      "edge-text-rotation": "autorotate",
     },
   },
   {
@@ -88,7 +89,8 @@ export const graphStyles = [
       "target-arrow-shape": "triangle",
       "source-arrow-shape": "triangle",
     },
-  },{
+  },
+  {
     selector: "edge.undirected.fromLav",
     style: {
       "control-point-distances": [100],
@@ -163,11 +165,11 @@ export const graphStyles = [
 ];
 
 export const graphSettings = {
-    autoungrabify: false,
-    autolock: false,
-    style: graphStyles,
-    minZoom: 0.2,
-    maxZoom: 5,
+  autoungrabify: false,
+  autolock: false,
+  style: graphStyles,
+  minZoom: 0.2,
+  maxZoom: 5,
 };
 
 export const ehSettings = {
@@ -178,15 +180,13 @@ export const ehSettings = {
   handleColor: "#ff0000", // bright red
   handleSize: 10, // increase the size
   canConnect: function (sourceNode, targetNode) {
-        // Allow connection if it doesn't create a parallel edge
-        return !cy.elements(
-          'edge[source = "' +
-            sourceNode.id() +
-            '"][target = "' +
-            targetNode.id() +
-            '"]'
-        ).length;
-      },
+    // Allow connection if it doesn't create a parallel edge
+    return !cy.elements(
+      'edge[source = "' +
+        sourceNode.id() +
+        '"][target = "' +
+        targetNode.id() +
+        '"]'
+    ).length;
+  },
 };
- 
-
