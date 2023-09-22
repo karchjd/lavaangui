@@ -2,6 +2,7 @@ import { writable, derived } from "svelte/store";
 
 export const cyStore = writable(0);
 export const ehStore = writable(0);
+export const ur = writable(0);
 
 export let modelOptions = writable({
   meanStruc: "default",
@@ -50,4 +51,4 @@ export function setAlert(type, message) {
   });
 }
 
-setAlert("info", "Greetings")
+setAlert("info", "Greetings");

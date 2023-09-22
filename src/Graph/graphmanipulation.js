@@ -1,4 +1,4 @@
-import { cyStore } from "../stores.js";
+import { cyStore, ur } from "../stores.js";
 import { get } from "svelte/store";
 import { v4 as uuidv4 } from "uuid";
 
@@ -31,8 +31,8 @@ export function addNode(nodeType, position) {
   let finalPosition = position
     ? position
     : { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 };
-
-  cy.add({
+  let urLocal = get(ur);
+  urLocal.do("add", {
     group: "nodes",
     data: { id: nodeId, label: label },
     classes: nodeType,
