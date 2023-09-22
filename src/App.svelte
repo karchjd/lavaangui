@@ -17,6 +17,7 @@
   import DataInfoModal from "./Toolbars/DataInfoModal.svelte";
   import EstimationWait from "./Shiny/EstimationWait.svelte";
   import Alert from "./Toolbars/Alert.svelte";
+  import UndoRedo from "./Graph/UndoRedo.svelte";
 </script>
 
 <DataInfoModal />
@@ -29,6 +30,7 @@
   <Zoom />
   <ContextMenus />
   <OnEvents />
+  <UndoRedo />
   <Results />
 </MainContainer>
 <Alert />
