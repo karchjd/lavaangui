@@ -1,7 +1,6 @@
 <script>
   import { cyStore, appState, modelOptions, dataInfo } from "../stores.js";
   import { get } from "svelte/store";
-  import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";

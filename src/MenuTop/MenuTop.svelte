@@ -5,6 +5,7 @@
   import ViewMenu from "./ViewMenu.svelte";
   import MeanMenu from "./MeanMenu.svelte";
   import EstimationMenu from "./EstimationMenu.svelte";
+  import Layouts from "./Layouts.svelte";
 </script>
 
 <HelpPage />
@@ -14,4 +15,5 @@
   <MeanMenu />
   <EstimationMenu />
   <HelpPage />
+  <Layouts />
 </Navbar>
