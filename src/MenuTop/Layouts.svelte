@@ -3,7 +3,7 @@
   import cytoscape from "cytoscape";
   import { onMount } from "svelte";
   import fcose from "cytoscape-fcose";
-  import { cyStore, appState } from "../stores.js";
+  import { cyStore, appState, ur } from "../stores.js";
   import { get } from "svelte/store";
   import DropDownLinks from "./helpers/DropDownLinks.svelte";
   import { createSyntax } from "../Shiny/toR";
@@ -91,23 +91,23 @@
       };
 
       // Run the layout
-      cy.layout(options).run();
+      $ur.do("layout", { options: options });
     });
   }
 
   function applyDagre() {
     const options = { name: "dagre", rankSep: 150, animate: true };
-    cy.layout(options).run();
+    $ur.do("layout", { options: options });
   }
 
   function applyBF() {
     const options = { name: "breadthfirst", animate: true, spacingFactor: 1 };
-    cy.layout(options).run();
+    $ur.do("layout", { options: options });
   }
 
   function applyCircle() {
     const options = { name: "circle", animate: true };
-    cy.layout(options).run();
+    $ur.do("layout", { options: options });
   }
 
   function applyfcose() {
@@ -119,7 +119,7 @@
       randomize: false,
       nodeSeparation: 200,
     };
-    cy.layout(options).run();
+    $ur.do("layout", { options: options });
   }
 
   function applycola() {
@@ -130,7 +130,7 @@
         return 50;
       },
     };
-    cy.layout(options).run();
+    $ur.do("layout", { options: options });
   }
 
   $: menuItems = [
