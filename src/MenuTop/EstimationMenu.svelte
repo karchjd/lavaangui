@@ -25,8 +25,8 @@
 
   $: {
     if (
-      !robustSupported.includes($modelOptions.estimator) &&
-      $modelOptions.se == "robust"
+      $modelOptions.se == "robust" &&
+      !robustSupported.includes($modelOptions.estimator)
     ) {
       $modelOptions.se = "standard";
       bootbox.alert(
@@ -39,6 +39,20 @@
     { value: "listwise", name: "Listwise" },
     { value: "ml", name: "Full information maximum likelihood" },
   ];
+
+  const fimlSupported = ["ML"];
+
+  $: {
+    if (
+      $modelOptions.missing == "ml" &&
+      !fimlSupported.includes($modelOptions.estimator)
+    ) {
+      $modelOptions.missing = "listwise";
+      bootbox.alert(
+        "Missing values set back to listwise. Only the maximum likelihood estimator supports Full information maximum likelihood."
+      );
+    }
+  }
 
   $: if ($modelOptions.se == "boot") {
     bootbox.prompt({
@@ -83,7 +97,7 @@
           value={item.value}
           bind:group={$modelOptions.se}
           isDisabled={item.value == "robust" &&
-            !robustSupported.includes($modelOptions.estimator)}
+            !fimlSupported.includes($modelOptions.estimator)}
         />
       {/each}
     </ul>
@@ -96,6 +110,8 @@
           name={item.name}
           value={item.value}
           bind:group={$modelOptions.missing}
+          isDisabled={item.value == "ml" &&
+            !robustSupported.includes($modelOptions.estimator)}
         />
       {/each}
     </ul>
