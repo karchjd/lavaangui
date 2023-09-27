@@ -1,18 +1,16 @@
 <script>
   import { onMount } from "svelte";
   import { addNode } from "./graphmanipulation.js";
-  import { cyStore, ehStore, appState} from "../stores.js";
+  import { cyStore, ehStore, appState } from "../stores.js";
   import { get } from "svelte/store";
-  import { checkNodeLoop} from "./checkNodeLoop.js";
-
+  import { checkNodeLoop } from "./checkNodeLoop.js";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
   let cyContainer;
   let m = { x: 0, y: 0 };
 
-  let spaceKeyDown =false;
-
+  let spaceKeyDown = false;
 
   onMount(() => {
     // Initialize the Cytoscape instance
@@ -20,11 +18,11 @@
   });
 
   function handleKeyDown(event) {
-    if (event.key === "Meta" || event.key === "Control" || ' ') {
+    if (event.key === "Meta" || event.key === "Control" || " ") {
       eh.enableDrawMode();
     }
 
-    if (event.key === ' ') {
+    if (event.key === " ") {
       spaceKeyDown = true;
     }
     // Handle Backspace key
@@ -63,13 +61,13 @@
   }
 
   function handleKeyUp() {
-    if (event.key === "Meta" || event.key === "Control" || ' ') {
+    if (event.key === "Meta" || event.key === "Control" || " ") {
       eh.disableDrawMode();
       makeNodesGrabbable();
     }
-    if (event.key === ' ') {
-    spaceKeyDown = false;
-  }
+    if (event.key === " ") {
+      spaceKeyDown = false;
+    }
   }
 
   function handleMouseOver() {
@@ -89,56 +87,51 @@
     m.y = event.offsetY;
   }
 
- 
- cy.on('ehcomplete', (event, sourceNode, targetNode, addedEdge) => {
-      const edge = addedEdge;
-      const sourceNodeId = sourceNode.id();
-      const targetNodeId = targetNode.id();
-      edge.addClass("free");
-      edge.addClass("nolabel");
-      if (
-        sourceNodeId !== targetNodeId
-      ) {
-        if(spaceKeyDown){
-          edge.addClass("undirected");
-        }else{
-          edge.addClass("directed");
-        }
-        checkNodeLoop(sourceNodeId);
-        checkNodeLoop(targetNodeId);
+  cy.on("ehcomplete", (event, sourceNode, targetNode, addedEdge) => {
+    const edge = addedEdge;
+    const sourceNodeId = sourceNode.id();
+    const targetNodeId = targetNode.id();
+    edge.addClass("free");
+    edge.addClass("nolabel");
+    edge.addClass("fromUser");
+    if (sourceNodeId !== targetNodeId) {
+      if (spaceKeyDown) {
+        edge.addClass("undirected");
       } else {
-        edge.addClass("loop");
+        edge.addClass("directed");
       }
-      //removers
-      if (
-        (edge.hasClass("undirected") || edge.hasClass("loop")) &&
-        (sourceNode.hasClass("constant") || targetNode.hasClass("constant"))
-      ) {
+      checkNodeLoop(sourceNodeId);
+      checkNodeLoop(targetNodeId);
+    } else {
+      edge.addClass("loop");
+    }
+    //removers
+    if (
+      (edge.hasClass("undirected") || edge.hasClass("loop")) &&
+      (sourceNode.hasClass("constant") || targetNode.hasClass("constant"))
+    ) {
+      cy.remove(edge);
+    }
+
+    if (edge.hasClass("directed") && targetNode.hasClass("constant")) {
+      cy.remove(edge);
+    }
+
+    if (edge.hasClass("directed") && sourceNode.hasClass("constant")) {
+      const conConstant = targetNode.connectedEdges((edge_local) =>
+        edge_local.source().hasClass("constant")
+      );
+      if (conConstant.length > 1) {
         cy.remove(edge);
       }
+    }
 
-      if (edge.hasClass("directed") && targetNode.hasClass("constant")) {
-        cy.remove(edge);
-      }
-
-      if (edge.hasClass("directed") && sourceNode.hasClass("constant")) {
-        const conConstant = targetNode.connectedEdges((edge_local) => edge_local.source().hasClass("constant")
-        );
-        if (conConstant.length > 1) {
-          cy.remove(edge);
-        }
-      }
-
-      if (edge.hasClass("directed") && sourceNode.hasClass("constant")) {
-        edge.data("isMean", "1");
-      } else {
-        edge.data("isMean", "0");
-      }
+    if (edge.hasClass("directed") && sourceNode.hasClass("constant")) {
+      edge.data("isMean", "1");
+    } else {
+      edge.data("isMean", "0");
+    }
   });
-
-
-
-
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->

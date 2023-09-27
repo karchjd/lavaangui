@@ -236,7 +236,7 @@
     {
       id: "change-fromUser",
       content: " Explicitly Include in Model",
-      selector: "edge",
+      selector: "edge.fromLav",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.removeClass("fromLav");
