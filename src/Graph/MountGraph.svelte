@@ -104,6 +104,7 @@
       checkNodeLoop(targetNodeId);
     } else {
       edge.addClass("loop");
+      checkNodeLoop(targetNodeId);
     }
     //removers
     if (

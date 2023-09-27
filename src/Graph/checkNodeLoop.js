@@ -4,24 +4,48 @@ export function checkNodeLoop(nodeID) {
     const edgePostions = getEdgePositions(nodeID);
     const angles = getOccupiedAngles(edgePostions);
     const freeDefault = defaultPositionsFree(angles);
-    let goalAngle;
-    if (freeDefault.length > 1) {
-      if (freeDefault.includes("top")) {
-        goalAngle = 0;
-      } else if (freeDefault.includes("bottom")) {
-        goalAngle = 180;
-      } else if (freeDefault.includes("right")) {
-        goalAngle = 90;
-      } else if (freeDefault.includes("left")) {
-        goalAngle = 270;
-      }
-    } else {
-      goalAngle = getBestFreeAngle(angles);
-    }
-
+    let goalAngle = getBestFreeAngle(angles);
+    goalAngle = checkDefaultsFree(goalAngle, angles);
     selfLoop.style("loop-direction", `${goalAngle}deg`);
   }
 }
+
+function checkDefaultsFree(goalAngle, angles) {
+  const defaultAngles = [0, 90, 180, 270];
+
+  // Sort default angles by their shortest distance to goalAngle considering angle wrap-around
+  const sortedDefaultAngles = defaultAngles.sort((a, b) => {
+    const diffA = Math.min(
+      Math.abs(a - goalAngle),
+      360 - Math.abs(a - goalAngle)
+    );
+    const diffB = Math.min(
+      Math.abs(b - goalAngle),
+      360 - Math.abs(b - goalAngle)
+    );
+    return diffA - diffB;
+  });
+
+  // Check each default angle starting from the closest
+  for (const defaultAngle of sortedDefaultAngles) {
+    const isFree = !angles.some((angle) => {
+      const diff = Math.abs(defaultAngle - angle);
+      return Math.min(diff, 360 - diff) <= 45;
+    });
+
+    if (isFree) {
+      return defaultAngle;
+    }
+  }
+
+  return goalAngle;
+}
+
+// Test the function
+const goalAngle = 50;
+const angles = [30, 355, 135, 240];
+const result = checkDefaultsFree(goalAngle, angles);
+console.log("Result:", result);
 
 function defaultPositionsFree(angles) {
   const intervals = {
@@ -135,32 +159,6 @@ function getBestFreeAngle(angles) {
   return furthestDegree;
 }
 
-function moveEdge(edge, angle) {}
-
-function countEdgesConnectedToNodeSides(nodeId) {
-  const node = cy.getElementById(nodeId);
-  if (node.length === 0) {
-    console.error(`Node with ID ${nodeId} does not exist.`);
-    return;
-  }
-
-  let topCount = 0;
-  let bottomCount = 0;
-
-  const nodePosition = node.position();
-  const nodeHeight = node.height();
-
-  if (topCount > 0 && bottomCount === 0) {
-    return "bottom";
-  }
-  if (topCount === 0 && bottomCount > 0) {
-    return "top";
-  }
-  return "keep";
-}
-
-// Rest of the functions remain unchanged
-
 function getSelfLoop(nodeId, angle) {
   var node = cy.getElementById(nodeId);
   var loopEdge = null;
@@ -174,5 +172,13 @@ function getSelfLoop(nodeId, angle) {
       return;
     }
   });
-  return loopEdge;
+  if (
+    loopEdge !== null &&
+    node.connectedEdges().length > 1 &&
+    !loopEdge.hasClass("fixDeg")
+  ) {
+    return loopEdge;
+  } else {
+    return null;
+  }
 }

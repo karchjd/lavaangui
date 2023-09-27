@@ -33,6 +33,20 @@
     }
     return true;
   }
+
+  function validDegree(str) {
+    if (str == "") {
+      bootbox.alert("Provide a degree");
+      return false;
+    }
+    const deg = parseInt(str);
+    if (deg < 0 || deg > 360) {
+      bootbox.alert("Provide a valid degree (0-360)");
+      return false;
+    }
+    return true;
+  }
+
   let menu = [
     {
       id: "add-observed",
@@ -230,9 +244,38 @@
           },
         });
       },
-      hasTrailingDivider: false,
+      hasTrailingDivider: true,
     },
+    {
+      id: "change-orientation",
+      content: "Change/Fix Loop Orientation",
+      selector: "edge.loop",
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        bootbox.prompt({
+          title:
+            "Please enter a degree from 0 to 360. 0 is top, 90 right, 180 bottom, and 270 left.",
+          inputType: "number",
+          value: parseInt(edge.style("loop-direction")),
+          callback: function (value) {
+            if (value == "") {
+              bootbox.alert("Provide a value");
+              return false;
+            }
 
+            if (!validDegree) {
+              return false;
+            }
+            console.log(parseInt(edge.style("loop-direction")));
+
+            if (value !== null) {
+              edge.style("loop-direction", `${value}deg`);
+            }
+          },
+        });
+      },
+      hasTrailingDivider: true,
+    },
     {
       id: "change-fromUser",
       content: " Explicitly Include in Model",
