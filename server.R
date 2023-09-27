@@ -7,6 +7,7 @@ server <- function(input, output, session) {
   shinyjs::useShinyjs(html = TRUE)
   library(future)
   library(promises)
+  library(semPlot)
   plan(multisession)
   
   library(rvest)
