@@ -16,10 +16,24 @@
   ];
 
   const standardErrors = [
-    { value: "standard", name: "Conventional" },
+    { value: "standard", name: "Standard" },
     { value: "robust", name: "Robust" },
     { value: "boot", name: "Bootstrap" },
   ];
+
+  const robustSupported = ["ML", "ULS", "DWLS"];
+
+  $: {
+    if (
+      !robustSupported.includes($modelOptions.estimator) &&
+      $modelOptions.se == "robust"
+    ) {
+      $modelOptions.se = "standard";
+      bootbox.alert(
+        "Standard error reset to Standard because selected estimator does not support robust standad errors."
+      );
+    }
+  }
 
   const missingValues = [
     { value: "listwise", name: "Listwise" },
@@ -68,6 +82,8 @@
           name={item.name}
           value={item.value}
           bind:group={$modelOptions.se}
+          isDisabled={item.value == "robust" &&
+            !robustSupported.includes($modelOptions.estimator)}
         />
       {/each}
     </ul>
