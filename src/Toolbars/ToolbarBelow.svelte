@@ -45,6 +45,12 @@
     } else if (mode == "user model") {
       $modelOptions.showLav = false;
       document.getElementById("lavaan_syntax_R").innerText = for_R;
+      cy.edges(".byLav").forEach((existingEdge) => {
+        existingEdge.removeClass("fixed");
+        existingEdge.addClass("free");
+        existingEdge.removeData("value");
+        existingEdge.removeClass("byLav");
+      });
     }
   }
 </script>
@@ -58,7 +64,7 @@
         tolavaan("user model");
       }}
     >
-      Create Script
+      Show User Model / Script
     </button>
     <button
       type="button"
@@ -76,7 +82,7 @@
         tolavaan("estimate");
       }}
     >
-      Run lavaan
+      Estimate
     </button>
   </div>
 </div>
