@@ -1,5 +1,5 @@
 <script>
-  import { appState } from "../stores";
+  import { appState, modelOptions } from "../stores";
   import { createSyntax } from "../Shiny/toR";
 
   function serverAvail() {
@@ -23,7 +23,7 @@
         }
       }
     }
-    cy.elements(".fromLav").remove();
+
     const edges = cy.edges();
 
     for (var i = 0; i < edges.length; i++) {
@@ -34,6 +34,7 @@
     let for_R = createSyntax(tolavaan);
     $appState.result = "script";
     if (mode != "user model" && serverAvail()) {
+      $modelOptions.showLav = true;
       for_R.mode = mode;
       Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
       $appState.runCounter = $appState.runCounter + 1;
@@ -42,6 +43,7 @@
         $appState.fitting = true;
       }
     } else if (mode == "user model") {
+      $modelOptions.showLav = false;
       document.getElementById("lavaan_syntax_R").innerText = for_R;
     }
   }

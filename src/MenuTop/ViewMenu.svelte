@@ -6,9 +6,13 @@
   import RadioItem from "./helpers/RadioItem.svelte";
   import { onMount } from "svelte";
 
-  let edgeItems = [
-    { name: "Edges Created by Lavaan", checked: true, class: "fromLav" },
-    { name: "Variance Edges", checked: true, class: "loop" },
+  $: edgeItems = [
+    {
+      name: "Edges Created by Lavaan",
+      checked: $modelOptions.showLav,
+      class: "fromLav",
+    },
+    { name: "Variance Edges", checked: $modelOptions.showVar, class: "loop" },
   ];
 
   let viewRadios = [

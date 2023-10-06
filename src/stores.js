@@ -13,6 +13,8 @@ export let modelOptions = writable({
   se: "standard",
   missing: "listwise",
   n_boot: 1000,
+  showLav: true,
+  showVar: true,
 });
 
 export let appState = writable({

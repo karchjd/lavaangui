@@ -116,6 +116,7 @@
     Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
       $appState.result = "model";
       cy = get(cyStore);
+      cy.edges().removeClass("validated");
       let const_added = false;
       let added_const_id;
       for (let i = 0; i < lav_model.lhs.length; i++) {
@@ -127,7 +128,8 @@
         if (lav_model.user[i] == 1) {
           //If it is a user row make sure the path is in, otherwise throw an error
           assert(existingEdge.length == 1);
-          //fix it if it is fixed
+          existingEdge.addClass("validated");
+          //fix it if lavaan fixed it
           if (lav_model.free[i] == 0 && !existingEdge.hasClass("fixed")) {
             existingEdge.addClass("fixed");
             existingEdge.removeClass("free");
@@ -135,58 +137,68 @@
             existingEdge.addClass("byLav");
           }
         } else {
-          assert(existingEdge.length == 0);
-          const desiredEdge = getEdge(
-            lav_model.lhs[i],
-            lav_model.op[i],
-            lav_model.rhs[i]
-          );
-          let sourceId;
-          if (desiredEdge.source !== 1) {
-            sourceId = cy
+          let edge;
+          if (existingEdge.length == 0) {
+            const desiredEdge = getEdge(
+              lav_model.lhs[i],
+              lav_model.op[i],
+              lav_model.rhs[i]
+            );
+            let sourceId;
+            if (desiredEdge.source !== 1) {
+              sourceId = cy
+                .nodes(function (node) {
+                  return node.data("label") == desiredEdge.source;
+                })[0]
+                .id();
+            } else {
+              //added edge is constant
+              if (lav_model.free[i] == 0 && lav_model.ustart[i] == 0) {
+                continue;
+              }
+              if (!const_added) {
+                added_const_id = addNode("constant", getConstNodePosition(cy));
+                const_added = true;
+                const added_node = cy.nodes(function (node) {
+                  return node.id() == added_const_id;
+                })[0];
+                added_node.addClass("fromLav");
+              }
+              sourceId = added_const_id;
+            }
+            const targetId = cy
               .nodes(function (node) {
-                return node.data("label") == desiredEdge.source;
+                return node.data("label") == desiredEdge.target;
               })[0]
               .id();
-          } else {
-            //added edge is constant
-            if (lav_model.free[i] == 0 && lav_model.ustart[i] == 0) {
-              continue;
-            }
-            if (!const_added) {
-              added_const_id = addNode("constant", getConstNodePosition(cy));
-              const_added = true;
-              const added_node = cy.nodes(function (node) {
-                return node.id() == added_const_id;
-              })[0];
-              added_node.addClass("fromLav");
-            }
-            sourceId = added_const_id;
-          }
-          const targetId = cy
-            .nodes(function (node) {
-              return node.data("label") == desiredEdge.target;
-            })[0]
-            .id();
 
-          const edge = cy.add({
-            groups: "edges",
-            data: {
-              source: sourceId,
-              target: targetId,
-            },
-            classes: desiredEdge.directed + " fromLav" + " nolabel",
-          });
+            edge = cy.add({
+              groups: "edges",
+              data: {
+                source: sourceId,
+                target: targetId,
+              },
+              classes: desiredEdge.directed + " fromLav" + " nolabel",
+            });
+            checkNodeLoop(sourceId);
+            checkNodeLoop(targetId);
+          } else {
+            edge = existingEdge;
+          }
           if (lav_model.free[i] == 0) {
             edge.addClass("fixed");
             edge.data("value", lav_model.ustart[i]);
           } else {
             edge.addClass("free");
           }
-          checkNodeLoop(sourceId);
-          checkNodeLoop(targetId);
+          edge.addClass("validated");
         }
       }
+      cy.edges().forEach((edge) => {
+        if (!edge.hasClass("validated")) {
+          edge.remove();
+        }
+      });
     });
 
     Shiny.addCustomMessageHandler("lav_failed", function (failCode) {
