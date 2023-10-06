@@ -91,7 +91,6 @@ function getEdgePositions(nodeID) {
     return;
   }
   let edgePostions = [];
-  debugger;
   node.connectedEdges().forEach((edge) => {
     const source = edge.source();
     const target = edge.target();
@@ -122,7 +121,6 @@ function elementWiseSubtract(obj1, obj2) {
 
 function getOccupiedAngles(edgePostions) {
   let angles = [];
-  debugger;
   edgePostions.forEach((position) => {
     angles.push(getAngleFromPos(position));
   });

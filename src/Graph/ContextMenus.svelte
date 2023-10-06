@@ -7,6 +7,7 @@
   import "cytoscape-context-menus/cytoscape-context-menus.css";
   import { onMount } from "svelte";
   import { addNode } from "./graphmanipulation.js";
+  import { checkNodeLoop } from "./checkNodeLoop.js";
 
   // register extension
   cytoscape.use(contextMenus);
@@ -247,6 +248,17 @@
       hasTrailingDivider: true,
     },
     {
+      id: "free-orientation",
+      content: "Free Loop Orientation",
+      selector: "edge.loop.fixDeg",
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.removeClass("fixDeg");
+        checkNodeLoop(edge.source().id());
+      },
+      hasTrailingDivider: false,
+    },
+    {
       id: "change-orientation",
       content: "Change/Fix Loop Orientation",
       selector: "edge.loop",
@@ -270,6 +282,7 @@
 
             if (value !== null) {
               edge.style("loop-direction", `${value}deg`);
+              edge.addClass("fixDeg");
             }
           },
         });
