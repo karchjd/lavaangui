@@ -5,6 +5,8 @@
   import { cyStore } from "../stores";
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { addNode } from "../Graph/graphmanipulation.js";
+  import { applySemLayout } from "../MenuTop/semPlotLayouts";
+  import { construct_svelte_component } from "svelte/internal";
 
   function serverAvail() {
     return typeof Shiny === "object" && Shiny !== null;
@@ -210,6 +212,7 @@
 
     // save all results in data attributes of the correct edges
     Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
+      console.log(lav_result);
       cy = get(cyStore);
       for (let i = 0; i < lav_result.lhs.length; i++) {
         let existingEdge = findEdge(
@@ -233,56 +236,94 @@
       $appState.result = "estimates_sucess";
       setAlert("success", "Succesfully fitted model");
     });
+
+    function importNode(type, label) {
+      addNode(type, undefined, label);
+    }
+
+    //import model
+    Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
+      const observed = lav_model.obs;
+      for (let i = 0; i < observed.length; i++) {
+        importNode("observed-variable", observed[i]);
+      }
+
+      const latent = lav_model.latent;
+      for (let i = 0; i < latent.length; i++) {
+        importNode("latent-variable", latent[i]);
+      }
+
+      $appState.result = "model";
+      cy = get(cyStore);
+      let const_added = false;
+      let added_const_id;
+      lav_model = lav_model.parTable;
+      for (let i = 0; i < lav_model.lhs.length; i++) {
+        const desiredEdge = getEdge(
+          lav_model.lhs[i],
+          lav_model.op[i],
+          lav_model.rhs[i]
+        );
+
+        let sourceId;
+        if (desiredEdge.source !== 1) {
+          sourceId = cy
+            .nodes(function (node) {
+              return node.data("label") == desiredEdge.source;
+            })[0]
+            .id();
+        } else {
+          //added edge is constant
+          if (lav_model.free[i] == 0 && lav_model.ustart[i] == 0) {
+            continue;
+          }
+          if (!const_added) {
+            added_const_id = addNode("constant", getConstNodePosition(cy));
+            const_added = true;
+            const added_node = cy.nodes(function (node) {
+              return node.id() == added_const_id;
+            })[0];
+            added_node.addClass("fromLav");
+          }
+          sourceId = added_const_id;
+        }
+
+        const targetId = cy
+          .nodes(function (node) {
+            return node.data("label") == desiredEdge.target;
+          })[0]
+          .id();
+
+        let edge = cy.add({
+          groups: "edges",
+          data: {
+            source: sourceId,
+            target: targetId,
+          },
+          classes: desiredEdge.directed,
+        });
+
+        if (lav_model.user[i] == 1) {
+          edge.addClass("fromUser");
+          if (lav_model.free[i] == 0) {
+            edge.addClass("byLav");
+          }
+        } else {
+          edge.addClass("fromLav");
+        }
+
+        if (lav_model.free[i] !== 0) {
+          edge.addClass("free");
+          console.log("set free");
+        } else {
+          edge.addClass("fixed");
+          edge.data("value", lav_model.ustart[i]);
+        }
+
+        checkNodeLoop(sourceId);
+        checkNodeLoop(targetId);
+      }
+      applySemLayout("tree", false);
+    });
   }
-
-  // function importNode(type, label) {
-  //   addNode(type, undefined, label);
-  // }
-
-  // function importEdge(edge_paras) {
-  //   const targetID = cy
-  //     .nodes(function (node) {
-  //       return node.data("label") == edge_paras.target;
-  //     })
-  //     .data("id");
-  //   const sourceID = cy
-  //     .nodes(function (node) {
-  //       return node.data("label") == edge_paras.source;
-  //     })
-  //     .data("id");
-  //   const edge = cy.add({
-  //     group: "edges",
-  //     data: {
-  //       id: "edge" + edgeIdCounter++,
-  //       source: sourceID,
-  //       target: targetID,
-  //     },
-  //   });
-  //   edge.addClass(edge_paras.directed);
-  // }
-
-  //import model
-  // Shiny.addCustomMessageHandler("model", function (model) {
-  //   const observed = model.obs;
-  //   for (let i = 0; i < observed.length; i++) {
-  //     importNode("observed-variable", observed[i]);
-  //   }
-
-  //   const latent = model.latent;
-  //   for (let i = 0; i < latent.length; i++) {
-  //     importNode("latent-variable", latent[i]);
-  //   }
-
-  //   const edges = model.pars;
-  //   for (let i = 0; i < edges.lhs.length; i++) {
-  //     const edge_paras = getEdge(edges.lhs[i], edges.op[i], edges.rhs[i]);
-  //     importEdge(edge_paras);
-  //   }
-  //   const layout = {
-  //     name: "breadthfirst",
-  //     spacingFactor: "0.6",
-  //     fit: false,
-  //   };
-  //   cy.layout(layout).run();
-  // });
 </script>

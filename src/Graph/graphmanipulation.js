@@ -15,22 +15,28 @@ export function resetCounters() {
 resetCounters();
 
 // Adding new nodes via mouse, toolbar, or hotkey
-export function addNode(nodeType, position) {
+export function addNode(nodeType, position, customLabel = null) {
   let cy = get(cyStore);
   let nodeId = uuidv4();
   let label;
-  if (nodeType == "observed-variable") {
-    label = "x" + obCounter++;
-  } else if (nodeType == "latent-variable") {
-    label = "f" + latentCounter++;
+
+  if (customLabel !== null) {
+    label = customLabel;
   } else {
-    label = undefined;
+    if (nodeType == "observed-variable") {
+      label = "x" + obCounter++;
+    } else if (nodeType == "latent-variable") {
+      label = "f" + latentCounter++;
+    } else {
+      label = undefined;
+    }
   }
 
   // Check if position is provided, if not, use random position
   let finalPosition = position
     ? position
     : { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 };
+
   let urLocal = get(ur);
   urLocal.do("add", {
     group: "nodes",

@@ -28,7 +28,8 @@ server <- function(input, output, session) {
   
   imported <- FALSE
   if ((!imported) && (exists("model"))) {
-    session$sendCustomMessage("model", message = model)
+    session$sendCustomMessage("imported_model", message = model)
+    session$sendCustomMessage("lav_results", model$est)
     imported <- TRUE
   }
   
