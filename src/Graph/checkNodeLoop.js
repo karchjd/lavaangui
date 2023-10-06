@@ -41,12 +41,6 @@ function checkDefaultsFree(goalAngle, angles) {
   return goalAngle;
 }
 
-// Test the function
-const goalAngle = 50;
-const angles = [30, 355, 135, 240];
-const result = checkDefaultsFree(goalAngle, angles);
-console.log("Result:", result);
-
 function defaultPositionsFree(angles) {
   const intervals = {
     top: [315, 45],
@@ -97,7 +91,6 @@ function getEdgePositions(nodeID) {
     let toAdd;
     if (source.id() !== node.id() || target.id() !== node.id()) {
       if (source.id() === node.id()) {
-        console.log("sourceEndpointAdded");
         toAdd = elementWiseSubtract(edge.sourceEndpoint(), node.position());
       } else {
         toAdd = elementWiseSubtract(edge.targetEndpoint(), node.position());
@@ -124,7 +117,6 @@ function getOccupiedAngles(edgePostions) {
   edgePostions.forEach((position) => {
     angles.push(getAngleFromPos(position));
   });
-  console.log(angles);
   return angles;
 }
 
