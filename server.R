@@ -27,10 +27,12 @@ server <- function(input, output, session) {
   
   
   imported <- FALSE
-  if ((!imported) && (exists("model"))) {
+  if ((!imported) && (exists("model_for_lavaangui_192049124"))) {
+    model <- model_for_lavaangui_192049124
     session$sendCustomMessage("imported_model", message = model)
     session$sendCustomMessage("lav_results", model$est)
     imported <- TRUE
+    rm(model_for_lavaangui_192049124, envir = .GlobalEnv)
   }
   
   read_auto <- function(filepath) {
