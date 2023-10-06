@@ -7,7 +7,7 @@
   }
 
   function tolavaan(mode) {
-    if (mode == 2) {
+    if (mode == "full model") {
       const nodes = cy.nodes(function (node) {
         return node.hasClass("observed-variable");
       });
@@ -25,21 +25,23 @@
     }
     cy.elements(".fromLav").remove();
     const edges = cy.edges();
+
     for (var i = 0; i < edges.length; i++) {
       edges[i].removeData("est");
       edges[i].removeClass("hasEst");
     }
-    let for_R = createSyntax(mode > 0);
+    const tolavaan = mode !== "user model";
+    let for_R = createSyntax(tolavaan);
     $appState.result = "script";
-    if (mode > 0 && serverAvail()) {
+    if (mode != "user model" && serverAvail()) {
       for_R.mode = mode;
       Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
       $appState.runCounter = $appState.runCounter + 1;
       Shiny.setInputValue("runCounter", $appState.runCounter);
-      if (mode == 2) {
+      if (mode == "estimate") {
         $appState.fitting = true;
       }
-    } else if (mode == 0) {
+    } else if (mode == "user model") {
       document.getElementById("lavaan_syntax_R").innerText = for_R;
     }
   }
@@ -51,7 +53,7 @@
       type="button"
       class="btn btn-default"
       on:click={() => {
-        tolavaan(0);
+        tolavaan("user model");
       }}
     >
       Create Script
@@ -60,7 +62,7 @@
       type="button"
       class="btn btn-default"
       on:click={() => {
-        tolavaan(1);
+        tolavaan("full model");
       }}
     >
       Show Full Model
@@ -69,7 +71,7 @@
       type="button"
       class="btn btn-default"
       on:click={() => {
-        tolavaan(2);
+        tolavaan("estimate");
       }}
     >
       Run lavaan

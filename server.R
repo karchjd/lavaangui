@@ -8,11 +8,13 @@ server <- function(input, output, session) {
   library(future)
   library(promises)
   library(semPlot)
+  library(dplyr)
   plan(multisession)
   
   library(rvest)
   library(xml2)
   abort_file <- tempfile()
+  last_model <- NULL
   
   create_summary <- function(df){
     sum_table <- paste0(capture.output(sumtable(df, out = "htmlreturn", title = "")), collapse = "")
@@ -95,9 +97,9 @@ server <- function(input, output, session) {
   
   getResults <- function(result){
     session$sendCustomMessage("lav_results", parameterestimates(result))
-    # partable(result)
     sum_model <- summary(result, fit.measures = TRUE)
     sum_model$pe <- NULL
+    last_model <<- result
     sum_model
   }
   
@@ -119,9 +121,17 @@ server <- function(input, output, session) {
     lavaan_model <- eval(parse(text = lavaan_parse_string))
     model_parsed <- parTable(lavaan_model)
     session$sendCustomMessage("lav_model", model_parsed)
+    print(last_model)
+    if(!is.null(last_model)){
+      last_model_parsed <- select(parTable(last_model), id:plabel)  
+    }else{
+      last_model_parsed <- NULL 
+    }
+    
+    print(identical(select(model_parsed, id:plabel), last_model_parsed))
     
     ## obtain estimates and send to javascript
-    if (fromJavascript$mode == 2) {
+    if (fromJavascript$mode == "estimate" && !identical(model_parsed, last_model_parsed)) {
       data <- data()$df
       lavaan_string <- paste0("lavaan(model, data, ", fromJavascript$options)
       
@@ -148,8 +158,11 @@ server <- function(input, output, session) {
           file.remove(abort_file)  
         }
       })
-    }else{
+    }else if (fromJavascript$mode == "full model"){
       to_render(model_parsed)
+    }else if (fromJavascript$mode == "estimate" && !identical(model_parsed, last_model_parsed)){
+      print("reusing cached results")
+      getResults(last_model)
     }
     NULL
   })
