@@ -19,6 +19,7 @@
     { name: "Estimate", value: "est" },
     { name: "Confidence intervals", value: "ci" },
     { name: "Estimate + p-value (stars)", value: "estPVal" },
+    { name: "Estimate + standard errors", value: "estSE" },
   ];
 
   $: {
@@ -75,11 +76,15 @@
       };
     } else if (viewOption == "ci") {
       styleEst = function (edge) {
-        return "[" + edge.data("ciLow") + ", " + edge.data("ciHigh") + "]";
+        return `[${edge.data("ciLow")}, ${edge.data("ciHigh")}]`;
       };
     } else if (viewOption == "estPVal") {
       styleEst = function (edge) {
         return edge.data("est") + getStars(edge.data("p_value"));
+      };
+    } else if (viewOption == "estSE") {
+      styleEst = function (edge) {
+        return `${edge.data("est")} (${edge.data("se")})`;
       };
     }
     cy.style()
