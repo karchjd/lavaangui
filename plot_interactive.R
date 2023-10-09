@@ -4,5 +4,5 @@ plot_interactive <- function(fit) {
   factNames <- lavaan:::lavaanNames(fit, type = "lv")
   factNames <- factNames[!factNames %in% varNames]
   model_for_lavaangui_192049124 <<- list(obs = varNames, latent = factNames, parTable = parTable(fit), est = pars)
-  shiny::runApp(launch.browser = TRUE)
+  runGadget(shinyAppDir("."), viewer = dialogViewer("lavaangui", width = 10^3, height = 10^3))
 }
