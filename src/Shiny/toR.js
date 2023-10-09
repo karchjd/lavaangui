@@ -200,21 +200,20 @@ function produceLavaanOptions() {
   const meanStruc = boolToString(modelOpt.meanStruc);
   const ovFree = boolToString(modelOpt.intOvFree);
   const lvFree = boolToString(modelOpt.intLvFree);
-  return (
-    "meanstructure = " +
-    meanStruc +
-    ",\n\t\t int.ov.free = " +
-    ovFree +
-    ", int.lv.free = " +
-    lvFree +
-    ", \n\t\t estimator = " +
-    addQuotes(modelOpt.estimator) +
-    ", se = " +
-    addQuotes(modelOpt.se) +
-    ", \n\t\t missing = " +
-    addQuotes(modelOpt.missing) +
-    ", auto.fix.first = TRUE,\n\t\t auto.fix.single = TRUE, auto.var = TRUE, \n\t\t auto.cov.lv.x = TRUE, auto.efa = TRUE, \n\t\t auto.th = TRUE, auto.delta = TRUE,  \n\t\t auto.cov.y = TRUE, fixed.x = FALSE)"
-  );
+  return `meanstructure = ${meanStruc},
+\t\t int.ov.free = ${ovFree}, int.lv.free = ${lvFree},
+\t\t estimator = ${addQuotes(modelOpt.estimator)}, se = ${addQuotes(
+    modelOpt.se
+  )},
+\t\t missing = ${addQuotes(modelOpt.missing)}, auto.fix.first = ${boolToString(
+    modelOpt.fix_first
+  )} ,
+\t\t auto.fix.single = ${boolToString(
+    modelOpt.fix_single
+  )}, auto.var = ${boolToString(modelOpt.auto_var)},
+\t\t auto.cov.lv.x = ${boolToString(modelOpt.auto_cov_lv_x)}, auto.efa = TRUE,
+\t\t auto.th = TRUE, auto.delta = TRUE,
+\t\t auto.cov.y = ${boolToString(modelOpt.auto_cov_y)}, fixed.x = FALSE)`;
 }
 
 function addQuotes(inputString) {

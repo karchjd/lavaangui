@@ -131,6 +131,15 @@
           //If it is a user row make sure the path is in, otherwise throw an error
           assert(existingEdge.length == 1);
           existingEdge.addClass("validated");
+          //if it used to be fixed by lavaan unfix it first
+          if (
+            existingEdge.hasClass("byLav") &&
+            existingEdge.hasClass("fixed")
+          ) {
+            existingEdge.removeClass("fixed");
+            existingEdge.removeClass("byLav");
+          }
+
           //fix it if lavaan fixed it
           if (lav_model.free[i] == 0 && !existingEdge.hasClass("fixed")) {
             existingEdge.addClass("fixed");
@@ -188,8 +197,12 @@
             edge = existingEdge;
           }
           if (lav_model.free[i] == 0) {
-            edge.addClass("fixed");
-            edge.data("value", lav_model.ustart[i]);
+            if (lav_model.ustart[i] !== 0) {
+              edge.addClass("fixed");
+              edge.data("value", lav_model.ustart[i]);
+            } else {
+              edge.remove();
+            }
           } else {
             edge.addClass("free");
           }

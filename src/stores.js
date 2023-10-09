@@ -15,6 +15,11 @@ export let modelOptions = writable({
   n_boot: 1000,
   showLav: true,
   showVar: true,
+  fix_first: true,
+  fix_single: true,
+  auto_var: true,
+  auto_cov_lv_x: true,
+  auto_cov_y: true,
 });
 
 export let appState = writable({
