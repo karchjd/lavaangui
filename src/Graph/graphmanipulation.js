@@ -33,17 +33,23 @@ export function addNode(nodeType, position, customLabel = null) {
   }
 
   // Check if position is provided, if not, use random position
-  let finalPosition = position
-    ? position
-    : { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 };
-
   let urLocal = get(ur);
-  urLocal.do("add", {
-    group: "nodes",
-    data: { id: nodeId, label: label },
-    classes: nodeType,
-    position: finalPosition,
-  });
+  if (position) {
+    urLocal.do("add", {
+      group: "nodes",
+      data: { id: nodeId, label: label },
+      classes: nodeType,
+      renderedPosition: position,
+    });
+  } else {
+    position = { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 };
+    urLocal.do("add", {
+      group: "nodes",
+      data: { id: nodeId, label: label },
+      classes: nodeType,
+      renderedPosition: position,
+    });
+  }
 
   return nodeId;
   // if (nodeType !== "constant") {

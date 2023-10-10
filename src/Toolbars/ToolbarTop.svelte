@@ -7,6 +7,14 @@
   let unsubscribe = appState.subscribe((newState) => {
     state = newState;
   });
+
+  function dragStart(variable) {
+    $appState.dragged = variable;
+  }
+
+  function alertDrag() {
+    bootbox.alert("Drag me on the model window to create a variable");
+  }
 </script>
 
 <div class="toolbox">
@@ -15,22 +23,37 @@
     <button
       id="add-manifest-variable"
       title="Create Observed Variable"
+      draggable="true"
+      data-button-type="observed-variable"
+      on:dragstart={() => {
+        dragStart("observed-variable");
+      }}
       on:click={() => {
-        addNode("observed-variable");
+        alertDrag();
       }}
     />
     <button
       id="add-latent-variable"
       title="Create Latent Variable"
+      draggable="true"
+      data-button-type="latent-variable"
+      on:dragstart={() => {
+        dragStart("latent-variable");
+      }}
       on:click={() => {
-        addNode("latent-variable");
+        alertDrag();
       }}
     />
     <button
       id="add-constant-variable"
       title="Create Constant Variable"
+      data-button-type="const"
+      draggable="true"
+      on:dragstart={() => {
+        dragStart("constant");
+      }}
       on:click={() => {
-        addNode("constant");
+        alertDrag();
       }}
     />
   </div>

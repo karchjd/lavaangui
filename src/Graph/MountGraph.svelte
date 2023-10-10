@@ -133,6 +133,16 @@
       edge.data("isMean", "0");
     }
   });
+
+  function handleDragOver(event) {
+    event.preventDefault();
+  }
+
+  function handleCreateNode(event) {
+    event.preventDefault();
+    const pos = { x: event.offsetX, y: event.offsetY };
+    const position = addNode($appState.dragged, pos);
+  }
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -143,6 +153,8 @@
   on:mouseover={handleMouseOver}
   on:mouseout={handleMouseOut}
   on:mousemove={handleMousemove}
+  on:drop={handleCreateNode}
+  on:dragover={handleDragOver}
 />
 
 <style>

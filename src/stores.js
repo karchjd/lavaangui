@@ -33,6 +33,7 @@ export let appState = writable({
   loadFileName: null,
   ids: null,
   result: "none",
+  dragged: null,
 });
 
 export let dataInfo = writable(0);
