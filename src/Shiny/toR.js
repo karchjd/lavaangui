@@ -211,9 +211,10 @@ function produceLavaanOptions() {
 \t\t auto.fix.single = ${boolToString(
     modelOpt.fix_single
   )}, auto.var = ${boolToString(modelOpt.auto_var)},
-\t\t auto.cov.lv.x = ${boolToString(modelOpt.auto_cov_lv_x)}, auto.efa = TRUE,
-\t\t auto.th = TRUE, auto.delta = TRUE,
-\t\t auto.cov.y = ${boolToString(modelOpt.auto_cov_y)}, fixed.x = FALSE)`;
+\t\t auto.cov.lv.x = ${boolToString(
+    modelOpt.auto_cov_lv_x
+  )}, auto.cov.y = ${boolToString(modelOpt.auto_cov_y)},
+  \t\t fixed.x = ${boolToString(modelOpt.fixed_x)})`;
 }
 
 function addQuotes(inputString) {

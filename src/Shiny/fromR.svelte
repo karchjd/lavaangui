@@ -197,7 +197,7 @@
             edge = existingEdge;
           }
           if (lav_model.free[i] == 0) {
-            if (lav_model.ustart[i] !== 0) {
+            if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
               edge.addClass("fixed");
               edge.data("value", lav_model.ustart[i]);
             } else {

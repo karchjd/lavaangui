@@ -7,7 +7,7 @@
   }
 
   function tolavaan(mode) {
-    if (mode == "full model") {
+    if (mode == "estimate") {
       const nodes = cy.nodes(function (node) {
         return node.hasClass("observed-variable");
       });

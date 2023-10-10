@@ -3,17 +3,13 @@
   import { modelOptions } from "../stores.js";
   import Dropdown from "./helpers/Dropdown.svelte";
 
-  $: menuItems = [
+  const menuItems = [
     {
       name: "Fix Factor Loading of First Indicator at 1",
       modelProperty: "fix_first",
     },
     {
-      name: "Fix Variance of Only Indicator to 0",
-      modelProperty: "fix_single",
-    },
-    {
-      name: "Include Variances of Exogenous Latent Variables",
+      name: "Include Variances",
       modelProperty: "auto_var",
     },
     {
@@ -21,8 +17,16 @@
       modelProperty: "auto_cov_lv_x",
     },
     {
-      name: "Include covariances of Dependent Variables",
+      name: "Include Covariances of Dependent Variables",
       modelProperty: "auto_cov_y",
+    },
+    {
+      name: "Fix Variance of Only Indicator to 0",
+      modelProperty: "fix_single",
+    },
+    {
+      name: "Treat Exogenous Observed Variables as Fixed Variables",
+      modelProperty: "fixed_x",
     },
   ];
 
