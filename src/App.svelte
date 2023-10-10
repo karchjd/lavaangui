@@ -23,20 +23,30 @@
 <DataInfoModal />
 <EstimationWait />
 <Init />
-<MenuTop />
-<MainContainer>
-  <Graph />
-  <GridGuides />
-  <Zoom />
-  <ContextMenus />
-  <OnEvents />
-  <UndoRedo />
-  <Results />
-</MainContainer>
-<Alert />
-<ToolbarBelow />
+<div>
+  <MenuTop />
+  <MainContainer>
+    <Graph />
+    <GridGuides />
+    <Zoom />
+    <ContextMenus />
+    <OnEvents />
+    <UndoRedo />
+    <Results />
+  </MainContainer>
+  <Alert />
+  <ToolbarBelow />
+</div>
 <Debug />
 <DataInput />
 <FromR />
 <DownloadModelData />
 <DuckTapeFixes />
+
+<style>
+  div {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+</style>

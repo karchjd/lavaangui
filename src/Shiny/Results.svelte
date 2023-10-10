@@ -1,52 +1,17 @@
-<script>
-  import { appState } from "../stores.js";
-
-  let title;
-  $: switch ($appState.result) {
-    case "none":
-      title = "";
-      break;
-    case "estimates_sucess":
-      title = "Model Fit";
-      break;
-    case "script":
-      title = "Script";
-      break;
-    case "model":
-      title = "Model";
-      break;
-  }
-</script>
-
-<div id="pre-container">
-  {#if title !== ""}
-    <h4>{title}</h4>
-  {/if}
-
-  <pre id="lavaan_syntax_R" class="shiny-html-output well" />
-</div>
+<pre id="lavaan_syntax_R" class="shiny-html-output well" />
 
 <style>
-  #pre-container {
-    width: 30%;
-    min-width: 30%;
-    background-color: lightgrey;
-    height: 100%;
-  }
-
-  h4 {
-    border-bottom: 1pt solid black;
-  }
   pre {
-    white-space: pre; /* Changed from pre-wrap to pre */
-    width: 100%;
-    min-width: 100%;
+    white-space: pre;
     text-align: left;
-    background-color: lightgrey;
-    max-height: 85.3vh;
-    overflow-y: auto;
-    overflow-x: auto; /* Added this line */
-    padding: 0px;
-    margin: 0px;
+    min-height: 0;
+    display: flex;
+    flex-basis: 30%;
+    flex-direction: column; /* Changed from row (default) to column */
+    overflow-y: scroll;
+    overflow-x: scroll;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
   }
 </style>

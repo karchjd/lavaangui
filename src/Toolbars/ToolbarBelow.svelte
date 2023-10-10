@@ -44,7 +44,8 @@
       }
     } else if (mode == "user model") {
       $modelOptions.showLav = false;
-      document.getElementById("lavaan_syntax_R").innerText = for_R;
+      document.getElementById("lavaan_syntax_R").innerText =
+        for_R + for_R + for_R + for_R;
       cy.edges(".byLav").forEach((existingEdge) => {
         existingEdge.removeClass("fixed");
         existingEdge.addClass("free");
@@ -55,7 +56,7 @@
   }
 </script>
 
-<div class="toolbox navbar-fixed-bottom">
+<div class="toolbox navbar-static-bottom">
   <div class="btn-group" role="group">
     <button
       type="button"

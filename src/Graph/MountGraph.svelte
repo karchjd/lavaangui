@@ -148,8 +148,10 @@
 <style>
   div {
     z-index: 1;
-    width: 70%;
-    height: 100%;
+    display: flex;
+    flex-basis: 70%;
     padding: 0px;
+    min-width: 0;
+    min-height: 0;
   }
 </style>

@@ -9,7 +9,6 @@
   import AddMenu from "./AddMenu.svelte";
 </script>
 
-<HelpPage />
 <Navbar>
   <FileMenu />
   <ViewMenu />
@@ -17,5 +16,4 @@
   <AddMenu />
   <EstimationMenu />
   <Layouts />
-  <HelpPage />
 </Navbar>
