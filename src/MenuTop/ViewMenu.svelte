@@ -6,13 +6,13 @@
   import RadioItem from "./helpers/RadioItem.svelte";
   import { onMount } from "svelte";
 
-  $: edgeItems = [
+  const edgeItems = [
     {
       name: "Edges Created by Lavaan",
-      checked: $modelOptions.showLav,
+      modelSlot: "showLav",
       class: "fromLav",
     },
-    { name: "Variance Edges", checked: $modelOptions.showVar, class: "loop" },
+    { name: "Variance Edges", modelSlot: "showVar", class: "loop" },
   ];
 
   let viewRadios = [
@@ -23,7 +23,7 @@
   ];
 
   $: {
-    updateVisibility(edgeItems);
+    updateVisibility($modelOptions, edgeItems);
   }
   let mounted = false;
 
@@ -38,15 +38,15 @@
     }
   }
 
-  function updateVisibility(menuItems) {
+  function updateVisibility(modelOptions, menuItems) {
     const cy = get(cyStore);
-    if (menuItems[0].checked && menuItems[1].checked) {
+    if (modelOptions.showLav && modelOptions.showVar) {
       cy.elements("." + menuItems[0].class).show();
       cy.elements("." + menuItems[1].class).show();
-    } else if (menuItems[0].checked && !menuItems[1].checked) {
+    } else if (modelOptions.showLav && !modelOptions.showVar) {
       cy.elements("." + menuItems[0].class).show();
       cy.elements("." + menuItems[1].class).hide();
-    } else if (!menuItems[0].checked && menuItems[1].checked) {
+    } else if (!modelOptions.showLav && modelOptions.showVar) {
       cy.elements("." + menuItems[1].class).show();
       cy.elements("." + menuItems[0].class).hide();
     } else {
@@ -100,7 +100,7 @@
   {#each edgeItems as item}
     <CheckItem
       bind:name={item.name}
-      bind:checked={item.checked}
+      bind:checked={$modelOptions[item.modelSlot]}
       disable={false}
     />
   {/each}
