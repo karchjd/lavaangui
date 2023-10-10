@@ -119,7 +119,7 @@ export function createSyntax(run) {
   }
 
   if (reg_nodes.length > 0) {
-    syntax += "\n" + "# regressions" + "\n";
+    syntax += "\n" + "# regressions";
     for (let i = 0; i < reg_nodes.length; i++) {
       const targetNode = reg_nodes[i];
       const connectedEdges = targetNode.connectedEdges(function (edge) {
@@ -136,7 +136,7 @@ export function createSyntax(run) {
           }
           nodeNames += addTerms(node, connectedEdges[j]);
         }
-        syntax += targetNode.data("label") + " ~ " + nodeNames + "\n ";
+        syntax += "\n" + targetNode.data("label") + " ~ " + nodeNames;
       }
     }
   }
@@ -150,12 +150,12 @@ export function createSyntax(run) {
   });
   if (cov_edges.length > 0) {
     let nodeNames = "";
-    syntax += "\n" + "# residual (co)variances" + "\n";
+    syntax += "\n\n" + "# residual (co)variances";
     for (let i = 0; i < cov_edges.length; i++) {
       let node1 = cov_edges[i].source().data("label");
       let node2 = cov_edges[i].target().data("label");
       syntax +=
-        node1 + " ~~ " + addTerms(cov_edges[i].target(), cov_edges[i]) + "\n ";
+        "\n" + node1 + " ~~ " + addTerms(cov_edges[i].target(), cov_edges[i]);
     }
   }
 
@@ -178,7 +178,7 @@ export function createSyntax(run) {
       }
     }
   }
-  syntax = "'\n" + syntax + "'" + "\n ";
+  syntax = "'\n" + syntax + "'" + "\n\n";
   const lavOptions = produceLavaanOptions();
 
   R_script += "model <-" + syntax;
