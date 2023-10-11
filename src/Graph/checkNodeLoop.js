@@ -3,7 +3,6 @@ export function checkNodeLoop(nodeID) {
   if (selfLoop != null) {
     const edgePostions = getEdgePositions(nodeID);
     const angles = getOccupiedAngles(edgePostions);
-    const freeDefault = defaultPositionsFree(angles);
     let goalAngle = getBestFreeAngle(angles);
     goalAngle = checkDefaultsFree(goalAngle, angles);
     selfLoop.style("loop-direction", `${goalAngle}deg`);
@@ -12,6 +11,7 @@ export function checkNodeLoop(nodeID) {
 
 function checkDefaultsFree(goalAngle, angles) {
   const defaultAngles = [0, 90, 180, 270];
+  const minDist = 35;
 
   // Sort default angles by their shortest distance to goalAngle considering angle wrap-around
   const sortedDefaultAngles = defaultAngles.sort((a, b) => {
@@ -30,7 +30,7 @@ function checkDefaultsFree(goalAngle, angles) {
   for (const defaultAngle of sortedDefaultAngles) {
     const isFree = !angles.some((angle) => {
       const diff = Math.abs(defaultAngle - angle);
-      return Math.min(diff, 360 - diff) <= 45;
+      return Math.min(diff, 360 - diff) <= minDist;
     });
 
     if (isFree) {
@@ -39,43 +39,6 @@ function checkDefaultsFree(goalAngle, angles) {
   }
 
   return goalAngle;
-}
-
-function defaultPositionsFree(angles) {
-  const intervals = {
-    top: [315, 45],
-    right: [45, 135],
-    bottom: [135, 225],
-    left: [225, 315],
-  };
-
-  let freeIntervals = [];
-
-  for (let key in intervals) {
-    const [start, end] = intervals[key];
-    let isFree = true;
-
-    for (const angle of angles) {
-      const normalizedAngle = ((angle % 360) + 360) % 360;
-      if (start <= end) {
-        if (normalizedAngle >= start && normalizedAngle <= end) {
-          isFree = false;
-          break;
-        }
-      } else {
-        if (normalizedAngle >= start || normalizedAngle <= end) {
-          isFree = false;
-          break;
-        }
-      }
-    }
-
-    if (isFree) {
-      freeIntervals.push(key);
-    }
-  }
-
-  return freeIntervals;
 }
 
 function getEdgePositions(nodeID) {
