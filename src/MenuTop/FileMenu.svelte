@@ -106,7 +106,7 @@
 
   function loadData() {
     //  / Trigger the file input click action
-    window.$("#fileInput").click();
+    document.getElementById("fileInput").click();
   }
 
   function loadModelData() {
