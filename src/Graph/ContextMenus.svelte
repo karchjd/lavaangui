@@ -13,12 +13,7 @@
   cytoscape.use(contextMenus);
 
   function isValidName(str) {
-    // The regex breakdown:
-    // ^: Asserts the start of a line.
-    // [a-zA-Z]: Matches any single uppercase or lowercase letter.
-    // [a-zA-Z0-9]*: Matches zero or more letters or digits.
-    // $: Asserts the end of a line.
-    const regex = /^[a-zA-Z][a-zA-Z0-9]*$/;
+    const rVarNameRegex = /^[a-zA-Z\._][a-zA-Z0-9\._]*(?<!\.)$/;
     return regex.test(str);
   }
 
