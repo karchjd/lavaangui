@@ -8,11 +8,11 @@
 
   const edgeItems = [
     {
-      name: "Edges Created by Lavaan",
+      name: "Arrows Created by Lavaan",
       modelSlot: "showLav",
       class: "fromLav",
     },
-    { name: "Variance Edges", modelSlot: "showVar", class: "loop" },
+    { name: "Variance Arrows", modelSlot: "showVar", class: "loop" },
   ];
 
   let viewRadios = [
