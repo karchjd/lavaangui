@@ -65,7 +65,7 @@
       eh.disableDrawMode();
       makeNodesGrabbable();
     }
-    if (event.key === " ") {
+    if (event.key === "Shift") {
       spaceKeyDown = false;
     }
   }

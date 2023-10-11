@@ -12,7 +12,7 @@
     let urLocal = cy.undoRedo(options);
     ur.set(urLocal);
     document.addEventListener("keydown", function (e) {
-      if (e.ctrlKey && e.target.nodeName === "BODY")
+      if ((e.ctrlKey || e.metaKey) && e.target.nodeName === "BODY")
         if (e.which === 90) $ur.undo();
         else if (e.which === 89) $ur.redo();
     });
