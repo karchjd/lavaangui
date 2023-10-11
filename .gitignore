@@ -40,3 +40,10 @@ index-294092bd.css
 index-8f1dc207.js
 .vite
 semPathTest.R
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+demo-todo-app.spec.ts

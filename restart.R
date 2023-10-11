@@ -6,4 +6,4 @@ if (ret_val != 0) {
   stop("Failed to compile Svelte front end.")
 }
 
-runApp(launch.browser = TRUE)
+runApp(launch.browser = TRUE, port = 3245)
