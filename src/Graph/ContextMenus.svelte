@@ -313,15 +313,16 @@
             .join("");
         }
 
-        const dropdownHTML = $appState.dataAvail
-          ? `
-      <label>Or select from existing labels:</label>
+        const dropdownHTML =
+          $appState.dataAvail && node.hasClass("observed-variable")
+            ? `
+      <label>Or Select From Variables in Your Data:</label>
       <select class="form-control" id="label-dropdown">
         <option value="">--Select--</option>
         ${dropdownOptions}
       </select>
     `
-          : "";
+            : "";
 
         bootbox.dialog({
           title: "Rename Variable",
