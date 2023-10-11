@@ -26,12 +26,12 @@
       {/each}
     </ul>
     <CheckItem
-      name="Add intercepts for all observed variables"
+      name="Add Intercepts for all Observed Variables"
       bind:checked={$modelOptions.intOvFree}
       bind:disable={disabledInts}
     />
     <CheckItem
-      name="Add intercepts for all latent variables"
+      name="Add Intercepts for all Latent Variables"
       bind:checked={$modelOptions.intLvFree}
       bind:disable={disabledInts}
     />

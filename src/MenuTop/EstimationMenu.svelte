@@ -4,15 +4,15 @@
   import RadioItem from "./helpers/RadioItem.svelte";
 
   const estimatorRadios = [
-    { value: "ML", name: "Maximum likelihood" },
-    { value: "GLS", name: "Generalized least squares" },
+    { value: "ML", name: "Maximum Likelihood (ML)" },
+    { value: "GLS", name: "Generalized Least Squares (GLS)" },
     {
       value: "WLS",
-      name: "Weighted least squares",
+      name: "Weighted Least Squares (WLS)",
     },
-    { value: "ULS", name: "Unweighted least squares" },
-    { value: "DWLS", name: "Diagonally weighted least squares" },
-    { value: "DLS", name: "Distributionally-weighted least squares" },
+    { value: "ULS", name: "Unweighted Least Squares (ULS)" },
+    { value: "DWLS", name: "Diagonally Weighted Least Squares (DWLS)" },
+    { value: "DLS", name: "Distributionally-weighted Least Squares (DLW)" },
   ];
 
   const standardErrors = [
@@ -37,7 +37,7 @@
 
   const missingValues = [
     { value: "listwise", name: "Listwise" },
-    { value: "ml", name: "Full information maximum likelihood" },
+    { value: "ml", name: "Full Information Maximum Likelihood (FIML)" },
   ];
 
   const fimlSupported = ["ML"];

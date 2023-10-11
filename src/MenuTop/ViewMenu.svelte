@@ -17,9 +17,9 @@
 
   let viewRadios = [
     { name: "Estimate", value: "est" },
-    { name: "Confidence intervals", value: "ci" },
+    { name: "Confidence Interval", value: "ci" },
     { name: "Estimate + p-value (stars)", value: "estPVal" },
-    { name: "Estimate + standard errors", value: "estSE" },
+    { name: "Estimate + Standard Error", value: "estSE" },
   ];
 
   $: {

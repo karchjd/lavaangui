@@ -81,7 +81,7 @@
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
-          title: "Please enter a label",
+          title: "Enter a Label",
           callback: function (result) {
             if (!validLabel(result)) {
               return false;
@@ -129,7 +129,7 @@
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
-          title: "Please enter a value",
+          title: "Enter a Value",
           inputType: "number",
           callback: function (value) {
             if (value == "") {
@@ -226,7 +226,7 @@
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
           title:
-            "Please enter new value. Larger absolute values result in more curvature. Switching the sign reverts the curvature.",
+            "Enter a New Value \n (Larger absolute values → more curvature. Switching the sign → reverts curvature)",
           inputType: "number",
           value: parseInt(edge.style().controlPointDistances),
           callback: function (value) {
@@ -261,7 +261,7 @@
         const edge = event.target || event.cyTarget;
         bootbox.prompt({
           title:
-            "Please enter a degree from 0 to 360. 0 is top, 90 right, 180 bottom, and 270 left.",
+            "Enter a Degree from 0 to 360 (0 is top, 90 right, 180 bottom, and 270 left)",
           inputType: "number",
           value: parseInt(edge.style("loop-direction")),
           callback: function (value) {
