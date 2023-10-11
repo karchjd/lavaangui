@@ -66,26 +66,27 @@
     }
   }
 
-  function uploadModel() {
-    let input = window.$("<input>").attr({ type: "file", accept: ".json" });
+  async function uploadModel() {
+    // Create file input element
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", ".json");
 
-    // Attach change event handler to the file input element
-    input.on("change", function (e) {
-      // Read the selected file
-      let file = e.target.files[0];
-      let reader = new FileReader();
-      reader.readAsText(file, "UTF-8");
-
-      // Handle file content after it's read
-      reader.onload = function (readerEvent) {
-        // Parse file content as JSON
-        let content = readerEvent.target.result;
-        parseModel(content);
-      };
+    // Await file selection by user
+    const file = await new Promise((resolve) => {
+      input.addEventListener("change", (e) => resolve(e.target.files[0]));
+      input.click();
     });
 
-    // Trigger the file input click action
-    input.click();
+    // Read the file as text
+    const fileContent = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      reader.onload = () => resolve(reader.result);
+    });
+
+    // Parse the file content as JSON and pass it to parseModel
+    parseModel(fileContent);
   }
 
   function loadModel() {
@@ -123,41 +124,35 @@
     }
   }
 
-  function uploadModelData() {
+  async function uploadModelData() {
     // Create file input element
-    let input = window.$("<input>").attr({ type: "file", accept: ".zip" });
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", ".zip");
 
-    // Attach change event handler to the file input element
-    input.on("change", function (e) {
-      // Read the selected file
-      let file = e.target.files[0];
-      let reader = new FileReader();
-      reader.readAsArrayBuffer(file);
-
-      // Handle file content after it's read
-      reader.onload = function (readerEvent) {
-        // Use JSZip to unzip the file content
-        JSZip.loadAsync(readerEvent.target.result).then(function (zip) {
-          // Apply loadModel to model.json file within the zip
-          zip
-            .file("model.json")
-            .async("text")
-            .then(function (content) {
-              parseModel(content);
-            });
-
-          // Send data.csv file to the shiny server
-          zip
-            .file("data.csv")
-            .async("base64")
-            .then(function (content) {
-              // Send the content of the file as a base64 string
-              Shiny.setInputValue("fileInput", { content: content });
-            });
-        });
-      };
+    // Await file selection by user
+    const file = await new Promise((resolve) => {
+      input.addEventListener("change", (e) => resolve(e.target.files[0]));
+      input.click();
     });
-    input.click();
+
+    // Read the file as an ArrayBuffer
+    const arrayBuffer = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = () => resolve(reader.result);
+    });
+
+    // Use JSZip to unzip the file
+    const zip = await JSZip.loadAsync(arrayBuffer);
+
+    // Read and parse model.json
+    const modelJsonContent = await zip.file("model.json").async("text");
+    parseModel(modelJsonContent);
+
+    // Read and send data.csv to the Shiny server
+    const dataCsvContent = await zip.file("data.csv").async("base64");
+    Shiny.setInputValue("fileInput", { content: dataCsvContent });
   }
 
   function jsonModel() {
