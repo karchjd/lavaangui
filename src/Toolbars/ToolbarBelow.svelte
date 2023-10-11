@@ -63,6 +63,7 @@
       on:click={() => {
         tolavaan("user model");
       }}
+      disabled={$appState.modelEmpty}
     >
       Show User Model / Script
     </button>
@@ -72,6 +73,7 @@
       on:click={() => {
         tolavaan("full model");
       }}
+      disabled={$appState.modelEmpty}
     >
       Show Full Model
     </button>
@@ -81,6 +83,7 @@
       on:click={() => {
         tolavaan("estimate");
       }}
+      disabled={$appState.modelEmpty}
     >
       Fit Model
     </button>
