@@ -82,7 +82,7 @@
         tolavaan("estimate");
       }}
     >
-      Estimate
+      Fit Model
     </button>
   </div>
 </div>
