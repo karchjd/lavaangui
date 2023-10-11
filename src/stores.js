@@ -34,6 +34,7 @@ export let appState = writable({
   ids: null,
   result: "none",
   dragged: null,
+  drawing: false,
 });
 
 export let dataInfo = writable(0);

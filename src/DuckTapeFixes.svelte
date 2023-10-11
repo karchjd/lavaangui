@@ -1,11 +1,11 @@
 <script>
-  import { cyStore } from "./stores.js";
+  import { cyStore, appState } from "./stores.js";
   import { get } from "svelte/store";
 
   let cy = get(cyStore);
 
   setInterval(() => {
-    if (cy) {
+    if (!$appState.drawing && cy) {
       cy.autoungrabify(false);
       cy.nodes().grabify();
     }

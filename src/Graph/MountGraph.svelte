@@ -20,9 +20,10 @@
   function handleKeyDown(event) {
     if (event.key === "Meta" || event.key === "Control" || " ") {
       eh.enableDrawMode();
+      $appState.drawing = true;
     }
 
-    if (event.key === " ") {
+    if (event.key === "Shift") {
       spaceKeyDown = true;
     }
     // Handle Backspace key
@@ -61,8 +62,9 @@
   }
 
   function handleKeyUp() {
-    if (event.key === "Meta" || event.key === "Control" || " ") {
+    if (event.key === "Meta" || event.key === "Control" || "Shift") {
       eh.disableDrawMode();
+      $appState.drawing = false;
       makeNodesGrabbable();
     }
     if (event.key === "Shift") {
