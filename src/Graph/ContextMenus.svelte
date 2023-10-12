@@ -14,7 +14,7 @@
 
   function isValidName(str) {
     const rVarNameRegex = /^[a-zA-Z\._][a-zA-Z0-9\._]*(?<!\.)$/;
-    return regex.test(str);
+    return rVarNameRegex.test(str);
   }
 
   function validLabel(str) {
