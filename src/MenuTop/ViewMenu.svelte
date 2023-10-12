@@ -34,7 +34,7 @@
 
   $: {
     if (mounted) {
-      updateLabels($modelOptions.view);
+      updateLabels($modelOptions.view, $modelOptions.std);
     }
   }
 
@@ -67,24 +67,32 @@
     }
   }
 
-  function updateLabels(viewOption) {
+  function updateLabels(viewOption, std) {
     const cy = get(cyStore);
+    let postfix;
+    if (std) {
+      postfix = "_std";
+    } else {
+      postfix = "";
+    }
     let styleEst;
     if (viewOption == "est") {
       styleEst = function (edge) {
-        return edge.data("est");
+        return edge.data("est" + postfix);
       };
     } else if (viewOption == "ci") {
       styleEst = function (edge) {
-        return `[${edge.data("ciLow")}, ${edge.data("ciHigh")}]`;
+        return `[${edge.data("ciLow" + postfix)}, ${edge.data(
+          "ciHigh" + postfix
+        )}]`;
       };
     } else if (viewOption == "estPVal") {
       styleEst = function (edge) {
-        return edge.data("est") + getStars(edge.data("p_value"));
+        return edge.data("est" + postfix) + getStars(edge.data("p_value"));
       };
     } else if (viewOption == "estSE") {
       styleEst = function (edge) {
-        return `${edge.data("est")} (${edge.data("se")})`;
+        return `${edge.data("est" + postfix)} (${edge.data("se" + postfix)})`;
       };
     }
     cy.style()
@@ -104,6 +112,12 @@
       disable={false}
     />
   {/each}
+  <li class="divider" />
+  <CheckItem
+    name={"Standardized Estimates"}
+    bind:checked={$modelOptions.std}
+    disable={false}
+  />
   <li class="divider" />
   {#each viewRadios as item}
     <RadioItem

@@ -99,7 +99,8 @@ server <- function(input, output, session) {
   to_render <- reactiveVal()
   
   getResults <- function(result){
-    session$sendCustomMessage("lav_results", parameterestimates(result))
+    res <- list(normal = parameterestimates(result), std = standardizedsolution(result))
+    session$sendCustomMessage("lav_results", res)
     sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
     sum_model$pe <- NULL
     last_model <<- result

@@ -224,8 +224,10 @@
     });
 
     // save all results in data attributes of the correct edges
-    Shiny.addCustomMessageHandler("lav_results", function (lav_result) {
-      console.log(lav_result);
+    Shiny.addCustomMessageHandler("lav_results", function (all_res) {
+      const lav_result = all_res.normal;
+      const std_result = all_res.std;
+      debugger;
       cy = get(cyStore);
       for (let i = 0; i < lav_result.lhs.length; i++) {
         let existingEdge = findEdge(
@@ -243,6 +245,11 @@
           existingEdge.data("se", lav_result.se[i].toFixed(2));
           existingEdge.data("ciLow", lav_result["ci.lower"][i].toFixed(2));
           existingEdge.data("ciHigh", lav_result["ci.upper"][i].toFixed(2));
+
+          existingEdge.data("est_std", std_result["est.std"][i].toFixed(2));
+          existingEdge.data("se_std", std_result.se[i].toFixed(2));
+          existingEdge.data("ciLow_std", std_result["ci.lower"][i].toFixed(2));
+          existingEdge.data("ciHigh_std", std_result["ci.upper"][i].toFixed(2));
         }
       }
       $appState.fitting = false;

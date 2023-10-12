@@ -21,6 +21,7 @@ export let modelOptions = writable({
   auto_cov_lv_x: true,
   auto_cov_y: true,
   fixed_x: true,
+  std: false,
 });
 
 export let appState = writable({
