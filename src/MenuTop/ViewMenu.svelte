@@ -67,39 +67,40 @@
     }
   }
 
+  function generateStyleEst(viewOption, postfix) {
+    switch (viewOption) {
+      case "est":
+        return (edge) => edge.data("est" + postfix);
+      case "ci":
+        return (edge) =>
+          `[${edge.data("ciLow" + postfix)}, ${edge.data("ciHigh" + postfix)}]`;
+      case "estPVal":
+        return (edge) =>
+          `${edge.data("est" + postfix)}${getStars(edge.data("p_value"))}`;
+      case "estSE":
+        return (edge) =>
+          `${edge.data("est" + postfix)} (${edge.data("se" + postfix)})`;
+      default:
+        return (edge) => ""; // Or some default behavior
+    }
+  }
+
+  function generateLabeledStyleEst(viewOption, postfix) {
+    const baseStyle = generateStyleEst(viewOption, postfix);
+    return (edge) => `${edge.data("label")} = ${baseStyle(edge)}`;
+  }
+
   function updateLabels(viewOption, std) {
     const cy = get(cyStore);
-    let postfix;
-    if (std) {
-      postfix = "_std";
-    } else {
-      postfix = "";
-    }
-    let styleEst;
-    if (viewOption == "est") {
-      styleEst = function (edge) {
-        return edge.data("est" + postfix);
-      };
-    } else if (viewOption == "ci") {
-      styleEst = function (edge) {
-        return `[${edge.data("ciLow" + postfix)}, ${edge.data(
-          "ciHigh" + postfix
-        )}]`;
-      };
-    } else if (viewOption == "estPVal") {
-      styleEst = function (edge) {
-        return edge.data("est" + postfix) + getStars(edge.data("p_value"));
-      };
-    } else if (viewOption == "estSE") {
-      styleEst = function (edge) {
-        return `${edge.data("est" + postfix)} (${edge.data("se" + postfix)})`;
-      };
-    }
+    const postfix = std ? "_std" : "";
+
+    const styleEst = generateStyleEst(viewOption, postfix);
+    cy.style().selector("edge.hasEst").style({ label: styleEst }).update();
+
+    const labeledStyleEst = generateLabeledStyleEst(viewOption, postfix);
     cy.style()
-      .selector("edge.hasEst")
-      .style({
-        label: styleEst,
-      })
+      .selector("edge.hasEst.label")
+      .style({ label: labeledStyleEst })
       .update();
   }
 </script>
