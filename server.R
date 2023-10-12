@@ -10,12 +10,11 @@ server <- function(input, output, session) {
   library(semPlot)
   library(dplyr)
   plan(multisession)
-  
   library(rvest)
   library(xml2)
-  abort_file <- tempfile()
-  last_model <- NULL
   
+  
+  # normal functions
   create_summary <- function(df){
     sum_table <- paste0(capture.output(sumtable(df, out = "htmlreturn", title = "")), collapse = "")
     remove_string <- "<table class=\"headtab\"> <tr><td style=\"text-align:left\">sumtable {vtable}</td> <td style=\"text-align:right\">Summary Statistics</td></tr></table> <h1>  </h1>"
@@ -23,16 +22,6 @@ server <- function(input, output, session) {
     remove_string <- "<title>Summary Statistics</title>"
     sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
     sum_table
-  }
-  
-  
-  imported <- FALSE
-  if ((!imported) && (exists("model_for_lavaangui_192049124"))) {
-    model <- model_for_lavaangui_192049124
-    session$sendCustomMessage("imported_model", message = model)
-    session$sendCustomMessage("lav_results", model$est)
-    imported <- TRUE
-    rm(model_for_lavaangui_192049124, envir = .GlobalEnv)
   }
   
   read_auto <- function(filepath) {
@@ -61,8 +50,45 @@ server <- function(input, output, session) {
     return(data)
   }
   
+  # constants
+  help_text <- paste(
+    "Command               Action",
+    "--------------------------------------------------",
+    "Right-Click           Right-Click Anywhere to get an Appropriate Menu",
+    "o                     Create Observed Variable at Mouse Location",
+    "l                     Create Latent Variable at Mouse Location",
+    "c                     Create Constant Variable at Mouse Location",
+    "Hold Shift            Draw Undirected Arrows by Connecting Variables With Mouse",
+    "Hold CTRL             Draw Directed Arrows by Connect Variables With Mouse",
+    "Hold CTRL             Click on Multiple Elements to Select",
+    "Hold CTRL             Click on Canvas to Activate Select Box",
+    "Backspace             Remove Selected Elements",
+    "CTRL+Z                Undo",
+    "CTRL+Y                Redo",
+    "",
+    "Mac Users Replace CTRL with CMD",
+    sep = "\n"
+  )
+  class(help_text) <- "help_text"
+  print.help_text <- function(helpt_text){
+    cat(help_text)
+  }
   
+  # state vars
+  abort_file <- tempfile()
+  last_model <- NULL
+  imported <- FALSE
   
+  # import model if present
+  if ((!imported) && (exists("model_for_lavaangui_192049124"))) {
+    model <- model_for_lavaangui_192049124
+    session$sendCustomMessage("imported_model", message = model)
+    session$sendCustomMessage("lav_results", model$est)
+    imported <- TRUE
+    rm(model_for_lavaangui_192049124, envir = .GlobalEnv)
+  }
+  
+  # data upload
   data_content <- reactive({
     req(input$fileInput)
     if (is.null(input$fileInput$content)) {
@@ -75,7 +101,6 @@ server <- function(input, output, session) {
     }
     
     df <- data$df
-    
     data_info <- list(
       name = data$name, columns = colnames(df),
       summary = create_summary(data$df)
@@ -84,10 +109,7 @@ server <- function(input, output, session) {
     return(data)
   })
   
-  observeEvent(data_content(), {
-    
-  })
-  
+  # renaming data columns
   data <- reactive({
     local_data <- data_content()
     if (!is.null(input$newnames)) {
@@ -96,17 +118,12 @@ server <- function(input, output, session) {
     return(local_data)
   })
   
-  to_render <- reactiveVal()
+  # showing help
+  observeEvent(input$show_help,{
+    to_render(help_text)}
+  )
   
-  getResults <- function(result){
-    res <- list(normal = parameterestimates(result), std = standardizedsolution(result))
-    session$sendCustomMessage("lav_results", res)
-    sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
-    sum_model$pe <- NULL
-    last_model <<- result
-    sum_model
-  }
-  
+  # layout helper
   observeEvent(input$layout,{
     req(input$layout)
     fromJavascript <- jsonlite::fromJSON(input$layout)
@@ -117,6 +134,31 @@ server <- function(input, output, session) {
     session$sendCustomMessage("semPlotLayout", coordinates)
   })
   
+  # result window
+  to_render <- reactiveVal(help_text)
+  
+  output$lavaan_syntax_R <- renderPrint({
+    req(to_render())
+    print(to_render())
+  })
+  
+  # needed, for mysterios reasons
+  observeEvent(data_content(), {
+    
+  })
+  
+  
+  # extract results from model
+  getResults <- function(result){
+    res <- list(normal = parameterestimates(result), std = standardizedsolution(result))
+    session$sendCustomMessage("lav_results", res)
+    sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
+    sum_model$pe <- NULL
+    last_model <<- result
+    sum_model
+  }
+  
+  # main part for fitting lavaan
   observeEvent(input$runCounter, {
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
@@ -171,13 +213,7 @@ server <- function(input, output, session) {
     NULL
   })
   
-  
-  ## run lavaan, send results to javascript, show results output windows
-  output$lavaan_syntax_R <- renderPrint({
-    req(to_render())
-    print(to_render())
-  })
-  
+  # allows uploading
   observeEvent(input$abort,{
     print("abort")
     file.create(abort_file)

@@ -13,8 +13,7 @@
   ];
 
   function showCommands() {
-    const event = new CustomEvent("reset-content");
-    document.body.dispatchEvent(event);
+    Shiny.setInputValue("show_help", Math.random());
   }
 </script>
 

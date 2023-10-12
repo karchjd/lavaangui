@@ -26,7 +26,7 @@
     let cy = get(cyStore);
     cy.elements().remove();
     resetCounters();
-    document.getElementById("lavaan_syntax_R").innerText = "";
+    Shiny.setInputValue("show_help", Math.random());
   }
 
   function mergeExistingProperties(target, source) {
