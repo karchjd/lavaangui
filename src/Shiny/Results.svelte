@@ -1,4 +1,13 @@
-<pre id="lavaan_syntax_R" class="shiny-html-output well">
+<script>
+  import { onMount } from "svelte";
+
+  function handleResetContentEvent() {
+    document.querySelector("#lavaan_syntax_R").textContent = help_text;
+  }
+
+  document.body.addEventListener("reset-content", handleResetContentEvent);
+
+  const help_text = `
 Command               Action
 --------------------------------------------------
 Right-Click           Right-Click Anywhere to get an Appropriate Menu 
@@ -13,10 +22,23 @@ Backspace             Remove Selected Elements
 CTRL+Z                Undo
 CTRL+Y                Redo
 
-
 Mac Users Replace CTRL with CMD
+    `;
 
-</pre>
+  onMount(() => {
+    document.body.addEventListener("reset-content", handleResetContentEvent);
+    document.querySelector("#lavaan_syntax_R").textContent = help_text;
+    // Cleanup event listener on component destruction
+    return () => {
+      document.body.removeEventListener(
+        "reset-content",
+        handleResetContentEvent
+      );
+    };
+  });
+</script>
+
+<pre id="lavaan_syntax_R" class="shiny-html-output well" />
 
 <style>
   pre {

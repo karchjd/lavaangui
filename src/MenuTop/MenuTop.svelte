@@ -7,6 +7,7 @@
   import EstimationMenu from "./EstimationMenu.svelte";
   import Layouts from "./Layouts.svelte";
   import AddMenu from "./AddMenu.svelte";
+  import ShowHelp from "./ShowHelp.svelte";
 </script>
 
 <Navbar>
@@ -16,4 +17,5 @@
   <AddMenu />
   <EstimationMenu />
   <Layouts />
+  <ShowHelp />
 </Navbar>
