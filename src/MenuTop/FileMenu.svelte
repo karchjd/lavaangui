@@ -124,35 +124,40 @@
     }
   }
 
-  async function uploadModelData() {
+  function uploadModelData() {
     // Create file input element
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", ".zip");
 
-    // Await file selection by user
-    const file = await new Promise((resolve) => {
-      input.addEventListener("change", (e) => resolve(e.target.files[0]));
-      input.click();
-    });
+    input.addEventListener("change", function (e) {
+      const file = e.target.files[0];
 
-    // Read the file as an ArrayBuffer
-    const arrayBuffer = await new Promise((resolve) => {
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);
-      reader.onload = () => resolve(reader.result);
+
+      reader.onload = function () {
+        const arrayBuffer = reader.result;
+
+        JSZip.loadAsync(arrayBuffer).then(function (zip) {
+          zip
+            .file("model.json")
+            .async("text")
+            .then(function (modelJsonContent) {
+              parseModel(modelJsonContent);
+
+              zip
+                .file("data.csv")
+                .async("base64")
+                .then(function (dataCsvContent) {
+                  Shiny.setInputValue("fileInput", { content: dataCsvContent });
+                });
+            });
+        });
+      };
     });
 
-    // Use JSZip to unzip the file
-    const zip = await JSZip.loadAsync(arrayBuffer);
-
-    // Read and parse model.json
-    const modelJsonContent = await zip.file("model.json").async("text");
-    parseModel(modelJsonContent);
-
-    // Read and send data.csv to the Shiny server
-    const dataCsvContent = await zip.file("data.csv").async("base64");
-    Shiny.setInputValue("fileInput", { content: dataCsvContent });
+    input.click();
   }
 
   function jsonModel() {
