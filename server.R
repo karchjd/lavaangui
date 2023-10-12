@@ -100,7 +100,7 @@ server <- function(input, output, session) {
   
   getResults <- function(result){
     session$sendCustomMessage("lav_results", parameterestimates(result))
-    sum_model <- summary(result, fit.measures = TRUE)
+    sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
     sum_model$pe <- NULL
     last_model <<- result
     sum_model
