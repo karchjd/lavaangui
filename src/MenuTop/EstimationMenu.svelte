@@ -54,23 +54,28 @@
     }
   }
 
-  $: if ($modelOptions.se == "boot") {
-    bootbox.prompt({
-      title: "Enter the number of bootstrap draws:",
-      value: $modelOptions.n_boot,
-      callback: function (result) {
-        if (result !== null) {
-          const parsedValue = parseInt(result, 10);
-          if (Number.isInteger(parsedValue) && parsedValue > 0) {
-            $modelOptions.n_boot = parsedValue;
-            return true;
-          } else {
-            return false;
-            bootbox.alert("Please enter a positive whole number.");
+  let previousSE = null;
+
+  $: {
+    if ($modelOptions.se == "boot" && previousSE !== "boot") {
+      bootbox.prompt({
+        title: "Enter the number of bootstrap draws:",
+        value: $modelOptions.n_boot,
+        callback: function (result) {
+          if (result !== null) {
+            const parsedValue = parseInt(result, 10);
+            if (Number.isInteger(parsedValue) && parsedValue > 0) {
+              $modelOptions.n_boot = parsedValue;
+              return true;
+            } else {
+              return false;
+              bootbox.alert("Please enter a positive whole number.");
+            }
           }
-        }
-      },
-    });
+        },
+      });
+    }
+    previousSE = $modelOptions.se;
   }
   const name = "Estimation";
 </script>
