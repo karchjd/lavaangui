@@ -343,9 +343,10 @@
               className: "btn-primary",
               callback: function () {
                 const inputLabel = document.getElementById("new-label").value;
-                const selectedLabel = $appState.dataAvail
-                  ? document.getElementById("label-dropdown").value
-                  : "";
+                const selectedLabel =
+                  $appState.dataAvail && node.hasClass("observed-variable")
+                    ? document.getElementById("label-dropdown").value
+                    : "";
 
                 const result = inputLabel || selectedLabel;
 
