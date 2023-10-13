@@ -80,12 +80,22 @@ export function createSyntax(run) {
         shown = true;
       }
 
+      const xRange =
+        Math.max(...connectedEdges.map((edge) => edge.target().position().x)) -
+        Math.min(...connectedEdges.map((edge) => edge.target().position().x));
+
+      const yRange =
+        Math.max(...connectedEdges.map((edge) => edge.target().position().y)) -
+        Math.min(...connectedEdges.map((edge) => edge.target().position().y));
+
+      const sortBy = xRange >= yRange ? "x" : "y";
+
       const sortedIndices = connectedEdges
         .map((edge, index) => ({
           index,
-          x: edge.target().position().x,
+          value: edge.target().position()[sortBy],
         }))
-        .sort((a, b) => a.x - b.x)
+        .sort((a, b) => a.value - b.value)
         .map((item) => item.index);
 
       for (let j = 0; j < connectedEdges.length; j++) {
