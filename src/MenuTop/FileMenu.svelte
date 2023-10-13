@@ -6,6 +6,7 @@
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
   import { graphSettings, graphStyles } from "../Graph/cytoscape_settings.js";
   import { resetCounters } from "../Graph/graphmanipulation.js";
+  import cytoscape from "cytoscape";
 
   function newModel() {
     if (!$appState.modelEmpty) {
@@ -26,7 +27,7 @@
     let cy = get(cyStore);
     cy.elements().remove();
     resetCounters();
-    Shiny.setInputValue("show_help", Math.random());
+    document.getElementById("lavaan_syntax_R").innerText = "";
   }
 
   function mergeExistingProperties(target, source) {
@@ -163,7 +164,11 @@
   function jsonModel() {
     //remove link with data set
     const cy = get(cyStore);
-    let cy_save = cy;
+    // Deep clone cytoscape instance to cy_save
+    const cy_save = cytoscape();
+    cy_save.json(cy.json());
+
+    // Remove link with data set
     cy_save.nodes().removeClass("linked");
 
     // Convert diagram data to JSON string
