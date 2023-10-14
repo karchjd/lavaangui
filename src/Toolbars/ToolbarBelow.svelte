@@ -23,12 +23,11 @@
         }
       }
     }
-    // if current model hash or current data hash unequal their old equivalents
+
     const edges = cy.edges();
 
     for (var i = 0; i < edges.length; i++) {
-      edges[i].removeData("est"); //really all remove est data, maybe make it a result object instead
-      // possible in cy?
+      edges[i].removeData("est");
       edges[i].removeClass("hasEst");
     }
     const tolavaan = mode !== "user model";

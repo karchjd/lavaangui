@@ -229,7 +229,7 @@
     Shiny.addCustomMessageHandler("lav_results", function (all_res) {
       const lav_result = all_res.normal;
       const std_result = all_res.std;
-      debugger;
+
       cy = get(cyStore);
       for (let i = 0; i < lav_result.lhs.length; i++) {
         let existingEdge = findEdge(

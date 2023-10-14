@@ -190,6 +190,7 @@ server <- function(input, output, session) {
         environment(new_function) <- asNamespace('lavaan')
         assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
         eval(parse(text = lavaan_string))
+        cat(lavaan_string)
       }, packages = "lavaan", globals = c("data", "abort_file", "model", "lavaan_string"), seed = TRUE)
       prom <- fut %...>% getResults %...>% to_render
       prom <- catch(fut,
