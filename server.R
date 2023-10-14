@@ -115,7 +115,7 @@ server <- function(input, output, session) {
     if (!is.null(input$newnames)) {
       names(local_data$df) <- jsonlite::fromJSON(input$newnames)
     }
-    return(local_data)
+    return(local_data$df)
   })
   
   # showing help
@@ -153,7 +153,8 @@ server <- function(input, output, session) {
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     fromJavascript$fitted_model = NULL
     res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
-                fitted_model = base64enc::base64encode(serialize(fit, NULL)), model = digest(fromJavascript$model))
+                fitted_model = base64enc::base64encode(serialize(fit, NULL)), model = digest(fromJavascript$model),
+                data = digest(data()))
     session$sendCustomMessage("lav_results", res)
     sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
     sum_model$pe <- NULL
@@ -174,10 +175,13 @@ server <- function(input, output, session) {
     if (fromJavascript$mode == "full model"){
       to_render(model_parsed)
     }else if(fromJavascript$mode == "estimate"){
-      if(is.null(fromJavascript$cache$lastFitModel) || fromJavascript$cache$lastFitModel != digest::digest(fromJavascript$model)){ ##mising check also that data is the same
+      cacheValid =  !is.null(fromJavascript$cache$lastFitModel) && 
+        fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
+        (is.null(fromJavascript$cache$lastFitData) || fromJavascript$cache$lastFitData == digest::digest(data()))
+      if(!cacheValid){ ##mising check also that data is the same
         ## obtain estimates and send to javascript
         session$sendCustomMessage("fitting", "")
-        data <- data()$df
+        data <- data()
         lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
         fut <- future_promise({
           original_function <- lavaan:::lav_model_objective
@@ -244,7 +248,7 @@ server <- function(input, output, session) {
       writeLines(input$model, jsonFile)
       
       # Write the data frame to the CSV file (replace my_data with your data frame)
-      write.csv(data()$df, csvFile, row.names = FALSE)
+      write.csv(data(), csvFile, row.names = FALSE)
       
       # Create a zip archive of the directory containing the JSON and CSV files
       zip::zip(zipfile = file, files = c("model.json", "data.csv"), root = tempDir)

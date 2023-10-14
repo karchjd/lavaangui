@@ -206,6 +206,7 @@ export function createSyntax(run) {
       cache: {
         lastFitLavFit: localCache.lastFitLavFit,
         lastFitModel: localCache.lastFitModel,
+        lastFitData: localCache.lastFitData,
       },
     };
     return for_R;

@@ -232,7 +232,7 @@
     Shiny.addCustomMessageHandler("usecache", function (dummy) {
       setAlert(
         "info",
-        "Reusing cached results because model did not change since last fit"
+        "Reusing cached results because model and data did not change since last fit"
       );
     });
 
@@ -242,6 +242,7 @@
       const std_result = all_res.std;
       $cache.lastFitLavFit = all_res.fitted_model;
       $cache.lastFitModel = all_res.model;
+      $cache.lastFitData = all_res.data;
       cy = get(cyStore);
       for (let i = 0; i < lav_result.lhs.length; i++) {
         let existingEdge = findEdge(
