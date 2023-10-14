@@ -1,5 +1,5 @@
 <script>
-  import { appState, dataInfo, setAlert } from "../stores";
+  import { appState, dataInfo, setAlert, cache } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass.js";
   import { get } from "svelte/store";
   import { cyStore } from "../stores";
@@ -229,7 +229,7 @@
     Shiny.addCustomMessageHandler("lav_results", function (all_res) {
       const lav_result = all_res.normal;
       const std_result = all_res.std;
-
+      $cache.lastFitLavFit = all_res.fitted_model;
       cy = get(cyStore);
       for (let i = 0; i < lav_result.lhs.length; i++) {
         let existingEdge = findEdge(

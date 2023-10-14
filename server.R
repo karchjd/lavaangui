@@ -12,6 +12,7 @@ server <- function(input, output, session) {
   plan(multisession)
   library(rvest)
   library(xml2)
+  library(base64enc)
   
   
   # normal functions
@@ -150,7 +151,9 @@ server <- function(input, output, session) {
   
   # extract results from model
   getResults <- function(result){
-    res <- list(normal = parameterestimates(result), std = standardizedsolution(result))
+    res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
+                fitted_model = base64enc::base64encode(serialize(fit, NULL))
+)
     session$sendCustomMessage("lav_results", res)
     sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
     sum_model$pe <- NULL
@@ -162,6 +165,10 @@ server <- function(input, output, session) {
   observeEvent(input$runCounter, {
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
+    if(!is.null(fromJavascript$oldFit)){
+      oldFit  <- unserialize(base64enc::base64decode(fromJavascript$oldFit))
+      browser()
+    }
     model <- eval(parse(text = fromJavascript$syntax))
     lavaan_parse_string <- paste0("lavaan(model, ", fromJavascript$options)
     lavaan_model <- eval(parse(text = lavaan_parse_string))
@@ -190,7 +197,6 @@ server <- function(input, output, session) {
         environment(new_function) <- asNamespace('lavaan')
         assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
         eval(parse(text = lavaan_string))
-        cat(lavaan_string)
       }, packages = "lavaan", globals = c("data", "abort_file", "model", "lavaan_string"), seed = TRUE)
       prom <- fut %...>% getResults %...>% to_render
       prom <- catch(fut,

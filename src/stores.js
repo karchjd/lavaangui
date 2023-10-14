@@ -24,6 +24,12 @@ export let modelOptions = writable({
   std: false,
 });
 
+export let cache = writable({
+  lastFitSyn: null,
+  lastFitLavFit: null,
+  lastFitData: null,
+});
+
 export let appState = writable({
   fitting: false,
   loadingMode: false,
