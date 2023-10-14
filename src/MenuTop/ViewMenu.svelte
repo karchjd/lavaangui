@@ -70,16 +70,22 @@
   function generateStyleEst(viewOption, postfix) {
     switch (viewOption) {
       case "est":
-        return (edge) => edge.data("est" + postfix);
+        return (edge) => edge.data("estimates")["est" + postfix];
       case "ci":
         return (edge) =>
-          `[${edge.data("ciLow" + postfix)}, ${edge.data("ciHigh" + postfix)}]`;
+          `[${edge.data("estimates")["ciLow" + postfix]}, ${
+            edge.data("estimates")["ciHigh" + postfix]
+          }]`;
       case "estPVal":
         return (edge) =>
-          `${edge.data("est" + postfix)}${getStars(edge.data("p_value"))}`;
+          `${edge.data("estimates")["est" + postfix]}${getStars(
+            edge.data("estimates")["p_value"]
+          )}`;
       case "estSE":
         return (edge) =>
-          `${edge.data("est" + postfix)} (${edge.data("se" + postfix)})`;
+          `${edge.data("estimates")["est" + postfix]} (${
+            edge.data("estimates")["se" + postfix]
+          })`;
       default:
         return (edge) => ""; // Or some default behavior
     }

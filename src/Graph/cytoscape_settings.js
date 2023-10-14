@@ -121,22 +121,6 @@ export const graphStyles = [
     },
   },
   {
-    selector: "edge.hasEst",
-    style: {
-      label: function (edge) {
-        return edge.data("est");
-      },
-    },
-  },
-  {
-    selector: "edge.hasEst.label",
-    style: {
-      label: function (edge) {
-        return edge.data("label") + "=" + edge.data("est");
-      },
-    },
-  },
-  {
     selector: "edge.forcefree",
     style: {
       "line-color": "blue",

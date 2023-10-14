@@ -8,6 +8,8 @@
   import { applySemLayout } from "../MenuTop/semPlotLayouts";
   import { construct_svelte_component } from "svelte/internal";
 
+  const number_digits = 2;
+
   function serverAvail() {
     return typeof Shiny === "object" && Shiny !== null;
   }
@@ -239,17 +241,29 @@
           debugger;
         }
         if (existingEdge.hasClass("free")) {
-          existingEdge.data("est", lav_result.est[i].toFixed(2));
-          existingEdge.addClass("hasEst");
-          existingEdge.data("p_value", lav_result.pvalue[i].toFixed(2));
-          existingEdge.data("se", lav_result.se[i].toFixed(2));
-          existingEdge.data("ciLow", lav_result["ci.lower"][i].toFixed(2));
-          existingEdge.data("ciHigh", lav_result["ci.upper"][i].toFixed(2));
+          // Object to store all the estimates
+          let allEstimates = {};
 
-          existingEdge.data("est_std", std_result["est.std"][i].toFixed(2));
-          existingEdge.data("se_std", std_result.se[i].toFixed(2));
-          existingEdge.data("ciLow_std", std_result["ci.lower"][i].toFixed(2));
-          existingEdge.data("ciHigh_std", std_result["ci.upper"][i].toFixed(2));
+          // Populate the object with estimates from lav_result
+          allEstimates.est = lav_result.est[i].toFixed(number_digits);
+          allEstimates.p_value = lav_result.pvalue[i].toFixed(number_digits);
+          allEstimates.se = lav_result.se[i].toFixed(number_digits);
+          allEstimates.ciLow = lav_result["ci.lower"][i].toFixed(number_digits);
+          allEstimates.ciHigh =
+            lav_result["ci.upper"][i].toFixed(number_digits);
+
+          // Populate the object with estimates from std_result
+          allEstimates.est_std =
+            std_result["est.std"][i].toFixed(number_digits);
+          allEstimates.se_std = std_result.se[i].toFixed(number_digits);
+          allEstimates.ciLow_std =
+            std_result["ci.lower"][i].toFixed(number_digits);
+          allEstimates.ciHigh_std =
+            std_result["ci.upper"][i].toFixed(number_digits);
+
+          // Store the consolidated estimates object in a single data attribute
+          existingEdge.data("estimates", allEstimates);
+          existingEdge.addClass("hasEst");
         }
       }
       $appState.fitting = false;
