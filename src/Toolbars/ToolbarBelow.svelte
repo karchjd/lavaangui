@@ -39,9 +39,6 @@
       Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
       $appState.runCounter = $appState.runCounter + 1;
       Shiny.setInputValue("runCounter", $appState.runCounter);
-      if (mode == "estimate") {
-        $appState.fitting = true;
-      }
     } else if (mode == "user model") {
       $modelOptions.showLav = false;
       document.getElementById("lavaan_syntax_R").innerText = for_R;

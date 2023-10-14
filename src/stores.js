@@ -25,7 +25,7 @@ export let modelOptions = writable({
 });
 
 export let cache = writable({
-  lastFitSyn: null,
+  lastFitModel: null,
   lastFitLavFit: null,
   lastFitData: null,
 });

@@ -13,7 +13,7 @@ server <- function(input, output, session) {
   library(rvest)
   library(xml2)
   library(base64enc)
-  
+
   
   # normal functions
   create_summary <- function(df){
@@ -77,7 +77,6 @@ server <- function(input, output, session) {
   
   # state vars
   abort_file <- tempfile()
-  last_model <- NULL
   imported <- FALSE
   
   # import model if present
@@ -151,13 +150,13 @@ server <- function(input, output, session) {
   
   # extract results from model
   getResults <- function(result){
+    fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
+    fromJavascript$fitted_model = NULL
     res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
-                fitted_model = base64enc::base64encode(serialize(fit, NULL))
-)
+                fitted_model = base64enc::base64encode(serialize(fit, NULL)), model = digest(fromJavascript$model))
     session$sendCustomMessage("lav_results", res)
     sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
     sum_model$pe <- NULL
-    last_model <<- result
     sum_model
   }
   
@@ -165,60 +164,53 @@ server <- function(input, output, session) {
   observeEvent(input$runCounter, {
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
-    if(!is.null(fromJavascript$oldFit)){
-      oldFit  <- unserialize(base64enc::base64decode(fromJavascript$oldFit))
-      browser()
-    }
-    model <- eval(parse(text = fromJavascript$syntax))
-    lavaan_parse_string <- paste0("lavaan(model, ", fromJavascript$options)
+    modelJavascript <- fromJavascript$model
+    model <- eval(parse(text = modelJavascript$syntax))
+    lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
     lavaan_model <- eval(parse(text = lavaan_parse_string))
     model_parsed <- parTable(lavaan_model)
     session$sendCustomMessage("lav_model", model_parsed)
-    print(last_model)
-    if(!is.null(last_model)){
-      last_model_parsed <- select(parTable(last_model), id:plabel)  
-    }else{
-      last_model_parsed <- NULL 
-    }
     
-    print(identical(select(model_parsed, id:plabel), last_model_parsed))
-    
-    ## obtain estimates and send to javascript
-    if (fromJavascript$mode == "estimate" && !identical(model_parsed, last_model_parsed)) {
-      data <- data()$df
-      lavaan_string <- paste0("lavaan(model, data, ", fromJavascript$options)
-      
-      fut <- future_promise({
-        original_function <- lavaan:::lav_model_objective
-        original_function_string <- deparse(original_function)
-        new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
-        new_function <- eval(parse(text = new_function))
-        
-        environment(new_function) <- asNamespace('lavaan')
-        assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
-        eval(parse(text = lavaan_string))
-      }, packages = "lavaan", globals = c("data", "abort_file", "model", "lavaan_string"), seed = TRUE)
-      prom <- fut %...>% getResults %...>% to_render
-      prom <- catch(fut,
-                    function(e){
-                      to_render(NULL)
-                      session$sendCustomMessage("lav_failed", "stopped")
-                      to_render("stopped by user")
-                      showNotification("Task Stopped")
-                    })
-      prom <- finally(prom, function(){
-        if(file.exists(abort_file)){
-          file.remove(abort_file)  
-        }
-      })
-    }else if (fromJavascript$mode == "full model"){
+    if (fromJavascript$mode == "full model"){
       to_render(model_parsed)
-    }else if (fromJavascript$mode == "estimate" && !identical(model_parsed, last_model_parsed)){
-      print("reusing cached results")
-      getResults(last_model)
+    }else if(fromJavascript$mode == "estimate"){
+      if(is.null(fromJavascript$cache$lastFitModel) || fromJavascript$cache$lastFitModel != digest::digest(fromJavascript$model)){ ##mising check also that data is the same
+        ## obtain estimates and send to javascript
+        session$sendCustomMessage("fitting", "")
+        data <- data()$df
+        lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
+        fut <- future_promise({
+          original_function <- lavaan:::lav_model_objective
+          original_function_string <- deparse(original_function)
+          new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
+          new_function <- eval(parse(text = new_function))
+          
+          environment(new_function) <- asNamespace('lavaan')
+          assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
+          eval(parse(text = lavaan_string))
+        }, packages = "lavaan", globals = c("data", "abort_file", "model", "lavaan_string"), seed = TRUE)
+        prom <- fut %...>% getResults %...>% to_render
+        prom <- catch(fut,
+                      function(e){
+                        to_render(NULL)
+                        session$sendCustomMessage("lav_failed", "stopped")
+                        to_render("stopped by user")
+                        showNotification("Task Stopped")
+                      })
+        prom <- finally(prom, function(){
+          if(file.exists(abort_file)){
+            file.remove(abort_file)  
+          }
+        })
+      }else{
+        cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
+        res <- getResults(cacheResult)
+        session$sendCustomMessage("usecache", "")
+        to_render(res)
+      }
     }
-    NULL
   })
+  
   
   # allows uploading
   observeEvent(input$abort,{

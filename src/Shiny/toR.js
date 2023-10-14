@@ -198,10 +198,15 @@ export function createSyntax(run) {
   } else {
     const localCache = get(cache);
     const for_R = {
-      options: lavOptions,
-      syntax: syntax,
-      run: run,
-      oldFit: localCache.lastFitLavFit,
+      model: {
+        options: lavOptions,
+        syntax: syntax,
+        run: run,
+      },
+      cache: {
+        lastFitLavFit: localCache.lastFitLavFit,
+        lastFitModel: localCache.lastFitModel,
+      },
     };
     return for_R;
   }
