@@ -9,15 +9,25 @@ server <- function(input, output, session) {
   library(promises)
   library(semPlot)
   library(dplyr)
-  plan(multisession)
+  future::plan(multisession)
   library(rvest)
   library(xml2)
   library(base64enc)
+  #lavaan
+  #vtable
+  #tools
+  #readr
+  #future
+  #promise
+  #readxl
+  #haven
+  
+  
   
   
   # normal functions
   create_summary <- function(df){
-    sum_table <- paste0(capture.output(sumtable(df, out = "htmlreturn", title = "")), collapse = "")
+    sum_table <- paste0(capture.output(vtable::sumtable(df, out = "htmlreturn", title = "")), collapse = "")
     remove_string <- "<table class=\"headtab\"> <tr><td style=\"text-align:left\">sumtable {vtable}</td> <td style=\"text-align:right\">Summary Statistics</td></tr></table> <h1>  </h1>"
     sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
     remove_string <- "<title>Summary Statistics</title>"
