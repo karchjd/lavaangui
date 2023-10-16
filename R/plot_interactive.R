@@ -1,4 +1,3 @@
-#' @import lavaan
 #' @export
 plot_interactive <- function(fit) {
   pars <- lavaan::parameterEstimates(fit)

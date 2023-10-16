@@ -1,9 +1,15 @@
-library(shiny)
-
 # Compile Svelte front end
-ret_val <- system("npm run build")
-if (ret_val != 0) {
-  stop("Failed to compile Svelte front end.")
-}
+# ret_val <- system("npm run build")
+# if (ret_val != 0) {
+#   stop("Failed to compile Svelte front end.")
+# }
 
-runApp(launch.browser = TRUE, port = 3245)
+# Detach all loaded packages and clean your environment
+golem::detach_all_attached()
+rm(list=ls(all.names = TRUE))
+
+# Document and reload your package
+roxygen2::roxygenise()
+pkgload::load_all()
+# Run the application
+start_gui()
