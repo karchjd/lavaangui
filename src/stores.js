@@ -24,7 +24,7 @@ export let modelOptions = writable({
   std: false,
 });
 
-export let cache = writable({
+export let fitCache = writable({
   lastFitModel: null,
   lastFitLavFit: null,
   lastFitData: null,

@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { appState, cyStore, modelOptions, cache } from "../stores";
+import { appState, cyStore, modelOptions, fitCache } from "../stores";
 
 function containsObject(list, obj) {
   for (let i = 0; i < list.length; i++) {
@@ -196,7 +196,7 @@ export function createSyntax(run) {
   if (!run) {
     return R_script;
   } else {
-    const localCache = get(cache);
+    const localCache = get(fitCache);
     const for_R = {
       model: {
         options: lavOptions,

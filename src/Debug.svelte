@@ -1,7 +1,7 @@
 <script>
   import { cyStore, modelOptions } from "./stores.js";
   import { get } from "svelte/store";
-  import { appState, dataInfo } from "./stores.js";
+  import { appState, dataInfo, fitCache } from "./stores.js";
   window.cy = get(cyStore);
 
   const unsubscribe = appState.subscribe((state) => {
@@ -14,5 +14,9 @@
 
   const unsubscribe2 = dataInfo.subscribe((state) => {
     window.dataInfo = state;
+  });
+
+  const unsubscribe3 = fitCache.subscribe((state) => {
+    window.fitCache = state;
   });
 </script>

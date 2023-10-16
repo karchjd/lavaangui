@@ -153,8 +153,8 @@ server <- function(input, output, session) {
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     fromJavascript$fitted_model = NULL
     res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
-                fitted_model = base64enc::base64encode(serialize(fit, NULL)), model = digest(fromJavascript$model),
-                data = digest(data()))
+                fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
+                data = digest::digest(data()))
     session$sendCustomMessage("lav_results", res)
     sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
     sum_model$pe <- NULL

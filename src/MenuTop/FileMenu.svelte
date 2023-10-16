@@ -4,7 +4,7 @@
     appState,
     modelOptions,
     dataInfo,
-    cache,
+    fitCache,
   } from "../stores.js";
   import { get } from "svelte/store";
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
@@ -35,8 +35,8 @@
     cy.elements().remove();
     resetCounters();
     Shiny.setInputValue("show_help", Math.random());
-    for (let key in cache) {
-      cache[key] = null;
+    for (let key in $fitCache) {
+      $fitCache[key] = null;
     }
   }
 
@@ -59,9 +59,9 @@
       json = JSON.parse(combinedData.model);
       const modelOpt = JSON.parse(combinedData.modelOpt);
       mergeExistingProperties($modelOptions, modelOpt);
-      if (!combinedData.cache == undefined) {
-        const localCache = JSON.parse(combinedData.cache);
-        mergeExistingProperties($cache, localCache);
+      if (!combinedData.fitCache == undefined) {
+        const localCache = JSON.parse(combinedData.fitCache);
+        mergeExistingProperties($fitCache, localCache);
       }
     } else {
       json = combinedData;
@@ -188,8 +188,8 @@
     const json = cy_save.json();
     const model = JSON.stringify(json);
     const modelOpt = JSON.stringify($modelOptions);
-    const cache = JSON.stringify($modelOptions);
-    const combinedData = JSON.stringify({ model, modelOpt, cache });
+    const fitCache = JSON.stringify($modelOptions);
+    const combinedData = JSON.stringify({ model, modelOpt, fitCache });
     return combinedData;
   }
 
