@@ -1,5 +1,11 @@
 <script>
-  import { cyStore, appState, modelOptions, dataInfo } from "../stores.js";
+  import {
+    cyStore,
+    appState,
+    modelOptions,
+    dataInfo,
+    cache,
+  } from "../stores.js";
   import { get } from "svelte/store";
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
   import JSZip from "jszip";
@@ -7,6 +13,7 @@
   import { graphSettings, graphStyles } from "../Graph/cytoscape_settings.js";
   import { resetCounters } from "../Graph/graphmanipulation.js";
   import cytoscape from "cytoscape";
+  import { component_subscribe } from "svelte/internal";
 
   function newModel() {
     if (!$appState.modelEmpty) {
@@ -27,7 +34,10 @@
     let cy = get(cyStore);
     cy.elements().remove();
     resetCounters();
-    document.getElementById("lavaan_syntax_R").innerText = "";
+    Shiny.setInputValue("show_help", Math.random());
+    for (let key in cache) {
+      cache[key] = null;
+    }
   }
 
   function mergeExistingProperties(target, source) {
@@ -49,7 +59,10 @@
       json = JSON.parse(combinedData.model);
       const modelOpt = JSON.parse(combinedData.modelOpt);
       mergeExistingProperties($modelOptions, modelOpt);
-      console.log(modelOpt);
+      if (!combinedData.cache == undefined) {
+        const localCache = JSON.parse(combinedData.cache);
+        mergeExistingProperties($cache, localCache);
+      }
     } else {
       json = combinedData;
     }
@@ -175,7 +188,8 @@
     const json = cy_save.json();
     const model = JSON.stringify(json);
     const modelOpt = JSON.stringify($modelOptions);
-    const combinedData = JSON.stringify({ model, modelOpt });
+    const cache = JSON.stringify($modelOptions);
+    const combinedData = JSON.stringify({ model, modelOpt, cache });
     return combinedData;
   }
 

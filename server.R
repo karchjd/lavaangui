@@ -175,11 +175,15 @@ server <- function(input, output, session) {
     if (fromJavascript$mode == "full model"){
       to_render(model_parsed)
     }else if(fromJavascript$mode == "estimate"){
+      # Check if the cache is valid. The cache is considered valid if:
+      # 1) There is a previously fitted model stored in cache
+      # 2) The cached model matches with the current model.
+      # 3) Either there is no cached data, or if there is, its matches the current data.
       cacheValid =  !is.null(fromJavascript$cache$lastFitModel) && 
         fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
         (is.null(fromJavascript$cache$lastFitData) || fromJavascript$cache$lastFitData == digest::digest(data()))
-      if(!cacheValid){ ##mising check also that data is the same
-        ## obtain estimates and send to javascript
+      if(!cacheValid){ 
+        ## fit model
         session$sendCustomMessage("fitting", "")
         data <- data()
         lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
@@ -207,6 +211,7 @@ server <- function(input, output, session) {
           }
         })
       }else{
+        # return cached results
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
         res <- getResults(cacheResult)
         session$sendCustomMessage("usecache", "")
