@@ -1,29 +1,12 @@
 lavaan_gui_server <- function(input, output, session) {
-  library(lavaan)
-  library(zip)
-  library(reader)
-  library(tools)
-  library(vtable)
+  ## init stuff
   shinyjs::useShinyjs(html = TRUE)
-  library(future)
-  library(promises)
-  library(semPlot)
+  future::plan(future::multisession)
+  `%...>%` <- promises::`%...>%`
+  
   library(dplyr)
-  future::plan(multisession)
-  library(rvest)
-  library(xml2)
-  library(base64enc)
-  #lavaan
-  #vtable
-  #tools
-  #readr
-  #future
-  #promise
-  #readxl
-  #haven
-  
-  
-  
+  # library(rvest)
+  # library(xml2)
   
   # normal functions
   create_summary <- function(df){
@@ -155,8 +138,8 @@ lavaan_gui_server <- function(input, output, session) {
     req(input$layout)
     fromJavascript <- jsonlite::fromJSON(input$layout)
     model <- eval(parse(text = fromJavascript$syntax))
-    semPlotModel <- semPlotModel(model)
-    semPlotRes <- semPaths(semPlotModel, layout = fromJavascript$name, nCharNodes = 0, nCharEdges = 0, DoNotPlot = TRUE)
+    semPlotModel <- semPlot::semPlotModel(model)
+    semPlotRes <- semPlot::semPaths(semPlotModel, layout = fromJavascript$name, nCharNodes = 0, nCharEdges = 0, DoNotPlot = TRUE)
     coordinates <- data.frame(name = semPlotModel@Vars$name, x = semPlotRes$layout[,1], y = semPlotRes$layout[,2])
     session$sendCustomMessage("semPlotLayout", coordinates)
   })
@@ -217,7 +200,7 @@ lavaan_gui_server <- function(input, output, session) {
             ## fit model
             session$sendCustomMessage("fitting", "")
             lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
-            fut <- future_promise({
+            fut <- promises::future_promise({
               original_function <- lavaan:::lav_model_objective
               original_function_string <- deparse(original_function)
               new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
@@ -228,14 +211,14 @@ lavaan_gui_server <- function(input, output, session) {
               eval(parse(text = lavaan_string))
             }, packages = "lavaan", globals = c("data", "abort_file", "model", "lavaan_string"), seed = TRUE)
             prom <- fut %...>% getResults %...>% to_render
-            prom <- catch(fut,
+            prom <- promises::catch(fut,
                           function(e){
                             to_render(NULL)
                             session$sendCustomMessage("lav_failed", "stopped")
                             to_render("stopped by user")
                             showNotification("Task Stopped")
                           })
-            prom <- finally(prom, function(){
+            prom <- promises::finally(prom, function(){
               if(file.exists(abort_file)){
                 file.remove(abort_file)  
               }
@@ -260,7 +243,6 @@ lavaan_gui_server <- function(input, output, session) {
   
   # allows uploading
   observeEvent(input$abort,{
-    print("abort")
     file.create(abort_file)
   })
   

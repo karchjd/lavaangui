@@ -47,3 +47,4 @@ semPathTest.R
 /playwright-report/
 /playwright/.cache/
 demo-todo-app.spec.ts
+src/test-results

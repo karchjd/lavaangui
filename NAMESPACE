@@ -2,4 +2,5 @@
 
 export(plot_interactive)
 export(start_gui)
+import(lavaan)
 import(shiny)
