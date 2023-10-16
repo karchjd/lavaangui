@@ -1,3 +1,6 @@
 ^lavaangui\.Rproj$
 ^\.Rproj\.user$
 ^src$
+^dev$
+^examples$
+^rsconnect$
