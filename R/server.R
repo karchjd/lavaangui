@@ -84,14 +84,13 @@ lavaan_gui_server <- function(input, output, session) {
   # state vars
   abort_file <- tempfile()
   imported <- FALSE
-  
   # import model if present
-  if ((!imported) && (exists("model_for_lavaangui_192049124"))) {
-    model <- model_for_lavaangui_192049124
+  if ((!imported) && (exists("importedModel"))) {
+    model <- importedModel
     session$sendCustomMessage("imported_model", message = model)
-    session$sendCustomMessage("lav_results", model$est)
+    # session$sendCustomMessage("lav_results", model$est)
     imported <- TRUE
-    rm(model_for_lavaangui_192049124, envir = .GlobalEnv)
+    rm(importedModel, envir = as.environment("package:lavaangui"))
   }
   
   # data upload
@@ -135,13 +134,16 @@ lavaan_gui_server <- function(input, output, session) {
   
   # layout helper
   observeEvent(input$layout,{
+    print("layout requested")
     req(input$layout)
     fromJavascript <- jsonlite::fromJSON(input$layout)
-    model <- eval(parse(text = fromJavascript$syntax))
+    model <- eval(parse(text = fromJavascript$model$syntax))
     semPlotModel <- semPlot::semPlotModel(model)
     semPlotRes <- semPlot::semPaths(semPlotModel, layout = fromJavascript$name, nCharNodes = 0, nCharEdges = 0, DoNotPlot = TRUE)
     coordinates <- data.frame(name = semPlotModel@Vars$name, x = semPlotRes$layout[,1], y = semPlotRes$layout[,2])
     session$sendCustomMessage("semPlotLayout", coordinates)
+    print("layout sent")
+    
   })
   
   # result window

@@ -151,6 +151,7 @@
 <div
   id="cy"
   class="graph"
+  style="flex-basis: {$appState.full ? '70%' : '100%'};"
   bind:this={cyContainer}
   on:mouseover={handleMouseOver}
   on:mouseout={handleMouseOut}

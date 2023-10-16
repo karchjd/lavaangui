@@ -18,13 +18,19 @@
   import EstimationWait from "./Shiny/EstimationWait.svelte";
   import Alert from "./Toolbars/Alert.svelte";
   import UndoRedo from "./Graph/UndoRedo.svelte";
+  import { appState } from "./stores.js";
 </script>
 
-<DataInfoModal />
-<EstimationWait />
+{#if $appState.full}
+  <DataInfoModal />
+  <EstimationWait />
+{/if}
+
 <Init />
 <div>
-  <MenuTop />
+  {#if $appState.full}
+    <MenuTop />
+  {/if}
   <MainContainer>
     <Graph />
     <GridGuides />
@@ -32,15 +38,23 @@
     <ContextMenus />
     <OnEvents />
     <UndoRedo />
-    <Results />
+    {#if $appState.full}
+      <Results />
+    {/if}
   </MainContainer>
-  <Alert />
-  <ToolbarBelow />
+  {#if $appState.full}
+    <Alert />
+    <ToolbarBelow />
+  {/if}
 </div>
 <Debug />
-<DataInput />
+{#if $appState.full}
+  <DataInput />
+{/if}
 <FromR />
-<DownloadModelData />
+{#if $appState.full}
+  <DownloadModelData />
+{/if}
 <DuckTapeFixes />
 
 <style>

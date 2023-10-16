@@ -5,8 +5,7 @@
   import { cyStore } from "../stores";
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { addNode } from "../Graph/graphmanipulation.js";
-  import { applySemLayout } from "../MenuTop/semPlotLayouts";
-  import { construct_svelte_component } from "svelte/internal";
+  import { applySemLayout } from "../MenuTop/semPlotLayouts.js";
 
   const number_digits = 2;
 
@@ -304,6 +303,7 @@
 
     //import model
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
+      console.log(lav_model);
       const observed = lav_model.obs;
       for (let i = 0; i < observed.length; i++) {
         importNode("observed-variable", observed[i]);
@@ -384,6 +384,7 @@
         checkNodeLoop(sourceId);
         checkNodeLoop(targetId);
       }
+      console.log("function called");
       applySemLayout("tree", false);
     });
   }

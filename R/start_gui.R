@@ -14,11 +14,15 @@
 #' @export
 #' @import shiny
 #' @import lavaan
-start_gui <- function(){
+start_gui <- function(where = "browser"){
   ui_loc <- system.file("www/index.html", package = "lavaangui")
   addResourcePath("assets", system.file("www/assets", package = "lavaangui"))
   app <- shinyApp(server = lavaan_gui_server,
            ui = htmlTemplate(ui_loc))
-  runApp(app, launch.browser = TRUE)
+  if(where == "browser"){
+    runApp(app, launch.browser = TRUE) 
+  }else{
+    runGadget(app, viewer = dialogViewer("lavaangui", width = 10^3, height = 10^3))
+  }
 }
 

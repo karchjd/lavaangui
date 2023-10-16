@@ -1,4 +1,4 @@
-recompile_front <- FALSE
+recompile_front <- F
 
 if (recompile_front){
   # Compile Svelte front end
@@ -11,10 +11,9 @@ if (recompile_front){
 
 # Detach all loaded packages and clean your environment
 golem::detach_all_attached()
-rm(list=ls(all.names = TRUE))
 
 # Document and reload your package
 roxygen2::roxygenise()
 pkgload::load_all()
 # Run the application
-start_gui()
+plot_interactive(fit)

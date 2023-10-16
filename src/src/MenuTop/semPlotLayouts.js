@@ -31,11 +31,18 @@ export function applySemLayout(name, undo = true) {
   let for_R = createSyntax(true);
   for_R.name = name;
   for_R.counter = counter;
-  if (serverAvail()) Shiny.setInputValue("layout", JSON.stringify(for_R));
+  console.log("semLayout called");
+
+  if (serverAvail()) {
+    Shiny.setInputValue("layout", JSON.stringify(for_R));
+    console.log("layout sent to R");
+  }
 }
 
 if (serverAvail()) {
   Shiny.addCustomMessageHandler("semPlotLayout", function (layout_R) {
+    console.log("layout received");
+
     layout_R = objectOfArraysToArrayOfObjects(layout_R);
     // Determine scale and translation factors
     const differenceX = 125;
@@ -83,6 +90,7 @@ if (serverAvail()) {
     } else {
       const cy = get(cyStore);
       cy.layout(options).run();
+      console.log("layout applied");
     }
   });
 }
