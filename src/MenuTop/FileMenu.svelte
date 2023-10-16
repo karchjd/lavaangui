@@ -59,9 +59,10 @@
       json = JSON.parse(combinedData.model);
       const modelOpt = JSON.parse(combinedData.modelOpt);
       mergeExistingProperties($modelOptions, modelOpt);
-      if (!combinedData.fitCache == undefined) {
+      if (combinedData.fitCache != undefined) {
         const localCache = JSON.parse(combinedData.fitCache);
-        mergeExistingProperties($fitCache, localCache);
+        debugger;
+        $fitCache = localCache;
       }
     } else {
       json = combinedData;
@@ -188,8 +189,12 @@
     const json = cy_save.json();
     const model = JSON.stringify(json);
     const modelOpt = JSON.stringify($modelOptions);
-    const fitCache = JSON.stringify($modelOptions);
-    const combinedData = JSON.stringify({ model, modelOpt, fitCache });
+    const fitCacheLocal = JSON.stringify($fitCache);
+    const combinedData = JSON.stringify({
+      model,
+      modelOpt,
+      fitCache: fitCacheLocal,
+    });
     return combinedData;
   }
 

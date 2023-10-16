@@ -194,10 +194,10 @@ server <- function(input, output, session) {
       # Check if the cache is valid. The cache is considered valid if:
       # 1) There is a previously fitted model stored in cache
       # 2) The cached model matches with the current model.
-      # 3) Either there is no cached data, or if there is, its matches the current data.
+      # 3) Either there is no current data, or if there is, it matches the cached data.
       cacheValid =  !is.null(fromJavascript$cache$lastFitModel) && 
         fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
-        (is.null(fromJavascript$cache$lastFitData) || fromJavascript$cache$lastFitData == digest::digest(getData()))
+        (!checkDataAvail() || fromJavascript$cache$lastFitData == digest::digest(getData()))
       if(!cacheValid){
         print(checkDataAvail())
         if(checkDataAvail()){
