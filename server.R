@@ -13,7 +13,7 @@ server <- function(input, output, session) {
   library(rvest)
   library(xml2)
   library(base64enc)
-
+  
   
   # normal functions
   create_summary <- function(df){
@@ -50,6 +50,19 @@ server <- function(input, output, session) {
     )
     return(data)
   }
+  
+  checkVarsInData <- function(model_parsed, data){
+    names_model <- lavNames(model_parsed, type = "ov")
+    names_data <- names(data)
+    var_not_in_data <- !(names_model %in% names_data)
+    names(var_not_in_data) <- names_model
+    return(var_not_in_data)
+  }
+  
+  checkDataAvail <- function() {
+    return(!is.null(getData()))
+  }
+  
   
   # constants
   help_text <- paste(
@@ -90,27 +103,31 @@ server <- function(input, output, session) {
   
   # data upload
   data_content <- reactive({
-    req(input$fileInput)
-    if (is.null(input$fileInput$content)) {
-      data <- list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name)
-    } else {
-      content <- input$fileInput$content
-      decoded <- base64enc::base64decode(content)
-      # Read content into a data frame
-      data <- list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
+    if(!is.null(input$fileInput)){
+      if (is.null(input$fileInput$content)) {
+        data <- list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name)
+      } else {
+        content <- input$fileInput$content
+        decoded <- base64enc::base64decode(content)
+        # Read content into a data frame
+        data <- list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
+      }
+      
+      df <- data$df
+      data_info <- list(
+        name = data$name, columns = colnames(df),
+        summary = create_summary(data$df)
+      )
+      session$sendCustomMessage(type = "dataInfo", message = data_info)
+      return(data)  
     }
-    
-    df <- data$df
-    data_info <- list(
-      name = data$name, columns = colnames(df),
-      summary = create_summary(data$df)
-    )
-    session$sendCustomMessage(type = "dataInfo", message = data_info)
-    return(data)
+    else{
+      return(NULL)
+    }
   })
   
   # renaming data columns
-  data <- reactive({
+  getData <- reactive({
     local_data <- data_content()
     if (!is.null(input$newnames)) {
       names(local_data$df) <- jsonlite::fromJSON(input$newnames)
@@ -154,7 +171,7 @@ server <- function(input, output, session) {
     fromJavascript$fitted_model = NULL
     res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
                 fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
-                data = digest::digest(data()))
+                data = digest::digest(getData()))
     session$sendCustomMessage("lav_results", res)
     sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
     sum_model$pe <- NULL
@@ -171,7 +188,6 @@ server <- function(input, output, session) {
     lavaan_model <- eval(parse(text = lavaan_parse_string))
     model_parsed <- parTable(lavaan_model)
     session$sendCustomMessage("lav_model", model_parsed)
-    
     if (fromJavascript$mode == "full model"){
       to_render(model_parsed)
     }else if(fromJavascript$mode == "estimate"){
@@ -181,35 +197,46 @@ server <- function(input, output, session) {
       # 3) Either there is no cached data, or if there is, its matches the current data.
       cacheValid =  !is.null(fromJavascript$cache$lastFitModel) && 
         fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
-        (is.null(fromJavascript$cache$lastFitData) || fromJavascript$cache$lastFitData == digest::digest(data()))
-      if(!cacheValid){ 
-        ## fit model
-        session$sendCustomMessage("fitting", "")
-        data <- data()
-        lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
-        fut <- future_promise({
-          original_function <- lavaan:::lav_model_objective
-          original_function_string <- deparse(original_function)
-          new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
-          new_function <- eval(parse(text = new_function))
-          
-          environment(new_function) <- asNamespace('lavaan')
-          assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
-          eval(parse(text = lavaan_string))
-        }, packages = "lavaan", globals = c("data", "abort_file", "model", "lavaan_string"), seed = TRUE)
-        prom <- fut %...>% getResults %...>% to_render
-        prom <- catch(fut,
-                      function(e){
-                        to_render(NULL)
-                        session$sendCustomMessage("lav_failed", "stopped")
-                        to_render("stopped by user")
-                        showNotification("Task Stopped")
-                      })
-        prom <- finally(prom, function(){
-          if(file.exists(abort_file)){
-            file.remove(abort_file)  
+        (is.null(fromJavascript$cache$lastFitData) || fromJavascript$cache$lastFitData == digest::digest(getData()))
+      if(!cacheValid){
+        print(checkDataAvail())
+        if(checkDataAvail()){
+          data <- getData()
+          missing_vars <- checkVarsInData(model_parsed, data)  
+          if(!any(missing_vars)){
+            ## fit model
+            session$sendCustomMessage("fitting", "")
+            lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
+            fut <- future_promise({
+              original_function <- lavaan:::lav_model_objective
+              original_function_string <- deparse(original_function)
+              new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
+              new_function <- eval(parse(text = new_function))
+              
+              environment(new_function) <- asNamespace('lavaan')
+              assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
+              eval(parse(text = lavaan_string))
+            }, packages = "lavaan", globals = c("data", "abort_file", "model", "lavaan_string"), seed = TRUE)
+            prom <- fut %...>% getResults %...>% to_render
+            prom <- catch(fut,
+                          function(e){
+                            to_render(NULL)
+                            session$sendCustomMessage("lav_failed", "stopped")
+                            to_render("stopped by user")
+                            showNotification("Task Stopped")
+                          })
+            prom <- finally(prom, function(){
+              if(file.exists(abort_file)){
+                file.remove(abort_file)  
+              }
+            })
+          }else{
+            session$sendCustomMessage("missing_vars", names(missing_vars)[missing_vars])
           }
-        })
+        } else{
+          print("send msg")
+          session$sendCustomMessage("data_missing", 1)
+        }
       }else{
         # return cached results
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
@@ -253,7 +280,7 @@ server <- function(input, output, session) {
       writeLines(input$model, jsonFile)
       
       # Write the data frame to the CSV file (replace my_data with your data frame)
-      write.csv(data(), csvFile, row.names = FALSE)
+      write.csv(getData(), csvFile, row.names = FALSE)
       
       # Create a zip archive of the directory containing the JSON and CSV files
       zip::zip(zipfile = file, files = c("model.json", "data.csv"), root = tempDir)

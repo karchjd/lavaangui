@@ -236,6 +236,20 @@
       );
     });
 
+    Shiny.addCustomMessageHandler("data_missing", function (dummy) {
+      setAlert("danger", "Could not fit model because no data is available");
+    });
+
+    Shiny.addCustomMessageHandler("missing_vars", function (missingVars) {
+      var missingVarsStr = [].concat(missingVars).join(", ");
+      setAlert(
+        "danger",
+        "Could not fit model because " +
+          missingVarsStr +
+          " are observed variables in the model but not present in the data."
+      );
+    });
+
     // save all results in data attributes of the correct edges
     Shiny.addCustomMessageHandler("lav_results", function (all_res) {
       const lav_result = all_res.normal;
