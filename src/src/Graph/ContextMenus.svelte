@@ -43,7 +43,7 @@
     return true;
   }
 
-  let menu = [
+  const menu = [
     {
       id: "add-observed",
       content: "Add Observed Variable",
@@ -52,6 +52,7 @@
         const position = event.position || event.cyPosition;
         addNode("observed-variable", position);
       },
+      show: "full",
     },
     {
       id: "add-latent",
@@ -61,6 +62,7 @@
         const position = event.position || event.cyPosition;
         addNode("latent-variable", position);
       },
+      show: "full",
     },
     {
       id: "add-constant",
@@ -70,6 +72,7 @@
         const position = event.position || event.cyPosition;
         addNode("constant", position);
       },
+      show: "full",
     },
 
     //edge menus
@@ -97,6 +100,7 @@
           },
         });
       },
+      show: "both",
       hasTrailingDivider: false,
     },
     {
@@ -109,6 +113,7 @@
         edge.addClass("nolabel");
         edge.data("label", undefined);
       },
+      show: "both",
       hasTrailingDivider: false,
     },
 
@@ -120,6 +125,7 @@
         const edge = event.target || event.cyTarget;
         edge.remove();
       },
+      show: "full",
       hasTrailingDivider: true,
     },
     {
@@ -148,6 +154,7 @@
           },
         });
       },
+      show: "full",
       hasTrailingDivider: false,
     },
     {
@@ -162,6 +169,7 @@
         edge.removeClass("byLav");
         edge.addClass("free");
       },
+      show: "full",
       hasTrailingDivider: false,
     },
     {
@@ -176,6 +184,7 @@
         edge.removeClass("byLav");
         edge.addClass("forcefree");
       },
+      show: "full",
       hasTrailingDivider: true,
     },
 
@@ -192,6 +201,7 @@
           target: sourceId,
         });
       },
+      show: "full",
       hasTrailingDivider: false,
     },
     {
@@ -203,6 +213,7 @@
         edge.removeClass("directed");
         edge.addClass("undirected");
       },
+      show: "full",
       hasTrailingDivider: true,
     },
 
@@ -215,6 +226,7 @@
         edge.removeClass("undirected");
         edge.addClass("directed");
       },
+      show: "full",
       hasTrailingDivider: true,
     },
 
@@ -240,6 +252,7 @@
           },
         });
       },
+      show: "both",
       hasTrailingDivider: true,
     },
     {
@@ -251,6 +264,7 @@
         edge.removeClass("fixDeg");
         checkNodeLoop(edge.source().id());
       },
+      show: "both",
       hasTrailingDivider: false,
     },
     {
@@ -282,6 +296,7 @@
           },
         });
       },
+      show: "both",
       hasTrailingDivider: true,
     },
     {
@@ -293,12 +308,14 @@
         edge.removeClass("fromLav");
         edge.addClass("fromUser");
       },
+      show: "full",
       hasTrailingDivider: false,
     },
 
     //node menus
     {
       id: "rename-node",
+      show: "full",
       content: "Rename Variable",
       selector: "node.latent-variable, node.observed-variable",
       onClickFunction: function (event) {
@@ -381,6 +398,7 @@
         const node = event.target || event.cyTarget;
         node.remove();
       },
+      show: "full",
       hasTrailingDivider: true,
     },
     {
@@ -393,11 +411,13 @@
         node.addClass("latent-variable");
         node.removeClass("linked");
       },
+      show: "full",
       hasTrailingDivider: false,
     },
 
     {
       id: "change-observed",
+      show: "full",
       content: "Change to Observed",
       selector: "node.latent-variable",
       onClickFunction: function (event) {
@@ -414,8 +434,18 @@
       },
     },
   ];
+
+  function selectMenu(menu, isFull) {
+    const valueToMatch = isFull ? "full" : "minimal";
+    return menu.filter(
+      (obj) => obj.show === valueToMatch || obj.show === "both"
+    );
+  }
+
+  const menuSel = selectMenu(menu, $appState.full);
   onMount(() => {
+    console.log(menu);
     // Initialize the Cytoscape instance
-    cy.contextMenus({ menuItems: menu });
+    cy.contextMenus({ menuItems: menuSel });
   });
 </script>
