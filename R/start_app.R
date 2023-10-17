@@ -2,11 +2,12 @@
 #' @import lavaan
 start_app <- function(fit, full, where){
   if(!is.null(fit)){
-    pars <- lavaan::parameterEstimates(fit)
-    varNames <- lavaan:::lavaanNames(fit, type = "ov")
-    factNames <- lavaan:::lavaanNames(fit, type = "lv")
+    pars <- parameterEstimates(fit)
+    varNames <- lavaanNames(fit, type = "ov")
+    factNames <- lavaanNames(fit, type = "lv")
     factNames <- factNames[!factNames %in% varNames]
-    assign("importedModel", list(obs = varNames, latent = factNames, parTable = parTable(fit), est = pars), envir = as.environment("package:lavaangui"))  
+    df <- as.data.frame(lavInspect(fit, what = "data"))
+    assign("importedModel", list(obs = varNames, latent = factNames, parTable = parTable(fit), est = pars, df = df), envir = as.environment("package:lavaangui"))  
   }
   assign("full", full, envir = as.environment("package:lavaangui"))
   

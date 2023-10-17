@@ -1,4 +1,4 @@
-recompile_front <- TRUE
+recompile_front <- FALSE
 
 if (recompile_front){
   # Compile Svelte front end
@@ -22,5 +22,5 @@ HS.model <- ' visual  =~ x1 + x2 + x3
               speed   =~ x7 + x8 + x9 '
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
-plot_interactive(fit, where = "browserr")
-start_gui()
+#plot_interactive(fit, where = "browserr")
+start_gui(fit)

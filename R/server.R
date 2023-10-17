@@ -5,48 +5,7 @@ lavaan_gui_server <- function(input, output, session) {
   `%...>%` <- promises::`%...>%`
   
   # normal functions
-  create_summary <- function(df){
-    sum_table <- paste0(capture.output(vtable::sumtable(df, out = "htmlreturn", title = "")), collapse = "")
-    remove_string <- "<table class=\"headtab\"> <tr><td style=\"text-align:left\">sumtable {vtable}</td> <td style=\"text-align:right\">Summary Statistics</td></tr></table> <h1>  </h1>"
-    sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
-    remove_string <- "<title>Summary Statistics</title>"
-    sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
-    sum_table
-  }
   
-  read_auto <- function(filepath) {
-    # Determine file extension
-    file_ext <- tools::file_ext(filepath)
-    
-    # Load appropriate package and read data based on file extension
-    switch(file_ext,
-           csv = {
-             library(readr, quietly = TRUE)
-             data <- readr::read_csv(filepath)
-           },
-           xlsx = {
-             library(readxl, quietly = TRUE)
-             data <- readxl::read_excel(filepath)
-           },
-           sav = {
-             library(haven, quietly = TRUE)
-             data <- haven::read_sav(filepath)
-           },
-           rds = {
-             data <- readRDS(filepath)
-           },
-           stop("Unsupported or unhandled file format.")
-    )
-    return(data)
-  }
-  
-  checkVarsInData <- function(model_parsed, data){
-    names_model <- lavNames(model_parsed, type = "ov")
-    names_data <- names(data)
-    var_not_in_data <- !(names_model %in% names_data)
-    names(var_not_in_data) <- names_model
-    return(var_not_in_data)
-  }
   
   checkDataAvail <- function() {
     return(!is.null(getData()))
@@ -86,11 +45,9 @@ lavaan_gui_server <- function(input, output, session) {
   
   # import model if present
   if ((!imported) && (exists("importedModel"))) {
-    model <- importedModel
-    session$sendCustomMessage("imported_model", message = model)
+    session$sendCustomMessage("imported_model", message = importedModel)
     # session$sendCustomMessage("lav_results", model$est)
     imported <- TRUE
-    rm(importedModel, envir = as.environment("package:lavaangui"))
   }
   
   # data upload
@@ -105,12 +62,7 @@ lavaan_gui_server <- function(input, output, session) {
         data <- list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
       }
       
-      df <- data$df
-      data_info <- list(
-        name = data$name, columns = colnames(df),
-        summary = create_summary(data$df)
-      )
-      session$sendCustomMessage(type = "dataInfo", message = data_info)
+      propagateData(data)
       return(data)  
     }
     else{
@@ -118,9 +70,30 @@ lavaan_gui_server <- function(input, output, session) {
     }
   })
   
+  importData <- reactive({
+    df <- importedModel$df
+    local_data <- list(df = df, name = "Imported from R")
+    propagateData(local_data)
+    return(local_data)
+  })
+    
+  propagateData <- function(df){
+    data_info <- list(
+      name = df$name, columns = colnames(df$df),
+      summary = create_summary(df$df)
+    )
+    print(data_info)
+    session$sendCustomMessage(type = "dataInfo", message = data_info)
+  }
+  
   # renaming data columns
   getData <- reactive({
-    local_data <- data_content()
+    if(!imported){
+      local_data <- data_content()  
+    }else{
+      local_data <- importData()
+    }
+    
     if (!is.null(input$newnames)) {
       names(local_data$df) <- jsonlite::fromJSON(input$newnames)
     }
@@ -155,7 +128,7 @@ lavaan_gui_server <- function(input, output, session) {
   })
   
   # needed, for mysterios reasons
-  observeEvent(data_content(), {
+  observeEvent(getData(), {
     
   })
   
