@@ -22,5 +22,5 @@ HS.model <- ' visual  =~ x1 + x2 + x3
               speed   =~ x7 + x8 + x9 '
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
-plot_interactive(fit, where = "browser")
+plot_interactive(fit, where = "browserr")
 start_gui()

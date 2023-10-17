@@ -21,6 +21,9 @@
   import { appState } from "./stores.js";
   import AppReady from "./Shiny/AppReady.svelte";
   import ViewUpdater from "./MenuTop/ViewUpdater.svelte";
+  import ViewMenu from "./MenuTop/ViewMenu.svelte";
+  import Layouts from "./MenuTop/Layouts.svelte";
+  import MinContextMenu from "./minimal/MinContextMenu.svelte";
 </script>
 
 <AppReady />
@@ -34,6 +37,11 @@
   <div>
     {#if $appState.full}
       <MenuTop />
+    {:else}
+      <MinContextMenu>
+        <ViewMenu />
+        <Layouts />
+      </MinContextMenu>
     {/if}
     <MainContainer>
       <Graph />
