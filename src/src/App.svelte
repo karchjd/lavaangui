@@ -20,6 +20,7 @@
   import UndoRedo from "./Graph/UndoRedo.svelte";
   import { appState } from "./stores.js";
   import AppReady from "./Shiny/AppReady.svelte";
+  import ViewUpdater from "./MenuTop/ViewUpdater.svelte";
 </script>
 
 <AppReady />
@@ -41,6 +42,7 @@
       <ContextMenus />
       <OnEvents />
       <UndoRedo />
+      <ViewUpdater />
       {#if $appState.full}
         <Results />
       {/if}

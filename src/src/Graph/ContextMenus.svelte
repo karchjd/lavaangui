@@ -435,6 +435,64 @@
     },
   ];
 
+  // const minimalMenu =
+  //           {
+  //             id: 'color',
+  //             content: 'change color',
+  //             tooltipText: 'change color',
+  //             selector: 'node',
+  //             hasTrailingDivider: true,
+  //             submenu: [
+  //               {
+  //                 id: 'color-blue',
+  //                 content: 'blue',
+  //                 tooltipText: 'blue',
+  //                 onClickFunction: function (event) {
+  //                   let target = event.target || event.cyTarget;
+  //                   target.style('background-color', 'blue');
+  //                 },
+  //                 submenu: [
+  //                   {
+  //                     id: 'color-light-blue',
+  //                     content: 'light blue',
+  //                     tooltipText: 'light blue',
+  //                     onClickFunction: function (event) {
+  //                       let target = event.target || event.cyTarget;
+  //                       target.style('background-color', 'lightblue');
+  //                     },
+  //                   },
+  //                   {
+  //                     id: 'color-dark-blue',
+  //                     content: 'dark blue',
+  //                     tooltipText: 'dark blue',
+  //                     onClickFunction: function (event) {
+  //                       let target = event.target || event.cyTarget;
+  //                       target.style('background-color', 'darkblue');
+  //                     },
+  //                   },
+  //                 ],
+  //               },
+  //               {
+  //                 id: 'color-green',
+  //                 content: 'green',
+  //                 tooltipText: 'green',
+  //                 onClickFunction: function (event) {
+  //                   let target = event.target || event.cyTarget;
+  //                   target.style('background-color', 'green');
+  //                 },
+  //               },
+  //               {
+  //                 id: 'color-red',
+  //                 content: 'red',
+  //                 tooltipText: 'red',
+  //                 onClickFunction: function (event) {
+  //                   let target = event.target || event.cyTarget;
+  //                   target.style('background-color', 'red');
+  //                 },
+  //               },
+  //             ]
+  //           },
+
   function selectMenu(menu, isFull) {
     const valueToMatch = isFull ? "full" : "minimal";
     return menu.filter(
