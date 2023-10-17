@@ -84,6 +84,10 @@ lavaan_gui_server <- function(input, output, session) {
   # state vars
   abort_file <- tempfile()
   imported <- FALSE
+  
+  #set state of front-end to full or reduced
+  session$sendCustomMessage("full", message = full)
+  
   # import model if present
   if ((!imported) && (exists("importedModel"))) {
     model <- importedModel

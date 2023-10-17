@@ -42,7 +42,8 @@ export let appState = writable({
   result: "none",
   dragged: null,
   drawing: false,
-  full: false,
+  full: true,
+  ready: false,
 });
 
 export let dataInfo = writable(0);

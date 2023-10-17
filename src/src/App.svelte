@@ -19,43 +19,47 @@
   import Alert from "./Toolbars/Alert.svelte";
   import UndoRedo from "./Graph/UndoRedo.svelte";
   import { appState } from "./stores.js";
+  import AppReady from "./Shiny/AppReady.svelte";
 </script>
 
-{#if $appState.full}
-  <DataInfoModal />
-  <EstimationWait />
-{/if}
+<AppReady />
+{#if $appState.ready}
+  {#if $appState.full}
+    <DataInfoModal />
+    <EstimationWait />
+  {/if}
 
-<Init />
-<div>
-  {#if $appState.full}
-    <MenuTop />
-  {/if}
-  <MainContainer>
-    <Graph />
-    <GridGuides />
-    <Zoom />
-    <ContextMenus />
-    <OnEvents />
-    <UndoRedo />
+  <Init />
+  <div>
     {#if $appState.full}
-      <Results />
+      <MenuTop />
     {/if}
-  </MainContainer>
+    <MainContainer>
+      <Graph />
+      <GridGuides />
+      <Zoom />
+      <ContextMenus />
+      <OnEvents />
+      <UndoRedo />
+      {#if $appState.full}
+        <Results />
+      {/if}
+    </MainContainer>
+    {#if $appState.full}
+      <Alert />
+      <ToolbarBelow />
+    {/if}
+  </div>
+  <Debug />
   {#if $appState.full}
-    <Alert />
-    <ToolbarBelow />
+    <DataInput />
   {/if}
-</div>
-<Debug />
-{#if $appState.full}
-  <DataInput />
+  <FromR />
+  {#if $appState.full}
+    <DownloadModelData />
+  {/if}
+  <DuckTapeFixes />
 {/if}
-<FromR />
-{#if $appState.full}
-  <DownloadModelData />
-{/if}
-<DuckTapeFixes />
 
 <style>
   div {

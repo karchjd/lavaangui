@@ -1,4 +1,4 @@
-recompile_front <- F
+recompile_front <- TRUE
 
 if (recompile_front){
   # Compile Svelte front end
@@ -16,4 +16,11 @@ golem::detach_all_attached()
 roxygen2::roxygenise()
 pkgload::load_all()
 # Run the application
+library(lavaan)
+HS.model <- ' visual  =~ x1 + x2 + x3
+              textual =~ x4 + x5 + x6
+              speed   =~ x7 + x8 + x9 '
+
+fit <- cfa(HS.model, data = HolzingerSwineford1939)
 plot_interactive(fit)
+start_gui(fit)
