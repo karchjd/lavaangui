@@ -4,10 +4,6 @@ lavaan_gui_server <- function(input, output, session) {
   future::plan(future::multisession)
   `%...>%` <- promises::`%...>%`
   
-  library(dplyr)
-  # library(rvest)
-  # library(xml2)
-  
   # normal functions
   create_summary <- function(df){
     sum_table <- paste0(capture.output(vtable::sumtable(df, out = "htmlreturn", title = "")), collapse = "")
