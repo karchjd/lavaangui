@@ -40,3 +40,7 @@ checkVarsInData <- function(model_parsed, data){
   names(var_not_in_data) <- names_model
   return(var_not_in_data)
 }
+
+checkDataAvail <- function() {
+  return(!is.null(getData()))
+}

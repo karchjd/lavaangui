@@ -4,38 +4,7 @@ lavaan_gui_server <- function(input, output, session) {
   future::plan(future::multisession)
   `%...>%` <- promises::`%...>%`
   
-  # normal functions
-  
-  
-  checkDataAvail <- function() {
-    return(!is.null(getData()))
-  }
-  
-  
-  # constants
-  help_text <- paste(
-    "Command               Action",
-    "--------------------------------------------------",
-    "Right-Click           Right-Click Anywhere to get an Appropriate Menu",
-    "o                     Create Observed Variable at Mouse Location",
-    "l                     Create Latent Variable at Mouse Location",
-    "c                     Create Constant Variable at Mouse Location",
-    "Hold Shift            Draw Undirected Arrows by Connecting Variables With Mouse",
-    "Hold CTRL             Draw Directed Arrows by Connect Variables With Mouse",
-    "Hold CTRL             Click on Multiple Elements to Select",
-    "Hold CTRL             Click on Canvas to Activate Select Box",
-    "Backspace             Remove Selected Elements",
-    "CTRL+Z                Undo Node Move(s)",
-    "CTRL+Y                Undo Node Move(s)",
-    "",
-    "Mac Users Replace CTRL with CMD",
-    sep = "\n"
-  )
-  class(help_text) <- "help_text"
-  print.help_text <- function(helpt_text){
-    cat(help_text)
-  }
-  
+
   # state vars
   abort_file <- tempfile()
   imported <- FALSE
@@ -46,7 +15,7 @@ lavaan_gui_server <- function(input, output, session) {
   # import model if present
   if ((!imported) && (exists("importedModel"))) {
     session$sendCustomMessage("imported_model", message = importedModel)
-    # session$sendCustomMessage("lav_results", model$est)
+    session$sendCustomMessage("lav_results", importedModel[c("normal", "std")])
     imported <- TRUE
   }
   
@@ -76,7 +45,7 @@ lavaan_gui_server <- function(input, output, session) {
     propagateData(local_data)
     return(local_data)
   })
-    
+  
   propagateData <- function(df){
     data_info <- list(
       name = df$name, columns = colnames(df$df),
@@ -187,12 +156,12 @@ lavaan_gui_server <- function(input, output, session) {
             }, packages = "lavaan", globals = c("data", "abort_file", "model", "lavaan_string"), seed = TRUE)
             prom <- fut %...>% getResults %...>% to_render
             prom <- promises::catch(fut,
-                          function(e){
-                            to_render(NULL)
-                            session$sendCustomMessage("lav_failed", "stopped")
-                            to_render("stopped by user")
-                            showNotification("Task Stopped")
-                          })
+                                    function(e){
+                                      to_render(NULL)
+                                      session$sendCustomMessage("lav_failed", "stopped")
+                                      to_render("stopped by user")
+                                      showNotification("Task Stopped")
+                                    })
             prom <- promises::finally(prom, function(){
               if(file.exists(abort_file)){
                 file.remove(abort_file)  

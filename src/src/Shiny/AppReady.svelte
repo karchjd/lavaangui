@@ -10,7 +10,7 @@
       $appState.ready = true;
     });
   } else {
-    $appState.full = false;
+    $appState.full = true;
     $appState.ready = true;
   }
 </script>

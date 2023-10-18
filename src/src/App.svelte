@@ -24,6 +24,7 @@
   import ViewMenu from "./MenuTop/ViewMenu.svelte";
   import Layouts from "./MenuTop/Layouts.svelte";
   import MinContextMenu from "./minimal/MinContextMenu.svelte";
+  import Errors from "./Errors.svelte";
 </script>
 
 <AppReady />
@@ -69,6 +70,7 @@
     <DownloadModelData />
   {/if}
   <DuckTapeFixes />
+  <Errors />
 {/if}
 
 <style>
