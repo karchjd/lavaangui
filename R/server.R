@@ -4,6 +4,9 @@ lavaan_gui_server <- function(input, output, session) {
   future::plan(future::multisession)
   `%...>%` <- promises::`%...>%`
   
+  checkDataAvail <- function() {
+    return(!is.null(getData()))
+  }
 
   # state vars
   abort_file <- tempfile()
@@ -125,6 +128,7 @@ lavaan_gui_server <- function(input, output, session) {
     lavaan_model <- eval(parse(text = lavaan_parse_string))
     model_parsed <- parTable(lavaan_model)
     session$sendCustomMessage("lav_model", model_parsed)
+
     if (fromJavascript$mode == "full model"){
       to_render(model_parsed)
     }else if(fromJavascript$mode == "estimate"){
