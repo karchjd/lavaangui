@@ -31,4 +31,5 @@ model.syntax <- '
     i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
     s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4'
 fit <- growth(model.syntax, data = Demo.growth)
-plot_interactive(fit, where = "browserr")
+# plot_interactive(fit, where = "browserr")
+start_gui()
