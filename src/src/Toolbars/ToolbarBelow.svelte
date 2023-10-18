@@ -7,23 +7,6 @@
   }
 
   function tolavaan(mode) {
-    // if (mode == "estimate") {
-    //   const nodes = cy.nodes(function (node) {
-    //     return node.hasClass("observed-variable");
-    //   });
-    //   for (var i = 0; i < nodes.length; i++) {
-    //     const node = nodes[i];
-    //     if (!node.hasClass("linked")) {
-    //       bootbox.alert(
-    //         "Observed variable " +
-    //           node.data("label") +
-    //           " is not linked to data. Cannot run."
-    //       );
-    //       return;
-    //     }
-    //   }
-    // }
-
     const edges = cy.edges();
 
     for (var i = 0; i < edges.length; i++) {

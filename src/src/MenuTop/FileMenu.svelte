@@ -14,7 +14,6 @@
   import { graphSettings, graphStyles } from "../Graph/cytoscape_settings.js";
   import { resetCounters } from "../Graph/graphmanipulation.js";
   import cytoscape from "cytoscape";
-  import { component_subscribe } from "svelte/internal";
 
   function newModel() {
     if (!$appState.modelEmpty) {
@@ -243,36 +242,42 @@
     startDownload(cy.jpg(), "jpg");
   }
 
-  const allMenuItems = [
-    { name: "New Model", action: newModel },
-    { name: "Load Model", action: loadModel },
-    { name: "Load Data", action: loadData },
-    { name: "Load Model and Data", action: loadModelData, divider: true },
-    {
-      name: "Download Model",
-      action: downloadModel,
-      disable: $appState.modelEmpty,
-    },
-    { name: "Remove Data", action: removeData, disable: !$appState.dataAvail },
-    {
-      name: "Download Model and Data",
-      disable: $appState.modelEmpty || !$appState.dataAvail,
-      action: downloadModelData,
-      divider: true,
-    },
-    {
-      name: "Export Model to PNG",
-      disable: $appState.modelEmpty,
-      action: exportPNG,
-    },
-    {
-      name: "Export Model to JPG",
-      disable: $appState.modelEmpty,
-      action: exportJPG,
-    },
-  ];
-
-  let menuItems = full ? allMenuItems : allMenuItems.slice(-2);
+  let menuItems;
+  $: {
+    let allMenuItems = [
+      { name: "New Model", action: newModel },
+      { name: "Load Model", action: loadModel },
+      { name: "Load Data", action: loadData },
+      { name: "Load Model and Data", action: loadModelData, divider: true },
+      {
+        name: "Download Model",
+        action: downloadModel,
+        disable: $appState.modelEmpty,
+      },
+      {
+        name: "Remove Data",
+        action: removeData,
+        disable: !$appState.dataAvail,
+      },
+      {
+        name: "Download Model and Data",
+        disable: $appState.modelEmpty || !$appState.dataAvail,
+        action: downloadModelData,
+        divider: true,
+      },
+      {
+        name: "Export Model to PNG",
+        disable: $appState.modelEmpty,
+        action: exportPNG,
+      },
+      {
+        name: "Export Model to JPG",
+        disable: $appState.modelEmpty,
+        action: exportJPG,
+      },
+    ];
+    menuItems = full ? allMenuItems : allMenuItems.slice(-2);
+  }
 </script>
 
 <DropdownLinks name={"File"} {menuItems} />

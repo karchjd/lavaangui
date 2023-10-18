@@ -7,46 +7,39 @@ lavaan_gui_server <- function(input, output, session) {
   checkDataAvail <- function() {
     return(!is.null(getData()))
   }
-
+  
   # state vars
   abort_file <- tempfile()
   imported <- FALSE
   
   #set state of front-end to full or reduced
   session$sendCustomMessage("full", message = full)
+  data_react <- reactiveVal()
   
   # import model if present
   if ((!imported) && (exists("importedModel"))) {
     session$sendCustomMessage("imported_model", message = importedModel)
     session$sendCustomMessage("lav_results", importedModel[c("normal", "std")])
+    df <- importedModel$df
+    df_full <- list(df = df, name = "Imported from R")
+    data_react(df_full)
     imported <- TRUE
   }
   
   # data upload
-  data_content <- reactive({
-    if(!is.null(input$fileInput)){
-      if (is.null(input$fileInput$content)) {
-        data <- list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name)
-      } else {
-        content <- input$fileInput$content
-        decoded <- base64enc::base64decode(content)
-        # Read content into a data frame
-        data <- list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
-      }
-      
-      propagateData(data)
-      return(data)  
+  data_content <- observeEvent(input$fileInput,{
+    print(input$fileInput)
+    req(input$fileInput)
+    if (is.null(input$fileInput$content)) {
+      data <- list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name)
+    } else {
+      content <- input$fileInput$content
+      decoded <- base64enc::base64decode(content)
+      # Read content into a data frame
+      data <- list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
     }
-    else{
-      return(NULL)
-    }
-  })
-  
-  importData <- reactive({
-    df <- importedModel$df
-    local_data <- list(df = df, name = "Imported from R")
-    propagateData(local_data)
-    return(local_data)
+    data_react(data)
+    propagateData(data)
   })
   
   propagateData <- function(df){
@@ -54,18 +47,12 @@ lavaan_gui_server <- function(input, output, session) {
       name = df$name, columns = colnames(df$df),
       summary = create_summary(df$df)
     )
-    print(data_info)
     session$sendCustomMessage(type = "dataInfo", message = data_info)
   }
   
   # renaming data columns
   getData <- reactive({
-    if(!imported){
-      local_data <- data_content()  
-    }else{
-      local_data <- importData()
-    }
-    
+    local_data <- data_react()
     if (!is.null(input$newnames)) {
       names(local_data$df) <- jsonlite::fromJSON(input$newnames)
     }
@@ -79,7 +66,6 @@ lavaan_gui_server <- function(input, output, session) {
   
   # layout helper
   observeEvent(input$layout,{
-    print("layout requested")
     req(input$layout)
     fromJavascript <- jsonlite::fromJSON(input$layout)
     model <- eval(parse(text = fromJavascript$model$syntax))
@@ -87,8 +73,6 @@ lavaan_gui_server <- function(input, output, session) {
     semPlotRes <- semPlot::semPaths(semPlotModel, layout = fromJavascript$name, nCharNodes = 0, nCharEdges = 0, DoNotPlot = TRUE)
     coordinates <- data.frame(name = semPlotModel@Vars$name, x = semPlotRes$layout[,1], y = semPlotRes$layout[,2])
     session$sendCustomMessage("semPlotLayout", coordinates)
-    print("layout sent")
-    
   })
   
   # result window
@@ -98,13 +82,7 @@ lavaan_gui_server <- function(input, output, session) {
     req(to_render())
     print(to_render())
   })
-  
-  # needed, for mysterios reasons
-  observeEvent(getData(), {
-    
-  })
-  
-  
+
   # extract results from model
   getResults <- function(result){
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
@@ -118,7 +96,7 @@ lavaan_gui_server <- function(input, output, session) {
     sum_model
   }
   
-  # main part for fitting lavaan
+  # main functions for fitting lavaan
   observeEvent(input$runCounter, {
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
@@ -128,7 +106,7 @@ lavaan_gui_server <- function(input, output, session) {
     lavaan_model <- eval(parse(text = lavaan_parse_string))
     model_parsed <- parTable(lavaan_model)
     session$sendCustomMessage("lav_model", model_parsed)
-
+    
     if (fromJavascript$mode == "full model"){
       to_render(model_parsed)
     }else if(fromJavascript$mode == "estimate"){
@@ -189,21 +167,19 @@ lavaan_gui_server <- function(input, output, session) {
   })
   
   
-  # allows uploading
+  # allows aborting computation
   observeEvent(input$abort,{
     file.create(abort_file)
   })
   
-  ## download stuff, still needed?
+  ## download stuff, still needed
   observe({
     req(input$triggerDownload)
     # Start the download
     shinyjs::click("downloadData")
   })
   
-  session$onSessionEnded(function() {
-    stopApp()
-  })
+
   
   # Define the download handler function
   output$downloadData <- downloadHandler(

@@ -64,16 +64,13 @@
     {/if}
   </div>
   <Debug />
-  {#if $appState.full}
-    <DataInput />
-  {/if}
   <FromR />
-  {#if $appState.full}
-    <DownloadModelData />
-  {/if}
   <DuckTapeFixes />
   <Errors />
 {/if}
+<!-- Warning: never ever put this inside ready, this will break them --> -->
+<DataInput />
+<DownloadModelData />
 
 <style>
   div {
