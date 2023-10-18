@@ -12,10 +12,6 @@
     return true;
   }
 
-  function triggerError() {
-    throw new Error("This is a custom error message.");
-  }
-
   function serverAvail() {
     return typeof Shiny === "object" && Shiny !== null;
   }

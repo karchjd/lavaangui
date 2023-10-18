@@ -201,9 +201,9 @@ lavaan_gui_server <- function(input, output, session) {
     shinyjs::click("downloadData")
   })
   
-  session$onSessionEnded(function() {
-    stopApp()
-  })
+  # session$onSessionEnded(function() {
+  #   stopApp()
+  # })
   
   # Define the download handler function
   output$downloadData <- downloadHandler(

@@ -93,7 +93,7 @@
     });
 
     let middleX = totalX / nodeCount;
-    let newY = maxY + 100; // 50 units below the lowest node. Adjust as needed.
+    let newY = maxY + 100;
 
     return { x: middleX, y: newY };
   }
@@ -101,6 +101,141 @@
   function assert(condition, message) {
     if (!condition) {
       throw new Error(message || "Assertion failed");
+    }
+  }
+
+  function importNode(type, label) {
+    addNode(type, undefined, label);
+  }
+
+  function getModelLav(lav_model, imported) {
+    debugger;
+    $appState.result = "model";
+    cy = get(cyStore);
+    if (!imported) {
+      cy.edges().removeClass("validated");
+    } else {
+      const observed = lav_model.obs;
+      for (let i = 0; i < observed.length; i++) {
+        importNode("observed-variable", observed[i]);
+      }
+
+      const latent = lav_model.latent;
+      for (let i = 0; i < latent.length; i++) {
+        importNode("latent-variable", latent[i]);
+      }
+      lav_model = lav_model.parTable;
+    }
+
+    let const_added = false;
+    let added_const_id;
+    for (let i = 0; i < lav_model.lhs.length; i++) {
+      // validate and remove existing edges
+      let existingEdge = findEdge(
+        lav_model.lhs[i],
+        lav_model.op[i],
+        lav_model.rhs[i]
+      );
+      if (!imported && lav_model.user[i] == 1) {
+        //If it is a user row make sure the path is in, otherwise throw an error
+        assert(existingEdge.length == 1);
+        existingEdge.addClass("validated");
+        //if it used to be fixed by lavaan unfix it first
+        if (existingEdge.hasClass("byLav") && existingEdge.hasClass("fixed")) {
+          existingEdge.removeClass("fixed");
+          existingEdge.removeClass("byLav");
+        }
+
+        //fix it if lavaan fixed it
+        if (lav_model.free[i] == 0 && !existingEdge.hasClass("fixed")) {
+          existingEdge.addClass("fixed");
+          existingEdge.removeClass("free");
+          existingEdge.data("value", lav_model.ustart[i]);
+          existingEdge.addClass("byLav");
+        }
+      } else {
+        // add (missing) edges
+        let edge;
+        if (imported || existingEdge.length == 0) {
+          const desiredEdge = getEdge(
+            lav_model.lhs[i],
+            lav_model.op[i],
+            lav_model.rhs[i]
+          );
+          let sourceId;
+          if (desiredEdge.source !== 1) {
+            sourceId = cy
+              .nodes(function (node) {
+                return node.data("label") == desiredEdge.source;
+              })[0]
+              .id();
+          } else {
+            //added edge is constant
+            if (lav_model.free[i] == 0 && lav_model.ustart[i] == 0) {
+              continue;
+            }
+            if (!const_added) {
+              added_const_id = addNode("constant", getConstNodePosition(cy));
+              const_added = true;
+              const added_node = cy.nodes(function (node) {
+                return node.id() == added_const_id;
+              })[0];
+              added_node.addClass("fromLav");
+            }
+            sourceId = added_const_id;
+          }
+          const targetId = cy
+            .nodes(function (node) {
+              return node.data("label") == desiredEdge.target;
+            })[0]
+            .id();
+
+          edge = cy.add({
+            groups: "edges",
+            data: {
+              source: sourceId,
+              target: targetId,
+            },
+            classes: desiredEdge.directed + " fromLav" + " nolabel",
+          });
+
+          if (lav_model.user[i] == 1) {
+            edge.addClass("fromUser");
+            if (lav_model.free[i] == 0) {
+              edge.addClass("byLav");
+            }
+          } else {
+            edge.addClass("fromLav");
+          }
+
+          checkNodeLoop(sourceId);
+          checkNodeLoop(targetId);
+        } else if (!imported && existingEdge.length == 1) {
+          edge = existingEdge;
+        }
+        if (lav_model.free[i] == 0) {
+          if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
+            edge.addClass("fixed");
+            edge.data("value", lav_model.ustart[i]);
+          } else {
+            edge.remove();
+          }
+        } else {
+          edge.addClass("free");
+        }
+        if (!imported) {
+          edge.addClass("validated");
+        }
+      }
+    }
+    if (!imported) {
+      cy.edges().forEach((edge) => {
+        if (!edge.hasClass("validated")) {
+          edge.remove();
+        }
+      });
+    } else {
+      applySemLayout("tree", false);
     }
   }
 
@@ -113,108 +248,6 @@
       $appState.loadFileName = data_info.name;
       $appState.dataAvail = true;
       $dataInfo = data_info.summary;
-    });
-
-    // parse model
-    Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
-      $appState.result = "model";
-      cy = get(cyStore);
-      cy.edges().removeClass("validated");
-      let const_added = false;
-      let added_const_id;
-      for (let i = 0; i < lav_model.lhs.length; i++) {
-        let existingEdge = findEdge(
-          lav_model.lhs[i],
-          lav_model.op[i],
-          lav_model.rhs[i]
-        );
-        if (lav_model.user[i] == 1) {
-          //If it is a user row make sure the path is in, otherwise throw an error
-          assert(existingEdge.length == 1);
-          existingEdge.addClass("validated");
-          //if it used to be fixed by lavaan unfix it first
-          if (
-            existingEdge.hasClass("byLav") &&
-            existingEdge.hasClass("fixed")
-          ) {
-            existingEdge.removeClass("fixed");
-            existingEdge.removeClass("byLav");
-          }
-
-          //fix it if lavaan fixed it
-          if (lav_model.free[i] == 0 && !existingEdge.hasClass("fixed")) {
-            existingEdge.addClass("fixed");
-            existingEdge.removeClass("free");
-            existingEdge.data("value", lav_model.ustart[i]);
-            existingEdge.addClass("byLav");
-          }
-        } else {
-          let edge;
-          if (existingEdge.length == 0) {
-            const desiredEdge = getEdge(
-              lav_model.lhs[i],
-              lav_model.op[i],
-              lav_model.rhs[i]
-            );
-            let sourceId;
-            if (desiredEdge.source !== 1) {
-              sourceId = cy
-                .nodes(function (node) {
-                  return node.data("label") == desiredEdge.source;
-                })[0]
-                .id();
-            } else {
-              //added edge is constant
-              if (lav_model.free[i] == 0 && lav_model.ustart[i] == 0) {
-                continue;
-              }
-              if (!const_added) {
-                added_const_id = addNode("constant", getConstNodePosition(cy));
-                const_added = true;
-                const added_node = cy.nodes(function (node) {
-                  return node.id() == added_const_id;
-                })[0];
-                added_node.addClass("fromLav");
-              }
-              sourceId = added_const_id;
-            }
-            const targetId = cy
-              .nodes(function (node) {
-                return node.data("label") == desiredEdge.target;
-              })[0]
-              .id();
-
-            edge = cy.add({
-              groups: "edges",
-              data: {
-                source: sourceId,
-                target: targetId,
-              },
-              classes: desiredEdge.directed + " fromLav" + " nolabel",
-            });
-            checkNodeLoop(sourceId);
-            checkNodeLoop(targetId);
-          } else {
-            edge = existingEdge;
-          }
-          if (lav_model.free[i] == 0) {
-            if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
-              edge.addClass("fixed");
-              edge.data("value", lav_model.ustart[i]);
-            } else {
-              edge.remove();
-            }
-          } else {
-            edge.addClass("free");
-          }
-          edge.addClass("validated");
-        }
-      }
-      cy.edges().forEach((edge) => {
-        if (!edge.hasClass("validated")) {
-          edge.remove();
-        }
-      });
     });
 
     Shiny.addCustomMessageHandler("lav_failed", function (failCode) {
@@ -247,6 +280,16 @@
           missingVarsStr +
           " are observed variables in the model but not present in the data."
       );
+    });
+
+    // parse model
+    Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
+      getModelLav(lav_model, false);
+    });
+
+    //import model
+    Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
+      getModelLav(lav_model, true);
     });
 
     // save all results in data attributes of the correct edges
@@ -295,97 +338,6 @@
       $appState.fitting = false;
       $appState.result = "estimates_sucess";
       setAlert("success", "Succesfully fitted model");
-    });
-
-    function importNode(type, label) {
-      addNode(type, undefined, label);
-    }
-
-    //import model
-    Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
-      console.log(lav_model);
-      const observed = lav_model.obs;
-      for (let i = 0; i < observed.length; i++) {
-        importNode("observed-variable", observed[i]);
-      }
-
-      const latent = lav_model.latent;
-      for (let i = 0; i < latent.length; i++) {
-        importNode("latent-variable", latent[i]);
-      }
-
-      $appState.result = "model";
-      cy = get(cyStore);
-      let const_added = false;
-      let added_const_id;
-      lav_model = lav_model.parTable;
-      for (let i = 0; i < lav_model.lhs.length; i++) {
-        const desiredEdge = getEdge(
-          lav_model.lhs[i],
-          lav_model.op[i],
-          lav_model.rhs[i]
-        );
-
-        let sourceId;
-        if (desiredEdge.source !== 1) {
-          sourceId = cy
-            .nodes(function (node) {
-              return node.data("label") == desiredEdge.source;
-            })[0]
-            .id();
-        } else {
-          //added edge is constant
-          if (lav_model.free[i] == 0 && lav_model.ustart[i] == 0) {
-            continue;
-          }
-          if (!const_added) {
-            added_const_id = addNode("constant", getConstNodePosition(cy));
-            const_added = true;
-            const added_node = cy.nodes(function (node) {
-              return node.id() == added_const_id;
-            })[0];
-            added_node.addClass("fromLav");
-          }
-          sourceId = added_const_id;
-        }
-
-        const targetId = cy
-          .nodes(function (node) {
-            return node.data("label") == desiredEdge.target;
-          })[0]
-          .id();
-
-        let edge = cy.add({
-          groups: "edges",
-          data: {
-            source: sourceId,
-            target: targetId,
-          },
-          classes: desiredEdge.directed,
-        });
-
-        if (lav_model.user[i] == 1) {
-          edge.addClass("fromUser");
-          if (lav_model.free[i] == 0) {
-            edge.addClass("byLav");
-          }
-        } else {
-          edge.addClass("fromLav");
-        }
-
-        if (lav_model.free[i] !== 0) {
-          edge.addClass("free");
-          console.log("set free");
-        } else {
-          edge.addClass("fixed");
-          edge.data("value", lav_model.ustart[i]);
-        }
-
-        checkNodeLoop(sourceId);
-        checkNodeLoop(targetId);
-      }
-      console.log("function called");
-      applySemLayout("tree", false);
     });
   }
 </script>
