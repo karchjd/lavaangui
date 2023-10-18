@@ -109,7 +109,6 @@
   }
 
   function getModelLav(lav_model, imported) {
-    debugger;
     $appState.result = "model";
     cy = get(cyStore);
     if (!imported) {

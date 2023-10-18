@@ -1,4 +1,5 @@
 <script>
+  export let full = true;
   import {
     cyStore,
     appState,
@@ -242,7 +243,7 @@
     startDownload(cy.jpg(), "jpg");
   }
 
-  $: menuItems = [
+  const allMenuItems = [
     { name: "New Model", action: newModel },
     { name: "Load Model", action: loadModel },
     { name: "Load Data", action: loadData },
@@ -270,6 +271,8 @@
       action: exportJPG,
     },
   ];
+
+  let menuItems = full ? allMenuItems : allMenuItems.slice(-2);
 </script>
 
 <DropdownLinks name={"File"} {menuItems} />
