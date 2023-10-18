@@ -7,7 +7,7 @@ start_app <- function(fit, full, where){
     factNames <- lavaanNames(fit, type = "lv")
     factNames <- factNames[!factNames %in% varNames]
     df <- as.data.frame(lavInspect(fit, what = "data"))
-    assign("importedModel", list(obs = varNames, latent = factNames, parTable = parTable(fit), est = pars, df = df), envir = as.environment("package:lavaangui"))  
+    assign("importedModel", list(obs = varNames, latent = factNames, parTable = parTable(fit), normal = pars, std = standardizedSolution(fit), df = df), envir = as.environment("package:lavaangui"))  
   }
   assign("full", full, envir = as.environment("package:lavaangui"))
   
