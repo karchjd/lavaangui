@@ -1,4 +1,9 @@
 lavaan_gui_server <- function(input, output, session) {
+  if(exists(".importedModel12849812948124912489128412948")){
+    importedModel <- .importedModel12849812948124912489128412948
+  }
+  full <- .full12849812948124912489128412948 
+  
   ## init stuff
   shinyjs::useShinyjs(html = TRUE)
   future::plan(future::multisession)

@@ -7,13 +7,9 @@ start_app <- function(fit, full, where){
     factNames <- lavaanNames(fit, type = "lv")
     factNames <- factNames[!factNames %in% varNames]
     df <- as.data.frame(lavInspect(fit, what = "data"))
-    assign("importedModel", list(obs = varNames, latent = factNames, parTable = parTable(fit), normal = pars, std = standardizedSolution(fit), df = df), envir = as.environment("package:lavaangui"))  
-  }else{
-    if (exists("importedModel", envir = as.environment("package:lavaangui"))) {
-      rm("importedModel", envir = as.environment("package:lavaangui"))
-    }
+    .GlobalEnv$.importedModel12849812948124912489128412948 <- list(obs = varNames, latent = factNames, parTable = parTable(fit), normal = pars, std = standardizedSolution(fit), df = df)
   }
-  assign("full", full, envir = as.environment("package:lavaangui"))
+  .GlobalEnv$.full12849812948124912489128412948 <- full
   
   
   ui_loc <- system.file("www/index.html", package = "lavaangui")
@@ -25,5 +21,6 @@ start_app <- function(fit, full, where){
   }else{
     runGadget(app, viewer = dialogViewer("lavaangui", width = 10^3, height = 10^3))
   }
+  on.exit(rm(.importedModel12849812948124912489128412948,.full12849812948124912489128412948,  envir=.GlobalEnv))
 }
 
