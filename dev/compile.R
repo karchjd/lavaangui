@@ -1,7 +1,7 @@
 recompile_front <- T
 
 if (recompile_front){
-  # Compile Svelte front end
+  # Compile Svelte front end 
   ret_val <- system("cd src && npm run build")
   if (ret_val != 0) {
     stop("Failed to compile Svelte front end.")
@@ -32,4 +32,4 @@ model.syntax <- '
     s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4'
 fit <- growth(model.syntax, data = Demo.growth)
 # plot_interactive(fit, where = "browserr")
-start_gui()
+start_gui(fit)

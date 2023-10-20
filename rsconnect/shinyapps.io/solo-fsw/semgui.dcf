@@ -5,10 +5,10 @@ account: solo-fsw
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 9501099
-bundleId: 7820290
+bundleId: 7826712
 url: https://solo-fsw.shinyapps.io/semgui/
-when: 1697646589.18057
-lastSyncTime: 1697646589.18058
+when: 1697764887.50101
+lastSyncTime: 1697764887.50103
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .github/workflows/playwright.yml|.Rapp.history|.Rbuildignore|.vite/deps_temp_b9b56b3a/package.json|.vite/deps_temp_d27f94f3/package.json|DESCRIPTION|dev/compile.R|man/start_gui.Rd|NAMESPACE|node_modules/.vite/deps_temp_fbea6e45/package.json|examples|src
+ignoredFiles: .dockerignore|.github/workflows/playwright.yml|.Rapp.history|.Rbuildignore|.vite/deps_temp_b9b56b3a/package.json|.vite/deps_temp_d27f94f3/package.json|dev/compile.R|dev/config_attachment.yaml|Dockerfile|man/start_gui.Rd|node_modules/.vite/deps_temp_fbea6e45/package.json|examples|src
