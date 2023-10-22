@@ -8,6 +8,10 @@ start_app <- function(fit, full, where){
     factNames <- factNames[!factNames %in% varNames]
     df <- as.data.frame(lavInspect(fit, what = "data"))
     .GlobalEnv$.importedModel12849812948124912489128412948 <- list(obs = varNames, latent = factNames, parTable = parTable(fit), normal = pars, std = standardizedSolution(fit), df = df)
+  }else{
+    if (exists(".GlobalEnv$.importedModel12849812948124912489128412948")) {
+      rm(".GlobalEnv$.importedModel12849812948124912489128412948")
+    }
   }
   .GlobalEnv$.full12849812948124912489128412948 <- full
   

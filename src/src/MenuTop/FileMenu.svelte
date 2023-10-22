@@ -81,6 +81,14 @@
     }
   }
 
+  // function reloadPage() {
+  //   bootbox.confirm("Are you sure you want to reset?", function (result) {
+  //     if (result) {
+  //       location.reload();
+  //     }
+  //   });
+  // }
+
   async function uploadModel() {
     // Create file input element
     const input = document.createElement("input");
@@ -235,7 +243,7 @@
   }
 
   function exportPNG() {
-    startDownload(cy.png(), "png");
+    startDownload(cy.png({ bg: "white" }), "png");
   }
 
   function exportJPG() {
