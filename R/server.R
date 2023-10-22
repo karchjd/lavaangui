@@ -1,8 +1,8 @@
 lavaan_gui_server <- function(input, output, session) {
-  if(exists(".importedModel12849812948124912489128412948")){
-    importedModel <- .importedModel12849812948124912489128412948
+  if(exists(".importedModel1284981294812491248912841294", where = .GlobalEnv)){
+    importedModel <- .GlobalEnv$.importedModel128498129481249124891284129
   }
-  full <- .full12849812948124912489128412948 
+  full <- .GlobalEnv$.full12849812948124912489128412948 
   
   ## init stuff
   shinyjs::useShinyjs(html = TRUE)
