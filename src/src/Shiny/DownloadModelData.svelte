@@ -8,3 +8,9 @@
   <i class="fas fa-download" role="presentation" aria-label="download icon" />
   Download
 </a>
+
+<style>
+  a {
+    display: block;
+  }
+</style>
