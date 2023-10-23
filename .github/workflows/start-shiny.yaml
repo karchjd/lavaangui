@@ -24,8 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefix src
       - name: Compile & Start
-        run: source("dev/compile.R")
-        run: | 
+        run: |
           source("dev/compile.R")
           start_gui()
         shell: Rscript {0}
