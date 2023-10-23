@@ -28,5 +28,5 @@ jobs:
         shell: Rscript {0}
 
       - name: Start
-        run: start_gui()
+        run: lavaangui::start_gui()
         shell: Rscript {0}
