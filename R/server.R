@@ -33,9 +33,9 @@ lavaan_gui_server <- function(input, output, session) {
   
   # import model if present
   if ((!imported) && (exists("importedModel"))) {
-    session$sendCustomMessage("imported_model", message = importedModel)
+    session$sendCustomMessage("imported_model", message = importedModel[c("parTable", "latent", "obs")])
     session$sendCustomMessage("lav_results", importedModel[c("normal", "std")])
-    to_render(getTextOut(importedModel$model))
+    to_render(getTextOut(importedModel$fit))
     df <- importedModel$df
     df_full <- list(df = df, name = "Imported from R")
     propagateData(df_full)

@@ -7,7 +7,7 @@ start_app <- function(fit, full, where){
     factNames <- lavaanNames(fit, type = "lv")
     factNames <- factNames[!factNames %in% varNames]
     df <- as.data.frame(lavInspect(fit, what = "data"))
-    model <- list(obs = varNames, latent = factNames, parTable = parTable(fit), normal = pars, std = standardizedSolution(fit), df = df, model = fit)
+    model <- list(obs = varNames, latent = factNames, parTable = parTable(fit), normal = pars, std = standardizedSolution(fit), df = df, fit = fit)
     .GlobalEnv$.importedModel128498129481249124891284129 <- model
   }else{
     if (exists(".importedModel128498129481249124891284129", where = .GlobalEnv)) {
