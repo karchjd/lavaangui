@@ -4,7 +4,11 @@
 \alias{start_gui}
 \title{Initialize and Run lavaan GUI Shiny Application}
 \usage{
-start_gui()
+start_gui(fit = NULL)
+}
+\arguments{
+\item{fit}{An optional argument to pass the fit object to the Shiny application.
+This is \code{NULL} by default.}
 }
 \description{
 The \code{start_gui} function launches a Shiny application for lavaan GUI.
@@ -16,5 +20,6 @@ This function performs the following tasks:
 \item Locates the "index.html" file within the "www" directory of the "lavaangui" package.
 \item Adds a resource path for the "assets" directory.
 \item Initializes and runs the Shiny application using the \code{lavaan_gui_server} server function.
+\item Optionally uses the \code{fit} argument to pass a fit object to the Shiny application.
 }
 }

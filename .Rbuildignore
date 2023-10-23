@@ -6,3 +6,4 @@
 ^rsconnect$
 ^app\.R$
 ^\.github$
+^LICENSE\.md$

@@ -53,7 +53,7 @@ lavaan_gui_server <- function(input, output, session) {
       content <- input$fileInput$content
       decoded <- base64enc::base64decode(content)
       # Read content into a data frame
-      data <- list(df = read.csv(textConnection(rawToChar(decoded))), name = "data.csv")
+      data <- list(df = readr::read_csv(textConnection(rawToChar(decoded))), name = "data.csv")
     }
     data_react(data)
     propagateData(data)
@@ -138,7 +138,7 @@ lavaan_gui_server <- function(input, output, session) {
               new_function <- eval(parse(text = new_function))
               
               environment(new_function) <- asNamespace('lavaan')
-              assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
+              utils::assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
               eval(parse(text = lavaan_string))
             }, packages = "lavaan", globals = c("data", "abort_file", "model", "lavaan_string"), seed = TRUE)
             prom <- fut %...>% getResults %...>% to_render
@@ -205,7 +205,7 @@ lavaan_gui_server <- function(input, output, session) {
       writeLines(input$model, jsonFile)
       
       # Write the data frame to the CSV file (replace my_data with your data frame)
-      write.csv(getData(), csvFile, row.names = FALSE)
+      utils::write.csv(getData(), csvFile, row.names = FALSE)
       
       # Create a zip archive of the directory containing the JSON and CSV files
       zip::zip(zipfile = file, files = c("model.json", "data.csv"), root = tempDir)
