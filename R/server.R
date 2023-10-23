@@ -16,6 +16,8 @@ lavaan_gui_server <- function(input, output, session) {
   # state vars
   abort_file <- tempfile()
   imported <- FALSE
+  to_render <- reactiveVal(help_text)
+  
   
   #set state of front-end to full or reduced
   session$sendCustomMessage("full", message = full)
@@ -33,6 +35,7 @@ lavaan_gui_server <- function(input, output, session) {
   if ((!imported) && (exists("importedModel"))) {
     session$sendCustomMessage("imported_model", message = importedModel)
     session$sendCustomMessage("lav_results", importedModel[c("normal", "std")])
+    to_render(getTextOut(importedModel$model))
     df <- importedModel$df
     df_full <- list(df = df, name = "Imported from R")
     propagateData(df_full)
@@ -82,7 +85,6 @@ lavaan_gui_server <- function(input, output, session) {
   })
   
   # result window
-  to_render <- reactiveVal(help_text)
   
   output$lavaan_syntax_R <- renderPrint({
     req(to_render())
@@ -97,9 +99,7 @@ lavaan_gui_server <- function(input, output, session) {
                 fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
                 data = digest::digest(getData()))
     session$sendCustomMessage("lav_results", res)
-    sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
-    sum_model$pe <- NULL
-    sum_model
+    return(getTextOut(result))
   }
   
   # main functions for fitting lavaan
@@ -124,7 +124,6 @@ lavaan_gui_server <- function(input, output, session) {
         fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
         (!checkDataAvail() || fromJavascript$cache$lastFitData == digest::digest(getData()))
       if(!cacheValid){
-        print(checkDataAvail())
         if(checkDataAvail()){
           data <- getData()
           missing_vars <- checkVarsInData(model_parsed, data)  

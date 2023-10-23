@@ -40,3 +40,9 @@ checkVarsInData <- function(model_parsed, data){
   names(var_not_in_data) <- names_model
   return(var_not_in_data)
 }
+
+getTextOut <- function(result){
+  sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
+  sum_model$pe <- NULL
+  return(sum_model)
+}
