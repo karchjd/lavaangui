@@ -21,7 +21,8 @@ jobs:
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
-
+      - name: Install dependencies
+        run: npm ci --prefix src
       - name: Compile
         run: source("dev/compile.R")
         shell: Rscript {0}
