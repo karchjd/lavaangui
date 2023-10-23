@@ -153,6 +153,7 @@
           existingEdge.addClass("byLav");
         }
       } else {
+        debugger;
         // add (missing) edges
         let edge;
         if (imported || existingEdge.length == 0) {
@@ -195,14 +196,11 @@
               source: sourceId,
               target: targetId,
             },
-            classes: desiredEdge.directed + " fromLav" + " nolabel",
+            classes: desiredEdge.directed + " nolabel",
           });
 
           if (lav_model.user[i] == 1) {
             edge.addClass("fromUser");
-            if (lav_model.free[i] == 0) {
-              edge.addClass("byLav");
-            }
           } else {
             edge.addClass("fromLav");
           }
