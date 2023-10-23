@@ -43,7 +43,7 @@ export function addNode(nodeType, position, customLabel = null) {
     });
   } else {
     position = { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 };
-    urLocal.do("add", {
+    cy.add({
       group: "nodes",
       data: { id: nodeId, label: label },
       classes: nodeType,

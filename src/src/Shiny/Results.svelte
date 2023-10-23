@@ -1,4 +1,8 @@
-<pre id="lavaan_syntax_R" class="shiny-html-output well" />
+<pre
+  id="lavaan_syntax_R"
+  class="shiny-html-output well"
+  data-testid="result-text"
+/>
 
 <style>
   pre {

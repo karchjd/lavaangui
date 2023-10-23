@@ -61,7 +61,6 @@
       mergeExistingProperties($modelOptions, modelOpt);
       if (combinedData.fitCache != undefined) {
         const localCache = JSON.parse(combinedData.fitCache);
-        debugger;
         $fitCache = localCache;
       }
     } else {

@@ -9,4 +9,5 @@ test("new model", async ({ page }) => {
 
   // Use Jest to make the assertion that the array has length 0
   expect(numberOfNodes).toBe(0);
+  await expect(page.getByTestId("result-text")).toContainText("Command");
 });

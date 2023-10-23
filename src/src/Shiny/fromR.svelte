@@ -153,7 +153,6 @@
           existingEdge.addClass("byLav");
         }
       } else {
-        debugger;
         // add (missing) edges
         let edge;
         if (imported || existingEdge.length == 0) {

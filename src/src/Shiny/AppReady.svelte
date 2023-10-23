@@ -13,4 +13,13 @@
     $appState.full = true;
     $appState.ready = true;
   }
+
+  if (
+    navigator.userAgent.indexOf("Safari") !== -1 &&
+    navigator.userAgent.indexOf("Chrome") === -1
+  ) {
+    alert(
+      "You are using Safari. This browser is not supported. Chrome or Firefox are recommended"
+    );
+  }
 </script>
