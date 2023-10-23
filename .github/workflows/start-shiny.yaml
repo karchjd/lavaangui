@@ -26,5 +26,5 @@ jobs:
       - name: Compile & Start
         run: |
           source("dev/compile.R")
-          start_gui()
+          start_gui() &
         shell: Rscript {0}
