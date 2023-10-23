@@ -1,5 +1,5 @@
 lavaan_gui_server <- function(input, output, session) {
-  if(exists(".importedModel1284981294812491248912841294", where = .GlobalEnv)){
+  if(exists(".importedModel128498129481249124891284129", where = .GlobalEnv)){
     importedModel <- .GlobalEnv$.importedModel128498129481249124891284129
   }
   full <- .GlobalEnv$.full12849812948124912489128412948 
@@ -21,12 +21,21 @@ lavaan_gui_server <- function(input, output, session) {
   session$sendCustomMessage("full", message = full)
   data_react <- reactiveVal()
   
+  propagateData <- function(df){
+    data_info <- list(
+      name = df$name, columns = colnames(df$df),
+      summary = create_summary(df$df)
+    )
+    session$sendCustomMessage(type = "dataInfo", message = data_info)
+  }
+  
   # import model if present
   if ((!imported) && (exists("importedModel"))) {
     session$sendCustomMessage("imported_model", message = importedModel)
     session$sendCustomMessage("lav_results", importedModel[c("normal", "std")])
     df <- importedModel$df
     df_full <- list(df = df, name = "Imported from R")
+    propagateData(df_full)
     data_react(df_full)
     imported <- TRUE
   }
@@ -46,14 +55,6 @@ lavaan_gui_server <- function(input, output, session) {
     data_react(data)
     propagateData(data)
   })
-  
-  propagateData <- function(df){
-    data_info <- list(
-      name = df$name, columns = colnames(df$df),
-      summary = create_summary(df$df)
-    )
-    session$sendCustomMessage(type = "dataInfo", message = data_info)
-  }
   
   # renaming data columns
   getData <- reactive({

@@ -1,7 +1,3 @@
-<script>
-  import { onMount } from "svelte";
-</script>
-
 <pre id="lavaan_syntax_R" class="shiny-html-output well" />
 
 <style>

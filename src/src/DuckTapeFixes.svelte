@@ -1,6 +1,7 @@
 <script>
   import { cyStore, appState } from "./stores.js";
   import { get } from "svelte/store";
+  import { onMount } from "svelte";
 
   let cy = get(cyStore);
 
@@ -10,4 +11,9 @@
       cy.nodes().grabify();
     }
   }, 1000); // every 1000 milliseconds or 1 second
+
+  onMount(() => {
+    // Initialize the Cytoscape instance
+    Shiny.bindAll();
+  });
 </script>
