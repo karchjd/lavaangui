@@ -129,3 +129,31 @@ test("Show Full Model", async ({ page }) => {
   // Expect all usrEdges to be visible
   expect(usrEdges.every((isVisible) => isVisible)).toBe(true);
 });
+
+test("Fit Model", async ({ page }) => {
+  await page.goto("http://127.0.0.1:3245/");
+  await page.getByRole("button", { name: "Show User Model / Script" }).click();
+  await page.getByRole("button", { name: "Fit Model" }).click();
+
+  await page.waitForTimeout(5000);
+
+  await page
+    .evaluate(() => {
+      const edge = window.cy.edges((edge) => {
+        const sourceNode = edge.source();
+        const targetNode = edge.target();
+        return (
+          sourceNode.data("label") === "visual" &&
+          targetNode.data("label") === "x3"
+        );
+      });
+      return edge.style("label") === "0.73";
+    })
+    .then((hasLabel) => {
+      expect(hasLabel).toBe(true);
+    });
+
+  await expect(page.getByTestId("result-text")).toContainText(
+    "Model Test User Model:"
+  );
+});
