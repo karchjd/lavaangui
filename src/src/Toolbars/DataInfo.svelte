@@ -18,7 +18,7 @@
       >{$appState.loadFileName} is loaded</a
     >
   {:else}
-    <p>No Data loaded</p>
+    <p data-testid="data-info">No Data loaded</p>
   {/if}
 </div>
 

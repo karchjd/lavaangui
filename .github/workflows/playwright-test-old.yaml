@@ -19,6 +19,14 @@ jobs:
       - name: Install Dependencies
         run: npm ci
         working-directory: src
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         working-directory: src
@@ -31,3 +39,4 @@ jobs:
           name: playwright-report
           path: src/playwright-report/
           retention-days: 30
+s
