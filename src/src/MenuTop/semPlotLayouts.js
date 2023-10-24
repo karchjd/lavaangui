@@ -39,8 +39,6 @@ export function applySemLayout(name, undo = true) {
 
 if (serverAvail()) {
   Shiny.addCustomMessageHandler("semPlotLayout", function (layout_R) {
-    console.log("layout received");
-
     layout_R = objectOfArraysToArrayOfObjects(layout_R);
     // Determine scale and translation factors
     const differenceX = 125;

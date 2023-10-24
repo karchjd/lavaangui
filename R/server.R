@@ -98,7 +98,11 @@ lavaan_gui_server <- function(input, output, session) {
   
   output$lavaan_syntax_R <- renderPrint({
     req(to_render())
-    print(to_render())
+    if(is.character(to_render())){
+      cat(to_render())
+    }else{
+      print(to_render())  
+    }
   })
 
   # extract results from model
@@ -116,6 +120,10 @@ lavaan_gui_server <- function(input, output, session) {
   observeEvent(input$runCounter, {
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
+    if(fromJavascript$mode == "user model"){
+      to_render(fromJavascript$syntax)
+      return(NULL)
+    }
     modelJavascript <- fromJavascript$model
     model <- eval(parse(text = modelJavascript$syntax))
     lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)

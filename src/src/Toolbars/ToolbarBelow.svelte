@@ -20,11 +20,16 @@
       $modelOptions.showLav = true;
       for_R.mode = mode;
       Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
-      $appState.runCounter = $appState.runCounter + 1;
-      Shiny.setInputValue("runCounter", $appState.runCounter);
+      Shiny.setInputValue("runCounter", Math.random());
     } else if (mode == "user model") {
       $modelOptions.showLav = false;
-      document.getElementById("lavaan_syntax_R").innerText = for_R;
+      if (!serverAvail()) {
+        document.getElementById("lavaan_syntax_R").innerText = for_R;
+      } else {
+        const for_R_con = { mode: mode, syntax: for_R };
+        Shiny.setInputValue("fromJavascript", JSON.stringify(for_R_con));
+        Shiny.setInputValue("runCounter", Math.random());
+      }
       cy.edges(".byLav").forEach((existingEdge) => {
         existingEdge.removeClass("fixed");
         existingEdge.addClass("free");
