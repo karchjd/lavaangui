@@ -132,7 +132,9 @@ lavaan_gui_server <- function(input, output, session) {
             session$sendCustomMessage("fitting", "")
             lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
             fut <- promises::future_promise({
-              original_function <- lavaan:::lav_model_objective
+              `%get%` = function(pkg, fun) get(fun, envir = asNamespace(pkg),
+                                               inherits = FALSE)
+              original_function <- 'lavaan'%get%'lav_model_objective'
               original_function_string <- deparse(original_function)
               new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
               new_function <- eval(parse(text = new_function))
