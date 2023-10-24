@@ -17,7 +17,7 @@ lavaan_gui_server <- function(input, output, session) {
   abort_file <- tempfile()
   imported <- FALSE
   to_render <- reactiveVal(help_text)
-  
+  first_run_layout <- reactiveVal(TRUE)
   
   #set state of front-end to full or reduced
   session$sendCustomMessage("full", message = full)
@@ -72,14 +72,14 @@ lavaan_gui_server <- function(input, output, session) {
   observeEvent(input$show_help,{
     to_render(help_text)}
   )
-  first_run_layout <- TRUE
   # layout helper
   observeEvent(input$layout,{
     req(input$layout)
     fromJavascript <- jsonlite::fromJSON(input$layout)
-    if(imported && first_run_layout){
+    print(first_run_layout())
+    if(imported && first_run_layout()){
       semPlotModel <- semPlot::semPlotModel(importedModel$fit)
-      first_run_layout <- FALSE
+      first_run_layout(FALSE)
     }else{
       model <- eval(parse(text = fromJavascript$model$syntax))
       semPlotModel <- semPlot::semPlotModel(model)  
