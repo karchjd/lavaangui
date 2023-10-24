@@ -13,19 +13,21 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Navigate to src directory
-        run: cd src
       - name: Check content directory
         run: ls
+        working-directory: src
       - name: Install Dependencies
         run: npm ci
+        working-directory: src
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+        working-directory: src
       - name: Run Playwright tests
         run: npx playwright test
+        working-directory: src
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
-          path: playwright-report/
+          path: src/playwright-report/
           retention-days: 30
