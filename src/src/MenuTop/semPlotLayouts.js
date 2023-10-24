@@ -31,11 +31,9 @@ export function applySemLayout(name, undo = true) {
   let for_R = createSyntax(true);
   for_R.name = name;
   for_R.counter = counter;
-  console.log("semLayout called");
 
   if (serverAvail()) {
     Shiny.setInputValue("layout", JSON.stringify(for_R));
-    console.log("layout sent to R");
   }
 }
 
@@ -64,26 +62,27 @@ if (serverAvail()) {
     const xScale = differenceX / minDiffX;
     const yScale = differenceY / minDiffY;
 
+    // Create an object to hold the positions
+    let preCalculatedPositions = {};
+
+    layout_R.forEach((nodeInfo) => {
+      const x = nodeInfo.x * xScale + 400;
+      const y = nodeInfo.y * -1 * yScale + 400;
+      preCalculatedPositions[nodeInfo.name] = { x, y };
+    });
+    debugger;
+    // Configure the options
     let options = {
       name: "preset",
       positions: function (node) {
-        // find the node in your predefined nodes array
         const nodeName = node.data("label");
-        const nodeInfo = layout_R.find((n) => n.name === nodeName);
-
-        if (nodeInfo) {
-          return {
-            x: nodeInfo.x * xScale + 400,
-            y: nodeInfo.y * -1 * yScale + 400,
-          };
-        }
-        return undefined; // return undefined if not found in your predefined array
+        return preCalculatedPositions[nodeName];
       },
       fit: true,
       padding: 60,
       animate: true,
     };
-
+    debugger;
     // Run the layout
     if (undo) {
       lur.do("layout", { options: options });

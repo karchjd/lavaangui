@@ -72,15 +72,25 @@ lavaan_gui_server <- function(input, output, session) {
   observeEvent(input$show_help,{
     to_render(help_text)}
   )
-  
+  first_run_layout <- TRUE
   # layout helper
   observeEvent(input$layout,{
     req(input$layout)
     fromJavascript <- jsonlite::fromJSON(input$layout)
-    model <- eval(parse(text = fromJavascript$model$syntax))
-    semPlotModel <- semPlot::semPlotModel(model)
-    semPlotRes <- semPlot::semPaths(semPlotModel, layout = fromJavascript$name, nCharNodes = 0, nCharEdges = 0, DoNotPlot = TRUE)
-    coordinates <- data.frame(name = semPlotModel@Vars$name, x = semPlotRes$layout[,1], y = semPlotRes$layout[,2])
+    if(imported && first_run_layout){
+      semPlotModel <- semPlot::semPlotModel(importedModel$fit)
+      first_run_layout <- FALSE
+    }else{
+      model <- eval(parse(text = fromJavascript$model$syntax))
+      semPlotModel <- semPlot::semPlotModel(model)  
+    }
+    
+    semPlotRes <- semPlot::semPaths(semPlotModel, 
+                                    layout = fromJavascript$name, 
+                                    nCharNodes = 0, nCharEdges = 0, 
+                                    DoNotPlot = TRUE, reorder = TRUE)
+    coordinates <- data.frame(name = semPlotModel@Vars$name, x = semPlotRes$layout[,1],
+                              y = semPlotRes$layout[,2])
     session$sendCustomMessage("semPlotLayout", coordinates)
   })
   
