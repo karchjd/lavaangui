@@ -66,12 +66,12 @@
   <Debug />
   <FromR />
   <DuckTapeFixes />
-  <Errors />
 {/if}
 <!-- Warning: never ever put this inside ready, this will break them
 Shiny needs to see them to attach listeners -->
 <DataInput />
 <DownloadModelData />
+<Errors />
 
 <style>
   div {

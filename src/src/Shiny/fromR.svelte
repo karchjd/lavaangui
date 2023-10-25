@@ -254,6 +254,8 @@
       $appState.fitting = false;
       if (failCode == "stopped") {
         setAlert("danger", "Fitting stopped by user");
+      } else {
+        setAlert("danger", "Fitting failed");
       }
     });
 

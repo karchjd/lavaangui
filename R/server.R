@@ -23,6 +23,17 @@ lavaan_gui_server <- function(input, output, session) {
   session$sendCustomMessage("full", message = full)
   data_react <- reactiveVal()
   
+  #to send errors to frontend
+  op <- options(shiny.error = function() {
+    session <- getDefaultReactiveDomain()
+    error_message <- geterrmessage()
+    session$sendCustomMessage("serverError", list(msg=error_message))
+  })
+  print(getOption("shiny.error"))
+  
+  onStop(function() options(op))
+  
+  
   propagateData <- function(df){
     data_info <- list(
       name = df$name, columns = colnames(df$df),
@@ -96,10 +107,20 @@ lavaan_gui_server <- function(input, output, session) {
   
   output$lavaan_syntax_R <- renderPrint({
     req(to_render())
+    ## for user model
     if(is.character(to_render())){
       cat(to_render())
     }else{
-      print(to_render())  
+      out <- to_render()
+      if(!is.null(out$warning)){
+        cat("Could not get results because of the following lavaan warning. Probably something is wrong with your model\n")
+        cat(out$warning$message)
+      }
+      if(!is.null(out$error)){
+        cat("Could not get results because of the following lavaan warning. Probably something is wrong with your model\n")
+        print(out$error)
+      }
+      print(out$summary)  
     }
   })
   
@@ -107,10 +128,15 @@ lavaan_gui_server <- function(input, output, session) {
   getResults <- function(result){
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     fromJavascript$fitted_model = NULL
-    res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
-                fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
-                data = digest::digest(getData()))
-    session$sendCustomMessage("lav_results", res)
+    text_res <- getTextOut(result)
+    if(!text_res$problem){
+      res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
+                  fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
+                  data = digest::digest(getData()))
+      session$sendCustomMessage("lav_results", res)  
+    }else{
+      session$sendCustomMessage("lav_failed", "lav_error")  
+    }
     return(getTextOut(result))
   }
   

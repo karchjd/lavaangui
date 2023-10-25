@@ -39,7 +39,28 @@ checkVarsInData <- function(model_parsed, data){
 }
 
 getTextOut <- function(result){
-  sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
-  sum_model$pe <- NULL
-  return(sum_model)
+  
+  # Initialize empty lists to hold errors and warnings
+  errors <- NULL
+  warnings <- NULL
+  
+  output <- withCallingHandlers({
+    tryCatch({
+      sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
+      sum_model$pe <- NULL
+      return(sum_model)
+    }, error = function(e) {
+      return(NULL)
+    })
+  },
+  warning = function(w) {
+    # Capture warning
+    warnings <<- w
+  },
+  error = function(e) {
+    # Capture error
+    errors <<- e
+  })
+  problem <- !is.null(warning) || !is.null(errors)
+  list(summary = output, errors = errors, warnings = warnings, problem = problem)
 }
