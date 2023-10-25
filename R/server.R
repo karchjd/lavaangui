@@ -109,6 +109,8 @@ lavaan_gui_server <- function(input, output, session) {
     ## for user model
     if(is.character(to_render())){
       cat(to_render())
+    }else if(any(class(to_render()) == "lavaan.data.frame")){
+      print(to_render())
     }else{
       out <- to_render()
       if(!is.null(out$warning)){

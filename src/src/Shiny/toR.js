@@ -175,7 +175,9 @@ export function createSyntax(run) {
   });
   for (let i = 0; i < constant_nodes.length; i++) {
     const c_node = constant_nodes[i];
-    const connectedEdges = c_node.connectedEdges();
+    const connectedEdges = c_node.connectedEdges(function (edge) {
+      return !edge.hasClass("fromLav");
+    });
     if (connectedEdges.length > 0) {
       syntax += "# intercepts" + "\n ";
       for (var j = 0; j < connectedEdges.length; j++) {

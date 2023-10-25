@@ -234,6 +234,14 @@
           edge.remove();
         }
       });
+      cy.nodes(".fromLav").forEach((node) => {
+        if (node.connectedEdges().length == 0) {
+          node.remove();
+          cy.nodes().forEach((node) => {
+            checkNodeLoop(node.id());
+          });
+        }
+      });
     } else {
       applySemLayout("tree", false);
     }
