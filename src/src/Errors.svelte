@@ -1,7 +1,11 @@
 <script>
-  // window.onerror = function (message, source, lineno, colno, error) {
-  //   showError(message, "Javascript");
-  // };
+  window.onerror = function (message, source, lineno, colno, error) {
+    showError(message, "Javascript");
+  };
+
+  window.addEventListener("unhandledrejection", function (event) {
+    showError(event.reason, "Javascript");
+  });
 
   function showError(message, source) {
     bootbox.alert({
