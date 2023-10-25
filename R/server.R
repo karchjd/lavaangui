@@ -114,14 +114,16 @@ lavaan_gui_server <- function(input, output, session) {
     }else{
       out <- to_render()
       if(!is.null(out$warning)){
-        cat("Could not get results because of the following lavaan warning. Probably something is wrong with your model\n")
+        cat("Could not get results because of the following lavaan warning.\nProbably your model is not identified\n")
         cat(out$warning$message)
       }
       if(!is.null(out$error)){
-        cat("Could not get results because of the following lavaan warning. Probably something is wrong with your model\n")
-        print(out$error)
+        cat("Could not get results because of the following lavaan error.\nProbably your model is not identified\n")
+        print(out$error$message)
       }
-      print(out$summary)  
+      if(!is.null(out$summary)){
+        print(out$summary)   
+      }
     }
   })
   
@@ -131,14 +133,24 @@ lavaan_gui_server <- function(input, output, session) {
     fromJavascript$fitted_model = NULL
     text_res <- getTextOut(result)
     if(!text_res$problem){
-      res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
-                  fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
-                  data = digest::digest(getData()))
-      session$sendCustomMessage("lav_results", res)  
+      out <- tryCatch({
+        res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
+                    fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
+                    data = digest::digest(getData()))
+        session$sendCustomMessage("lav_results", res) 
+        return(text_res)
+      }, error = function(e) {
+        session$sendCustomMessage("lav_failed", "lav_error")  
+        return(list(error=e))
+      }, warning = function(w) {
+        session$sendCustomMessage("lav_failed", "lav_error")  
+        return(list(warning=w))
+      })
+      return(out)
     }else{
+      return(text_res)
       session$sendCustomMessage("lav_failed", "lav_error")  
     }
-    return(getTextOut(result))
   }
   
   # main functions for fitting lavaan
@@ -192,8 +204,8 @@ lavaan_gui_server <- function(input, output, session) {
             prom <- promises::catch(fut,
                                     function(e){
                                       to_render(NULL)
-                                      session$sendCustomMessage("lav_failed", "stopped")
-                                      to_render("stopped by user")
+                                      session$sendCustomMessage("lav_failed", "lav_error")
+                                      to_render(list(error=e))
                                     })
             prom <- promises::finally(prom, function(){
               if(file.exists(abort_file)){
@@ -229,7 +241,7 @@ lavaan_gui_server <- function(input, output, session) {
     shinyjs::click("downloadData")
   })
   
-
+  
   
   # Define the download handler function
   output$downloadData <- downloadHandler(
