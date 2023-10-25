@@ -10,25 +10,25 @@
 
 <div id="data">
   {#if $appState.dataAvail}
-    <a
-      href={"#"}
-      on:click={showInfo}
-      data-toggle="tooltip"
-      title="View Summary Statistics / Rename Variables"
-      >{$appState.loadFileName} is loaded</a
-    >
+    <span>{$appState.loadFileName} is loaded</span>
+    <button on:click={showInfo}>Data Editor</button>
   {:else}
-    <p data-testid="data-info">No Data loaded</p>
+    <span data-testid="data-info">No Data loaded</span>
   {/if}
 </div>
 
 <style>
-  #data {
+  span {
     margin-left: 10px;
     margin-bottom: 0px;
     padding: 1px;
     background-color: white;
     border: solid 1px black;
     height: 20px;
+  }
+
+  button {
+    padding-top: 1px;
+    padding-bottom: 1px;
   }
 </style>
