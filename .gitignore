@@ -50,3 +50,4 @@ demo-todo-app.spec.ts
 src/test-results
 inst
 index.html
+src/playwright-report

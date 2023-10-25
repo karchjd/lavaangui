@@ -1,7 +1,7 @@
 <script>
   import { appState } from "../stores";
   function abort() {
-    Shiny.setInputValue("abort", true);
+    Shiny.setInputValue("abort", Math.random());
   }
 </script>
 

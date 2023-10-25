@@ -14,7 +14,7 @@ lavaan_gui_server <- function(input, output, session) {
   }
   
   # state vars
-  abort_file <- tempfile()
+  abort_file <- NULL
   imported <- FALSE
   to_render <- reactiveVal(help_text)
   first_run_layout <- reactiveVal(TRUE)
@@ -45,7 +45,6 @@ lavaan_gui_server <- function(input, output, session) {
   
   # data upload
   data_content <- observeEvent(input$fileInput,{
-    print(input$fileInput)
     req(input$fileInput)
     if (is.null(input$fileInput$content)) {
       data <- list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name)
@@ -76,7 +75,6 @@ lavaan_gui_server <- function(input, output, session) {
   observeEvent(input$layout,{
     req(input$layout)
     fromJavascript <- jsonlite::fromJSON(input$layout)
-    print(first_run_layout())
     if(imported && first_run_layout()){
       semPlotModel <- semPlot::semPlotModel(importedModel$fit)
       first_run_layout(FALSE)
@@ -104,7 +102,7 @@ lavaan_gui_server <- function(input, output, session) {
       print(to_render())  
     }
   })
-
+  
   # extract results from model
   getResults <- function(result){
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
@@ -118,6 +116,7 @@ lavaan_gui_server <- function(input, output, session) {
   
   # main functions for fitting lavaan
   observeEvent(input$runCounter, {
+    req(input$runCounter)
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     if(fromJavascript$mode == "user model"){
@@ -148,6 +147,7 @@ lavaan_gui_server <- function(input, output, session) {
           if(!any(missing_vars)){
             ## fit model
             session$sendCustomMessage("fitting", "")
+            abort_file <<- tempfile()
             lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
             fut <- promises::future_promise({
               `%get%` = function(pkg, fun) get(fun, envir = asNamespace(pkg),
@@ -167,7 +167,6 @@ lavaan_gui_server <- function(input, output, session) {
                                       to_render(NULL)
                                       session$sendCustomMessage("lav_failed", "stopped")
                                       to_render("stopped by user")
-                                      showNotification("Task Stopped")
                                     })
             prom <- promises::finally(prom, function(){
               if(file.exists(abort_file)){
@@ -178,7 +177,6 @@ lavaan_gui_server <- function(input, output, session) {
             session$sendCustomMessage("missing_vars", names(missing_vars)[missing_vars])
           }
         } else{
-          print("send msg")
           session$sendCustomMessage("data_missing", 1)
         }
       }else{
@@ -189,10 +187,10 @@ lavaan_gui_server <- function(input, output, session) {
         to_render(res)
       }
     }
+    return(NULL) ## Never ever remove this. This stops the UI from blocking!!!
   })
   
   
-  # allows aborting computation
   observeEvent(input$abort,{
     file.create(abort_file)
   })
