@@ -6,7 +6,7 @@
 
 <div id="data">
   {#if $appState.dataAvail}
-    <span>{$appState.loadFileName} is loaded</span>
+    <span data-testid="data-info">{$appState.loadFileName} is loaded</span>
   {:else}
     <span data-testid="data-info">No Data loaded</span>
   {/if}

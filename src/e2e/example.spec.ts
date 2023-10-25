@@ -1,4 +1,9 @@
 import { test, expect } from "@playwright/test";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 
 //File menu
 
@@ -12,6 +17,35 @@ test("new model", async ({ page }) => {
   // Asserttions
   expect(numberOfNodes).toBe(0);
   await expect(page.getByTestId("result-text")).toContainText("Command");
+});
+
+test("Load Data", async ({ page }) => {
+  const fileChooserPromise = page.waitForEvent("filechooser");
+  await page.goto("http://127.0.0.1:3245/");
+  await page.getByRole("button", { name: "File" }).click();
+  await page.getByRole("link", { name: "Load Data", exact: true }).click();
+
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles(path.join(__dirname, "cfa.csv"));
+  await expect(page.getByTestId("data-info")).toContainText(
+    "cfa.csv is loaded"
+  );
+});
+
+test("Load Model and Data", async ({ page }) => {
+  const fileChooserPromise = page.waitForEvent("filechooser");
+  await page.goto("http://127.0.0.1:3245/");
+  await page.getByRole("button", { name: "File" }).click();
+  await page
+    .getByRole("link", { name: "Load Model and Data", exact: true })
+    .click();
+  await page.getByText("OK").click();
+
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles(path.join(__dirname, "cfa.zip"));
+  await expect(page.getByTestId("data-info")).toContainText(
+    "data.csv is loaded"
+  );
 });
 
 test("Download Model", async ({ page }) => {

@@ -62,8 +62,7 @@ lavaan_gui_server <- function(input, output, session) {
     } else {
       content <- input$fileInput$content
       decoded <- base64enc::base64decode(content)
-      # Read content into a data frame
-      data <- list(df = readr::read_csv(textConnection(rawToChar(decoded))), name = "data.csv")
+      data <- list(df = readr::read_csv(decoded), name = "data.csv")
     }
     data_react(data)
     propagateData(data)
