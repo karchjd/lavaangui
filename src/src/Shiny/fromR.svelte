@@ -198,6 +198,10 @@
             classes: desiredEdge.directed + " nolabel",
           });
 
+          if (lav_model.label[i] != "") {
+            edge.addClass("label");
+            edge.data("label", lav_model.label[i]);
+          }
           if (lav_model.user[i] == 1) {
             edge.addClass("fromUser");
           } else {
