@@ -379,7 +379,7 @@
                       "success",
                       `Variable ${node.data("label")} linked to data`
                     );
-                  } else {
+                  } else if (node.hasClass("linked")) {
                     node.removeClass("linked");
                     setAlert("info", `Variable ${node.data("label")} unlinked`);
                   }
