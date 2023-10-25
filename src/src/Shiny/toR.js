@@ -218,7 +218,7 @@ function produceLavaanOptions() {
   const meanStruc = boolToString(modelOpt.meanStruc);
   const ovFree = boolToString(modelOpt.intOvFree);
   const lvFree = boolToString(modelOpt.intLvFree);
-  return `meanstructure = ${meanStruc},
+  let options = `meanstructure = ${meanStruc},
 \t\t int.ov.free = ${ovFree}, int.lv.free = ${lvFree},
 \t\t estimator = ${addQuotes(modelOpt.estimator)}, se = ${addQuotes(
     modelOpt.se
@@ -232,7 +232,14 @@ function produceLavaanOptions() {
 \t\t auto.cov.lv.x = ${boolToString(
     modelOpt.auto_cov_lv_x
   )}, auto.cov.y = ${boolToString(modelOpt.auto_cov_y)},
-  \t\t fixed.x = ${boolToString(modelOpt.fixed_x)})`;
+  \t\t fixed.x = ${boolToString(modelOpt.fixed_x)}`;
+  if (modelOpt.se == "boot") {
+    const additional = `, bootstrap = ${modelOpt.n_boot})`;
+    options = options + additional;
+  } else {
+    options = options + ")";
+  }
+  return options;
 }
 
 function addQuotes(inputString) {
