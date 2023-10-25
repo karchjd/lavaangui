@@ -13,13 +13,16 @@
         setAlert("success", `Variable ${node.data("label")} linked to data`);
       }
     }
-    if ($appState.modelEmpty && cy.nodes().length > 0) {
+  });
+
+  cy.on("add", "edge", function (event) {
+    if ($appState.modelEmpty && cy.edges().length > 0) {
       $appState.modelEmpty = false;
     }
   });
 
-  cy.on("remove", "node", function (event) {
-    if (cy.nodes().length == 0) {
+  cy.on("remove", "edge", function (event) {
+    if (cy.edges().length == 0) {
       $appState.modelEmpty = true;
     }
   });
