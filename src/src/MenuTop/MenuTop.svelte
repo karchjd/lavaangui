@@ -1,5 +1,4 @@
 <script>
-  import HelpPage from "./HelpPage.svelte";
   import Navbar from "./Navbar.svelte";
   import FileMenu from "./FileMenu.svelte";
   import ViewMenu from "./ViewMenu.svelte";
@@ -8,6 +7,7 @@
   import Layouts from "./Layouts.svelte";
   import AddMenu from "./AddMenu.svelte";
   import ShowHelp from "./ShowHelp.svelte";
+  import DataEditor from "./DataEditor.svelte";
 </script>
 
 <Navbar>
@@ -17,5 +17,6 @@
   <AddMenu />
   <EstimationMenu />
   <Layouts />
+  <DataEditor />
   <ShowHelp />
 </Navbar>
