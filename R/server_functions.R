@@ -48,7 +48,7 @@ getTextOut <- function(result){
     tryCatch({
       sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
       sum_model$pe <- NULL
-      return(sum_model)
+      sum_model
     }, error = function(e) {
       return(NULL)
     })
@@ -62,5 +62,5 @@ getTextOut <- function(result){
     errors <<- e
   })
   problem <- !is.null(warning) || !is.null(errors)
-  list(summary = output, errors = errors, warnings = warnings, problem = problem)
+  return(list(summary = output, errors = errors, warnings = warnings, problem = problem))
 }
