@@ -157,3 +157,21 @@ test("Fit Model", async ({ page }) => {
     "Model Test User Model:"
   );
 });
+
+test("Abort", async ({ page }) => {
+  await page.goto("http://127.0.0.1:3245/");
+  await page.getByRole("button", { name: "Estimation" }).click();
+  await page.getByRole("link", { name: "Standard Error" }).hover();
+  await page.getByText("Bootstrap").click();
+  await page.getByText("OK").click();
+  await page.getByRole("button", { name: "Fit Model" }).click();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page.getByTestId("result-text")).toContainText(
+    "stopped by user"
+  );
+  await page.getByRole("button", { name: "Fit Model" }).click();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page.getByTestId("result-text")).toContainText(
+    "stopped by user"
+  );
+});
