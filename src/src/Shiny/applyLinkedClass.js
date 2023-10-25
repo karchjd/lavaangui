@@ -29,6 +29,8 @@ export function applyLinkedClass(columnNames, apply) {
         all_linked = false;
       }
     }
-    setAlert("success", "All observed variables linked.");
+    if (all_linked) {
+      setAlert("success", "All observed variables linked.");
+    }
   }
 }
