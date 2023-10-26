@@ -4,7 +4,7 @@
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
 
   function showDataInfo() {
-    console.log("Should Show?");
+    // @ts-expect-error
     window.$("#data-modal").modal();
   }
   let menuItems;

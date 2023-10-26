@@ -17,6 +17,7 @@
 
   function newModel() {
     if (!$appState.modelEmpty) {
+      // @ts-expect-error
       bootbox.confirm(
         "Are you sure you want to create a new model? This will delete the current model.",
         function (result) {
@@ -34,6 +35,7 @@
     let cy = get(cyStore);
     cy.elements().remove();
     resetCounters();
+    // @ts-expect-error
     Shiny.setInputValue("show_help", Math.random());
     for (let key in $fitCache) {
       $fitCache[key] = null;
@@ -96,6 +98,7 @@
 
     // Await file selection by user
     const file = await new Promise((resolve) => {
+      // @ts-expect-error
       input.addEventListener("change", (e) => resolve(e.target.files[0]));
       input.click();
     });
@@ -113,6 +116,7 @@
 
   function loadModel() {
     if (!$appState.modelEmpty) {
+      // @ts-expect-error
       bootbox.confirm(
         "Are you sure you want to load a model? This will delete the current model.",
         function (result) {
@@ -133,6 +137,7 @@
 
   function loadModelData() {
     if (!$appState.modelEmpty) {
+      // @ts-expect-error
       bootbox.confirm(
         "Are you sure you want to load a model? This will delete the current model.",
         function (result) {
@@ -153,6 +158,7 @@
     input.setAttribute("accept", ".zip");
 
     input.addEventListener("change", function (e) {
+      // @ts-expect-error
       const file = e.target.files[0];
 
       const reader = new FileReader();
@@ -172,6 +178,7 @@
                 .file("data.csv")
                 .async("base64")
                 .then(function (dataCsvContent) {
+                  // @ts-expect-error
                   Shiny.setInputValue("fileInput", { content: dataCsvContent });
                 });
             });
@@ -215,12 +222,15 @@
     let url = URL.createObjectURL(blob);
 
     // Create and trigger download link for the JSON data
+    // @ts-expect-error
     window.$("<a>").attr({ href: url, download: "diagram.json" })[0].click();
   }
 
   function downloadModelData() {
     const str = jsonModel();
+    // @ts-expect-error
     Shiny.setInputValue("model", str);
+    // @ts-expect-error
     Shiny.setInputValue("triggerDownload", Math.random());
   }
 
@@ -228,7 +238,7 @@
     const cy = get(cyStore);
     $appState.dataAvail = false;
     $appState.columnNames = null;
-    $appState.loadFileName = null;
+    $appState.loadedFileName = null;
     $appState.ids = null;
     $dataInfo = null;
     cy.nodes().removeClass("linked");
@@ -242,10 +252,13 @@
   }
 
   function exportPNG() {
+    const cy = get(cyStore);
+
     startDownload(cy.png({ bg: "white" }), "png");
   }
 
   function exportJPG() {
+    const cy = get(cyStore);
     startDownload(cy.jpg(), "jpg");
   }
 

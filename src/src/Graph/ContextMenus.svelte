@@ -19,11 +19,13 @@
 
   function validLabel(str) {
     if (str == "") {
+      // @ts-expect-error
       bootbox.alert("Provide a label");
       return false;
     }
 
     if (!isValidName(str)) {
+      // @ts-expect-error
       bootbox.alert("Provide a valid label");
       return false;
     }
@@ -32,11 +34,13 @@
 
   function validDegree(str) {
     if (str == "") {
+      // @ts-expect-error
       bootbox.alert("Provide a degree");
       return false;
     }
     const deg = parseInt(str);
     if (deg < 0 || deg > 360) {
+      // @ts-expect-error
       bootbox.alert("Provide a valid degree (0-360)");
       return false;
     }
@@ -83,6 +87,7 @@
       selector: "edge.fromUser",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        // @ts-expect-error
         bootbox.prompt({
           title: "Enter a Label",
           callback: function (result) {
@@ -134,11 +139,13 @@
       selector: "edge.free.fromUser, edge.forcefree.fromUser",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        // @ts-expect-error
         bootbox.prompt({
           title: "Enter a Value",
           inputType: "number",
           callback: function (value) {
             if (value == "") {
+              // @ts-expect-error
               bootbox.alert("Provide a value");
               return false;
             }
@@ -236,6 +243,7 @@
       selector: "edge.undirected",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        // @ts-expect-error
         bootbox.prompt({
           title:
             "Enter a New Value \n (Larger absolute values → more curvature. Switching the sign → reverts curvature)",
@@ -243,6 +251,7 @@
           value: parseInt(edge.style().controlPointDistances),
           callback: function (value) {
             if (value == "") {
+              // @ts-expect-error
               bootbox.alert("Provide a value");
               return false;
             }
@@ -273,6 +282,7 @@
       selector: "edge.loop",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        // @ts-expect-error
         bootbox.prompt({
           title:
             "Enter a Degree from 0 to 360 (0 is top, 90 right, 180 bottom, and 270 left)",
@@ -280,6 +290,7 @@
           value: parseInt(edge.style("loop-direction")),
           callback: function (value) {
             if (value == "") {
+              // @ts-expect-error
               bootbox.alert("Provide a value");
               return false;
             }
@@ -287,8 +298,6 @@
             if (!validDegree) {
               return false;
             }
-            console.log(parseInt(edge.style("loop-direction")));
-
             if (value !== null) {
               edge.style("loop-direction", `${value}deg`);
               edge.addClass("fixDeg");
@@ -340,7 +349,7 @@
       </select>
     `
             : "";
-
+        // @ts-expect-error
         bootbox.dialog({
           title: "Rename Variable",
           message: `
@@ -428,6 +437,7 @@
         if (columnNames && columnNames.includes(node.data("label"))) {
           node.addClass("linked");
           if (!$appState.loadingMode) {
+            // @ts-expect-error
             bootbox.alert("Variable linked with data set");
           }
         }

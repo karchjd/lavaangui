@@ -1,12 +1,15 @@
 <script>
-  import { appState, modelOptions } from "../stores";
+  import { appState, cyStore, modelOptions } from "../stores";
   import { createSyntax } from "../Shiny/toR";
+  import { get } from "svelte/store";
 
   function serverAvail() {
+    // @ts-expect-error
     return typeof Shiny === "object" && Shiny !== null;
   }
 
   function tolavaan(mode) {
+    let cy = get(cyStore);
     const edges = cy.edges();
 
     for (var i = 0; i < edges.length; i++) {
@@ -18,16 +21,22 @@
     $appState.result = "script";
     if (mode != "user model" && serverAvail()) {
       $modelOptions.showLav = true;
+      // @ts-expect-error
       for_R.mode = mode;
+      // @ts-expect-error
       Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
+      // @ts-expect-error
       Shiny.setInputValue("runCounter", Math.random());
     } else if (mode == "user model") {
       $modelOptions.showLav = false;
       if (!serverAvail()) {
+        // @ts-expect-error
         document.getElementById("lavaan_syntax_R").innerText = for_R;
       } else {
         const for_R_con = { mode: mode, syntax: for_R };
+        // @ts-expect-error
         Shiny.setInputValue("fromJavascript", JSON.stringify(for_R_con));
+        // @ts-expect-error
         Shiny.setInputValue("runCounter", Math.random());
       }
       cy.edges(".byLav").forEach((existingEdge) => {

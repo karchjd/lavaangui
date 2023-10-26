@@ -1,8 +1,8 @@
 import { writable, derived } from "svelte/store";
 
-export const cyStore = writable(0);
-export const ehStore = writable(0);
-export const ur = writable(0);
+export const cyStore = writable(null);
+export const ehStore = writable(null);
+export const ur = writable(null);
 
 export let modelOptions = writable({
   meanStruc: "default",
@@ -37,7 +37,7 @@ export let appState = writable({
   modelEmpty: true,
   dataAvail: false,
   columnNames: null,
-  loadFileName: null,
+  loadedFileName: null,
   ids: null,
   result: "none",
   dragged: null,

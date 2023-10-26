@@ -10,6 +10,7 @@
   const number_digits = 2;
 
   function serverAvail() {
+    // @ts-expect-error
     return typeof Shiny === "object" && Shiny !== null;
   }
 
@@ -110,7 +111,7 @@
 
   function getModelLav(lav_model, imported) {
     $appState.result = "model";
-    cy = get(cyStore);
+    let cy = get(cyStore);
     if (!imported) {
       cy.edges().removeClass("validated");
     } else {
@@ -249,15 +250,17 @@
 
   if (serverAvail()) {
     //sent by server when data is loaded
+    // @ts-expect-error
     Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
       applyLinkedClass(data_info.columns, true);
       $appState.columnNames = [...data_info.columns];
       $appState.ids = [...data_info.columns];
-      $appState.loadFileName = data_info.name;
+      $appState.loadedFileName = data_info.name;
       $appState.dataAvail = true;
       $dataInfo = data_info.summary;
     });
 
+    // @ts-expect-error
     Shiny.addCustomMessageHandler("lav_failed", function (failCode) {
       $appState.fitting = false;
       if (failCode == "stopped") {
@@ -266,22 +269,24 @@
         setAlert("danger", "Fitting failed");
       }
     });
-
+    // @ts-expect-error
     Shiny.addCustomMessageHandler("fitting", function (dummy) {
       $appState.fitting = true;
     });
 
+    // @ts-expect-error
     Shiny.addCustomMessageHandler("usecache", function (dummy) {
       setAlert(
         "info",
         "Reusing cached results because model and data did not change since last fit"
       );
     });
-
+    // @ts-expect-error
     Shiny.addCustomMessageHandler("data_missing", function (dummy) {
       setAlert("danger", "Could not fit model because no data is available");
     });
 
+    // @ts-expect-error
     Shiny.addCustomMessageHandler("missing_vars", function (missingVars) {
       var missingVarsStr = [].concat(missingVars).join(", ");
       setAlert(
@@ -293,23 +298,26 @@
     });
 
     // parse model
+    // @ts-expect-error
     Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
       getModelLav(lav_model, false);
     });
 
     //import model
+    // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
       getModelLav(lav_model, true);
     });
 
     // save all results in data attributes of the correct edges
+    // @ts-expect-error
     Shiny.addCustomMessageHandler("lav_results", function (all_res) {
       const lav_result = all_res.normal;
       const std_result = all_res.std;
       $fitCache.lastFitLavFit = all_res.fitted_model;
       $fitCache.lastFitModel = all_res.model;
       $fitCache.lastFitData = all_res.data;
-      cy = get(cyStore);
+      let cy = get(cyStore);
       for (let i = 0; i < lav_result.lhs.length; i++) {
         let existingEdge = findEdge(
           lav_result.lhs[i],

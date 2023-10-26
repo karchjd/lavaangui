@@ -1,7 +1,7 @@
 import { cyStore, setAlert } from "../stores";
 import { get } from "svelte/store";
-
 function serverAvail() {
+  // @ts-expect-error
   return typeof Shiny === "object" && Shiny !== null;
 }
 
@@ -9,7 +9,7 @@ export function applyLinkedClass(columnNames, apply) {
   if (columnNames == null) {
     throw new Error("Columnnames may not be null.");
   }
-  cy = get(cyStore);
+  let cy = get(cyStore);
   const nodes = cy.nodes(function (node) {
     return node.hasClass("observed-variable");
   });

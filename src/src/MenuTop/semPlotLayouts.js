@@ -7,6 +7,7 @@ let counter = 0;
 let undo = false;
 
 function serverAvail() {
+  // @ts-expect-error
   return typeof Shiny === "object" && Shiny !== null;
 }
 function objectOfArraysToArrayOfObjects(obj) {
@@ -29,15 +30,19 @@ export function applySemLayout(name, undo = true) {
   undo = undo;
   counter = counter + 1;
   let for_R = createSyntax(true);
+  // @ts-expect-error
   for_R.name = name;
+  // @ts-expect-error
   for_R.counter = counter;
 
   if (serverAvail()) {
+    // @ts-expect-error
     Shiny.setInputValue("layout", JSON.stringify(for_R));
   }
 }
 
 if (serverAvail()) {
+  // @ts-expect-error
   Shiny.addCustomMessageHandler("semPlotLayout", function (layout_R) {
     layout_R = objectOfArraysToArrayOfObjects(layout_R);
     // Determine scale and translation factors
@@ -87,7 +92,6 @@ if (serverAvail()) {
     } else {
       const cy = get(cyStore);
       cy.layout(options).run();
-      console.log("layout applied");
     }
   });
 }

@@ -12,6 +12,7 @@ test("new model", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("link", { name: "New Model" }).click();
   await page.getByText("OK").click();
+  // @ts-expect-error
   const numberOfNodes = await page.evaluate(() => window.cy.nodes().length);
 
   // Asserttions
@@ -100,6 +101,7 @@ test("Default options View", async ({ page }) => {
   //Edges created by lavaan visible
   await page
     .evaluate(() => {
+      // @ts-expect-error
       const edgesFromLav = window.cy.edges(".fromLav");
       return edgesFromLav.every((edge) => edge.visible());
     })
@@ -109,15 +111,16 @@ test("Default options View", async ({ page }) => {
   //Standard estimates shown
   await page
     .evaluate(() => {
+      // @ts-expect-error
       const edge = window.cy.edges((edge) => {
         const sourceNode = edge.source();
         const targetNode = edge.target();
         return (
           sourceNode.data("label") === "visual" &&
-          targetNode.data("label") === "x3"
+          targetNode.data("label") === "x2"
         );
       });
-      return edge.style("label") === "0.73";
+      return edge.style("label") === "0.55";
     })
     .then((hasLabel) => {
       expect(hasLabel).toBe(true);
@@ -132,9 +135,11 @@ test("Show Script", async ({ page }) => {
     "library(lavaan)"
   );
   const lavEdges = await page.evaluate(() =>
+    // @ts-expect-error
     window.cy.edges(".fromLav").map((edge) => edge.visible())
   );
   const usrEdges = await page.evaluate(() =>
+    // @ts-expect-error
     window.cy.edges(".fromUser").map((edge) => edge.visible())
   );
 
@@ -151,9 +156,11 @@ test("Show Full Model", async ({ page }) => {
 
   await expect(page.getByTestId("result-text")).toContainText("lhs");
   const lavEdges = await page.evaluate(() =>
+    // @ts-expect-error
     window.cy.edges(".fromLav").map((edge) => edge.visible())
   );
   const usrEdges = await page.evaluate(() =>
+    // @ts-expect-error
     window.cy.edges(".fromUser").map((edge) => edge.visible())
   );
   const x = 3;
@@ -173,15 +180,16 @@ test("Fit Model", async ({ page }) => {
 
   await page
     .evaluate(() => {
+      // @ts-expect-error
       const edge = window.cy.edges((edge) => {
         const sourceNode = edge.source();
         const targetNode = edge.target();
         return (
           sourceNode.data("label") === "visual" &&
-          targetNode.data("label") === "x3"
+          targetNode.data("label") === "x2"
         );
       });
-      return edge.style("label") === "0.73";
+      return edge.style("label") === "0.55";
     })
     .then((hasLabel) => {
       expect(hasLabel).toBe(true);

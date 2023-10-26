@@ -205,7 +205,7 @@ lavaan_gui_server <- function(input, output, session) {
                                     function(e){
                                       to_render(NULL)
                                       session$sendCustomMessage("lav_failed", "lav_error")
-                                      to_render(list(error=e))
+                                      to_render("stopped by user")
                                     })
             prom <- promises::finally(prom, function(){
               if(file.exists(abort_file)){
