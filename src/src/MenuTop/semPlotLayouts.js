@@ -83,7 +83,6 @@ if (serverAvail()) {
       padding: 60,
       animate: true,
     };
-    debugger;
     // Run the layout
     if (undo) {
       const lur = get(ur);
