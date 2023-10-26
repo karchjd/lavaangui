@@ -46,8 +46,7 @@ semPathTest.R
 /test-results/
 /playwright-report/
 /playwright/.cache/
-demo-todo-app.spec.ts
 src/test-results
-inst
 index.html
 src/playwright-report
+inst/www/assets
