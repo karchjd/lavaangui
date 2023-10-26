@@ -2,7 +2,6 @@ import { cyStore, ur } from "../stores.js";
 import { get } from "svelte/store";
 import { createSyntax } from "../Shiny/toR.js";
 
-let lur = get(ur);
 let counter = 0;
 let undo = false;
 
@@ -26,8 +25,8 @@ function objectOfArraysToArrayOfObjects(obj) {
   return result;
 }
 
-export function applySemLayout(name, undo = true) {
-  undo = undo;
+export function applySemLayout(name, undoArg = true) {
+  undo = undoArg;
   counter = counter + 1;
   let for_R = createSyntax(true);
   // @ts-expect-error
@@ -73,7 +72,6 @@ if (serverAvail()) {
       const y = nodeInfo.y * -1 * yScale + 400;
       preCalculatedPositions[nodeInfo.name] = { x, y };
     });
-    debugger;
     // Configure the options
     let options = {
       name: "preset",
@@ -88,6 +86,7 @@ if (serverAvail()) {
     debugger;
     // Run the layout
     if (undo) {
+      const lur = get(ur);
       lur.do("layout", { options: options });
     } else {
       const cy = get(cyStore);
