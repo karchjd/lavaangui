@@ -2,7 +2,7 @@
   export let name;
   export let value;
   export let group;
-  export let isDisabled;
+  export let isDisabled = false;
 </script>
 
 <div class={isDisabled ? "radio disabled" : "radio"}>

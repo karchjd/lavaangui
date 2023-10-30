@@ -41,9 +41,9 @@
       <MenuTop />
     {:else}
       <MinContextMenu>
-        <ViewMenu />
-        <Layouts />
-        <FileMenu full={$appState.full} />
+        <FileMenu full={false} />
+        <ViewMenu minimal={true} />
+        <Layouts minimal={true} />
       </MinContextMenu>
     {/if}
     <MainContainer>

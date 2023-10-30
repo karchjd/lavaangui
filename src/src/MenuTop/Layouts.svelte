@@ -8,7 +8,7 @@
   import DropDownLinks from "./helpers/DropDownLinks.svelte";
   import cola from "cytoscape-cola";
   import { applySemLayout } from "./semPlotLayouts.js";
-
+  export let minimal = false;
   let cy = get(cyStore);
 
   onMount(() => {
@@ -95,4 +95,4 @@
   ];
 </script>
 
-<DropDownLinks name={"Apply Layout"} {menuItems} />
+<DropDownLinks name={"Apply Layout"} {menuItems} {minimal} />

@@ -300,4 +300,4 @@
   }
 </script>
 
-<DropdownLinks name={"File"} {menuItems} />
+<DropdownLinks name={"File"} {menuItems} minimal={!full} />

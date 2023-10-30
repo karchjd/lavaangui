@@ -29,6 +29,7 @@
       !robustSupported.includes($modelOptions.estimator)
     ) {
       $modelOptions.se = "standard";
+      // @ts-expect-error
       bootbox.alert(
         "Standard error reset to Standard because selected estimator does not support robust standad errors."
       );
@@ -48,6 +49,7 @@
       !fimlSupported.includes($modelOptions.estimator)
     ) {
       $modelOptions.missing = "listwise";
+      // @ts-expect-error
       bootbox.alert(
         "Missing values set back to listwise. Only the maximum likelihood estimator supports Full information maximum likelihood."
       );
@@ -58,6 +60,7 @@
 
   $: {
     if ($modelOptions.se == "boot" && previousSE !== "boot") {
+      // @ts-expect-error
       bootbox.prompt({
         title: "Enter the number of bootstrap draws:",
         value: $modelOptions.n_boot,
@@ -69,6 +72,7 @@
               return true;
             } else {
               return false;
+              // @ts-expect-error
               bootbox.alert("Please enter a positive whole number.");
             }
           }

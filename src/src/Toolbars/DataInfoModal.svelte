@@ -52,6 +52,7 @@
   let unsubscribe3 = columnNamesSTore.subscribe((newState) => {
     if (state.dataAvail && newState !== undefined && state.ids !== undefined) {
       if (renamed || !arraysAreEqual(newState, state.ids)) {
+        // @ts-expect-error
         Shiny.setInputValue("newnames", JSON.stringify(newState));
         applyLinkedClass(newState, true);
         renamed = true;

@@ -4,9 +4,10 @@
   import Dropdown from "./helpers/Dropdown.svelte";
   import RadioItem from "./helpers/RadioItem.svelte";
   import { edgeItems, viewRadios } from "./viewModule";
+  export let minimal = false;
 </script>
 
-<Dropdown name="View">
+<Dropdown name="View" {minimal}>
   {#each edgeItems as item}
     <CheckItem
       bind:name={item.name}
