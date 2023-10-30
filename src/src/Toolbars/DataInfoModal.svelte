@@ -47,11 +47,14 @@
     }
   });
 
+  let renamed = false;
+
   let unsubscribe3 = columnNamesSTore.subscribe((newState) => {
     if (state.dataAvail && newState !== undefined && state.ids !== undefined) {
-      if (!arraysAreEqual(newState, state.ids)) {
+      if (renamed || !arraysAreEqual(newState, state.ids)) {
         Shiny.setInputValue("newnames", JSON.stringify(newState));
         applyLinkedClass(newState, true);
+        renamed = true;
       }
     }
   });
