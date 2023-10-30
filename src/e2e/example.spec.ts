@@ -225,3 +225,17 @@ test("Remove data", async ({ page }) => {
   const fitButton = await page.getByRole("button", { name: "Fit Model" });
   expect(await fitButton.isDisabled()).toBe(true);
 });
+
+test("Not Identified", async ({ page }) => {
+  const fileChooserPromise = page.waitForEvent("filechooser");
+  await page.goto("http://127.0.0.1:3245/");
+  await page.getByRole("button", { name: "File" }).click();
+  await page.getByRole("link", { name: "Load Model", exact: true }).click();
+  await page.getByText("OK").click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles(path.join(__dirname, "not_identified.json"));
+  await page.getByRole("button", { name: "Fit Model" }).click();
+  await expect(page.getByTestId("result-text")).toContainText(
+    "This may be a symptom that the model is not"
+  );
+});
