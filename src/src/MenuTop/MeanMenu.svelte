@@ -25,17 +25,17 @@
         />
       {/each}
     </ul>
-    <CheckItem
-      name="Add Intercepts for all Observed Variables"
-      bind:checked={$modelOptions.intOvFree}
-      bind:disable={disabledInts}
-    />
-    <CheckItem
-      name="Add Intercepts for all Latent Variables"
-      bind:checked={$modelOptions.intLvFree}
-      bind:disable={disabledInts}
-    />
   </li>
+  <CheckItem
+    name="Add Intercepts for all Observed Variables"
+    bind:checked={$modelOptions.intOvFree}
+    bind:disable={disabledInts}
+  />
+  <CheckItem
+    name="Add Intercepts for all Latent Variables"
+    bind:checked={$modelOptions.intLvFree}
+    bind:disable={disabledInts}
+  />
 </Dropdown>
 
 <style>
