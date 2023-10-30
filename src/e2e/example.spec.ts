@@ -217,3 +217,11 @@ test("Abort", async ({ page }) => {
     "stopped by user"
   );
 });
+
+test("Remove data", async ({ page }) => {
+  await page.goto("http://127.0.0.1:3245/");
+  await page.getByRole("button", { name: "File" }).click();
+  await page.getByRole("link", { name: "Remove Data" }).click();
+  const fitButton = await page.getByRole("button", { name: "Fit Model" });
+  expect(await fitButton.isDisabled()).toBe(true);
+});

@@ -77,7 +77,7 @@
       on:click={() => {
         tolavaan("estimate");
       }}
-      disabled={$appState.modelEmpty}
+      disabled={$appState.modelEmpty || !$appState.dataAvail}
     >
       Fit Model
     </button>
