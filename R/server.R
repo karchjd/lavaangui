@@ -29,8 +29,7 @@ lavaan_gui_server <- function(input, output, session) {
     error_message <- geterrmessage()
     session$sendCustomMessage("serverError", list(msg=error_message))
   })
-  print(getOption("shiny.error"))
-  
+
   onStop(function() options(op))
   
   
