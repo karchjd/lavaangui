@@ -76,7 +76,7 @@ export function createSyntax(run) {
     });
     if (connectedEdges.length > 0) {
       if (!shown) {
-        syntax += "# measurement model" + "\n ";
+        syntax += "# measurement model" + "\n";
         shown = true;
       }
 
@@ -106,7 +106,7 @@ export function createSyntax(run) {
 
         nodeNames += addTerms(node, connectedEdges[sortedIndices[j]]);
       }
-      syntax += latentNode.data("label") + " =~ " + nodeNames + "\n ";
+      syntax += " " + latentNode.data("label") + " =~ " + nodeNames + "\n";
     }
   }
 
@@ -146,7 +146,7 @@ export function createSyntax(run) {
           }
           nodeNames += addTerms(node, connectedEdges[j]);
         }
-        syntax += "\n" + targetNode.data("label") + " ~ " + nodeNames;
+        syntax += "\n " + targetNode.data("label") + " ~ " + nodeNames;
       }
     }
   }
@@ -159,13 +159,11 @@ export function createSyntax(run) {
     );
   });
   if (cov_edges.length > 0) {
-    let nodeNames = "";
     syntax += "\n\n" + "# residual (co)variances";
     for (let i = 0; i < cov_edges.length; i++) {
       let node1 = cov_edges[i].source().data("label");
-      let node2 = cov_edges[i].target().data("label");
       syntax +=
-        "\n" + node1 + " ~~ " + addTerms(cov_edges[i].target(), cov_edges[i]);
+        "\n " + node1 + " ~~ " + addTerms(cov_edges[i].target(), cov_edges[i]);
     }
   }
 
