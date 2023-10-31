@@ -34,8 +34,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-www/assets/
-www/index.html
 index-294092bd.css
 index-8f1dc207.js
 .vite
@@ -47,6 +45,4 @@ semPathTest.R
 /playwright-report/
 /playwright/.cache/
 src/test-results
-index.html
 src/playwright-report
-inst/www/assets
