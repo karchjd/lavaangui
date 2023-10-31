@@ -3,11 +3,6 @@
 .RData
 .Ruserdata
 .data.csv
-init_simple.js
-main_test-reduced.html
-main-test.html
-resizeCue.svg
-test_data_generate.R
 .vscode
 
 # Logs
@@ -34,8 +29,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-index-294092bd.css
-index-8f1dc207.js
 .vite
 semPathTest.R
 /test-results/

@@ -8,7 +8,7 @@ export default defineConfig({
     minify: true,
     outDir: "../inst/www",
     sourcemap: false,
-    emptyOutDir: false,
+    emptyOutDir: true,
   },
   //base: "",
 });

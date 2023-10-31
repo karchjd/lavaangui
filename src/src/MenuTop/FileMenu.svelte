@@ -262,13 +262,24 @@
     startDownload(cy.jpg(), "jpg");
   }
 
+  function showDataInfo() {
+    // @ts-expect-error
+    window.$("#data-modal").modal();
+  }
+
   let menuItems;
   $: {
     let allMenuItems = [
       { name: "New Model", action: newModel },
       { name: "Load Model", action: loadModel },
       { name: "Load Data", action: loadData },
-      { name: "Load Model and Data", action: loadModelData, divider: true },
+      { name: "Load Model and Data", action: loadModelData },
+      {
+        name: "Data Editor",
+        action: showDataInfo,
+        disable: !$appState.dataAvail,
+        divider: true,
+      },
       {
         name: "Download Model",
         action: downloadModel,
