@@ -17,6 +17,6 @@
 #'
 #' @export
 start_gui <- function(fit = NULL){
-  start_app(fit, full = TRUE, where = "browser")
+  start_app(full = TRUE, where = "browser")
 }
 

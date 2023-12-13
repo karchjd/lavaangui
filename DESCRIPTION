@@ -13,6 +13,7 @@ Imports:
     haven (>= 2.5.3),
     jsonlite (>= 1.8.4),
     lavaan (>= 0.6.15),
+    pkgload,
     promises (>= 1.2.0.1),
     readr (>= 2.1.4),
     readxl (>= 1.4.3),

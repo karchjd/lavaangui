@@ -1,6 +1,6 @@
 #' @import shiny
 #' @import lavaan
-start_app <- function(fit, full, where){
+start_app <- function(fit = NULL, full, where){
   if(!is.null(fit)){
     pars <- parameterEstimates(fit)
     varNames <- lavaanNames(fit, type = "ov")
@@ -23,7 +23,10 @@ start_app <- function(fit, full, where){
            ui = htmlTemplate(ui_loc))
   if(where == "browser"){
     runApp(app, launch.browser = TRUE) 
-  }else{
+  }else if(where == "webserver"){
+    runApp(app) 
+  }
+  else{
     runGadget(app, viewer = dialogViewer("lavaangui", width = 10^3, height = 10^3))
   }
   on.exit(rm(.importedModel12849812948124912489128412948,.full12849812948124912489128412948,  envir=.GlobalEnv))
