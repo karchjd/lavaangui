@@ -24,7 +24,7 @@ start_app <- function(fit = NULL, full, where){
   if(where == "browser"){
     runApp(app, launch.browser = TRUE) 
   }else if(where == "webserver"){
-    runApp(app) 
+    runApp(app, port = Sys.getenv('PORT'), host = '0.0.0.0') 
   }
   else{
     runGadget(app, viewer = dialogViewer("lavaangui", width = 10^3, height = 10^3))
