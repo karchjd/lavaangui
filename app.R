@@ -3,4 +3,4 @@ pkgload::load_all(export_all = FALSE,helpers = FALSE,attach_testthat = FALSE, co
 print("starting server")
 port <- Sys.getenv('PORT')
 print(port)
-lavaangui:::start_app(full = TRUE, where = "heroku")
+lavaangui:::start_app(full = TRUE, where = "shinyapps")

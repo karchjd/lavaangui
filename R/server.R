@@ -78,7 +78,7 @@ lavaan_gui_server <- function(input, output, session) {
   
   # showing help
   observeEvent(input$show_help,{
-    to_render(help_text)}
+    to_render(rep(help_text, 10))}
   )
   # layout helper
   observeEvent(input$layout,{

@@ -23,8 +23,10 @@ start_app <- function(fit = NULL, full, where){
            ui = htmlTemplate(ui_loc))
   if(where == "browser"){
     runApp(app, launch.browser = TRUE) 
-  }else if(where == "webserver"){
+  }else if(where == "heroku"){
     runApp(app, port = as.numeric(Sys.getenv('PORT')), host = '0.0.0.0') 
+  }else if(where == "shinyapps"){
+    runApp(app) 
   }
   else{
     runGadget(app, viewer = dialogViewer("lavaangui", width = 10^3, height = 10^3))
