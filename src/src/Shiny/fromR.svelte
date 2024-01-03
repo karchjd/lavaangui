@@ -111,6 +111,7 @@
 
   function getModelLav(lav_model, imported) {
     $appState.result = "model";
+    $appState.meansModelled = false;
     let cy = get(cyStore);
     if (!imported) {
       cy.edges().removeClass("validated");
@@ -134,7 +135,7 @@
       let existingEdge = findEdge(
         lav_model.lhs[i],
         lav_model.op[i],
-        lav_model.rhs[i]
+        lav_model.rhs[i],
       );
       if (!imported && lav_model.user[i] == 1) {
         //If it is a user row make sure the path is in, otherwise throw an error
@@ -160,7 +161,7 @@
           const desiredEdge = getEdge(
             lav_model.lhs[i],
             lav_model.op[i],
-            lav_model.rhs[i]
+            lav_model.rhs[i],
           );
           let sourceId;
           if (desiredEdge.source !== 1) {
@@ -171,6 +172,7 @@
               .id();
           } else {
             //added edge is constant
+            $appState.meansModelled = true;
             if (lav_model.free[i] == 0 && lav_model.ustart[i] == 0) {
               continue;
             }
@@ -246,6 +248,10 @@
     } else {
       applySemLayout("tree", false);
     }
+
+    if (!$appState.parsedModel) {
+      $appState.parsedModel = true;
+    }
   }
 
   if (serverAvail()) {
@@ -278,7 +284,7 @@
     Shiny.addCustomMessageHandler("usecache", function (dummy) {
       setAlert(
         "info",
-        "Reusing cached results because model and data did not change since last fit"
+        "Reusing cached results because model and data did not change since last fit",
       );
     });
     // @ts-expect-error
@@ -293,7 +299,7 @@
         "danger",
         "Could not fit model because " +
           missingVarsStr +
-          " are observed variables in the model but not present in the data."
+          " are observed variables in the model but not present in the data.",
       );
     });
 
@@ -322,7 +328,7 @@
         let existingEdge = findEdge(
           lav_result.lhs[i],
           lav_result.op[i],
-          lav_result.rhs[i]
+          lav_result.rhs[i],
         );
         if (existingEdge.length != 1) {
           debugger;

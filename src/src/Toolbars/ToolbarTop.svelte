@@ -18,44 +18,57 @@
 </script>
 
 <div class="toolbox">
-  <DataInfo />
-  <div id="buttons">
-    <button
-      id="add-manifest-variable"
-      title="Create Observed Variable"
-      draggable="true"
-      data-button-type="observed-variable"
-      on:dragstart={() => {
-        dragStart("observed-variable");
-      }}
-      on:click={() => {
-        alertDrag();
-      }}
-    />
-    <button
-      id="add-latent-variable"
-      title="Create Latent Variable"
-      draggable="true"
-      data-button-type="latent-variable"
-      on:dragstart={() => {
-        dragStart("latent-variable");
-      }}
-      on:click={() => {
-        alertDrag();
-      }}
-    />
-    <button
-      id="add-constant-variable"
-      title="Create Constant Variable"
-      data-button-type="const"
-      draggable="true"
-      on:dragstart={() => {
-        dragStart("constant");
-      }}
-      on:click={() => {
-        alertDrag();
-      }}
-    />
+  <div id="buttonCont">
+    <div id="buttons">
+      <button
+        id="add-manifest-variable"
+        title="Create Observed Variable"
+        draggable="true"
+        data-button-type="observed-variable"
+        on:dragstart={() => {
+          dragStart("observed-variable");
+        }}
+        on:click={() => {
+          alertDrag();
+        }}
+      />
+      <button
+        id="add-latent-variable"
+        title="Create Latent Variable"
+        draggable="true"
+        data-button-type="latent-variable"
+        on:dragstart={() => {
+          dragStart("latent-variable");
+        }}
+        on:click={() => {
+          alertDrag();
+        }}
+      />
+      <button
+        id="add-constant-variable"
+        title="Create Constant Variable"
+        data-button-type="const"
+        draggable="true"
+        on:dragstart={() => {
+          dragStart("constant");
+        }}
+        on:click={() => {
+          alertDrag();
+        }}
+      />
+    </div>
+  </div>
+  <div id="messages">
+    <DataInfo />
+    {#if $appState.parsedModel}
+      <div id="means">
+        {#if $appState.meansModelled}
+          <span data-testid="data-info">Means are Modelled</span>
+        {:else}
+          <span data-testid="data-info">Means are NOT Modelled</span>
+        {/if}
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -66,8 +79,9 @@
     align-items: center;
   }
 
-  #buttons {
-    margin: 0 auto;
+  #messages {
+    display: flex;
+    margin-right: 20px;
   }
 
   button {
@@ -128,5 +142,28 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  span {
+    margin-left: 10px;
+    margin-bottom: 0px;
+    padding: 1px;
+    background-color: white;
+    border: solid 1px black;
+    height: 20px;
+  }
+
+  #buttons {
+    margin-left: 300px;
+  }
+
+  #buttonCont {
+    display: flex;
+    flex-basis: 70%;
+    padding: 0px;
+    min-width: 0;
+    min-height: 0;
+    align-items: center;
+    flex: 1;
   }
 </style>

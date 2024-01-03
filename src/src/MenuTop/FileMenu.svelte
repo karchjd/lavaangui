@@ -24,7 +24,7 @@
           if (result) {
             reset();
           }
-        }
+        },
       );
     } else {
       reset();
@@ -35,6 +35,7 @@
     let cy = get(cyStore);
     cy.elements().remove();
     resetCounters();
+    $appState.parsedModel = false;
     // @ts-expect-error
     Shiny.setInputValue("show_help", Math.random());
     for (let key in $fitCache) {
@@ -123,7 +124,7 @@
           if (result) {
             uploadModel();
           }
-        }
+        },
       );
     } else {
       uploadModel();
@@ -144,7 +145,7 @@
           if (result) {
             uploadModelData();
           }
-        }
+        },
       );
     } else {
       uploadModelData();

@@ -10,7 +10,7 @@ export let modelOptions = writable({
   intLvFree: false,
   view: "est",
   estimator: "ML",
-  se: "standard",
+  se: "default",
   missing: "listwise",
   n_boot: 1000,
   showLav: true,
@@ -44,6 +44,8 @@ export let appState = writable({
   drawing: false,
   full: true,
   ready: false,
+  parsedModel: false,
+  meansModelled: null
 });
 
 export let dataInfo = writable(0);
