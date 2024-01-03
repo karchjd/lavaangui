@@ -15,4 +15,8 @@
     margin: 0;
     padding: 0;
   }
+
+  .navbar {
+    min-height: auto !important;
+  }
 </style>

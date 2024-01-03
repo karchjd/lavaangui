@@ -10,5 +10,5 @@ export default defineConfig({
     sourcemap: false,
     emptyOutDir: true,
   },
-  //base: "",
+  base: "./",
 });

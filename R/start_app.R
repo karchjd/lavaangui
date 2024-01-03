@@ -25,11 +25,11 @@ start_app <- function(fit = NULL, full, where){
     runApp(app, launch.browser = TRUE) 
   }else if(where == "heroku"){
     runApp(app, port = as.numeric(Sys.getenv('PORT')), host = '0.0.0.0') 
-  }else if(where == "shinyapps"){
-    runApp(app) 
   }
-  else{
+  else if(where == "gadget"){
     runGadget(app, viewer = dialogViewer("lavaangui", width = 10^3, height = 10^3))
+  }else{
+    stop("Invalid where argument")
   }
   on.exit(rm(.importedModel12849812948124912489128412948,.full12849812948124912489128412948,  envir=.GlobalEnv))
 }
