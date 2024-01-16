@@ -63,9 +63,9 @@
     {#if $appState.parsedModel}
       <div id="means">
         {#if $appState.meansModelled}
-          <span data-testid="data-info">Means are Modelled</span>
+          <span>Means are Modelled</span>
         {:else}
-          <span data-testid="data-info">Means are NOT Modelled</span>
+          <span>Means are NOT Modelled</span>
         {/if}
       </div>
     {/if}

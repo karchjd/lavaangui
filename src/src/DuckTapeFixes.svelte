@@ -14,6 +14,7 @@
 
   onMount(() => {
     // Initialize the Cytoscape instance
+    Shiny.unbindAll();
     Shiny.bindAll();
   });
 </script>

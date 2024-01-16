@@ -29,7 +29,7 @@ test("Load Data", async ({ page }) => {
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, "cfa.csv"));
   await expect(page.getByTestId("data-info")).toContainText(
-    "cfa.csv is loaded"
+    "Dataset \"cfa.csv\" is loaded"
   );
 });
 
@@ -45,7 +45,7 @@ test("Load Model and Data", async ({ page }) => {
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, "cfa.zip"));
   await expect(page.getByTestId("data-info")).toContainText(
-    "data.csv is loaded"
+    "Dataset \"data.csv\" is loaded"
   );
 });
 
