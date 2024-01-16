@@ -44,11 +44,12 @@ getTextOut <- function(result){
   errors <- NULL
   warnings <- NULL
   
-  output <- withCallingHandlers({
+  results <- withCallingHandlers({
     tryCatch({
       sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
       sum_model$pe <- NULL
-      sum_model
+      estimates <- parameterestimates(result)
+      list(summary = sum_model, estimates = estimates)
     }, error = function(e) {
       return(NULL)
     })
@@ -62,5 +63,5 @@ getTextOut <- function(result){
     errors <<- e
   })
   problem <- !is.null(warnings) || !is.null(errors)
-  return(list(summary = output, errors = errors, warnings = warnings, problem = problem))
+  return(list(results = results, errors = errors, warnings = warnings, problem = problem))
 }

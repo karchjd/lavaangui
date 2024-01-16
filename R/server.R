@@ -78,7 +78,8 @@ lavaan_gui_server <- function(input, output, session) {
   
   # showing help
   observeEvent(input$show_help,{
-    to_render(rep(help_text, 10))}
+    to_render(help_text)
+  }
   )
   # layout helper
   observeEvent(input$layout,{
@@ -120,8 +121,8 @@ lavaan_gui_server <- function(input, output, session) {
         cat("Could not get results because of the following lavaan error.\nProbably your model is not identified\n")
         print(out$error$message)
       }
-      if(!is.null(out$summary)){
-        print(out$summary)   
+      if(!is.null(out$results)){
+        print(out$results)
       }
     }
   })
