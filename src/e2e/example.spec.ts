@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 //File menu
 
 test("new model", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto('/');
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("link", { name: "New Model" }).click();
   await page.getByText("OK").click();
@@ -22,7 +22,7 @@ test("new model", async ({ page }) => {
 
 test("Load Data", async ({ page }) => {
   const fileChooserPromise = page.waitForEvent("filechooser");
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("link", { name: "Load Data", exact: true }).click();
 
@@ -35,7 +35,7 @@ test("Load Data", async ({ page }) => {
 
 test("Load Model and Data", async ({ page }) => {
   const fileChooserPromise = page.waitForEvent("filechooser");
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
   await page
     .getByRole("link", { name: "Load Model and Data", exact: true })
@@ -50,7 +50,7 @@ test("Load Model and Data", async ({ page }) => {
 });
 
 test("Download Model", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("link", { name: "Download Model", exact: true }).click();
@@ -59,14 +59,14 @@ test("Download Model", async ({ page }) => {
 });
 
 test("Remove Data", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("link", { name: "Remove Data" }).click();
   await expect(page.getByTestId("data-info")).toContainText("No Data loaded");
 });
 
 test("Download Model Data", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
   const downloadPromise = page.waitForEvent("download");
   await page
@@ -77,7 +77,7 @@ test("Download Model Data", async ({ page }) => {
 });
 
 test("Export PNG", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("link", { name: "PNG", exact: false }).click();
@@ -86,7 +86,7 @@ test("Export PNG", async ({ page }) => {
 });
 
 test("Export JPG", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("link", { name: "JPG", exact: false }).click();
@@ -96,7 +96,7 @@ test("Export JPG", async ({ page }) => {
 
 //View Menu
 test("Default options View", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "View" }).click();
   //Edges created by lavaan visible
   await page
@@ -128,7 +128,7 @@ test("Default options View", async ({ page }) => {
 });
 
 test("Show Script", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "Show User Model / Script" }).click();
 
   await expect(page.getByTestId("result-text")).toContainText(
@@ -151,7 +151,7 @@ test("Show Script", async ({ page }) => {
 });
 
 test("Show Full Model", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "Show Full Model" }).click();
 
   await expect(page.getByTestId("result-text")).toContainText("lhs");
@@ -172,7 +172,7 @@ test("Show Full Model", async ({ page }) => {
 });
 
 test("Fit Model", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
+  await page.goto("/");
   await page.getByRole("button", { name: "Show User Model / Script" }).click();
   await page.getByRole("button", { name: "Fit Model" }).click();
 
