@@ -23,5 +23,7 @@ HS.model <- ' visual  =~ x1 + x2 + myLabel * x3
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
 options(shiny.port = 3245)
+
 start_gui(fit)
+# plot_interactive(fit)
 
