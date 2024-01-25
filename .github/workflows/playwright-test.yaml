@@ -25,7 +25,7 @@ jobs:
       - name: Compile
         run: npm run build:deploy --prefix src
       - name: Compile & Start
-        run: Rscript -e 'source("dev/compile_testing.R")' &
+        run: Rscript -e 'source("dev/start_for_tests.R")' &
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
