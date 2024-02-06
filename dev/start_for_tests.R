@@ -1,4 +1,7 @@
 # Detach all loaded packages and clean your environment
+if (!requireNamespace("golem", quietly = TRUE)) {
+  install.packages("golem")
+}
 golem::detach_all_attached()
 
 # Document and reload your package

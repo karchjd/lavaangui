@@ -8,12 +8,16 @@
     },
     {
       name: "Open Manual",
-      action: showCommands,
+      action: openManual,
     },
   ];
 
   function showCommands() {
     Shiny.setInputValue("show_help", Math.random());
+  }
+
+  function openManual() {
+    window.open("https://karchjd.github.io/docs.lavaangui/", "_blank");
   }
 </script>
 
