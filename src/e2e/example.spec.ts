@@ -176,7 +176,7 @@ test("Fit Model", async ({ page }) => {
   await page.getByRole("button", { name: "Show User Model / Script" }).click();
   await page.getByRole("button", { name: "Fit Model" }).click();
 
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(10000);
 
   await page
     .evaluate(() => {

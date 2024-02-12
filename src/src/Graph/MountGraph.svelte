@@ -1,9 +1,10 @@
 <script>
   import { onMount } from "svelte";
   import { addNode } from "./graphmanipulation.js";
-  import { cyStore, ehStore, appState } from "../stores.js";
+  import { cyStore, ehStore, appState, modelOptions } from "../stores.js";
   import { get } from "svelte/store";
   import { checkNodeLoop } from "./checkNodeLoop.js";
+  import { tolavaan } from "../Shiny/toR.js";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -18,6 +19,7 @@
   });
 
   function handleKeyDown(event) {
+    $appState.buttonDown = true;
     if (event.key === "Meta" || event.key === "Control" || " ") {
       eh.enableDrawMode();
       $appState.drawing = true;
@@ -54,6 +56,8 @@
       }
       addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
     }
+    $appState.buttonDown = false;
+    tolavaan($modelOptions.mode);
   }
 
   function makeNodesGrabbable() {
@@ -122,7 +126,7 @@
 
     if (edge.hasClass("directed") && sourceNode.hasClass("constant")) {
       const conConstant = targetNode.connectedEdges((edge_local) =>
-        edge_local.source().hasClass("constant")
+        edge_local.source().hasClass("constant"),
       );
       if (conConstant.length > 1) {
         cy.remove(edge);
@@ -134,6 +138,7 @@
     } else {
       edge.data("isMean", "0");
     }
+    tolavaan($modelOptions.mode);
   });
 
   function handleDragOver(event) {

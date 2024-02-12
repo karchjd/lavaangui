@@ -22,6 +22,7 @@ export let modelOptions = writable({
   auto_cov_y: true,
   fixed_x: true,
   std: false,
+  mode: "user model"
 });
 
 export let fitCache = writable({
@@ -45,7 +46,8 @@ export let appState = writable({
   full: true,
   ready: false,
   parsedModel: false,
-  meansModelled: null
+  meansModelled: null,
+  buttonDown: false,
 });
 
 export let dataInfo = writable(0);

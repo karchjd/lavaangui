@@ -1,6 +1,64 @@
 import { get } from "svelte/store";
 import { appState, cyStore, modelOptions, fitCache } from "../stores";
 
+function serverAvail() {
+  // @ts-expect-error
+  return typeof Shiny === "object" && Shiny !== null;
+}
+
+export function tolavaan(mode) {
+
+  var appState_local = get(appState);
+  var mOptions = get(modelOptions);
+  let cy = get(cyStore);
+  const edges = cy.edges();
+
+  if (appState_local.loadingMode ||
+    edges.not(".byLav").length == 0 ||
+    appState_local.buttonDown) {
+    return;
+  }
+
+  appState_local.loadingMode = true;
+
+
+  for (var i = 0; i < edges.length; i++) {
+    edges[i].removeData("est");
+    edges[i].removeClass("hasEst");
+  }
+  const tolavaan = mode !== "user model";
+  let for_R = createSyntax(tolavaan);
+  appState_local.result = "script";
+  if (mode != "user model" && serverAvail()) {
+    mOptions.showLav = true;
+    // @ts-expect-error
+    for_R.mode = mode;
+    // @ts-expect-error
+    Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
+    // @ts-expect-error
+    Shiny.setInputValue("runCounter", Math.random());
+  } else if (mode == "user model") {
+    mOptions.showLav = false;
+    if (!serverAvail()) {
+      // @ts-expect-error
+      document.getElementById("lavaan_syntax_R").innerText = for_R;
+    } else {
+      const for_R_con = { mode: mode, syntax: for_R };
+      // @ts-expect-error
+      Shiny.setInputValue("fromJavascript", JSON.stringify(for_R_con));
+      // @ts-expect-error
+      Shiny.setInputValue("runCounter", Math.random());
+    }
+    cy.edges(".byLav").forEach((existingEdge) => {
+      existingEdge.removeClass("fixed");
+      existingEdge.addClass("free");
+      existingEdge.removeData("value");
+      existingEdge.removeClass("byLav");
+    });
+  }
+  appState_local.loadingMode = false;
+}
+
 function containsObject(list, obj) {
   for (let i = 0; i < list.length; i++) {
     if (list[i] === obj) {

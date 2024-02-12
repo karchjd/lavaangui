@@ -26,6 +26,7 @@
   import MinContextMenu from "./minimal/MinContextMenu.svelte";
   import Errors from "./Errors.svelte";
   import FileMenu from "./MenuTop/FileMenu.svelte";
+  import Reactive from "./Shiny/Reactive.svelte";
 </script>
 
 <AppReady />
@@ -61,6 +62,7 @@
     {#if $appState.full}
       <Alert />
       <ToolbarBelow />
+      <Reactive />
     {/if}
   </div>
   <Debug />

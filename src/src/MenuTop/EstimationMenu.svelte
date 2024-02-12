@@ -4,6 +4,7 @@
   import RadioItem from "./helpers/RadioItem.svelte";
 
   const estimatorRadios = [
+    { value: "default", name: "Default" },
     { value: "ML", name: "Maximum Likelihood (ML)" },
     { value: "GLS", name: "Generalized Least Squares (GLS)" },
     {
@@ -21,7 +22,7 @@
     // { value: "boot", name: "Bootstrap" },
   ];
 
-  const robustSupported = ["ML", "ULS", "DWLS"];
+  const robustSupported = ["default", "ML", "ULS", "DWLS"];
 
   $: {
     if (
@@ -41,7 +42,7 @@
     { value: "ml", name: "Full Information Maximum Likelihood (FIML)" },
   ];
 
-  const fimlSupported = ["ML"];
+  const fimlSupported = ["default", "ML"];
 
   $: {
     if (
@@ -51,7 +52,7 @@
       $modelOptions.missing = "listwise";
       // @ts-expect-error
       bootbox.alert(
-        "Missing values set back to listwise. Only the maximum likelihood estimator supports Full information maximum likelihood.",
+        "Missing values set back to listwise. Only the default and maximum likelihood estimators supports Full information maximum likelihood.",
       );
     }
   }
