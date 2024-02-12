@@ -170,7 +170,8 @@ lavaan_gui_server <- function(input, output, session) {
     session$sendCustomMessage("lav_model", model_parsed)
     
     if (fromJavascript$mode == "full model"){
-      to_render(model_parsed)
+      to_render(modelJavascript$R_script)
+      return(NULL)
     }else if(fromJavascript$mode == "estimate"){
       # Check if the cache is valid. The cache is considered valid if:
       # 1) There is a previously fitted model stored in cache

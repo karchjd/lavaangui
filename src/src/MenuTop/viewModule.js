@@ -31,15 +31,16 @@ export function updateLabels(viewOption, std) {
     .update();
 }
 
-export function updateVisibility(modelOptions, menuItems) {
+export function updateVisibility(showVar, showLav, menuItems) {
   const cy = get(cyStore);
-  if (modelOptions.showLav && modelOptions.showVar) {
+  console.log("updatevisibility")
+  if (showLav && showVar) {
     cy.elements("." + menuItems[0].class).show();
     cy.elements("." + menuItems[1].class).show();
-  } else if (modelOptions.showLav && !modelOptions.showVar) {
+  } else if (showLav && !showVar) {
     cy.elements("." + menuItems[0].class).show();
     cy.elements("." + menuItems[1].class).hide();
-  } else if (!modelOptions.showLav && modelOptions.showVar) {
+  } else if (!showLav && showVar) {
     cy.elements("." + menuItems[1].class).show();
     cy.elements("." + menuItems[0].class).hide();
   } else {
@@ -66,8 +67,7 @@ function generateStyleEst(viewOption, postfix) {
       return (edge) => edge.data("estimates")["est" + postfix];
     case "ci":
       return (edge) =>
-        `[${edge.data("estimates")["ciLow" + postfix]}, ${
-          edge.data("estimates")["ciHigh" + postfix]
+        `[${edge.data("estimates")["ciLow" + postfix]}, ${edge.data("estimates")["ciHigh" + postfix]
         }]`;
     case "estPVal":
       return (edge) =>
@@ -76,8 +76,7 @@ function generateStyleEst(viewOption, postfix) {
         )}`;
     case "estSE":
       return (edge) =>
-        `${edge.data("estimates")["est" + postfix]} (${
-          edge.data("estimates")["se" + postfix]
+        `${edge.data("estimates")["est" + postfix]} (${edge.data("estimates")["se" + postfix]
         })`;
     default:
       return (edge) => ""; // Or some default behavior

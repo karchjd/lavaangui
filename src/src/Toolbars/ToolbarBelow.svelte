@@ -1,6 +1,5 @@
 <script>
   import { appState, modelOptions } from "../stores";
-  import { tolavaan } from "../Shiny/toR";
 
   function changeMode(newMode) {
     modelOptions.update((options) => {

@@ -31,13 +31,17 @@
     // Handle Backspace key
     if (event.key === "Backspace") {
       let selectedElements = cy.$(":selected");
-      selectedElements.forEach(function (element) {
-        if (element.isNode()) {
-          element.remove();
-        } else if (element.isEdge()) {
-          element.remove();
-        }
-      });
+      if (selectedElements.length > 0) {
+        selectedElements.forEach(function (element) {
+          if (element.isNode()) {
+            element.remove();
+          } else if (element.isEdge()) {
+            element.remove();
+          }
+        });
+      }
+      $appState.buttonDown = false;
+      tolavaan($modelOptions.mode);
     }
 
     // Handle 'l', 'o', 'c' keys
@@ -55,9 +59,10 @@
           break;
       }
       addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
+      $appState.buttonDown = false;
+      tolavaan($modelOptions.mode);
     }
     $appState.buttonDown = false;
-    tolavaan($modelOptions.mode);
   }
 
   function makeNodesGrabbable() {
@@ -94,6 +99,7 @@
   }
 
   cy.on("ehcomplete", (event, sourceNode, targetNode, addedEdge) => {
+    console.log("ehcomplete");
     const edge = addedEdge;
     const sourceNodeId = sourceNode.id();
     const targetNodeId = targetNode.id();

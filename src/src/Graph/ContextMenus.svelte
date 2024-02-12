@@ -1,5 +1,5 @@
 <script>
-  import { cyStore, appState, setAlert } from "../stores.js";
+  import { cyStore, appState, setAlert, modelOptions } from "../stores.js";
   import { get } from "svelte/store";
   let cy = get(cyStore);
   import cytoscape from "cytoscape";
@@ -8,6 +8,7 @@
   import { onMount } from "svelte";
   import { addNode } from "./graphmanipulation.js";
   import { checkNodeLoop } from "./checkNodeLoop.js";
+  import { tolavaan } from "../Shiny/toR.js";
 
   // register extension
   cytoscape.use(contextMenus);
@@ -101,6 +102,7 @@
               edge.removeClass("nolabel");
               edge.removeClass("fromLav");
               edge.removeClass("byLav");
+              tolavaan($modelOptions.mode);
             }
           },
         });
@@ -117,6 +119,7 @@
         edge.removeClass("label");
         edge.addClass("nolabel");
         edge.data("label", undefined);
+        tolavaan($modelOptions.mode);
       },
       show: "both",
       hasTrailingDivider: false,
@@ -129,6 +132,7 @@
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.remove();
+        tolavaan($modelOptions.mode);
       },
       show: "full",
       hasTrailingDivider: true,
@@ -157,6 +161,7 @@
               edge.removeClass("byLav");
               edge.removeClass("hasEst");
               edge.addClass("fixed");
+              tolavaan($modelOptions.mode);
             }
           },
         });
@@ -175,6 +180,7 @@
         edge.removeClass("fromLav");
         edge.removeClass("byLav");
         edge.addClass("free");
+        tolavaan($modelOptions.mode);
       },
       show: "full",
       hasTrailingDivider: false,
@@ -190,6 +196,7 @@
         edge.removeClass("fromLav");
         edge.removeClass("byLav");
         edge.addClass("forcefree");
+        tolavaan($modelOptions.mode);
       },
       show: "full",
       hasTrailingDivider: true,
@@ -207,6 +214,7 @@
           source: targetId,
           target: sourceId,
         });
+        tolavaan($modelOptions.mode);
       },
       show: "full",
       hasTrailingDivider: false,
@@ -219,6 +227,7 @@
         const edge = event.target || event.cyTarget;
         edge.removeClass("directed");
         edge.addClass("undirected");
+        tolavaan($modelOptions.mode);
       },
       show: "full",
       hasTrailingDivider: true,
@@ -232,6 +241,7 @@
         const edge = event.target || event.cyTarget;
         edge.removeClass("undirected");
         edge.addClass("directed");
+        tolavaan($modelOptions.mode);
       },
       show: "full",
       hasTrailingDivider: true,
@@ -272,6 +282,7 @@
         const edge = event.target || event.cyTarget;
         edge.removeClass("fixDeg");
         checkNodeLoop(edge.source().id());
+        tolavaan($modelOptions.mode);
       },
       show: "both",
       hasTrailingDivider: false,
@@ -316,6 +327,7 @@
         const edge = event.target || event.cyTarget;
         edge.removeClass("fromLav");
         edge.addClass("fromUser");
+        tolavaan($modelOptions.mode);
       },
       show: "full",
       hasTrailingDivider: false,
@@ -386,12 +398,13 @@
                     node.addClass("linked");
                     setAlert(
                       "success",
-                      `Variable ${node.data("label")} linked to data`
+                      `Variable ${node.data("label")} linked to data`,
                     );
                   } else if (node.hasClass("linked")) {
                     node.removeClass("linked");
                     setAlert("info", `Variable ${node.data("label")} unlinked`);
                   }
+                  tolavaan($modelOptions.mode);
                 }
               },
             },
@@ -406,6 +419,7 @@
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.remove();
+        tolavaan($modelOptions.mode);
       },
       show: "full",
       hasTrailingDivider: true,
@@ -419,6 +433,7 @@
         node.removeClass("observed-variable");
         node.addClass("latent-variable");
         node.removeClass("linked");
+        tolavaan($modelOptions.mode);
       },
       show: "full",
       hasTrailingDivider: false,
@@ -441,6 +456,7 @@
             bootbox.alert("Variable linked with data set");
           }
         }
+        tolavaan($modelOptions.mode);
       },
     },
   ];
@@ -506,7 +522,7 @@
   function selectMenu(menu, isFull) {
     const valueToMatch = isFull ? "full" : "minimal";
     return menu.filter(
-      (obj) => obj.show === valueToMatch || obj.show === "both"
+      (obj) => obj.show === valueToMatch || obj.show === "both",
     );
   }
 

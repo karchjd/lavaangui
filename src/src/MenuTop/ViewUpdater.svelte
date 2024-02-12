@@ -4,7 +4,7 @@
   import { modelOptions } from "../stores";
 
   $: {
-    updateVisibility($modelOptions, edgeItems);
+    updateVisibility($modelOptions.showVar, $modelOptions.showLav, edgeItems);
   }
   let mounted = false;
 

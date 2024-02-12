@@ -2,8 +2,15 @@
     import { cyStore } from "../stores";
     import { modelOptions, appState } from "../stores";
     import { tolavaan } from "../Shiny/toR.js";
+    import { updateVisibility, edgeItems } from "../MenuTop/viewModule";
+
     $: {
-        console.log("modelOptions changed", $modelOptions);
+        console.log("model options watcher triggered");
         tolavaan($modelOptions.mode);
+        updateVisibility(
+            $modelOptions.showVar,
+            $modelOptions.showLav,
+            edgeItems,
+        );
     }
 </script>

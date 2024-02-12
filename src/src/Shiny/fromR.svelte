@@ -253,6 +253,10 @@
     if (!$appState.parsedModel) {
       $appState.parsedModel = true;
     }
+    if (cy.edges().not(".byLav").length > 0) {
+      $appState.modelEmpty = false;
+    }
+
     $appState.loadingMode = false;
   }
 
