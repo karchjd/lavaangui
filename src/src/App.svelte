@@ -14,7 +14,6 @@
   import Zoom from "./Graph/Zoom.svelte";
   import MainContainer from "./Graph/MainContainer.svelte";
   import DuckTapeFixes from "./DuckTapeFixes.svelte";
-  import DataInfoModal from "./Toolbars/DataInfoModal.svelte";
   import EstimationWait from "./Shiny/EstimationWait.svelte";
   import Alert from "./Toolbars/Alert.svelte";
   import UndoRedo from "./Graph/UndoRedo.svelte";
@@ -32,7 +31,6 @@
 <AppReady />
 {#if $appState.ready}
   {#if $appState.full}
-    <DataInfoModal />
     <EstimationWait />
   {/if}
 

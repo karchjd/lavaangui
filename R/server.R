@@ -29,18 +29,56 @@ lavaan_gui_server <- function(input, output, session) {
     error_message <- geterrmessage()
     session$sendCustomMessage("serverError", list(msg=error_message))
   })
-
+  
   onStop(function() options(op))
   
   
-  propagateData <- function(df){
+  propagateData <- function(df, import = FALSE){
     data_info <- list(
       name = df$name, columns = colnames(df$df),
-      summary = create_summary(df$df)
+      summary = create_summary(df$df),
+      import = import
     )
     session$sendCustomMessage(type = "dataInfo", message = data_info)
   }
+
+
+  callback <- c(
+    "var colnames = table.columns().header().to$().map(function(){return this.innerHTML;}).get();",
+    "table.on('dblclick.dt', 'thead th', function(e) {",
+    "  var $th = $(this);",
+    "  var index = $th.index();",
+    "  var colname = $th.text(), newcolname = colname;",
+    "  var $input = $('<input type=\"text\">')",
+    "  $input.val(colname);",
+    "  $th.empty().append($input);",
+    "  $input.on('change', function(){",
+    "    newcolname = $input.val();",
+    "    if(newcolname != colname){",
+    "      $(table.column(index).header()).text(newcolname);",
+    "      colnames[index] = newcolname;",
+    "      Shiny.setInputValue('newnames', colnames.slice(1));",
+    "      Shiny.setInputValue('sendnames', Math.random());",
+    "    }",
+    "    $input.remove();",
+    "  }).on('blur', function(){",
+    "    $(table.column(index).header()).text(newcolname);",
+    "    $input.remove();",
+    "  });",
+    "});"
+  )
   
+  observeEvent(input$sendnames,{
+    session$sendCustomMessage("columnames", message = input$newnames)
+  })
+
+  
+  output$tbl_data <- DT::renderDT({
+    DT::datatable(getData(), callback = htmlwidgets::JS(callback), 
+              options = list(ordering = FALSE))
+  }, server = FALSE) 
+  
+
   # import model if present
   if ((!imported) && (exists("importedModel"))) {
     session$sendCustomMessage("imported_model", message = importedModel[c("parTable", "latent", "obs")])
@@ -48,7 +86,7 @@ lavaan_gui_server <- function(input, output, session) {
     to_render(getTextOut(importedModel$fit))
     df <- importedModel$df
     df_full <- list(df = df, name = "Imported from R")
-    propagateData(df_full)
+    propagateData(df_full, import = TRUE)
     data_react(df_full)
     imported <- TRUE
   }
@@ -71,7 +109,7 @@ lavaan_gui_server <- function(input, output, session) {
   getData <- reactive({
     local_data <- data_react()
     if (!is.null(input$newnames)) {
-      names(local_data$df) <- jsonlite::fromJSON(input$newnames)
+      names(local_data$df) <- input$newnames
     }
     return(local_data$df)
   })
@@ -101,8 +139,6 @@ lavaan_gui_server <- function(input, output, session) {
                               y = semPlotRes$layout[,2])
     session$sendCustomMessage("semPlotLayout", coordinates)
   })
-  
-  # result window
   
   output$lavaan_syntax_R <- renderPrint({
     req(to_render())

@@ -257,7 +257,7 @@
 
   function showDataInfo() {
     // @ts-expect-error
-    window.$("#data-modal").modal();
+    window.$("#data-modal-2").modal();
   }
 
   let menuItems;
@@ -267,12 +267,6 @@
       { name: "Load Model", action: loadModel },
       { name: "Load Data", action: loadData },
       { name: "Load Model and Data", action: loadModelData },
-      {
-        name: "Data Editor",
-        action: showDataInfo,
-        disable: !$appState.dataAvail,
-        divider: true,
-      },
       {
         name: "Download Model",
         action: downloadModel,

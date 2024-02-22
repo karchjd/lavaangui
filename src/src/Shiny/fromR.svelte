@@ -270,6 +270,9 @@
       $appState.loadedFileName = data_info.name;
       $appState.dataAvail = true;
       $dataInfo = data_info.summary;
+      if (!data_info.import) {
+        window.$("#data-modal-2").modal();
+      }
     });
 
     // @ts-expect-error
@@ -296,6 +299,12 @@
     // @ts-expect-error
     Shiny.addCustomMessageHandler("data_missing", function (dummy) {
       setAlert("danger", "Could not fit model because no data is available");
+    });
+
+    // @ts-expect-error
+    Shiny.addCustomMessageHandler("columnames", function (cnames) {
+      $appState.columnNames = cnames;
+      applyLinkedClass(cnames, true);
     });
 
     // @ts-expect-error
