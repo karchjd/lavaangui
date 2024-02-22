@@ -171,16 +171,18 @@ export function createSyntax(run) {
   }
 
   // regression
-  let reg_edges = cy.edges(function (edge) {
-    let res =
-      edge.hasClass("directed") &&
+
+  function regression_edge(edge) {
+    let res = edge.hasClass("directed") &&
       !edge.source().hasClass("constant") &&
       !(
         edge.source().hasClass("latent-variable") &&
         edge.target().hasClass("observed-variable")
-      );
+      ) && (edge.hasClass("fromUser") || edge.hasClass("byLav"))
     return res;
-  });
+
+  }
+  let reg_edges = cy.edges(regression_edge);
   let reg_nodes = [];
   for (let i = 0; i < reg_edges.length; i++) {
     if (!containsObject(reg_nodes, reg_edges[i].target())) {
@@ -192,11 +194,7 @@ export function createSyntax(run) {
     syntax += "\n" + "# regressions";
     for (let i = 0; i < reg_nodes.length; i++) {
       const targetNode = reg_nodes[i];
-      const connectedEdges = targetNode.connectedEdges(function (edge) {
-        return (
-          edge.hasClass("directed") && edge.target().id() == targetNode.id()
-        );
-      });
+      const connectedEdges = targetNode.connectedEdges(regression_edge);
       if (connectedEdges.length > 0) {
         let nodeNames = "";
         for (var j = 0; j < connectedEdges.length; j++) {
@@ -215,7 +213,7 @@ export function createSyntax(run) {
   let cov_edges = cy.edges(function (edge) {
     return (
       (edge.hasClass("undirected") || edge.hasClass("loop")) &&
-      !edge.hasClass("fromLav")
+      (edge.hasClass("fromUser") || edge.hasClass("byLav"))
     );
   });
   if (cov_edges.length > 0) {
@@ -234,10 +232,10 @@ export function createSyntax(run) {
   for (let i = 0; i < constant_nodes.length; i++) {
     const c_node = constant_nodes[i];
     const connectedEdges = c_node.connectedEdges(function (edge) {
-      return !edge.hasClass("fromLav");
+      return edge.hasClass("fromUser");
     });
     if (connectedEdges.length > 0) {
-      syntax += "# intercepts" + "\n ";
+      syntax += "\n " + "# intercepts" + "\n ";
       for (var j = 0; j < connectedEdges.length; j++) {
         var node = connectedEdges[j].target();
         syntax +=

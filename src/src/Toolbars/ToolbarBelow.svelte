@@ -51,7 +51,7 @@
       on:click={() => changeMode("estimate")}
       disabled={$appState.modelEmpty || !$appState.dataAvail}
     >
-      Show Estimates
+      Estimate
     </button>
   </div>
 </div>
