@@ -1,4 +1,4 @@
-recompile_front <- F
+recompile_front <- T
 
 if (recompile_front){
   # Compile Svelte front end 

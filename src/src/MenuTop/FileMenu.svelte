@@ -14,6 +14,10 @@
   import { graphSettings, graphStyles } from "../Graph/cytoscape_settings.js";
   import { resetCounters } from "../Graph/graphmanipulation.js";
   import cytoscape from "cytoscape";
+  import svg from "cytoscape-svg";
+  import { saveAs } from "file-saver";
+
+  cytoscape.use(svg);
 
   function newModel() {
     if (!$appState.modelEmpty) {
@@ -238,10 +242,7 @@
   }
 
   function startDownload(object, fileEnding) {
-    let a = document.createElement("a");
-    a.href = object;
-    a.download = "model." + fileEnding;
-    a.click();
+    saveAs(object, "model." + fileEnding);
   }
 
   function exportPNG() {
@@ -255,9 +256,13 @@
     startDownload(cy.jpg(), "jpg");
   }
 
-  function showDataInfo() {
-    // @ts-expect-error
-    window.$("#data-modal-2").modal();
+  function exportSVG() {
+    const cy = get(cyStore);
+    const svgContent = cy.svg({ scale: 1, full: true });
+    const blob = new Blob([svgContent], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    startDownload(blob, "svg");
   }
 
   let menuItems;
@@ -292,6 +297,11 @@
         name: "Export Diagram to JPG",
         disable: $appState.modelEmpty,
         action: exportJPG,
+      },
+      {
+        name: "Export Diagram to SVG",
+        disable: $appState.modelEmpty,
+        action: exportSVG,
       },
     ];
     menuItems = full ? allMenuItems : allMenuItems.slice(-2);

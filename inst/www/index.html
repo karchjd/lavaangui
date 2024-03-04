@@ -1,35 +1,53 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <script src="shared/jquery.js"></script>
-    <script src="shared/shiny.js"></script>
-    <script src="shinyjs/inject.js"></script>
-    <link
-      rel="/src/lib/shiny.min.css"
-      type="text/css"
-      href="shared/shiny.css"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.3/bootbox.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <script type="module" crossorigin src="/assets/index-4057073a.js"></script>
-    <link rel="stylesheet" href="/assets/index-d7422df6.css">
-  </head>
-  <body>
-    <div id="app"></div>
-    
-  </body>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  {{ headContent() }}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.3/bootbox.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
+
+  <style>
+    .modal-dialog {
+      width: 90%;
+      /* or any desired width */
+      height: 90%;
+      /* or any desired height */
+      margin: auto;
+      /* Centers the modal */
+    }
+  </style>
+
+  </script>
+  <script type="module" crossorigin src="/assets/index-d7e6eb55.js"></script>
+  <link rel="stylesheet" href="/assets/index-51c00516.css">
+</head>
+
+<body>
+  <div class="modal fade" tabindex="-1" role="dialog" id="data-modal-2">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Data Information (Double click on column name to change)</h4>
+        </div>
+        <div class="modal-body">
+          {{ DT::DTOutput("tbl_data", width = "100%", height = "auto") }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div id="app"></div>
+  
+</body>
+
 </html>
