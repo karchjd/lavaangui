@@ -19,6 +19,13 @@ export const graphStyles = [
     },
   },
   {
+    selector: "node.observed-variable.ordered",
+    style: {
+      "border-style": "double",
+      "border-width": 5
+    },
+  },
+  {
     selector: "node.latent-variable",
     style: {
       shape: "ellipse",
@@ -167,10 +174,10 @@ export const ehSettings = {
     // Allow connection if it doesn't create a parallel edge
     return !cy.elements(
       'edge[source = "' +
-        sourceNode.id() +
-        '"][target = "' +
-        targetNode.id() +
-        '"]'
+      sourceNode.id() +
+      '"][target = "' +
+      targetNode.id() +
+      '"]'
     ).length;
   },
 };

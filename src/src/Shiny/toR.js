@@ -247,7 +247,14 @@ export function createSyntax(run) {
     }
   }
   syntax = "'\n" + syntax + "'" + "\n\n";
-  const lavOptions = produceLavaanOptions();
+  let ordered_nodes = cy.nodes(function (node) {
+    return node.hasClass("ordered");
+  });
+
+  const ordered_labels = ordered_nodes.map(node => node.data('label'));
+
+
+  const lavOptions = produceLavaanOptions(ordered_labels);
 
   R_script += "model <-" + syntax;
   R_script += "result <- lavaan(model, data, " + lavOptions;
@@ -272,11 +279,12 @@ export function createSyntax(run) {
   }
 }
 
-function produceLavaanOptions() {
+function produceLavaanOptions(ordered_labels) {
   const modelOpt = get(modelOptions);
   const meanStruc = boolToString(modelOpt.meanStruc);
   const ovFree = boolToString(modelOpt.intOvFree);
   const lvFree = boolToString(modelOpt.intLvFree);
+
   let options = `meanstructure = ${meanStruc},
 \t\t int.ov.free = ${ovFree}, int.lv.free = ${lvFree},
 \t\t estimator = ${addQuotes(modelOpt.estimator)}, se = ${addQuotes(
@@ -298,6 +306,12 @@ function produceLavaanOptions() {
   } else {
     options = options + ")";
   }
+
+  if (ordered_labels.length > 0) {
+    const ordered_arg = 'c("' + ordered_labels.join('", "') + '")'
+    options = `ordered = ${ordered_arg}, ${options}`
+  }
+
   return options;
 }
 

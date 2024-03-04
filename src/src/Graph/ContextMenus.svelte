@@ -440,6 +440,34 @@
     },
 
     {
+      id: "change-ordered",
+      content: "Change to Ordered",
+      selector: "node.observed-variable.continous",
+      onClickFunction: function (event) {
+        const node = event.target || event.cyTarget;
+        node.removeClass("continous");
+        node.addClass("ordered");
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+
+    {
+      id: "change-continous",
+      content: "Change to Continous",
+      selector: "node.observed-variable.ordered",
+      onClickFunction: function (event) {
+        const node = event.target || event.cyTarget;
+        node.removeClass("ordered");
+        node.addClass("continous");
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+
+    {
       id: "change-observed",
       show: "full",
       content: "Change to Observed",

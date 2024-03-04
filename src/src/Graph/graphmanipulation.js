@@ -38,7 +38,7 @@ export function addNode(nodeType, position, customLabel = null) {
     urLocal.do("add", {
       group: "nodes",
       data: { id: nodeId, label: label },
-      classes: nodeType,
+      classes: [nodeType, "continous"],
       renderedPosition: position,
     });
   } else {
@@ -46,7 +46,7 @@ export function addNode(nodeType, position, customLabel = null) {
     cy.add({
       group: "nodes",
       data: { id: nodeId, label: label },
-      classes: nodeType,
+      classes: [nodeType, "continous"],
       renderedPosition: position,
     });
   }
