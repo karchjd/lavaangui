@@ -22,7 +22,15 @@ export let modelOptions = writable({
   auto_cov_y: true,
   fixed_x: true,
   std: false,
-  mode: "user model"
+  mode: "user model",
+  gridShow: false,
+  gridSpace: 26,
+  gridColor: "#dedede",
+  gridWidth: 1,
+  gridMovePan: false,
+  gridSnap: false,
+  gridAlign: false,
+  gridResize: false,
 });
 
 export let fitCache = writable({

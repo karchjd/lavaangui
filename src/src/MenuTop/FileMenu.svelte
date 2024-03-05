@@ -16,6 +16,8 @@
   import cytoscape from "cytoscape";
   import svg from "cytoscape-svg";
   import { saveAs } from "file-saver";
+  import { jsPDF } from "jspdf";
+  import "svg2pdf.js";
 
   cytoscape.use(svg);
 
@@ -263,6 +265,26 @@
       type: "image/svg+xml;charset=utf-8",
     });
     startDownload(blob, "svg");
+  }
+
+  function exportPDF() {
+    const cy = get(cyStore);
+    const svgContent = cy.svg({ scale: 1, full: true });
+    const blob = new Blob([svgContent], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+
+    const pdf = new jsPDF({
+      orientation: "landscape",
+      unit: "pt",
+      format: [cy.width(), cy.height()],
+    });
+
+    pdf.addImage(url, "SVG", 0, 0, cy.width(), cy.height());
+    pdf.save("network.pdf");
+
+    URL.revokeObjectURL(url);
   }
 
   let menuItems;

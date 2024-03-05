@@ -1,9 +1,10 @@
 <script>
+  import { cyStore, modelOptions } from "../stores.js";
+  import { get } from "svelte/store";
   import cytoscape from "cytoscape";
   import gridGuide from "cytoscape-grid-guide";
-  import { cyStore } from "../stores.js";
-  import { get } from "svelte/store";
   import { onMount } from "svelte";
+  let ready = false;
 
   gridGuide(cytoscape); // register extension
   let cy = get(cyStore);
@@ -12,8 +13,6 @@
     // On/Off Modules
     /* From the following four snap options, at most one should be true at a given time */
     snapToGridOnRelease: false, // Snap to grid on release
-    snapToGridDuringDrag: false, // Snap to grid during drag
-    snapToAlignmentLocationOnRelease: false, // Snap to alignment location on release
     snapToAlignmentLocationDuringDrag: false, // Snap to alignment location during drag
     distributionGuidelines: true, // Distribution guidelines
     geometricGuideline: true, // Geometric guidelines
@@ -21,7 +20,6 @@
     centerToEdgeAlignment: false, // Center to edge alignment
     resize: false, // Adjust node sizes to cell sizes
     parentPadding: false, // Adjust parent sizes to cell sizes by padding
-    drawGrid: false, // Draw grid background
 
     // Guidelines
     guidelinesStackOrder: 4, // z-index of guidelines
@@ -49,5 +47,45 @@
   onMount(() => {
     // Initialize the Cytoscape instance
     cy.gridGuide(options);
+    ready = true;
   });
+
+  $: if (ready && $modelOptions.gridShow !== undefined) {
+    let cy = get(cyStore);
+    cy.gridGuide({ drawGrid: $modelOptions.gridShow });
+  }
+
+  $: if (ready && $modelOptions.gridSpace !== undefined) {
+    let cy = get(cyStore);
+    cy.gridGuide({ gridSpacing: $modelOptions.gridSpace });
+  }
+
+  $: if (ready && $modelOptions.gridWidth !== undefined) {
+    let cy = get(cyStore);
+    cy.gridGuide({ lineWidth: $modelOptions.gridWidth });
+  }
+
+  $: if (ready && $modelOptions.gridMovePan !== undefined) {
+    let cy = get(cyStore);
+    cy.gridGuide({ panGrid: $modelOptions.gridMovePan });
+  }
+
+  $: if (ready && $modelOptions.gridSnap !== undefined) {
+    let cy = get(cyStore);
+    cy.gridGuide({ snapToGridDuringDrag: $modelOptions.gridSnap });
+  }
+
+  $: if (ready && $modelOptions.gridAlign !== undefined) {
+    let cy = get(cyStore);
+    cy.gridGuide({
+      snapToAlignmentLocationOnRelease: $modelOptions.gridAlign,
+    });
+  }
+
+  $: if (ready && $modelOptions.gridAlign !== undefined) {
+    let cy = get(cyStore);
+    cy.gridGuide({
+      resize: $modelOptions.gridResize,
+    });
+  }
 </script>

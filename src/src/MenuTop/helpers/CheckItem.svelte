@@ -1,7 +1,7 @@
 <script>
   export let name;
   export let checked;
-  export let disable;
+  export let disable = false;
 </script>
 
 <li>
