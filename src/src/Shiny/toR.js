@@ -167,6 +167,12 @@ export function createSyntax(run) {
         nodeNames += addTerms(node, connectedEdges[sortedIndices[j]]);
       }
       syntax += " " + latentNode.data("label") + " =~ " + nodeNames + "\n";
+    } else {
+      if (!shown) {
+        syntax += "# measurement model" + "\n";
+        shown = true;
+      }
+      syntax += " " + latentNode.data("label") + " =~ 0" + "\n";
     }
   }
 
@@ -194,7 +200,7 @@ export function createSyntax(run) {
     syntax += "\n" + "# regressions";
     for (let i = 0; i < reg_nodes.length; i++) {
       const targetNode = reg_nodes[i];
-      const connectedEdges = targetNode.connectedEdges(regression_edge);
+      const connectedEdges = targetNode.connectedEdges(edge => regression_edge(edge) && edge.target().same(targetNode));
       if (connectedEdges.length > 0) {
         let nodeNames = "";
         for (var j = 0; j < connectedEdges.length; j++) {
@@ -246,6 +252,8 @@ export function createSyntax(run) {
       }
     }
   }
+
+  // check for formative factor 
   syntax = "'\n" + syntax + "'" + "\n\n";
   let ordered_nodes = cy.nodes(function (node) {
     return node.hasClass("ordered");

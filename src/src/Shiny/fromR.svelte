@@ -36,7 +36,7 @@
         } else {
           directed = "undirected";
         }
-      } else if (op === "~") {
+      } else if (op === "~" || "<~") {
         directed = "directed";
       }
     }
