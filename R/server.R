@@ -195,7 +195,7 @@ lavaan_gui_server <- function(input, output, session) {
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     if(fromJavascript$mode == "user model"){
-      to_render(fromJavascript$syntax)
+      to_render(fromJavascript$model$R_script)
       return(NULL)
     }
     modelJavascript <- fromJavascript$model

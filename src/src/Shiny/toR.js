@@ -25,29 +25,16 @@ export function tolavaan(mode) {
   for (var i = 0; i < edges.length; i++) {
     edges[i].removeEstimates();
   }
-  const tolavaan = mode !== "user model";
-  let for_R = createSyntax(tolavaan);
-  appState_local.result = "script";
-  if (mode != "user model" && serverAvail()) {
+  let for_R = createSyntax(mode);
+  appState_local.result = "script"; //TODO: check whether needed
+  // @ts-expect-error
+  Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
+  // @ts-expect-error
+  Shiny.setInputValue("runCounter", Math.random());
+  if (mode !== "user model") {
     mOptions.showLav = true;
-    // @ts-expect-error
-    for_R.mode = mode;
-    // @ts-expect-error
-    Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
-    // @ts-expect-error
-    Shiny.setInputValue("runCounter", Math.random());
-  } else if (mode == "user model") {
+  } else {
     mOptions.showLav = false;
-    if (!serverAvail()) {
-      // @ts-expect-error
-      document.getElementById("lavaan_syntax_R").innerText = for_R;
-    } else {
-      const for_R_con = { mode: mode, syntax: for_R };
-      // @ts-expect-error
-      Shiny.setInputValue("fromJavascript", JSON.stringify(for_R_con));
-      // @ts-expect-error
-      Shiny.setInputValue("runCounter", Math.random());
-    }
     cy.getLavaanModifiedEdges().forEach((existingEdge) => {
       existingEdge.freePara()
     });
@@ -98,19 +85,34 @@ function addTerms(node, edge) {
   return formula;
 }
 
-export function createSyntax(run) {
+class DataForR {
+  constructor(mode, R_script, lavOptions = null, syntax = null, fitCache = null) {
+    this.mode = mode;
+    Object.assign(this, {
+      model: {
+        options: lavOptions,
+        syntax: syntax,
+        R_script: R_script,
+      },
+      cache: fitCache
+    });
+  }
+}
+
+
+export function createSyntax(mode) {
   let cy = get(cyStore);
   let appSt = get(appState);
   let syntax = "";
   let R_script = "";
-  if (!run) {
-    R_script += "library(lavaan)" + "\n";
-    if (appSt.dataAvail) {
-      R_script += "data <- read.csv(" + appSt.loadedFileName + ")" + "\n";
-    } else {
-      R_script +=
-        "#make sure your data is loaded into the 'data' variable" + "\n";
-    }
+  const run = mode !== "user model"
+
+  R_script += "library(lavaan)" + "\n";
+  if (appSt.dataAvail) {
+    R_script += "data <- read.csv(" + appSt.loadedFileName + ")" + "\n";
+  } else {
+    R_script +=
+      "#make sure your data is loaded into the 'data' variable" + "\n";
   }
 
   // measurement model
@@ -259,25 +261,8 @@ export function createSyntax(run) {
 
   R_script += "model <-" + syntax;
   R_script += "result <- lavaan(model, data, " + lavOptions;
-  if (!run) {
-    return R_script;
-  } else {
-    const localCache = get(fitCache);
-    const for_R = {
-      model: {
-        options: lavOptions,
-        syntax: syntax,
-        run: run,
-        R_script: R_script
-      },
-      cache: {
-        lastFitLavFit: localCache.lastFitLavFit,
-        lastFitModel: localCache.lastFitModel,
-        lastFitData: localCache.lastFitData,
-      },
-    };
-    return for_R;
-  }
+  const for_R = new DataForR(mode, R_script, lavOptions, syntax = syntax, get(fitCache))
+  return for_R;
 }
 
 function produceLavaanOptions(ordered_labels) {
