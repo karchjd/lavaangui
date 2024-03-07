@@ -13,6 +13,7 @@
     // On/Off Modules
     /* From the following four snap options, at most one should be true at a given time */
     snapToGridOnRelease: false, // Snap to grid on release
+    drawGrid: false,
     snapToAlignmentLocationDuringDrag: false, // Snap to alignment location during drag
     distributionGuidelines: true, // Distribution guidelines
     geometricGuideline: true, // Geometric guidelines
