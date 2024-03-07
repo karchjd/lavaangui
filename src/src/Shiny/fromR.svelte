@@ -1,5 +1,11 @@
 <script>
-  import { appState, dataInfo, setAlert, fitCache } from "../stores";
+  import {
+    appState,
+    dataInfo,
+    setAlert,
+    fitCache,
+    modelOptions,
+  } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass.js";
   import { get } from "svelte/store";
   import { cyStore } from "../stores";
@@ -329,6 +335,7 @@
     // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
       getModelLav(lav_model, true);
+      $modelOptions.mode = "estimate";
     });
 
     // save all results in data attributes of the correct edges

@@ -1,5 +1,4 @@
 <script>
-    import { cyStore } from "../stores";
     import { modelOptions, appState } from "../stores";
     import { tolavaan } from "../Shiny/toR.js";
     import { updateVisibility, edgeItems } from "../MenuTop/viewModule";

@@ -1,7 +1,8 @@
 <script>
+  import { onMount } from "svelte";
   import { appState, modelOptions } from "../stores";
 
-  var selected = $modelOptions.mode;
+  let selected;
 
   function changeMode(newMode) {
     selected = newMode;
@@ -14,6 +15,12 @@
   function showData() {
     window.$("#data-modal-2").modal();
   }
+  let ready = false;
+  onMount(() => {
+    ready = true;
+  });
+
+  $: if (ready) selected = $modelOptions.mode;
 </script>
 
 <div class="toolbox navbar-static-bottom">
@@ -51,7 +58,7 @@
       on:click={() => changeMode("estimate")}
       disabled={$appState.modelEmpty || !$appState.dataAvail}
     >
-      Estimate
+      Show Estimate
     </button>
   </div>
 </div>
