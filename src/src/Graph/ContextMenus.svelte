@@ -9,6 +9,7 @@
   import { addNode } from "./graphmanipulation.js";
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { tolavaan } from "../Shiny/toR.js";
+  import * as Constants from "./classNames.js";
 
   // register extension
   cytoscape.use(contextMenus);
@@ -55,7 +56,7 @@
       coreAsWell: true,
       onClickFunction: function (event) {
         const position = event.position || event.cyPosition;
-        addNode("observed-variable", position);
+        addNode(Constants.OBSERVED, position);
       },
       show: "full",
     },
@@ -65,7 +66,7 @@
       coreAsWell: true,
       onClickFunction: function (event) {
         const position = event.position || event.cyPosition;
-        addNode("latent-variable", position);
+        addNode(Constants.LATENT, position);
       },
       show: "full",
     },
@@ -75,7 +76,7 @@
       coreAsWell: true,
       onClickFunction: function (event) {
         const position = event.position || event.cyPosition;
-        addNode("constant", position);
+        addNode(Constants.CONSTANT, position);
       },
       show: "full",
     },
@@ -85,7 +86,7 @@
     {
       id: "label-para",
       content: "Add/Change Label",
-      selector: "edge.fromUser",
+      selector: `edge.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         // @ts-expect-error
@@ -109,7 +110,7 @@
     {
       id: "label-remove",
       content: "Remove Label",
-      selector: "edge.label",
+      selector: `edge.${Constants.LABEL}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.removeLabel();
@@ -122,7 +123,7 @@
     {
       id: "remove-edge",
       content: "Delete edge",
-      selector: "edge.fromUser",
+      selector: `edge.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.remove();
@@ -134,7 +135,7 @@
     {
       id: "fix-para",
       content: "Fix Parameter",
-      selector: "edge.free.fromUser, edge.forcefree.fromUser",
+      selector: `edge.${Constants.FREE}.${Constants.FROM_USER}, edge.${Constants.FORCE_FREE}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         // @ts-expect-error
@@ -160,7 +161,7 @@
     {
       id: "free-para",
       content: "Free Parameter",
-      selector: "edge.fixed.fromUser, edge.forcefree.fromUser",
+      selector: `edge.${Constants.FIXED}.${Constants.FROM_USER}, edge.${Constants.FORCE_FREE}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         var edge = event.target || event.cyTarget;
         edge.freePara();
@@ -172,7 +173,7 @@
     {
       id: "free-force-para",
       content: "Force Parameter Free",
-      selector: "edge.free.fromUser, edge.fixed.fromUser",
+      selector: `edge.${Constants.FREE}.${Constants.FROM_USER}, edge.${Constants.FIXED}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.forceFreePara();
@@ -185,7 +186,7 @@
     {
       id: "revert-arrow",
       content: "Revert Direction",
-      selector: 'edge[isMean="0"].directed.fromUser',
+      selector: `edge[isMean="0"].${Constants.DIRECTED}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.revert();
@@ -198,7 +199,7 @@
     {
       id: "set-undirected",
       content: "Set Undirected",
-      selector: 'edge[isMean="0"].directed.fromUser',
+      selector: `edge[isMean="0"].${Constants.DIRECTED}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.setUndirected();
@@ -211,7 +212,7 @@
     {
       id: "set-arrow",
       content: "Set Directed",
-      selector: "edge.undirected.fromUser",
+      selector: `edge.${Constants.UNDIRECTED}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.setDirected();
@@ -224,7 +225,7 @@
     {
       id: "change-curve",
       content: "Change Curvature",
-      selector: "edge.undirected",
+      selector: `edge.${Constants.UNDIRECTED}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         // @ts-expect-error
@@ -251,7 +252,7 @@
     {
       id: "free-orientation",
       content: "Free Loop Orientation",
-      selector: "edge.loop.fixDeg",
+      selector: `edge.${Constants.LOOP}.fixDeg`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.removeClass("fixDeg");
@@ -264,7 +265,7 @@
     {
       id: "change-orientation",
       content: "Change/Fix Loop Orientation",
-      selector: "edge.loop",
+      selector: `edge.${Constants.LOOP}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         // @ts-expect-error
@@ -296,7 +297,7 @@
     {
       id: "change-fromUser",
       content: "Explicitly Include in Model",
-      selector: "edge.fromLav",
+      selector: `edge.${Constants.FROM_LAV}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.markAddedUser();
@@ -311,7 +312,7 @@
       id: "rename-node",
       show: "full",
       content: "Rename Variable",
-      selector: "node.latent-variable, node.observed-variable",
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         const columnNames = $appState.columnNames;
@@ -400,7 +401,7 @@
     {
       id: "change-latent",
       content: "Change to Latent",
-      selector: "node.observed-variable",
+      selector: `node.${Constants.OBSERVED}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.makeLatent();
@@ -413,7 +414,7 @@
     {
       id: "change-ordered",
       content: "Change to Ordered",
-      selector: "node.observed-variable.continous",
+      selector: `node.${Constants.OBSERVED}.${Constants.CONTINOUS}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.makeOrdered();
@@ -426,7 +427,8 @@
     {
       id: "change-continous",
       content: "Change to Continous",
-      selector: "node.observed-variable.ordered",
+      selector: `node.${Constants.OBSERVED}.${Constants.ORDERED}`,
+
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.makeContinous();
@@ -440,7 +442,7 @@
       id: "change-observed",
       show: "full",
       content: "Change to Observed",
-      selector: "node.latent-variable",
+      selector: `node.${Constants.LATENT}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.makeObserved();
