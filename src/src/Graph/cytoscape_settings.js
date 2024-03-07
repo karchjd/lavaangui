@@ -1,3 +1,6 @@
+import * as Constants from "./classNames.js";
+
+
 export const graphStyles = [
   {
     selector: "node",
@@ -13,27 +16,27 @@ export const graphStyles = [
     },
   },
   {
-    selector: "node.observed-variable",
+    selector: `node.${Constants.OBSERVED}`,
     style: {
       shape: "rectangle",
     },
   },
   {
-    selector: "node.observed-variable.ordered",
+    selector: `node.${Constants.OBSERVED}.${Constants.ORDERED}`,
     style: {
       "border-style": "double",
       "border-width": 5
     },
   },
   {
-    selector: "node.latent-variable",
+    selector: `node.${Constants.LATENT}`,
     style: {
       shape: "ellipse",
       "border-color": "black",
     },
   },
   {
-    selector: "node.constant",
+    selector: `node.${Constants.CONSTANT}`,
     style: {
       shape: "triangle",
       label: "1",
@@ -43,7 +46,7 @@ export const graphStyles = [
     },
   },
   {
-    selector: "node.linked",
+    selector: `node.${Constants.LINKED}`,
     style: {
       "border-color": "black",
     },
@@ -53,8 +56,8 @@ export const graphStyles = [
     style: {
       width: 3,
       "line-color": "#000",
-      "target-arrow-color": "#000", // Set target arrow color to black
-      "source-arrow-color": "#000", // Set target arrow color to black
+      "target-arrow-color": "#000",
+      "source-arrow-color": "#000",
       "target-arrow-shape": "triangle",
       "curve-style": "bezier",
       "text-valign": "center",
@@ -88,7 +91,7 @@ export const graphStyles = [
     },
   },
   {
-    selector: "edge.undirected",
+    selector: `edge.${Constants.UNDIRECTED}`,
     style: {
       "curve-style": "unbundled-bezier",
       "control-point-distances": [-100],
@@ -98,13 +101,13 @@ export const graphStyles = [
     },
   },
   {
-    selector: "edge.undirected.fromLav",
+    selector: `edge.${Constants.UNDIRECTED}.${Constants.FROM_LAV}`,
     style: {
       "control-point-distances": [100],
     },
   },
   {
-    selector: "edge.label, edge.label",
+    selector: `edge.${Constants.LABEL}, edge.${Constants.LABEL}`,
     style: {
       label: function (edge) {
         return edge.data("label");
@@ -112,7 +115,7 @@ export const graphStyles = [
     },
   },
   {
-    selector: "edge.fixed.label",
+    selector: `edge.${Constants.FIXED}.${Constants.LABEL}`,
     style: {
       label: function (edge) {
         return edge.data("label") + "@" + edge.data("value");
@@ -120,7 +123,7 @@ export const graphStyles = [
     },
   },
   {
-    selector: "edge.fixed.nolabel",
+    selector: `edge.${Constants.FIXED}.${Constants.NOT_LABEL}`,
     style: {
       label: function (edge) {
         return "@" + edge.data("value");
@@ -128,13 +131,13 @@ export const graphStyles = [
     },
   },
   {
-    selector: "edge.forcefree",
+    selector: `edge.${Constants.FORCE_FREE}`,
     style: {
       "line-color": "blue",
     },
   },
   {
-    selector: "edge.fromLav, edge.byLav",
+    selector: `edge.${Constants.FROM_LAV}, edge.${Constants.BY_LAV}`,
     style: {
       "line-style": "dashed",
     },

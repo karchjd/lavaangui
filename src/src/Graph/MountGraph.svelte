@@ -5,6 +5,7 @@
   import { get } from "svelte/store";
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { tolavaan } from "../Shiny/toR.js";
+  import { OBSERVED, LATENT, CONSTANT } from "./classNames.js";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -49,13 +50,13 @@
       let nodeType;
       switch (event.key.toLowerCase()) {
         case "l":
-          nodeType = "latent-variable";
+          nodeType = LATENT;
           break;
         case "o":
-          nodeType = "observed-variable";
+          nodeType = OBSERVED;
           break;
         case "c":
-          nodeType = "constant";
+          nodeType = CONSTANT;
           break;
       }
       addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
