@@ -52,17 +52,4 @@ export function addNode(nodeType, position, customLabel = null) {
   }
 
   return nodeId;
-  // if (nodeType !== "constant") {
-  //     let edgeId = 'edge' + edgeIdCounter++;
-  //     cy.add({
-  //         group: 'edges',
-  //         data: {
-  //             id: edgeId,
-  //             source: nodeId,
-  //             target: nodeId,
-  //             label: ''
-  //         },
-  //         classes: 'loop free nolabel'
-  //     });
-  // }
 }
