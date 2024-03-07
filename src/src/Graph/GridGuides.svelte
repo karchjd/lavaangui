@@ -1,5 +1,5 @@
 <script>
-  import { cyStore, modelOptions } from "../stores.js";
+  import { cyStore, gridViewOptions } from "../stores.js";
   import { get } from "svelte/store";
   import cytoscape from "cytoscape";
   import gridGuide from "cytoscape-grid-guide";
@@ -51,42 +51,42 @@
     ready = true;
   });
 
-  $: if (ready && $modelOptions.gridShow !== undefined) {
+  $: if (ready && $gridViewOptions.gridShow !== undefined) {
     let cy = get(cyStore);
-    cy.gridGuide({ drawGrid: $modelOptions.gridShow });
+    cy.gridGuide({ drawGrid: $gridViewOptions.gridShow });
   }
 
-  $: if (ready && $modelOptions.gridSpace !== undefined) {
+  $: if (ready && $gridViewOptions.gridSpace !== undefined) {
     let cy = get(cyStore);
-    cy.gridGuide({ gridSpacing: $modelOptions.gridSpace });
+    cy.gridGuide({ gridSpacing: $gridViewOptions.gridSpace });
   }
 
-  $: if (ready && $modelOptions.gridWidth !== undefined) {
+  $: if (ready && $gridViewOptions.gridWidth !== undefined) {
     let cy = get(cyStore);
-    cy.gridGuide({ lineWidth: $modelOptions.gridWidth });
+    cy.gridGuide({ lineWidth: $gridViewOptions.gridWidth });
   }
 
-  $: if (ready && $modelOptions.gridMovePan !== undefined) {
+  $: if (ready && $gridViewOptions.gridMovePan !== undefined) {
     let cy = get(cyStore);
-    cy.gridGuide({ panGrid: $modelOptions.gridMovePan });
+    cy.gridGuide({ panGrid: $gridViewOptions.gridMovePan });
   }
 
-  $: if (ready && $modelOptions.gridSnap !== undefined) {
+  $: if (ready && $gridViewOptions.gridSnap !== undefined) {
     let cy = get(cyStore);
-    cy.gridGuide({ snapToGridDuringDrag: $modelOptions.gridSnap });
+    cy.gridGuide({ snapToGridDuringDrag: $gridViewOptions.gridSnap });
   }
 
-  $: if (ready && $modelOptions.gridAlign !== undefined) {
+  $: if (ready && $gridViewOptions.gridAlign !== undefined) {
     let cy = get(cyStore);
     cy.gridGuide({
-      snapToAlignmentLocationOnRelease: $modelOptions.gridAlign,
+      snapToAlignmentLocationOnRelease: $gridViewOptions.gridAlign,
     });
   }
 
-  $: if (ready && $modelOptions.gridAlign !== undefined) {
+  $: if (ready && $gridViewOptions.gridAlign !== undefined) {
     let cy = get(cyStore);
     cy.gridGuide({
-      resize: $modelOptions.gridResize,
+      resize: $gridViewOptions.gridResize,
     });
   }
 </script>

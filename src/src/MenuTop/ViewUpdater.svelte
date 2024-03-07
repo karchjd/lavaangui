@@ -1,21 +1,25 @@
 <script>
   import { onMount } from "svelte";
   import { updateVisibility, updateLabels, edgeItems } from "./viewModule";
-  import { modelOptions } from "../stores";
+  import { gridViewOptions, modelOptions } from "../stores";
 
-  $: {
-    updateVisibility($modelOptions.showVar, $modelOptions.showLav, edgeItems);
-  }
+  console.log("viewupdated loaded");
+
   let mounted = false;
 
-  //to make sure the cy instance exists before first update
+  $: if (mounted) {
+    updateVisibility(
+      $gridViewOptions.showVar,
+      $gridViewOptions.showLav,
+      edgeItems,
+    );
+  }
+
+  $: if (mounted) {
+    updateLabels($gridViewOptions.view, $gridViewOptions.std);
+  }
+
   onMount(() => {
     mounted = true;
   });
-
-  $: {
-    if (mounted) {
-      updateLabels($modelOptions.view, $modelOptions.std);
-    }
-  }
 </script>

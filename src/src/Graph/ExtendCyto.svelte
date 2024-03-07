@@ -112,6 +112,16 @@
         return this.hasClass(Constants.LOOP);
     });
 
+    cytoscape("collection", "makeMeanEdge", function () {
+        this.data("isMean", "1");
+        return this;
+    });
+
+    cytoscape("collection", "makeOtherEdge", function () {
+        this.data("isMean", "0");
+        return this;
+    });
+
     cytoscape("collection", "isFixed", function () {
         return this.hasClass(Constants.FIXED);
     });

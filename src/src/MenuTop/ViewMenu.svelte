@@ -1,5 +1,5 @@
 <script>
-  import { modelOptions } from "../stores";
+  import { gridViewOptions } from "../stores";
   import CheckItem from "./helpers/CheckItem.svelte";
   import Dropdown from "./helpers/Dropdown.svelte";
   import RadioItem from "./helpers/RadioItem.svelte";
@@ -11,14 +11,14 @@
   {#each edgeItems as item}
     <CheckItem
       bind:name={item.name}
-      bind:checked={$modelOptions[item.modelSlot]}
+      bind:checked={$gridViewOptions[item.modelSlot]}
       disable={false}
     />
   {/each}
   <li class="divider" />
   <CheckItem
     name={"Standardized Estimates"}
-    bind:checked={$modelOptions.std}
+    bind:checked={$gridViewOptions.std}
     disable={false}
   />
   <li class="divider" />
@@ -26,7 +26,7 @@
     <RadioItem
       name={item.name}
       value={item.value}
-      bind:group={$modelOptions.view}
+      bind:group={$gridViewOptions.view}
     />
   {/each}
 </Dropdown>

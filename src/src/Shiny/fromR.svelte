@@ -40,7 +40,7 @@
     } else if (op == "~1") {
       source = 1;
       target = lhs;
-      directed = UNDIRECTED;
+      directed = DIRECTED;
     } else {
       target = lhs;
       source = rhs;
@@ -354,9 +354,6 @@
           lav_result.op[i],
           lav_result.rhs[i],
         );
-        if (existingEdge.length != 1) {
-          debugger;
-        }
         if (existingEdge.isFree()) {
           // Object to store all the estimates
           let allEstimates = {};

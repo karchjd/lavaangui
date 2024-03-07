@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { appState, cyStore, modelOptions, fitCache } from "../stores";
+import { appState, cyStore, modelOptions, fitCache, gridViewOptions } from "../stores";
 
 function serverAvail() {
   // @ts-expect-error
@@ -9,7 +9,7 @@ function serverAvail() {
 export function tolavaan(mode) {
 
   var appState_local = get(appState);
-  var mOptions = get(modelOptions);
+  var viewOptions = get(gridViewOptions);
   let cy = get(cyStore);
   const edges = cy.edges();
 
@@ -31,10 +31,7 @@ export function tolavaan(mode) {
   Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
   // @ts-expect-error
   Shiny.setInputValue("runCounter", Math.random());
-  if (mode !== "user model") {
-    mOptions.showLav = true;
-  } else {
-    mOptions.showLav = false;
+  if (mode === "user model") {
     cy.getLavaanModifiedEdges().forEach((existingEdge) => {
       existingEdge.freePara()
     });
@@ -235,7 +232,7 @@ export function createSyntax(mode) {
       return edge.isUserAdded();
     });
     if (connectedEdges.length > 0) {
-      syntax += "\n " + "# intercepts" + "\n ";
+      syntax += "\n" + "# intercepts" + "\n";
       for (var j = 0; j < connectedEdges.length; j++) {
         var node = connectedEdges[j].target();
         syntax +=

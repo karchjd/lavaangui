@@ -8,21 +8,20 @@ export let modelOptions = writable({
   meanStruc: "default",
   intOvFree: true,
   intLvFree: false,
-  view: "est",
   estimator: "ML",
   se: "default",
   missing: "listwise",
   n_boot: 1000,
-  showLav: true,
-  showVar: true,
   fix_first: true,
   fix_single: true,
   auto_var: true,
   auto_cov_lv_x: true,
   auto_cov_y: true,
   fixed_x: true,
-  std: false,
   mode: "user model",
+});
+
+export let gridViewOptions = writable({
   gridShow: false,
   gridSpace: 26,
   gridColor: "#dedede",
@@ -31,6 +30,10 @@ export let modelOptions = writable({
   gridSnap: false,
   gridAlign: false,
   gridResize: false,
+  showLav: true,
+  showVar: true,
+  std: false,
+  view: "est",
 });
 
 export let fitCache = writable({

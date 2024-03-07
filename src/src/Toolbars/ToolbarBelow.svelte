@@ -1,11 +1,16 @@
 <script>
   import { onMount } from "svelte";
-  import { appState, modelOptions } from "../stores";
+  import { appState, modelOptions, gridViewOptions } from "../stores";
 
   let selected;
 
   function changeMode(newMode) {
     selected = newMode;
+    if (newMode !== "user model") {
+      $gridViewOptions.showLav = true;
+    } else {
+      $gridViewOptions.showLav = false;
+    }
     modelOptions.update((options) => {
       options.mode = newMode;
       return options;
@@ -56,7 +61,7 @@
         ? 'btn-primary active'
         : 'btn-default'}"
       on:click={() => changeMode("estimate")}
-      disabled={$appState.modelEmpty || !$appState.dataAvail}
+      disabled={!$appState.dataAvail}
     >
       Show Estimate
     </button>

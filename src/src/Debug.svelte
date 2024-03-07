@@ -1,5 +1,5 @@
 <script>
-  import { cyStore, modelOptions } from "./stores.js";
+  import { cyStore, gridViewOptions, modelOptions } from "./stores.js";
   import { get } from "svelte/store";
   import { appState, dataInfo, fitCache } from "./stores.js";
   window.cy = get(cyStore);
@@ -18,5 +18,10 @@
 
   const unsubscribe3 = fitCache.subscribe((state) => {
     window.fitCache = state;
+  });
+
+  const unsubscribe4 = gridViewOptions.subscribe((state) => {
+    console.log("changed");
+    window.gridViewOptions = state;
   });
 </script>

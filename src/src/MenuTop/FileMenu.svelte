@@ -6,6 +6,7 @@
     modelOptions,
     dataInfo,
     fitCache,
+    gridViewOptions,
   } from "../stores.js";
   import { get } from "svelte/store";
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
@@ -65,7 +66,9 @@
     if ("model" in combinedData && "modelOpt" in combinedData) {
       json = JSON.parse(combinedData.model);
       const modelOpt = JSON.parse(combinedData.modelOpt);
+      const gridViewOpt = JSON.parse(combinedData.gridViewOpt);
       mergeExistingProperties($modelOptions, modelOpt);
+      mergeExistingProperties($gridViewOptions, gridViewOpt);
       if (combinedData.fitCache != undefined) {
         const localCache = JSON.parse(combinedData.fitCache);
         $fitCache = localCache;
@@ -200,10 +203,12 @@
     const json = cy_save.json();
     const model = JSON.stringify(json);
     const modelOpt = JSON.stringify($modelOptions);
+    const gridViewOpt = JSON.stringify($modelOptions);
     const fitCacheLocal = JSON.stringify($fitCache);
     const combinedData = JSON.stringify({
       model,
       modelOpt,
+      gridViewOpt,
       fitCache: fitCacheLocal,
     });
     return combinedData;
