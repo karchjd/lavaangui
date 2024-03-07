@@ -89,6 +89,7 @@ lavaan_gui_server <- function(input, output, session) {
     propagateData(df_full, import = TRUE)
     data_react(df_full)
     imported <- TRUE
+    session$sendCustomMessage("setToEstimate", message = rnorm(1))
   }
   
   # data upload

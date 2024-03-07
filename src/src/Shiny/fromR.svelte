@@ -335,7 +335,7 @@
     // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
       getModelLav(lav_model, true);
-      $modelOptions.mode = "estimate";
+      $modelOptions.fix_first = false;
     });
 
     // save all results in data attributes of the correct edges
@@ -384,6 +384,12 @@
       $appState.result = "estimates_sucess";
       $appState.loadingMode = false;
       setAlert("success", "Succesfully fitted model");
+    });
+
+    //import model
+    // @ts-expect-error
+    Shiny.addCustomMessageHandler("setToEstimate", function (lav_model) {
+      $modelOptions.mode = "estimate";
     });
   }
 </script>
