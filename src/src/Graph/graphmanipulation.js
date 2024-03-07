@@ -4,8 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 
 let obCounter;
 let latentCounter;
-// let edgeIdCounter = 0;
-let nodeIdCounter;
 
 export function resetCounters() {
   obCounter = 1;
