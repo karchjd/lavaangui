@@ -556,7 +556,6 @@
 
   const menuSel = selectMenu(menu, $appState.full);
   onMount(() => {
-    console.log(menu);
     // Initialize the Cytoscape instance
     cy.contextMenus({ menuItems: menuSel });
   });

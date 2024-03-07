@@ -26,6 +26,7 @@
   import Errors from "./Errors.svelte";
   import FileMenu from "./MenuTop/FileMenu.svelte";
   import Reactive from "./Shiny/Reactive.svelte";
+  import AutoMove from "./Graph/AutoMove.svelte";
 </script>
 
 <AppReady />
@@ -48,6 +49,7 @@
     <MainContainer>
       <Graph />
       <GridGuides />
+      <AutoMove />
       <Zoom />
       <ContextMenus />
       <OnEvents />

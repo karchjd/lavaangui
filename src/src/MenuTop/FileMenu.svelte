@@ -16,8 +16,6 @@
   import cytoscape from "cytoscape";
   import svg from "cytoscape-svg";
   import { saveAs } from "file-saver";
-  import { jsPDF } from "jspdf";
-  import "svg2pdf.js";
 
   cytoscape.use(svg);
 

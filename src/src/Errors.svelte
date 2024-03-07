@@ -25,7 +25,6 @@
   if (serverAvail()) {
     // @ts-expect-error
     Shiny.addCustomMessageHandler("serverError", function (message) {
-      console.log(message);
       showError(message.msg, "Server");
     });
   }

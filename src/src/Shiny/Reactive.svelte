@@ -5,7 +5,6 @@
     import { updateVisibility, edgeItems } from "../MenuTop/viewModule";
 
     $: {
-        console.log("model options watcher triggered");
         tolavaan($modelOptions.mode);
         updateVisibility(
             $modelOptions.showVar,

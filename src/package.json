@@ -23,6 +23,7 @@
     "bootbox": "^5.5.3",
     "bootstrap": "^3.4.1",
     "cytoscape": "^3.25.0",
+    "cytoscape-automove": "^1.10.3",
     "cytoscape-cola": "^2.5.1",
     "cytoscape-context-menus": "^4.1.0",
     "cytoscape-dagre": "^2.5.0",

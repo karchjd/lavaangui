@@ -7,7 +7,6 @@ function serverAvail() {
 }
 
 export function tolavaan(mode) {
-  console.log("tolavaan called")
 
   var appState_local = get(appState);
   var mOptions = get(modelOptions);
@@ -17,7 +16,6 @@ export function tolavaan(mode) {
   if (appState_local.loadingMode ||
     edges.not(".byLav").length == 0 ||
     appState_local.buttonDown) {
-    console.log("cancelled")
     return;
   }
 

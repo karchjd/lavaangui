@@ -33,7 +33,6 @@ export function updateLabels(viewOption, std) {
 
 export function updateVisibility(showVar, showLav, menuItems) {
   const cy = get(cyStore);
-  console.log("updatevisibility")
   if (showLav && showVar) {
     cy.elements("." + menuItems[0].class).show();
     cy.elements("." + menuItems[1].class).show();
