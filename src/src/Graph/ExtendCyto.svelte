@@ -2,29 +2,35 @@
     import cytoscape from "cytoscape";
     import * as Constants from "./classNames.js";
 
-    //Edges
+    // Edges
 
     cytoscape("collection", "init", function () {
-        this.addClass("free").addClass("notlabel").addClass("fromUser");
+        this.addClass(Constants.FREE)
+            .addClass(Constants.NOT_LABEL)
+            .addClass(Constants.FROM_USER);
         return this;
     });
 
     cytoscape("collection", "free", function () {
-        return this.hasClass("free");
+        return this.hasClass(Constants.FREE);
     });
 
     cytoscape("collection", "addLabel", function (label) {
-        this.addLabelImport(label).removeClass("byLav");
+        this.addLabelImport(label).removeClass(Constants.BY_LAV);
         return this;
     });
 
     cytoscape("collection", "addLabelImport", function (label) {
-        this.data("label", label).addClass("label").removeClass("nolabel");
+        this.data("label", label)
+            .addClass(Constants.LABEL)
+            .removeClass(Constants.NOT_LABEL);
         return this;
     });
 
     cytoscape("collection", "removeLabel", function () {
-        this.removeClass("label").addClass("nolabel").data("label", undefined);
+        this.removeClass(Constants.LABEL)
+            .addClass(Constants.NOT_LABEL)
+            .data("label", undefined);
         return this;
     });
 
@@ -39,31 +45,33 @@
 
     cytoscape("collection", "fixPara", function (value) {
         this.data("value", value)
-            .removeClass("free")
-            .removeClass("forcefree")
-            .removeClass("hasEst")
-            .addClass("fixed");
+            .removeClass(Constants.FREE)
+            .removeClass(Constants.FORCE_FREE)
+            .removeClass(Constants.HAS_EST)
+            .addClass(Constants.FIXED);
         return this;
     });
 
     cytoscape("collection", "freePara", function () {
-        this.removeClass("fixed")
-            .removeClass("forcefree")
-            .removeClass("byLav")
-            .addClass("free");
+        this.removeClass(Constants.FIXED)
+            .removeClass(Constants.FORCE_FREE)
+            .removeClass(Constants.BY_LAV)
+            .addClass(Constants.FREE);
         return this;
     });
 
     cytoscape("collection", "setFree", function () {
-        this.removeClass("fixed").removeClass("forcefree").addClass("free");
+        this.removeClass(Constants.FIXED)
+            .removeClass(Constants.FORCE_FREE)
+            .addClass(Constants.FREE);
         return this;
     });
 
     cytoscape("collection", "forceFreePara", function () {
-        this.removeClass("free")
-            .removeClass("fixed")
-            .removeClass("byLav")
-            .addClass("forcefree");
+        this.removeClass(Constants.FREE)
+            .removeClass(Constants.FIXED)
+            .removeClass(Constants.BY_LAV)
+            .addClass(Constants.FORCE_FREE);
         return this;
     });
 
@@ -78,65 +86,69 @@
     });
 
     cytoscape("collection", "setUndirected", function () {
-        this.removeClass("directed").addClass("undirected");
+        this.removeClass(Constants.DIRECTED).addClass(Constants.UNDIRECTED);
         return this;
     });
 
     cytoscape("collection", "setDirected", function () {
-        this.removeClass("undirected").addClass("directed");
+        this.removeClass(Constants.UNDIRECTED).addClass(Constants.DIRECTED);
         return this;
     });
 
     cytoscape("collection", "isUndirected", function () {
-        return this.hasClass("undirected");
+        return this.hasClass(Constants.UNDIRECTED);
     });
 
     cytoscape("collection", "isDirected", function () {
-        return this.hasClass("directed");
+        return this.hasClass(Constants.DIRECTED);
     });
 
     cytoscape("collection", "makeLoop", function () {
-        this.addClass("loop");
+        this.addClass(Constants.LOOP);
         return this;
     });
 
     cytoscape("collection", "myIsLoop", function () {
-        return this.hasClass("loop");
+        return this.hasClass(Constants.LOOP);
     });
 
     cytoscape("collection", "isFixed", function () {
-        return this.hasClass("fixed");
+        return this.hasClass(Constants.FIXED);
     });
 
-    cytoscape("collection", "isForceFree", function (label) {
-        return this.hasClass("forcefree");
+    cytoscape("collection", "isFree", function () {
+        return this.hasClass(Constants.FREE);
     });
 
-    cytoscape("collection", "hasLabel", function (label) {
-        return this.hasClass("label");
+    cytoscape("collection", "isForceFree", function () {
+        return this.hasClass(Constants.FORCE_FREE);
+    });
+
+    cytoscape("collection", "hasLabel", function () {
+        return this.hasClass(Constants.LABEL);
     });
 
     cytoscape("collection", "isModifiedLavaan", function () {
-        return this.hasClass("byLav");
+        return this.hasClass(Constants.BY_LAV);
     });
 
     cytoscape("collection", "markModifiedLavaan", function () {
-        this.addClass("byLav");
+        this.addClass(Constants.BY_LAV);
         return this;
     });
 
     cytoscape("collection", "markAddedLavaan", function () {
-        this.addClass("fromLav").removeClass("fromUser");
+        this.addClass(Constants.FROM_LAV).removeClass(Constants.FROM_USER);
         return this;
     });
 
     cytoscape("collection", "markAddedUser", function () {
-        this.removeClass("fromLav").addClass("fromUser");
+        this.removeClass(Constants.FROM_LAV).addClass(Constants.FROM_USER);
         return this;
     });
 
     cytoscape("collection", "isUserAdded", function () {
-        return this.hasClass("fromUser");
+        return this.hasClass(Constants.FROM_USER);
     });
 
     cytoscape("collection", "getValue", function () {
@@ -144,97 +156,97 @@
     });
 
     cytoscape("collection", "invalidate", function () {
-        this.removeClass("validated");
+        this.removeClass(Constants.VALIDATED);
         return this;
     });
 
     cytoscape("collection", "validate", function () {
-        this.addClass("validated");
+        this.addClass(Constants.VALIDATED);
         return this;
     });
 
     cytoscape("collection", "isValid", function () {
-        return this.hasClass("validated");
+        return this.hasClass(Constants.VALIDATED);
     });
 
     cytoscape("collection", "revertLavaanFix", function () {
-        this.freePara().removeClass("byLav");
+        this.freePara().removeClass(Constants.BY_LAV);
     });
 
     cytoscape("collection", "removeEstimates", function () {
-        this.removeData("est").removeClass("hasEst");
+        this.removeData("est").removeClass(Constants.HAS_EST);
         return this;
     });
 
     // Nodes
     cytoscape("collection", "link", function () {
-        this.addClass("linked");
+        this.addClass(Constants.LINKED);
         return this;
     });
 
     cytoscape("collection", "unlink", function () {
-        this.removeClass("linked");
+        this.removeClass(Constants.LINKED);
         return this;
     });
 
     cytoscape("collection", "isLinked", function () {
-        return this.hasClass("linked");
+        return this.hasClass(Constants.LINKED);
     });
 
     cytoscape("collection", "isLatent", function () {
-        return this.hasClass("latent-variable");
+        return this.hasClass(Constants.LATENT);
     });
 
     cytoscape("collection", "makeLatent", function () {
-        this.removeClass("observed-variable")
-            .addClass("latent-variable")
-            .removeClass("linked");
+        this.removeClass(Constants.OBSERVED)
+            .addClass(Constants.LATENT)
+            .removeClass(Constants.LINKED);
         return this;
     });
 
     cytoscape("collection", "makeObserved", function () {
-        this.addClass("observed-variable").removeClass("latent-variable");
+        this.addClass(Constants.OBSERVED).removeClass(Constants.LATENT);
         return this;
     });
 
     cytoscape("collection", "makeOrdered", function () {
-        this.removeClass("continous").addClass("ordered");
+        this.removeClass(Constants.CONTINOUS).addClass(Constants.ORDERED);
         return this;
     });
 
     cytoscape("collection", "isOrdered", function () {
-        return this.hasClass("ordered");
+        return this.hasClass(Constants.ORDERED);
     });
 
     cytoscape("collection", "makeContinous", function () {
-        this.addClass("continous").removeClass("ordered");
+        this.addClass(Constants.CONTINOUS).removeClass(Constants.ORDERED);
         return this;
     });
 
     cytoscape("collection", "isConstant", function () {
-        return this.hasClass("constant");
+        return this.hasClass(Constants.CONSTANT);
     });
 
     cytoscape("collection", "isObserved", function () {
-        return this.hasClass("observed-variable");
+        return this.hasClass(Constants.OBSERVED);
     });
 
-    // core functions
+    // Core functions
     cytoscape("core", "getLavaanNodes", function () {
-        return this.nodes(".fromLav");
+        return this.nodes(`.${Constants.FROM_LAV}`);
     });
 
     cytoscape("core", "getUserEdges", function () {
-        return this.edges(".fromUser");
+        return this.edges(`.${Constants.FROM_USER}`);
     });
 
     cytoscape("core", "getLavaanModifiedEdges", function () {
-        return this.edges(".byLav");
+        return this.edges(`.${Constants.BY_LAV}`);
     });
 
     cytoscape("core", "getLatentNodes", function () {
         return this.nodes(function (node) {
-            return node.hasClass("latent-variable");
+            return node.hasClass(Constants.LATENT);
         });
     });
 </script>
