@@ -1,6 +1,8 @@
 import { cyStore, ur } from "../stores.js";
 import { get } from "svelte/store";
 import { v4 as uuidv4 } from "uuid";
+import { OBSERVED, LATENT } from "./classNames.js";
+
 
 let obCounter;
 let latentCounter;
@@ -21,9 +23,9 @@ export function addNode(nodeType, position, customLabel = null) {
   if (customLabel !== null) {
     label = customLabel;
   } else {
-    if (nodeType == "observed-variable") {
+    if (nodeType == OBSERVED) {
       label = "x" + obCounter++;
-    } else if (nodeType == "latent-variable") {
+    } else if (nodeType == LATENT) {
       label = "f" + latentCounter++;
     } else {
       label = undefined;

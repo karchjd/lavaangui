@@ -2,6 +2,7 @@
   import { addNode } from "../Graph/graphmanipulation.js";
   import { appState } from "../stores";
   import DataInfo from "./DataInfo.svelte";
+  import { OBSERVED, LATENT, CONSTANT } from "../Graph/classNames.js";
   let state = {};
 
   let unsubscribe = appState.subscribe((newState) => {
@@ -24,9 +25,9 @@
         id="add-manifest-variable"
         title="Create Observed Variable"
         draggable="true"
-        data-button-type="observed-variable"
+        data-button-type={OBSERVED}
         on:dragstart={() => {
-          dragStart("observed-variable");
+          dragStart(OBSERVED);
         }}
         on:click={() => {
           alertDrag();
@@ -36,9 +37,9 @@
         id="add-latent-variable"
         title="Create Latent Variable"
         draggable="true"
-        data-button-type="latent-variable"
+        data-button-type={LATENT}
         on:dragstart={() => {
-          dragStart("latent-variable");
+          dragStart(LATENT);
         }}
         on:click={() => {
           alertDrag();
@@ -50,7 +51,7 @@
         data-button-type="const"
         draggable="true"
         on:dragstart={() => {
-          dragStart("constant");
+          dragStart(CONSTANT);
         }}
         on:click={() => {
           alertDrag();

@@ -6,7 +6,14 @@
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { addNode } from "../Graph/graphmanipulation.js";
   import { applySemLayout } from "../MenuTop/semPlotLayouts.js";
-  import { cytoscapeEdgeEditing } from "cytoscape-edge-editing";
+  import {
+    OBSERVED,
+    LATENT,
+    CONSTANT,
+    DIRECTED,
+    UNDIRECTED,
+    LOOP,
+  } from "../Graph/classNames.js";
 
   const number_digits = 2;
 
@@ -21,24 +28,24 @@
     let target;
 
     if (op === "=~") {
-      directed = "directed";
+      directed = DIRECTED;
       source = lhs;
       target = rhs;
     } else if (op == "~1") {
       source = 1;
       target = lhs;
-      directed = "directed";
+      directed = UNDIRECTED;
     } else {
       target = lhs;
       source = rhs;
       if (op === "~~") {
         if (lhs === rhs) {
-          directed = "loop";
+          directed = LOOP;
         } else {
-          directed = "undirected";
+          directed = UNDIRECTED;
         }
       } else if (op === "~" || "<~") {
-        directed = "directed";
+        directed = DIRECTED;
       }
     }
     return { directed: directed, source: source, target: target };
@@ -54,7 +61,7 @@
         res =
           edge.source().getLabel() == goal_edge.source &&
           edge.target().getLabel() == goal_edge.target;
-        if (goal_edge.directed == "undirected") {
+        if (goal_edge.directed == DIRECTED) {
           res =
             res ||
             (edge.source().getLabel() == goal_edge.target &&
@@ -120,12 +127,12 @@
     } else {
       const observed = lav_model.obs;
       for (let i = 0; i < observed.length; i++) {
-        importNode("observed-variable", observed[i]);
+        importNode(OBSERVED, observed[i]);
       }
 
       const latent = lav_model.latent;
       for (let i = 0; i < latent.length; i++) {
-        importNode("latent-variable", latent[i]);
+        importNode(LATENT, latent[i]);
       }
       lav_model = lav_model.parTable;
     }
@@ -142,7 +149,7 @@
       if (!imported && lav_model.user[i] == 1) {
         //If it is a user row make sure the path is in, otherwise throw an error
         assert(existingEdge.length == 1);
-        existingEdge.addClass("validated");
+        existingEdge.validate();
         //if it used to be fixed by lavaan unfix it first
         if (existingEdge.isModifiedLavaan() && existingEdge.isFixed()) {
           existingEdge.revertLavaanFix();
@@ -175,7 +182,7 @@
               continue;
             }
             if (!const_added) {
-              added_const_id = addNode("constant", getConstNodePosition(cy));
+              added_const_id = addNode(CONSTANT, getConstNodePosition(cy));
               const_added = true;
               const added_node = cy.nodes(function (node) {
                 return node.id() == added_const_id;
