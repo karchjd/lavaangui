@@ -18,11 +18,11 @@
   cy.on("add", "node", function (event) {
     $appState.loadingMode = true;
     const node = event.target;
-    if (node.hasClass("observed-variable")) {
+    if (node.isObserved()) {
       let columnNames = $appState.columnNames;
-      if (columnNames && columnNames.includes(node.data("label"))) {
-        node.addClass("linked");
-        setAlert("success", `Variable ${node.data("label")} linked to data`);
+      if (columnNames && columnNames.includes(node.getLabel())) {
+        node.link();
+        setAlert("success", `Variable ${node.getLabel()} linked to data`);
       }
     }
     $appState.loadingMode = false;
@@ -33,9 +33,10 @@
   });
 
   cy.on("remove", "edge, node", function (event) {
-    if (cy.edges().not(".byLav").length == 0) {
+    if (cy.getUserEdges().length == 0) {
       $appState.modelEmpty = true;
     }
+    tolavaan($modelOptions.mode);
   });
 
   cy.on("position", "node", function (event) {

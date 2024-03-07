@@ -97,11 +97,7 @@
             }
 
             if (result !== null) {
-              edge.data("label", result);
-              edge.addClass("label");
-              edge.removeClass("nolabel");
-              edge.removeClass("fromLav");
-              edge.removeClass("byLav");
+              edge.addLabel(result);
               tolavaan($modelOptions.mode);
             }
           },
@@ -116,9 +112,7 @@
       selector: "edge.label",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
-        edge.removeClass("label");
-        edge.addClass("nolabel");
-        edge.data("label", undefined);
+        edge.removeLabel();
         tolavaan($modelOptions.mode);
       },
       show: "both",
@@ -154,13 +148,7 @@
               return false;
             }
             if (value !== null) {
-              edge.data("value", value);
-              edge.removeClass("free");
-              edge.removeClass("forcefree");
-              edge.removeClass("fromLav");
-              edge.removeClass("byLav");
-              edge.removeClass("hasEst");
-              edge.addClass("fixed");
+              edge.fixPara(value);
               tolavaan($modelOptions.mode);
             }
           },
@@ -175,11 +163,7 @@
       selector: "edge.fixed.fromUser, edge.forcefree.fromUser",
       onClickFunction: function (event) {
         var edge = event.target || event.cyTarget;
-        edge.removeClass("fixed");
-        edge.removeClass("forcefree");
-        edge.removeClass("fromLav");
-        edge.removeClass("byLav");
-        edge.addClass("free");
+        edge.freePara();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -191,11 +175,7 @@
       selector: "edge.free.fromUser, edge.fixed.fromUser",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
-        edge.removeClass("free");
-        edge.removeClass("fixed");
-        edge.removeClass("fromLav");
-        edge.removeClass("byLav");
-        edge.addClass("forcefree");
+        edge.forceFreePara();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -208,12 +188,8 @@
       selector: 'edge[isMean="0"].directed.fromUser',
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
-        const sourceId = edge.source().id();
-        const targetId = edge.target().id();
-        edge.move({
-          source: targetId,
-          target: sourceId,
-        });
+        edge.revert();
+
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -225,8 +201,7 @@
       selector: 'edge[isMean="0"].directed.fromUser',
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
-        edge.removeClass("directed");
-        edge.addClass("undirected");
+        edge.setUndirected();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -239,8 +214,7 @@
       selector: "edge.undirected.fromUser",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
-        edge.removeClass("undirected");
-        edge.addClass("directed");
+        edge.setDirected();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -321,12 +295,11 @@
     },
     {
       id: "change-fromUser",
-      content: " Explicitly Include in Model",
+      content: "Explicitly Include in Model",
       selector: "edge.fromLav",
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
-        edge.removeClass("fromLav");
-        edge.addClass("fromUser");
+        edge.markAddedUser();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -352,7 +325,7 @@
         }
 
         const dropdownHTML =
-          $appState.dataAvail && node.hasClass("observed-variable")
+          $appState.dataAvail && node.isObserved()
             ? `
       <label>Or Select From Variables in Your Data:</label>
       <select class="form-control" id="label-dropdown">
@@ -382,7 +355,7 @@
               callback: function () {
                 const inputLabel = document.getElementById("new-label").value;
                 const selectedLabel =
-                  $appState.dataAvail && node.hasClass("observed-variable")
+                  $appState.dataAvail && node.isObserved()
                     ? document.getElementById("label-dropdown").value
                     : "";
 
@@ -393,16 +366,16 @@
                 }
 
                 if (result) {
-                  node.data("label", result);
-                  if (columnNames && columnNames.includes(node.data("label"))) {
-                    node.addClass("linked");
+                  node.setLabel(result);
+                  if (columnNames && columnNames.includes(node.getLabel())) {
+                    node.link();
                     setAlert(
                       "success",
                       `Variable ${node.data("label")} linked to data`,
                     );
-                  } else if (node.hasClass("linked")) {
-                    node.removeClass("linked");
-                    setAlert("info", `Variable ${node.data("label")} unlinked`);
+                  } else if (node.isLinked()) {
+                    node.unlink();
+                    setAlert("info", `Variable ${node.getLabel()} unlinked`);
                   }
                   tolavaan($modelOptions.mode);
                 }
@@ -430,9 +403,7 @@
       selector: "node.observed-variable",
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
-        node.removeClass("observed-variable");
-        node.addClass("latent-variable");
-        node.removeClass("linked");
+        node.makeLatent();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -445,8 +416,7 @@
       selector: "node.observed-variable.continous",
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
-        node.removeClass("continous");
-        node.addClass("ordered");
+        node.makeOrdered();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -459,8 +429,7 @@
       selector: "node.observed-variable.ordered",
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
-        node.removeClass("ordered");
-        node.addClass("continous");
+        node.makeContinous();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -474,11 +443,10 @@
       selector: "node.latent-variable",
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
-        node.removeClass("latent-variable");
-        node.addClass("observed-variable");
+        node.makeObserved();
         let columnNames = $appState.columnNames;
-        if (columnNames && columnNames.includes(node.data("label"))) {
-          node.addClass("linked");
+        if (columnNames && columnNames.includes(node.getLabel())) {
+          node.link();
           if (!$appState.loadingMode) {
             // @ts-expect-error
             bootbox.alert("Variable linked with data set");

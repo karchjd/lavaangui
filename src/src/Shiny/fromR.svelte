@@ -6,6 +6,7 @@
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { addNode } from "../Graph/graphmanipulation.js";
   import { applySemLayout } from "../MenuTop/semPlotLayouts.js";
+  import { cytoscapeEdgeEditing } from "cytoscape-edge-editing";
 
   const number_digits = 2;
 
@@ -51,19 +52,19 @@
       // normal case, constant not involved
       if (goal_edge.source != 1) {
         res =
-          edge.source().data("label") == goal_edge.source &&
-          edge.target().data("label") == goal_edge.target;
+          edge.source().getLabel() == goal_edge.source &&
+          edge.target().getLabel() == goal_edge.target;
         if (goal_edge.directed == "undirected") {
           res =
             res ||
-            (edge.source().data("label") == goal_edge.target &&
-              edge.target().data("label") == goal_edge.source);
+            (edge.source().getLabel() == goal_edge.target &&
+              edge.target().getLabel() == goal_edge.source);
         }
         // abnormal case, constant involved
       } else {
         res =
-          edge.source().hasClass("constant") &&
-          edge.target().data("label") == goal_edge.target;
+          edge.source().isConstant() &&
+          edge.target().getLabel() == goal_edge.target;
       }
       return res;
     });
@@ -115,7 +116,7 @@
     $appState.loadingMode = true;
     let cy = get(cyStore);
     if (!imported) {
-      cy.edges().removeClass("validated");
+      cy.edges().invalidate();
     } else {
       const observed = lav_model.obs;
       for (let i = 0; i < observed.length; i++) {
@@ -143,17 +144,13 @@
         assert(existingEdge.length == 1);
         existingEdge.addClass("validated");
         //if it used to be fixed by lavaan unfix it first
-        if (existingEdge.hasClass("byLav") && existingEdge.hasClass("fixed")) {
-          existingEdge.removeClass("fixed");
-          existingEdge.removeClass("byLav");
+        if (existingEdge.isModifiedLavaan() && existingEdge.isFixed()) {
+          existingEdge.revertLavaanFix();
         }
 
         //fix it if lavaan fixed it
-        if (lav_model.free[i] == 0 && !existingEdge.hasClass("fixed")) {
-          existingEdge.addClass("fixed");
-          existingEdge.removeClass("free");
-          existingEdge.data("value", lav_model.ustart[i]);
-          existingEdge.addClass("byLav");
+        if (lav_model.free[i] == 0 && !existingEdge.isFixed()) {
+          existingEdge.fixPara(lav_model.ustart[i]).markModifiedLavaan();
         }
       } else {
         // add (missing) edges
@@ -168,7 +165,7 @@
           if (desiredEdge.source !== 1) {
             sourceId = cy
               .nodes(function (node) {
-                return node.data("label") == desiredEdge.source;
+                return node.getLabel() == desiredEdge.source;
               })[0]
               .id();
           } else {
@@ -183,13 +180,13 @@
               const added_node = cy.nodes(function (node) {
                 return node.id() == added_const_id;
               })[0];
-              added_node.addClass("fromLav");
+              added_node.markAddedLavaan();
             }
             sourceId = added_const_id;
           }
           const targetId = cy
             .nodes(function (node) {
-              return node.data("label") == desiredEdge.target;
+              return node.getLabel() == desiredEdge.target;
             })[0]
             .id();
 
@@ -203,13 +200,12 @@
           });
 
           if (lav_model.label[i] != "") {
-            edge.addClass("label");
-            edge.data("label", lav_model.label[i]);
+            edge.addLabelImport(lav_model.label[i]);
           }
           if (lav_model.user[i] == 1) {
-            edge.addClass("fromUser");
+            edge.markAddedUser();
           } else {
-            edge.addClass("fromLav");
+            edge.markAddedLavaan();
           }
 
           checkNodeLoop(sourceId);
@@ -219,26 +215,25 @@
         }
         if (lav_model.free[i] == 0) {
           if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
-            edge.addClass("fixed");
-            edge.data("value", lav_model.ustart[i]);
+            edge.fixPara(lav_model.ustart[i]);
           } else {
             edge.remove();
           }
         } else {
-          edge.addClass("free");
+          edge.setFree();
         }
         if (!imported) {
-          edge.addClass("validated");
+          edge.validate();
         }
       }
     }
     if (!imported) {
       cy.edges().forEach((edge) => {
-        if (!edge.hasClass("validated")) {
+        if (!edge.isValid()) {
           edge.remove();
         }
       });
-      cy.nodes(".fromLav").forEach((node) => {
+      cy.getLavaanNodes().forEach((node) => {
         if (node.connectedEdges().length == 0) {
           node.remove();
           cy.nodes().forEach((node) => {
@@ -253,10 +248,9 @@
     if (!$appState.parsedModel) {
       $appState.parsedModel = true;
     }
-    if (cy.edges().not(".byLav").length > 0) {
+    if (cy.getUserEdges().length > 0) {
       $appState.modelEmpty = false;
     }
-
     $appState.loadingMode = false;
   }
 
@@ -349,7 +343,7 @@
         if (existingEdge.length != 1) {
           debugger;
         }
-        if (existingEdge.hasClass("free")) {
+        if (existingEdge.isFree()) {
           // Object to store all the estimates
           let allEstimates = {};
 

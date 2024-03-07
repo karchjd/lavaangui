@@ -11,19 +11,19 @@ export function applyLinkedClass(columnNames, apply) {
   }
   let cy = get(cyStore);
   const nodes = cy.nodes(function (node) {
-    return node.hasClass("observed-variable");
+    return node.isObserved();
   });
   if (nodes.length > 0) {
     let all_linked = true;
     for (var i = 0; i < nodes.length; i++) {
       const node = nodes[i];
-      const label = node.data("label");
+      const label = node.getLabel();
       if (apply) {
-        node.removeClass("linked");
+        node.link();
       }
       if (columnNames.includes(label)) {
         if (apply) {
-          node.addClass("linked");
+          node.unlink();
         }
       } else {
         all_linked = false;

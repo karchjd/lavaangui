@@ -27,6 +27,7 @@
   import FileMenu from "./MenuTop/FileMenu.svelte";
   import Reactive from "./Shiny/Reactive.svelte";
   import AutoMove from "./Graph/AutoMove.svelte";
+  import ExtendCyto from "./Graph/ExtendCyto.svelte";
 </script>
 
 <AppReady />
@@ -48,6 +49,7 @@
     {/if}
     <MainContainer>
       <Graph />
+      <ExtendCyto />
       <GridGuides />
       <AutoMove />
       <Zoom />

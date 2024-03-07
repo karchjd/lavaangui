@@ -99,50 +99,47 @@
   }
 
   cy.on("ehcomplete", (event, sourceNode, targetNode, addedEdge) => {
-    console.log("ehcomplete");
     const edge = addedEdge;
     const sourceNodeId = sourceNode.id();
     const targetNodeId = targetNode.id();
-    edge.addClass("free");
-    edge.addClass("nolabel");
-    edge.addClass("fromUser");
+    edge.init();
     if (sourceNodeId !== targetNodeId) {
       if (spaceKeyDown) {
-        edge.addClass("undirected");
+        edge.setUndirected();
       } else {
-        edge.addClass("directed");
+        edge.setDirected();
       }
       checkNodeLoop(sourceNodeId);
       checkNodeLoop(targetNodeId);
     } else {
-      edge.addClass("loop");
+      edge.makeLoop();
       checkNodeLoop(targetNodeId);
     }
     //removers
     if (
-      (edge.hasClass("undirected") || edge.hasClass("loop")) &&
-      (sourceNode.hasClass("constant") || targetNode.hasClass("constant"))
+      (edge.isUndirected() || edge.myIsLoop()) &&
+      (sourceNode.isConstant() || targetNode.isConstant())
     ) {
       cy.remove(edge);
     }
 
-    if (edge.hasClass("directed") && targetNode.hasClass("constant")) {
+    if (edge.isDirected() && targetNode.isConstant()) {
       cy.remove(edge);
     }
 
-    if (edge.hasClass("directed") && sourceNode.hasClass("constant")) {
+    if (edge.isDirected() && sourceNode.isConstant()) {
       const conConstant = targetNode.connectedEdges((edge_local) =>
-        edge_local.source().hasClass("constant"),
+        edge_local.source().isConstant(),
       );
       if (conConstant.length > 1) {
         cy.remove(edge);
       }
     }
 
-    if (edge.hasClass("directed") && sourceNode.hasClass("constant")) {
-      edge.data("isMean", "1");
+    if (edge.isDirected() && sourceNode.isConstant()) {
+      edge.makeMeanEdge();
     } else {
-      edge.data("isMean", "0");
+      edge.makeOtherEdge();
     }
     tolavaan($modelOptions.mode);
   });

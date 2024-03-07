@@ -14,7 +14,7 @@ export function tolavaan(mode) {
   const edges = cy.edges();
 
   if (appState_local.loadingMode ||
-    edges.not(".byLav").length == 0 ||
+    cy.getUserEdges().length == 0 ||
     appState_local.buttonDown) {
     return;
   }
@@ -23,8 +23,7 @@ export function tolavaan(mode) {
 
 
   for (var i = 0; i < edges.length; i++) {
-    edges[i].removeData("est");
-    edges[i].removeClass("hasEst");
+    edges[i].removeEstimates();
   }
   const tolavaan = mode !== "user model";
   let for_R = createSyntax(tolavaan);
@@ -49,11 +48,8 @@ export function tolavaan(mode) {
       // @ts-expect-error
       Shiny.setInputValue("runCounter", Math.random());
     }
-    cy.edges(".byLav").forEach((existingEdge) => {
-      existingEdge.removeClass("fixed");
-      existingEdge.addClass("free");
-      existingEdge.removeData("value");
-      existingEdge.removeClass("byLav");
+    cy.getLavaanModifiedEdges().forEach((existingEdge) => {
+      existingEdge.freePara()
     });
   }
   appState_local.loadingMode = false;
@@ -73,20 +69,20 @@ function addTerms(node, edge) {
   if (node == undefined) {
     node_label = "1";
   } else {
-    node_label = node.data("label");
+    node_label = node.getLabel();
   }
   let premultiplier = false;
   let formula;
-  if (edge.hasClass("fixed") && !edge.hasClass("byLav")) {
-    formula = edge.data("value") + "*" + node_label;
+  if (edge.isFixed() && edge.isUserAdded()) {
+    formula = edge.getValue() + "*" + node_label;
     premultiplier = true;
-  } else if (edge.hasClass("forcefree")) {
+  } else if (edge.isForceFree()) {
     formula = "NA*" + node_label;
     premultiplier = true;
   }
 
-  if (edge.hasClass("label")) {
-    const label = edge.data("label");
+  if (edge.hasLabel()) {
+    const label = edge.getLabel();
     if (!premultiplier) {
       formula = label + "*" + node_label;
     } else {
@@ -118,18 +114,16 @@ export function createSyntax(run) {
   }
 
   // measurement model
-  const latentNodes = cy.nodes(function (node) {
-    return node.hasClass("latent-variable");
-  });
+  const latentNodes = cy.getLatentNodes()
   let shown = false;
   for (let i = 0; i < latentNodes.length; i++) {
     const latentNode = latentNodes[i];
     let nodeNames = "";
     const connectedEdges = latentNode.connectedEdges(function (edge) {
       return (
-        edge.hasClass("directed") &&
+        edge.isDirected() &&
         edge.source().id() == latentNode.id() &&
-        edge.target().hasClass("observed-variable")
+        edge.target().isObserved()
       );
     });
     if (connectedEdges.length > 0) {
@@ -164,25 +158,25 @@ export function createSyntax(run) {
 
         nodeNames += addTerms(node, connectedEdges[sortedIndices[j]]);
       }
-      syntax += " " + latentNode.data("label") + " =~ " + nodeNames + "\n";
+      syntax += " " + latentNode.getLabel() + " =~ " + nodeNames + "\n";
     } else {
       if (!shown) {
         syntax += "# measurement model" + "\n";
         shown = true;
       }
-      syntax += " " + latentNode.data("label") + " =~ 0" + "\n";
+      syntax += " " + latentNode.getLabel() + " =~ 0" + "\n";
     }
   }
 
   // regression
 
   function regression_edge(edge) {
-    let res = edge.hasClass("directed") &&
-      !edge.source().hasClass("constant") &&
+    let res = edge.isDirected() &&
+      !edge.source().isConstant() &&
       !(
-        edge.source().hasClass("latent-variable") &&
-        edge.target().hasClass("observed-variable")
-      ) && (edge.hasClass("fromUser") || edge.hasClass("byLav"))
+        edge.source().isLatent() &&
+        edge.target().isObserved()
+      ) && (edge.isUserAdded() || edge.isModifiedLavaan())
     return res;
 
   }
@@ -208,7 +202,7 @@ export function createSyntax(run) {
           }
           nodeNames += addTerms(node, connectedEdges[j]);
         }
-        syntax += "\n " + targetNode.data("label") + " ~ " + nodeNames;
+        syntax += "\n " + targetNode.getLabel() + " ~ " + nodeNames;
       }
     }
   }
@@ -216,8 +210,8 @@ export function createSyntax(run) {
   // covariances
   let cov_edges = cy.edges(function (edge) {
     return (
-      (edge.hasClass("undirected") || edge.hasClass("loop")) &&
-      (edge.hasClass("fromUser") || edge.hasClass("byLav"))
+      (edge.isUndirected() || edge.myIsLoop()) &&
+      (edge.isUserAdded() || edge.isModifiedLavaan())
     );
   });
   if (cov_edges.length > 0) {
@@ -231,19 +225,19 @@ export function createSyntax(run) {
 
   // mean structure
   const constant_nodes = cy.nodes(function (node) {
-    return node.hasClass("constant");
+    return node.isConstant();
   });
   for (let i = 0; i < constant_nodes.length; i++) {
     const c_node = constant_nodes[i];
     const connectedEdges = c_node.connectedEdges(function (edge) {
-      return edge.hasClass("fromUser");
+      return edge.isUserAdded();
     });
     if (connectedEdges.length > 0) {
       syntax += "\n " + "# intercepts" + "\n ";
       for (var j = 0; j < connectedEdges.length; j++) {
         var node = connectedEdges[j].target();
         syntax +=
-          node.data("label") +
+          node.getLabel() +
           " ~ " +
           addTerms(undefined, connectedEdges[j]) +
           "\n";
@@ -251,13 +245,14 @@ export function createSyntax(run) {
     }
   }
 
-  // check for formative factor 
   syntax = "'\n" + syntax + "'" + "\n\n";
+
+  // check for ordered nodes
   let ordered_nodes = cy.nodes(function (node) {
-    return node.hasClass("ordered");
+    return node.isOrdered();
   });
 
-  const ordered_labels = ordered_nodes.map(node => node.data('label'));
+  const ordered_labels = ordered_nodes.map(node => node.getLabel());
 
 
   const lavOptions = produceLavaanOptions(ordered_labels);

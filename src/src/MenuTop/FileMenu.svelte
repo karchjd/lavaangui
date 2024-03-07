@@ -194,7 +194,7 @@
     cy_save.json(cy.json());
 
     // Remove link with data set
-    cy_save.nodes().removeClass("linked");
+    cy_save.nodes().unlink();
 
     // Convert diagram data to JSON string
     const json = cy_save.json();
@@ -238,7 +238,7 @@
     $appState.loadedFileName = null;
     $appState.ids = null;
     $dataInfo = null;
-    cy.nodes().removeClass("linked");
+    cy.nodes().unlink();
   }
 
   function startDownload(object, fileEnding) {
