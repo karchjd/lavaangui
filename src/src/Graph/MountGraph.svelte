@@ -6,6 +6,7 @@
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { tolavaan } from "../Shiny/toR.js";
   import { OBSERVED, LATENT, CONSTANT } from "./classNames.js";
+  import { edgeItems } from "../MenuTop/viewModule.js";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -42,7 +43,6 @@
         });
       }
       $appState.buttonDown = false;
-      tolavaan($modelOptions.mode);
     }
 
     // Handle 'l', 'o', 'c' keys
@@ -61,7 +61,6 @@
       }
       addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
       $appState.buttonDown = false;
-      tolavaan($modelOptions.mode);
     }
     $appState.buttonDown = false;
   }
@@ -129,8 +128,8 @@
     }
 
     if (edge.isDirected() && sourceNode.isConstant()) {
-      const conConstant = targetNode.connectedEdges((edge_local) =>
-        edge_local.source().isConstant(),
+      const conConstant = targetNode.connectedEdges(
+        (edge_local) => edge_local.isUserAdded() && edge.source().isConstant(),
       );
       if (conConstant.length > 1) {
         cy.remove(edge);
@@ -142,7 +141,6 @@
     } else {
       edge.makeOtherEdge();
     }
-    tolavaan($modelOptions.mode);
   });
 
   function handleDragOver(event) {

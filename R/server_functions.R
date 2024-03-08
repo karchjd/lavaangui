@@ -62,6 +62,6 @@ getTextOut <- function(result){
     # Capture error
     errors <<- e
   })
-  problem <- !is.null(warnings) || !is.null(errors)
+  problem <-  !is.null(errors)
   return(list(results = results, errors = errors, warnings = warnings, problem = problem))
 }

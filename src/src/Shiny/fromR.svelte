@@ -67,7 +67,7 @@
         res =
           edge.source().getLabel() == goal_edge.source &&
           edge.target().getLabel() == goal_edge.target;
-        if (goal_edge.directed == DIRECTED) {
+        if (goal_edge.directed == UNDIRECTED) {
           res =
             res ||
             (edge.source().getLabel() == goal_edge.target &&

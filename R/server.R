@@ -151,8 +151,9 @@ lavaan_gui_server <- function(input, output, session) {
     }else{
       out <- to_render()
       if(!is.null(out$warning)){
-        cat("Could not get results because of the following lavaan warning.\nProbably your model is not identified\n")
+        cat("Beware of the following lavaan warning\n")
         cat(out$warning$message)
+        cat("\n\n")
       }
       if(!is.null(out$error)){
         cat("Could not get results because of the following lavaan error.\nProbably your model is not identified\n")
@@ -185,8 +186,8 @@ lavaan_gui_server <- function(input, output, session) {
       })
       return(out)
     }else{
-      return(text_res)
       session$sendCustomMessage("lav_failed", "lav_error")  
+      return(text_res)
     }
   }
   
@@ -195,6 +196,7 @@ lavaan_gui_server <- function(input, output, session) {
     req(input$runCounter)
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
+    print(fromJavascript)
     if(fromJavascript$mode == "user model"){
       to_render(fromJavascript$model$R_script)
       return(NULL)
@@ -205,7 +207,6 @@ lavaan_gui_server <- function(input, output, session) {
     lavaan_model <- eval(parse(text = lavaan_parse_string))
     model_parsed <- parTable(lavaan_model)
     session$sendCustomMessage("lav_model", model_parsed)
-    
     if (fromJavascript$mode == "full model"){
       to_render(modelJavascript$R_script)
       return(NULL)
@@ -243,7 +244,7 @@ lavaan_gui_server <- function(input, output, session) {
                                     function(e){
                                       to_render(NULL)
                                       session$sendCustomMessage("lav_failed", "lav_error")
-                                      to_render("stopped by user")
+                                      to_render(e$message)
                                     })
             prom <- promises::finally(prom, function(){
               if(file.exists(abort_file)){

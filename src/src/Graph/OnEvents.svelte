@@ -5,16 +5,6 @@
   import { tolavaan } from "../Shiny/toR.js";
   let cy = get(cyStore);
 
-  // Initialize a map to keep track of the classes for each element
-  let classMap = new Map();
-
-  // Function to update class map with the current classes of elements
-  function updateClassMap(cy) {
-    cy.elements().forEach((ele) => {
-      classMap.set(ele.id(), ele.classes().join(" "));
-    });
-  }
-
   cy.on("add", "node", function (event) {
     $appState.loadingMode = true;
     const node = event.target;

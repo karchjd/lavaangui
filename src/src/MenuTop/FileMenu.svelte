@@ -41,6 +41,7 @@
     cy.elements().remove();
     resetCounters();
     $appState.parsedModel = false;
+    $modelOptions.fix_first = true;
     // @ts-expect-error
     Shiny.setInputValue("show_help", Math.random());
     for (let key in $fitCache) {
