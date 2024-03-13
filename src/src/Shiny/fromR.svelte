@@ -146,6 +146,10 @@
     let const_added = false;
     let added_const_id;
     for (let i = 0; i < lav_model.lhs.length; i++) {
+      //skip equality constraints
+      if (lav_model.op[i] == "==") {
+        continue;
+      }
       // validate and remove existing edges
       let existingEdge = findEdge(
         lav_model.lhs[i],

@@ -72,7 +72,6 @@ export const graphStyles = [
       "text-background-color": "#fff",
       "text-background-opacity": 1,
       "text-background-padding": "4px",
-      "edge-text-rotation": "autorotate",
     },
   },
   {
