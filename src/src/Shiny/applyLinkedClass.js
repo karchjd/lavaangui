@@ -23,10 +23,11 @@ export function applyLinkedClass(columnNames, apply) {
       }
       if (columnNames.includes(label)) {
         if (apply) {
-          node.unlink();
+          node.link();
         }
       } else {
         all_linked = false;
+        return;
       }
     }
     if (all_linked) {
