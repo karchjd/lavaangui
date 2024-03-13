@@ -1,5 +1,5 @@
 <script>
-    import { modelOptions, visibility } from "../stores";
+    import { modelOptions } from "../stores";
     import { tolavaan } from "../Shiny/toR.js";
 
     $: {

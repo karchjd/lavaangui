@@ -83,7 +83,7 @@
     });
   }
 
-  $: if (ready && $gridViewOptions.gridAlign !== undefined) {
+  $: if (ready && $gridViewOptions.gridResize !== undefined) {
     let cy = get(cyStore);
     cy.gridGuide({
       resize: $gridViewOptions.gridResize,

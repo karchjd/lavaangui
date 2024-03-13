@@ -6,14 +6,12 @@
     import TextItem from "./helpers/TextItem.svelte";
 </script>
 
-<!-- todo color -->
-
 <Dropdown minimal={!full} name={"Grid Options"}>
     <CheckItem name={"Show Grid"} bind:checked={$gridViewOptions.gridShow} />
     <CheckItem name={"Snap to Grid"} bind:checked={$gridViewOptions.gridSnap} />
     <CheckItem
         name={"Resize to Grid"}
-        bind:checked={$gridViewOptions.gridAlign}
+        bind:checked={$gridViewOptions.gridResize}
     />
     <CheckItem
         name={"Snap to Alignment on Release"}
