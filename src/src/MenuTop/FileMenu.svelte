@@ -17,6 +17,7 @@
   import cytoscape from "cytoscape";
   import svg from "cytoscape-svg";
   import { saveAs } from "file-saver";
+  import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
 
   cytoscape.use(svg);
 
@@ -89,6 +90,11 @@
     if ($appState.dataAvail) {
       applyLinkedClass($appState.columnNames, false);
     }
+
+    debugger;
+    cy.nodes().forEach((node) => {
+      checkNodeLoop(node.id());
+    });
   }
 
   async function uploadModel() {
