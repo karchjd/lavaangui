@@ -21,8 +21,6 @@
     LOOP,
   } from "../Graph/classNames.js";
 
-  const number_digits = 2;
-
   function serverAvail() {
     // @ts-expect-error
     return typeof Shiny === "object" && Shiny !== null;
@@ -284,19 +282,17 @@
         let allEstimates = {};
 
         // Populate the object with estimates from lav_result
-        allEstimates.est = lav_result.est[i].toFixed(number_digits);
-        allEstimates.p_value = lav_result.pvalue[i].toFixed(number_digits);
-        allEstimates.se = lav_result.se[i].toFixed(number_digits);
-        allEstimates.ciLow = lav_result["ci.lower"][i].toFixed(number_digits);
-        allEstimates.ciHigh = lav_result["ci.upper"][i].toFixed(number_digits);
+        allEstimates.est = lav_result.est[i];
+        allEstimates.p_value = lav_result.pvalue[i];
+        allEstimates.se = lav_result.se[i];
+        allEstimates.ciLow = lav_result["ci.lower"][i];
+        allEstimates.ciHigh = lav_result["ci.upper"][i];
 
         // Populate the object with estimates from std_result
-        allEstimates.est_std = std_result["est.std"][i].toFixed(number_digits);
-        allEstimates.se_std = std_result.se[i].toFixed(number_digits);
-        allEstimates.ciLow_std =
-          std_result["ci.lower"][i].toFixed(number_digits);
-        allEstimates.ciHigh_std =
-          std_result["ci.upper"][i].toFixed(number_digits);
+        allEstimates.est_std = std_result["est.std"][i];
+        allEstimates.se_std = std_result.se[i];
+        allEstimates.ciLow_std = std_result["ci.lower"][i];
+        allEstimates.ciHigh_std = std_result["ci.upper"][i];
 
         // Store the consolidated estimates object in a single data attribute
         existingEdge.data("estimates", allEstimates);

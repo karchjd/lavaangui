@@ -17,14 +17,14 @@ export let viewRadios = [
   { name: "Estimate + Standard Error", value: "estSE" },
 ];
 
-export function updateLabels(viewOption, std) {
+export function updateLabels(viewOption, std, number_digits) {
   const cy = get(cyStore);
   const postfix = std ? "_std" : "";
 
-  const styleEst = generateStyleEst(viewOption, postfix);
+  const styleEst = generateStyleEst(viewOption, postfix, number_digits);
   cy.style().selector("edge.hasEst").style({ label: styleEst }).update();
 
-  const labeledStyleEst = generateLabeledStyleEst(viewOption, postfix);
+  const labeledStyleEst = generateLabeledStyleEst(viewOption, postfix, number_digits);
   cy.style()
     .selector("edge.hasEst.label")
     .style({ label: labeledStyleEst })
@@ -60,29 +60,30 @@ function getStars(pval) {
   }
 }
 
-function generateStyleEst(viewOption, postfix) {
+
+function generateStyleEst(viewOption, postfix, number_digits) {
   switch (viewOption) {
     case "est":
-      return (edge) => edge.data("estimates")["est" + postfix];
+      return (edge) => edge.data("estimates")["est" + postfix].toFixed(number_digits);
     case "ci":
       return (edge) =>
-        `[${edge.data("estimates")["ciLow" + postfix]}, ${edge.data("estimates")["ciHigh" + postfix]
+        `[${edge.data("estimates")["ciLow" + postfix].toFixed(number_digits)}, ${edge.data("estimates")["ciHigh" + postfix].toFixed(number_digits)
         }]`;
     case "estPVal":
       return (edge) =>
-        `${edge.data("estimates")["est" + postfix]}${getStars(
+        `${edge.data("estimates")["est" + postfix].toFixed(number_digits)}${getStars(
           edge.data("estimates")["p_value"]
         )}`;
     case "estSE":
       return (edge) =>
-        `${edge.data("estimates")["est" + postfix]} (${edge.data("estimates")["se" + postfix]
+        `${edge.data("estimates")["est" + postfix].toFixed(number_digits)} (${edge.data("estimates")["se" + postfix].toFixed(number_digits)
         })`;
     default:
       return (edge) => ""; // Or some default behavior
   }
 }
 
-function generateLabeledStyleEst(viewOption, postfix) {
-  const baseStyle = generateStyleEst(viewOption, postfix);
+function generateLabeledStyleEst(viewOption, postfix, number_digits) {
+  const baseStyle = generateStyleEst(viewOption, postfix, number_digits);
   return (edge) => `${edge.data("label")} = ${baseStyle(edge)}`;
 }

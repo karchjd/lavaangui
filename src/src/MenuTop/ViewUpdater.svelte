@@ -16,7 +16,11 @@
   }
 
   $: if (mounted) {
-    updateLabels($gridViewOptions.view, $gridViewOptions.std);
+    updateLabels(
+      $gridViewOptions.view,
+      $gridViewOptions.std,
+      $gridViewOptions.number_digits,
+    );
   }
 
   onMount(() => {

@@ -5,6 +5,11 @@
   import RadioItem from "./helpers/RadioItem.svelte";
   import { edgeItems, viewRadios } from "./viewModule";
   export let minimal = false;
+  import TextItem from "./helpers/TextItem.svelte";
+
+  $: {
+    Shiny.setInputValue("confindence_level", $gridViewOptions.ci);
+  }
 </script>
 
 <Dropdown name="View" {minimal}>
@@ -29,17 +34,21 @@
       bind:group={$gridViewOptions.view}
     />
   {/each}
+  <li class="divider" />
   <li style="padding-left: 28px;">
     Confidence Level
     <input
-      id="confindence_level"
       type="number"
-      class="shiny-input-number form-control"
-      value="0.95"
+      bind:value={$gridViewOptions.ci}
       min="0"
       max="0.999999"
       step="0.01"
-      style="width: 6em"
+      style="width: 4em"
     />
   </li>
+  <TextItem
+    name={"Number Digits"}
+    bind:value={$gridViewOptions.number_digits}
+    min={0}
+  />
 </Dropdown>
