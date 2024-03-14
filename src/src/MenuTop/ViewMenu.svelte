@@ -29,4 +29,17 @@
       bind:group={$gridViewOptions.view}
     />
   {/each}
+  <li style="padding-left: 28px;">
+    Confidence Level
+    <input
+      id="confindence_level"
+      type="number"
+      class="shiny-input-number form-control"
+      value="0.95"
+      min="0"
+      max="0.999999"
+      step="0.01"
+      style="width: 6em"
+    />
+  </li>
 </Dropdown>

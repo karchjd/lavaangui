@@ -41,7 +41,8 @@ lavaan_gui_server <- function(input, output, session) {
     )
     session$sendCustomMessage(type = "dataInfo", message = data_info)
   }
-
+  
+  fit <- reactiveVal()
 
   callback <- c(
     "var colnames = table.columns().header().to$().map(function(){return this.innerHTML;}).get();",
@@ -83,6 +84,7 @@ lavaan_gui_server <- function(input, output, session) {
   if ((!imported) && (exists("importedModel"))) {
     session$sendCustomMessage("imported_model", message = importedModel[c("parTable", "latent", "obs")])
     session$sendCustomMessage("lav_results", importedModel[c("normal", "std")])
+    fit(importedModel$fit)
     to_render(getTextOut(importedModel$fit))
     df <- importedModel$df
     df_full <- list(df = df, name = "Imported from R")
@@ -165,14 +167,23 @@ lavaan_gui_server <- function(input, output, session) {
     }
   })
   
+  observeEvent(input$confindence_level,{
+    req(fit())
+    res <- list(normal = parameterestimates(fit(), level = input$confindence_level),
+                                            std = standardizedsolution(fit(), level = input$confindence_level))
+    session$sendCustomMessage("lav_estimates", res) 
+  })
+
+  
   # extract results from model
   getResults <- function(result){
+    fit <- reactiveVal(result)
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     fromJavascript$fitted_model = NULL
     text_res <- getTextOut(result)
     if(!text_res$problem){
       out <- tryCatch({
-        res <- list(normal = parameterestimates(result), std = standardizedsolution(result), 
+        res <- list(normal = parameterestimates(result, level = input$confindence_level), std = standardizedsolution(result, level = input$confindence_level), 
                     fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
                     data = digest::digest(getData()))
         session$sendCustomMessage("lav_results", res) 

@@ -34,6 +34,7 @@ export let gridViewOptions = writable({
   showVar: true,
   std: false,
   view: "est",
+  ci: .95
 });
 
 export let fitCache = writable({

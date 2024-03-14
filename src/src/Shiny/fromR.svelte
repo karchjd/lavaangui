@@ -271,6 +271,40 @@
     $appState.loadingMode = false;
   }
 
+  function updateEstimates(lav_result, std_result) {
+    let cy = get(cyStore);
+    for (let i = 0; i < lav_result.lhs.length; i++) {
+      let existingEdge = findEdge(
+        lav_result.lhs[i],
+        lav_result.op[i],
+        lav_result.rhs[i],
+      );
+      if (existingEdge.isFree()) {
+        // Object to store all the estimates
+        let allEstimates = {};
+
+        // Populate the object with estimates from lav_result
+        allEstimates.est = lav_result.est[i].toFixed(number_digits);
+        allEstimates.p_value = lav_result.pvalue[i].toFixed(number_digits);
+        allEstimates.se = lav_result.se[i].toFixed(number_digits);
+        allEstimates.ciLow = lav_result["ci.lower"][i].toFixed(number_digits);
+        allEstimates.ciHigh = lav_result["ci.upper"][i].toFixed(number_digits);
+
+        // Populate the object with estimates from std_result
+        allEstimates.est_std = std_result["est.std"][i].toFixed(number_digits);
+        allEstimates.se_std = std_result.se[i].toFixed(number_digits);
+        allEstimates.ciLow_std =
+          std_result["ci.lower"][i].toFixed(number_digits);
+        allEstimates.ciHigh_std =
+          std_result["ci.upper"][i].toFixed(number_digits);
+
+        // Store the consolidated estimates object in a single data attribute
+        existingEdge.data("estimates", allEstimates);
+        existingEdge.addClass("hasEst");
+      }
+    }
+  }
+
   if (serverAvail()) {
     //sent by server when data is loaded
     // @ts-expect-error
@@ -351,43 +385,19 @@
       $fitCache.lastFitLavFit = all_res.fitted_model;
       $fitCache.lastFitModel = all_res.model;
       $fitCache.lastFitData = all_res.data;
-      let cy = get(cyStore);
-      for (let i = 0; i < lav_result.lhs.length; i++) {
-        let existingEdge = findEdge(
-          lav_result.lhs[i],
-          lav_result.op[i],
-          lav_result.rhs[i],
-        );
-        if (existingEdge.isFree()) {
-          // Object to store all the estimates
-          let allEstimates = {};
-
-          // Populate the object with estimates from lav_result
-          allEstimates.est = lav_result.est[i].toFixed(number_digits);
-          allEstimates.p_value = lav_result.pvalue[i].toFixed(number_digits);
-          allEstimates.se = lav_result.se[i].toFixed(number_digits);
-          allEstimates.ciLow = lav_result["ci.lower"][i].toFixed(number_digits);
-          allEstimates.ciHigh =
-            lav_result["ci.upper"][i].toFixed(number_digits);
-
-          // Populate the object with estimates from std_result
-          allEstimates.est_std =
-            std_result["est.std"][i].toFixed(number_digits);
-          allEstimates.se_std = std_result.se[i].toFixed(number_digits);
-          allEstimates.ciLow_std =
-            std_result["ci.lower"][i].toFixed(number_digits);
-          allEstimates.ciHigh_std =
-            std_result["ci.upper"][i].toFixed(number_digits);
-
-          // Store the consolidated estimates object in a single data attribute
-          existingEdge.data("estimates", allEstimates);
-          existingEdge.addClass("hasEst");
-        }
-      }
+      updateEstimates(lav_result, std_result);
       $appState.fitting = false;
       $appState.result = "estimates_sucess";
       $appState.loadingMode = false;
       setAlert("success", "Succesfully fitted model");
+    });
+
+    // get new estimates
+    // @ts-expect-error
+    Shiny.addCustomMessageHandler("lav_estimates", function (all_res) {
+      const lav_result = all_res.normal;
+      const std_result = all_res.std;
+      updateEstimates(lav_result, std_result);
     });
 
     //import model
