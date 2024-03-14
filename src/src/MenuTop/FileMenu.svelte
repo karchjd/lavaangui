@@ -18,6 +18,8 @@
   import svg from "cytoscape-svg";
   import { saveAs } from "file-saver";
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
+  import { jsPDF } from "jspdf";
+  import { svg2pdf } from "svg2pdf.js";
 
   cytoscape.use(svg);
 
@@ -268,33 +270,41 @@
     startDownload(cy.jpg(), "jpg");
   }
 
-  function exportSVG() {
+  function getSVG() {
     const cy = get(cyStore);
     const svgContent = cy.svg({ scale: 1, full: true });
+    return svgContent;
+  }
+
+  function exportSVG() {
+    const svgContent = getSVG();
     const blob = new Blob([svgContent], {
       type: "image/svg+xml;charset=utf-8",
     });
     startDownload(blob, "svg");
   }
 
-  function exportPDF() {
-    const cy = get(cyStore);
-    const svgContent = cy.svg({ scale: 1, full: true });
-    const blob = new Blob([svgContent], {
-      type: "image/svg+xml;charset=utf-8",
-    });
-    const url = URL.createObjectURL(blob);
-
+  async function exportPDF() {
+    const svgContent = getSVG();
+    const parser = new DOMParser();
+    const svgElement = parser.parseFromString(
+      svgContent,
+      "image/svg+xml",
+    ).documentElement;
+    svgElement.style.position = "absolute";
+    svgElement.style.left = "-9999px"; // Move the SVG off-screen
+    document.body.appendChild(svgElement); // Temporarily add the SVG to the document
+    const rect = svgElement.getBoundingClientRect(); // Get the actual size
+    document.body.removeChild(svgElement); // Remove the SVG from the document
+    const width = rect.width;
+    const height = rect.height;
     const pdf = new jsPDF({
-      orientation: "landscape",
+      orientation: width > height ? "landscape" : "portrait",
       unit: "pt",
-      format: [cy.width(), cy.height()],
+      format: [width, height],
     });
-
-    pdf.addImage(url, "SVG", 0, 0, cy.width(), cy.height());
-    pdf.save("network.pdf");
-
-    URL.revokeObjectURL(url);
+    await svg2pdf(svgElement, pdf, { width, height });
+    pdf.save("test.pdf");
   }
 
   let menuItems;
@@ -334,6 +344,11 @@
         name: "Export Diagram to SVG",
         disable: $appState.modelEmpty,
         action: exportSVG,
+      },
+      {
+        name: "Export Diagram to PDF",
+        disable: $appState.modelEmpty,
+        action: exportPDF,
       },
     ];
     menuItems = full ? allMenuItems : allMenuItems.slice(-2);

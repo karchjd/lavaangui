@@ -36,11 +36,7 @@ determine_seperator_header <- function(filepath) {
   
   consistent <- apply(counts, 2, function(column) {
     # Check if the second entry of the column is bigger than 0
-    if (column[2] > 0) {
-      return(check_equal(column))
-    } else {
-      return(FALSE)
-    }
+      return(column[2] > 0 && check_equal(column))
   })
   
   
