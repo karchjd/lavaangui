@@ -237,12 +237,12 @@
     window.$("<a>").attr({ href: url, download: "diagram.json" })[0].click();
   }
 
-  function downloadModelData() {
+  async function downloadModelData() {
     const str = jsonModel();
     // @ts-expect-error
     Shiny.setInputValue("model", str);
-    // @ts-expect-error
-    Shiny.setInputValue("triggerDownload", Math.random());
+    await new Promise((r) => setTimeout(r, 1));
+    document.getElementById("downloadData").click();
   }
 
   function removeData() {

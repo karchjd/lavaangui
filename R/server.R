@@ -284,15 +284,6 @@ lavaan_gui_server <- function(input, output, session) {
     file.create(abort_file)
   })
   
-  ## download stuff, still needed
-  observe({
-    req(input$triggerDownload)
-    # Start the download
-    shinyjs::click("downloadData")
-  })
-  
-  
-  
   # Define the download handler function
   output$downloadData <- downloadHandler(
     filename = function() {
@@ -318,4 +309,7 @@ lavaan_gui_server <- function(input, output, session) {
       zip::zip(zipfile = file, files = c("model.json", "data.csv"), root = tempDir)
     }
   )
+  
+  outputOptions(output, "downloadData", suspendWhenHidden = FALSE) 
+  
 }

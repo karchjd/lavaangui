@@ -11,6 +11,6 @@
 
 <style>
   a {
-    display: block;
+    display: none;
   }
 </style>
