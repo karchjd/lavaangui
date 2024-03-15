@@ -2,6 +2,9 @@
 #' @import lavaan
 start_app <- function(fit = NULL, full, where){
   if(!is.null(fit)){
+    if(lavInspect(fit, "ngroups") > 1){
+      stop("Multiple groups model currently not supported")
+    }
     pars <- parameterEstimates(fit)
     varNames <- lavaanNames(fit, type = "ov")
     factNames <- lavaanNames(fit, type = "lv")
