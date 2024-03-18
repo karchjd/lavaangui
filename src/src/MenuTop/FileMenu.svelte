@@ -45,6 +45,7 @@
     resetCounters();
     $appState.parsedModel = false;
     $modelOptions.fix_first = true;
+    $modelOptions.mode = "user model";
     // @ts-expect-error
     Shiny.setInputValue("show_help", Math.random());
     for (let key in $fitCache) {

@@ -339,12 +339,12 @@
         bootbox.dialog({
           title: "Rename Variable",
           message: `
-        <div>
-          <label>Enter a label:</label>
-          <input type="text" class="form-control" id="new-label">
-          ${dropdownHTML}
-        </div>
-      `,
+      <div>
+        <label>Enter a label:</label>
+        <input type="text" class="form-control" id="new-label">
+        ${dropdownHTML}
+      </div>
+    `,
           buttons: {
             cancel: {
               label: "Cancel",
@@ -382,6 +382,17 @@
                 }
               },
             },
+          },
+          onShown: function (e) {
+            document
+              .getElementById("new-label")
+              .addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                  event.preventDefault(); // Prevent form submission if any
+                  const confirmButton = e.target.querySelector(".btn-primary");
+                  confirmButton.click();
+                }
+              });
           },
         });
       },
