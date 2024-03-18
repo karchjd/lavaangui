@@ -16,6 +16,11 @@
   function alertDrag() {
     bootbox.alert("Drag me on the model window to create a variable");
   }
+
+  function handleDragStart(event, name) {
+    $appState.dragged = "observed-with-name";
+    $appState.draggedName = name;
+  }
 </script>
 
 <div class="toolbox">
@@ -59,8 +64,20 @@
       />
     </div>
   </div>
+  {#if $appState.dataAvail}
+    <ul class="draggable-list">
+      {#each $appState.columnNames as name}
+        <li
+          draggable="true"
+          class="draggable-item"
+          on:dragstart={(event) => handleDragStart(event, name)}
+        >
+          {name}
+        </li>
+      {/each}
+    </ul>
+  {/if}
   <div id="messages">
-    <DataInfo />
     {#if $appState.parsedModel}
       <div id="means">
         {#if $appState.meansModelled}
@@ -75,9 +92,9 @@
 
 <style>
   .toolbox {
-    height: 30px;
+    height: 60px;
     justify-content: space-between;
-    align-items: center;
+    align-items: left;
   }
 
   #messages {
@@ -94,6 +111,7 @@
     position: relative;
     border: none;
     background: none;
+    cursor: grab;
   }
 
   button::before {
@@ -158,13 +176,20 @@
     margin-left: 300px;
   }
 
-  #buttonCont {
+  .draggable-list {
     display: flex;
-    flex-basis: 70%;
-    padding: 0px;
-    min-width: 0;
-    min-height: 0;
-    align-items: center;
-    flex: 1;
+    gap: 10px;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    overflow-x: scroll;
+    width: 60%;
+  }
+  .draggable-item {
+    padding: 2px 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    cursor: grab;
   }
 </style>

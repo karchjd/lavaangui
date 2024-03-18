@@ -55,6 +55,7 @@ export let appState = writable({
   ids: null,
   result: "none",
   dragged: null,
+  draggedName: null,
   drawing: false,
   full: true,
   ready: false,

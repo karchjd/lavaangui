@@ -4,9 +4,7 @@
   import { cyStore, ehStore, appState, modelOptions } from "../stores.js";
   import { get } from "svelte/store";
   import { checkNodeLoop } from "./checkNodeLoop.js";
-  import { tolavaan } from "../Shiny/toR.js";
   import { OBSERVED, LATENT, CONSTANT } from "./classNames.js";
-  import { edgeItems } from "../MenuTop/viewModule.js";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -150,7 +148,11 @@
   function handleCreateNode(event) {
     event.preventDefault();
     const pos = { x: event.offsetX, y: event.offsetY };
-    const position = addNode($appState.dragged, pos);
+    if ($appState.dragged != "observed-with-name") {
+      const position = addNode($appState.dragged, pos);
+    } else {
+      const position = addNode(OBSERVED, pos, $appState.draggedName);
+    }
   }
 </script>
 
