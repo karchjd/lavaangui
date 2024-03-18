@@ -154,6 +154,49 @@
       const position = addNode(OBSERVED, pos, $appState.draggedName);
     }
   }
+
+  let isMouseDown = false;
+  let currentEdge = null;
+
+  cy.on("mousedown", "edge.loop", function (event) {
+    isMouseDown = true;
+    currentEdge = event.target;
+    currentEdge.unpanify();
+    currentEdge.addClass("fixDeg");
+  });
+
+  function vectorAngleDegrees(x, y) {
+    let angle = Math.atan2(x, -y) * (180 / Math.PI);
+    if (angle < 0) angle += 360;
+    return angle;
+  }
+
+  cy.on("mousemove", function (event) {
+    if (!isMouseDown || !currentEdge) return;
+
+    let sourceNode = currentEdge.source();
+    let nodePosition = sourceNode.renderedPosition();
+    let angle = vectorAngleDegrees(m.x - nodePosition.x, m.y - nodePosition.y);
+
+    const tolerance = 5;
+    const targetAngles = [0, 90, 180, 270];
+    for (let i = 0; i < targetAngles.length; i++) {
+      if (Math.abs(angle - targetAngles[i]) <= tolerance) {
+        angle = targetAngles[i];
+        break;
+      }
+    }
+    currentEdge.style({
+      "loop-direction": `${angle}deg`,
+    });
+  });
+
+  window.addEventListener("mouseup", function () {
+    if (isMouseDown) {
+      isMouseDown = false;
+      currentEdge = null;
+    }
+  });
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
