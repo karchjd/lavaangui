@@ -86,7 +86,20 @@ export const graphStyles = [
       "source-arrow-fill": "filled",
       "target-arrow-color": "#000",
       "source-arrow-color": "#000",
-      "control-point-step-size": 60,
+      "control-point-step-size": (edge) => {
+        const sourceNode = edge.source();
+        const height = parseInt(sourceNode.style('height'));
+        const width = parseInt(sourceNode.style('width'));
+        let maxVal;
+        if (edge.style("loop-direction") == "0deg" || edge.style("loop-direction") == "180deg") {
+          maxVal = height;
+        } else if ((edge.style("loop-direction") == "90deg" || edge.style("loop-direction") == "270deg")) {
+          maxVal = width;
+        } else {
+          maxVal = Math.max(width, height);
+        }
+        return maxVal / 80 * 60;
+      },
     },
   },
   {

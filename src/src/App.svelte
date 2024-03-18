@@ -27,6 +27,7 @@
   import FileMenu from "./MenuTop/FileMenu.svelte";
   import Reactive from "./Shiny/Reactive.svelte";
   import AutoMove from "./Graph/AutoMove.svelte";
+  import NodeEditing from "./Graph/NodeEditing.svelte";
   import ExtendCyto from "./Graph/ExtendCyto.svelte";
 </script>
 
@@ -52,6 +53,7 @@
       <ExtendCyto />
       <GridGuides />
       <AutoMove />
+      <NodeEditing />
       <Zoom />
       <ContextMenus />
       <OnEvents />
