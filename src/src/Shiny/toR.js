@@ -8,7 +8,6 @@ function serverAvail() {
 }
 
 export function tolavaan(mode) {
-  console.log("tolavaan");
   var appState_local = get(appState);
   var viewOptions = get(gridViewOptions);
   let cy = get(cyStore);
@@ -28,7 +27,6 @@ export function tolavaan(mode) {
   let for_R = createSyntax(mode);
   appState_local.result = "script"; //TODO: check whether needed
   // @ts-expect-error
-  console.log(for_R)
   Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
   // @ts-expect-error
   Shiny.setInputValue("runCounter", Math.random());

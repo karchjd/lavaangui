@@ -75,8 +75,10 @@ lavaan_gui_server <- function(input, output, session) {
 
   
   output$tbl_data <- DT::renderDT({
-    DT::datatable(getData(), callback = htmlwidgets::JS(callback), 
-              options = list(ordering = FALSE))
+    df <- getData()
+    local_data <- df[sapply(df, labelled::is.labelled)] <- lapply(df[sapply(df, labelled::is.labelled)], labelled::to_factor)
+    DT::datatable(df, 
+              options = list(ordering = FALSE), callback = htmlwidgets::JS(callback))
   }, server = FALSE) 
   
 
@@ -207,7 +209,6 @@ lavaan_gui_server <- function(input, output, session) {
     req(input$runCounter)
     ## construct model and send to javascript
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
-    print(fromJavascript)
     if(fromJavascript$mode == "user model"){
       to_render(fromJavascript$model$R_script)
       return(NULL)

@@ -18,8 +18,6 @@
   function onMouseUp() {
     moving = false;
   }
-
-  // 	$: console.log(moving);
 </script>
 
 <section

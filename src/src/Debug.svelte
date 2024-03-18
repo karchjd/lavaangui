@@ -21,7 +21,6 @@
   });
 
   const unsubscribe4 = gridViewOptions.subscribe((state) => {
-    console.log("changed");
     window.gridViewOptions = state;
   });
 </script>

@@ -24,7 +24,8 @@ Imports:
     utils,
     DT,
     vtable (>= 1.4.4),
-    zip (>= 2.3.0)
+    zip (>= 2.3.0),
+    labelled
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3

@@ -3,8 +3,6 @@
   import { updateVisibility, updateLabels, edgeItems } from "./viewModule";
   import { gridViewOptions, modelOptions } from "../stores";
 
-  console.log("viewupdated loaded");
-
   let mounted = false;
 
   $: if (mounted) {
