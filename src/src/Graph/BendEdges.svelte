@@ -13,7 +13,7 @@
   onMount(() => {
     // Initialize the Cytoscape instance
     cy.edgeEditing({
-      undoable: false,
+      undoable: true,
       bendRemovalSensitivity: 16,
       enableMultipleAnchorRemovalOption: true,
       initAnchorsAutomatically: false,

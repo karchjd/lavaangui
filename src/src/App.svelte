@@ -29,6 +29,7 @@
   import AutoMove from "./Graph/AutoMove.svelte";
   import NodeEditing from "./Graph/NodeEditing.svelte";
   import ExtendCyto from "./Graph/ExtendCyto.svelte";
+  import BendEdges from "./Graph/BendEdges.svelte";
 </script>
 
 <AppReady />
@@ -59,6 +60,7 @@
       <OnEvents />
       <UndoRedo />
       <ViewUpdater />
+      <BendEdges />
       {#if $appState.full}
         <Results />
       {/if}
