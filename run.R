@@ -1,3 +1,4 @@
+## for heroku
 library(shiny)
 pkgload::load_all(export_all = FALSE,helpers = FALSE,attach_testthat = FALSE, compile = FALSE)
 print("starting server")

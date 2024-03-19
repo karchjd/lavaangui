@@ -8,6 +8,7 @@
   import AddMenu from "./AddMenu.svelte";
   import ShowHelp from "./ShowHelp.svelte";
   import GridOptions from "./GridOptions.svelte";
+  import DropDownOpenhover from "./DropDownOpenhover.svelte";
 </script>
 
 <Navbar>
@@ -19,4 +20,5 @@
   <Layouts />
   <GridOptions />
   <ShowHelp />
+  <DropDownOpenhover />
 </Navbar>
