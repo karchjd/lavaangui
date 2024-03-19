@@ -9,7 +9,7 @@
       <span class="btn btn-default btn-file">
         Browse...
         <input
-          id="fileInput"
+          id="dataUpload-fileInput"
           name="fileInput"
           type="file"
           style="position: absolute !important; top: -99999px !important; left: -99999px !important;"

@@ -142,7 +142,7 @@
 
   function loadData() {
     //  / Trigger the file input click action
-    document.getElementById("fileInput").click();
+    document.getElementById("dataUpload-fileInput").click();
   }
 
   function loadModelData() {

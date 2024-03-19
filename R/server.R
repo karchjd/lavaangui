@@ -42,22 +42,14 @@ lavaan_gui_server <- function(input, output, session) {
   observeEvent(input$sendnames,{
     session$sendCustomMessage("columnames", message = input$newnames)
   })
-
-
   
-  # data upload
-  data_content <- observeEvent(input$fileInput,{
-    req(input$fileInput)
-    if (is.null(input$fileInput$content)) {
-      data <- list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name)
-    } else {
-      content <- input$fileInput$content
-      decoded <- base64enc::base64decode(content)
-      data <- list(df = readr::read_csv(decoded), name = "data.csv")
-    }
-    data_react(data)
-    propagateData(data, session)
+  x <- serverDataUploader("dataUpload")
+  reactive({
+    req(x)
+    data_react(x)
   })
+  
+  
   
   
   
