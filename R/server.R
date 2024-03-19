@@ -19,6 +19,13 @@ lavaan_gui_server <- function(input, output, session) {
   to_render <- reactiveVal(help_text)
   first_run_layout <- reactiveVal(TRUE)
   data_react <- reactiveVal()
+  getData <- reactive({
+    local_data <- data_react()
+    if (!is.null(input$newnames)) {
+      names(local_data$df) <- input$newnames
+    }
+    return(local_data$df)
+  })
   
   ## import model if present
   importRes <- importModel(session)
@@ -29,38 +36,7 @@ lavaan_gui_server <- function(input, output, session) {
     data_react(importRes$data_react)
   }
   
-  callback <- c(
-    "var colnames = table.columns().header().to$().map(function(){return this.innerHTML;}).get();",
-    "table.on('dblclick.dt', 'thead th', function(e) {",
-    "  var $th = $(this);",
-    "  var index = $th.index();",
-    "  var colname = $th.text(), newcolname = colname;",
-    "  var $input = $('<input type=\"text\">')",
-    "  $input.val(colname);",
-    "  $th.empty().append($input);",
-    "  $input.on('change', function(){",
-    "    newcolname = $input.val();",
-    "    if(newcolname != colname){",
-    "      $(table.column(index).header()).text(newcolname);",
-    "      colnames[index] = newcolname;",
-    "      Shiny.setInputValue('newnames', colnames.slice(1));",
-    "      Shiny.setInputValue('sendnames', Math.random());",
-    "    }",
-    "    $input.remove();",
-    "  }).on('blur', function(){",
-    "    $(table.column(index).header()).text(newcolname);",
-    "    $input.remove();",
-    "  });",
-    "});"
-  )
-  
-  
-  output$tbl_data <- DT::renderDT({
-    df <- getData()
-    local_data <- df[sapply(df, labelled::is.labelled)] <- lapply(df[sapply(df, labelled::is.labelled)], labelled::to_factor)
-    DT::datatable(df, 
-                  options = list(ordering = FALSE), callback = htmlwidgets::JS(callback))
-  }, server = FALSE) 
+  serverDataViewer("dataViewer", getData)
   
   #investigate this one
   observeEvent(input$sendnames,{
@@ -83,14 +59,8 @@ lavaan_gui_server <- function(input, output, session) {
     propagateData(data, session)
   })
   
-  # renaming data columns
-  getData <- reactive({
-    local_data <- data_react()
-    if (!is.null(input$newnames)) {
-      names(local_data$df) <- input$newnames
-    }
-    return(local_data$df)
-  })
+  
+  
   
   # showing help
   observeEvent(input$show_help,{
