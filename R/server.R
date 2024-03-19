@@ -1,8 +1,5 @@
 lavaan_gui_server <- function(input, output, session) {
-  if(exists(".importedModel128498129481249124891284129", where = .GlobalEnv)){
-    importedModel <- .GlobalEnv$.importedModel128498129481249124891284129
-  }
-  full <- .GlobalEnv$.full12849812948124912489128412948 
+  
   
   ## init stuff
   shinyjs::useShinyjs(html = TRUE)
@@ -13,15 +10,25 @@ lavaan_gui_server <- function(input, output, session) {
     return(!is.null(getData()))
   }
   
-  # state vars
-  abort_file <- NULL
-  imported <- FALSE
+  #reactive vals
+  fit <- reactiveVal()
   to_render <- reactiveVal(help_text)
   first_run_layout <- reactiveVal(TRUE)
-  
-  #set state of front-end to full or reduced
-  session$sendCustomMessage("full", message = full)
   data_react <- reactiveVal()
+  
+  # state vars
+  abort_file <- NULL
+  
+  importRes <- importModel(session)
+  fit(importRes$fit)
+  to_render(importRes$to_render)
+  data_react(importRes$data_react)
+  imported <- importRes$imported
+  
+  
+  
+  
+  
   
   #to send errors to frontend
   op <- options(shiny.error = function() {
@@ -32,17 +39,6 @@ lavaan_gui_server <- function(input, output, session) {
   
   onStop(function() options(op))
   
-  
-  propagateData <- function(df, import = FALSE){
-    data_info <- list(
-      name = df$name, columns = colnames(df$df),
-      summary = create_summary(df$df),
-      import = import
-    )
-    session$sendCustomMessage(type = "dataInfo", message = data_info)
-  }
-  
-  fit <- reactiveVal()
 
   callback <- c(
     "var colnames = table.columns().header().to$().map(function(){return this.innerHTML;}).get();",
@@ -81,21 +77,6 @@ lavaan_gui_server <- function(input, output, session) {
               options = list(ordering = FALSE), callback = htmlwidgets::JS(callback))
   }, server = FALSE) 
   
-
-  # import model if present
-  if ((!imported) && (exists("importedModel"))) {
-    session$sendCustomMessage("imported_model", message = importedModel[c("parTable", "latent", "obs")])
-    session$sendCustomMessage("lav_results", importedModel[c("normal", "std")])
-    fit(importedModel$fit)
-    to_render(getTextOut(importedModel$fit))
-    df <- importedModel$df
-    df_full <- list(df = df, name = "Imported from R")
-    propagateData(df_full, import = TRUE)
-    data_react(df_full)
-    imported <- TRUE
-    session$sendCustomMessage("setToEstimate", message = rnorm(1))
-  }
-  
   # data upload
   data_content <- observeEvent(input$fileInput,{
     req(input$fileInput)
@@ -107,7 +88,7 @@ lavaan_gui_server <- function(input, output, session) {
       data <- list(df = readr::read_csv(decoded), name = "data.csv")
     }
     data_react(data)
-    propagateData(data)
+    propagateData(data, session)
   })
   
   # renaming data columns
@@ -129,7 +110,7 @@ lavaan_gui_server <- function(input, output, session) {
     req(input$layout)
     fromJavascript <- jsonlite::fromJSON(input$layout)
     if(imported && first_run_layout()){
-      semPlotModel <- semPlot::semPlotModel(importedModel$fit)
+      semPlotModel <- semPlot::semPlotModel(fit())
       first_run_layout(FALSE)
     }else{
       model <- eval(parse(text = fromJavascript$model$syntax))
