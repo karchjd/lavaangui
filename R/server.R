@@ -1,4 +1,12 @@
 lavaan_gui_server <- function(input, output, session) {
+  #settings
+  #to send errors to frontend
+  op <- options(shiny.error = function() {
+    session <- getDefaultReactiveDomain()
+    error_message <- geterrmessage()
+    session$sendCustomMessage("serverError", list(msg=error_message))
+  })
+  onStop(function() options(op))
   
   
   ## init stuff
@@ -6,40 +14,21 @@ lavaan_gui_server <- function(input, output, session) {
   future::plan(future::multisession)
   `%...>%` <- promises::`%...>%`
   
-  checkDataAvail <- function() {
-    return(!is.null(getData()))
-  }
-  
   #reactive vals
   fit <- reactiveVal()
   to_render <- reactiveVal(help_text)
   first_run_layout <- reactiveVal(TRUE)
   data_react <- reactiveVal()
   
-  # state vars
-  abort_file <- NULL
-  
+  ## import model if present
   importRes <- importModel(session)
-  fit(importRes$fit)
-  to_render(importRes$to_render)
-  data_react(importRes$data_react)
   imported <- importRes$imported
+  if(imported){
+    fit(importRes$fit)
+    to_render(importRes$to_render)
+    data_react(importRes$data_react)
+  }
   
-  
-  
-  
-  
-  
-  #to send errors to frontend
-  op <- options(shiny.error = function() {
-    session <- getDefaultReactiveDomain()
-    error_message <- geterrmessage()
-    session$sendCustomMessage("serverError", list(msg=error_message))
-  })
-  
-  onStop(function() options(op))
-  
-
   callback <- c(
     "var colnames = table.columns().header().to$().map(function(){return this.innerHTML;}).get();",
     "table.on('dblclick.dt', 'thead th', function(e) {",
@@ -65,17 +54,20 @@ lavaan_gui_server <- function(input, output, session) {
     "});"
   )
   
-  observeEvent(input$sendnames,{
-    session$sendCustomMessage("columnames", message = input$newnames)
-  })
-
   
   output$tbl_data <- DT::renderDT({
     df <- getData()
     local_data <- df[sapply(df, labelled::is.labelled)] <- lapply(df[sapply(df, labelled::is.labelled)], labelled::to_factor)
     DT::datatable(df, 
-              options = list(ordering = FALSE), callback = htmlwidgets::JS(callback))
+                  options = list(ordering = FALSE), callback = htmlwidgets::JS(callback))
   }, server = FALSE) 
+  
+  #investigate this one
+  observeEvent(input$sendnames,{
+    session$sendCustomMessage("columnames", message = input$newnames)
+  })
+
+
   
   # data upload
   data_content <- observeEvent(input$fileInput,{
@@ -184,6 +176,13 @@ lavaan_gui_server <- function(input, output, session) {
       return(text_res)
     }
   }
+  
+  checkDataAvail <- function() {
+    return(!is.null(getData()))
+  }
+  
+  # state vars
+  abort_file <- NULL
   
   # main functions for fitting lavaan
   observeEvent(input$runCounter, {
