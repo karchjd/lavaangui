@@ -36,7 +36,7 @@ export function applySemLayout(name, undoArg = true) {
 
   if (serverAvail()) {
     // @ts-expect-error
-    Shiny.setInputValue("layout", JSON.stringify(for_R));
+    Shiny.setInputValue("layout-layout", JSON.stringify(for_R));
   }
 }
 
