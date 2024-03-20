@@ -122,7 +122,6 @@
   }
 
   function getModelLav(lav_model, imported) {
-    $appState.result = "model";
     $appState.meansModelled = false;
     // TODO: remove? $appState.loadingMode = true;
     let cy = get(cyStore);
@@ -380,7 +379,6 @@
       $fitCache.lastFitModel = all_res.model;
       $fitCache.lastFitData = all_res.data;
       $appState.fitting = false;
-      $appState.result = "estimates_sucess";
       // TODO: remove? $appState.loadingMode = false;
     });
 

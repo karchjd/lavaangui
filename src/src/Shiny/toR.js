@@ -25,7 +25,6 @@ export function tolavaan(mode) {
     edges[i].removeEstimates();
   }
   let for_R = createSyntax(mode);
-  appState_local.result = "script"; //TODO: check whether needed
   // @ts-expect-error
   Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
   // @ts-expect-error

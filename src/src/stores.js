@@ -53,7 +53,6 @@ export let appState = writable({
   columnNames: null,
   loadedFileName: null,
   ids: null,
-  result: "none",
   dragged: null,
   draggedName: null,
   drawing: false,
