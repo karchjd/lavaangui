@@ -19,7 +19,6 @@ Imports:
     readxl (>= 1.4.3),
     semPlot,
     shiny (>= 1.7.4),
-    shinyjs (>= 2.1.0),
     tools,
     utils,
     DT,

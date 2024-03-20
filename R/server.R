@@ -10,7 +10,6 @@ lavaan_gui_server <- function(input, output, session) {
 
 
   ## init stuff
-  shinyjs::useShinyjs(html = TRUE) ##TODO CHECK NEEDED
   future::plan(future::multisession) ##TODO CHECK MOVE
   `%...>%` <- promises::`%...>%` ##TODO CHECK NEEDED
 
