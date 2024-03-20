@@ -182,6 +182,7 @@ lavaan_gui_server <- function(input, output, session) {
       res <- getResults(cacheResult)
       session$sendCustomMessage("usecache", "")
       to_render(res)
+      return(NULL)
     }
     
     # Data missing, stop
