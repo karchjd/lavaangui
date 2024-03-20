@@ -138,7 +138,6 @@
       for (let i = 0; i < latent.length; i++) {
         importNode(LATENT, latent[i]);
       }
-      debugger;
       lav_model = lav_model.parTable;
     }
 

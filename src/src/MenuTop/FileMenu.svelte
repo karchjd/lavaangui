@@ -20,6 +20,7 @@
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { jsPDF } from "jspdf";
   import { svg2pdf } from "svg2pdf.js";
+  import * as Constants from "../Graph/classNames.js";
 
   cytoscape.use(svg);
 
@@ -68,22 +69,19 @@
     let cy = get(cyStore);
     // for backwards compatibility, remove eventually
     let json;
-    if ("model" in combinedData && "modelOpt" in combinedData) {
-      json = JSON.parse(combinedData.model);
-      const modelOpt = JSON.parse(combinedData.modelOpt);
-      const gridViewOpt = JSON.parse(combinedData.gridViewOpt);
-      mergeExistingProperties($modelOptions, modelOpt);
-      mergeExistingProperties($gridViewOptions, gridViewOpt);
-      if (combinedData.fitCache != undefined) {
-        const localCache = JSON.parse(combinedData.fitCache);
-        $fitCache = localCache;
-      }
-    } else {
-      json = combinedData;
+    json = JSON.parse(combinedData.model);
+    const modelOpt = JSON.parse(combinedData.modelOpt);
+    const gridViewOpt = JSON.parse(combinedData.gridViewOpt);
+    mergeExistingProperties($modelOptions, modelOpt);
+    mergeExistingProperties($gridViewOptions, gridViewOpt);
+    if (combinedData.fitCache != undefined) {
+      const localCache = JSON.parse(combinedData.fitCache);
+      $fitCache = localCache;
     }
+
     // Set loading mode, update diagram and perform checks
     $appState.loadingMode = true;
-    cy.json(json);
+    cy.json({ elements: json });
     cy.style(graphStyles);
     cy.minZoom(graphSettings.minZoom);
     cy.maxZoom(graphSettings.maxZoom);
@@ -94,7 +92,6 @@
       applyLinkedClass($appState.columnNames, false);
     }
 
-    debugger;
     cy.nodes().forEach((node) => {
       checkNodeLoop(node.id());
     });
@@ -200,17 +197,19 @@
   }
 
   function jsonModel() {
-    //remove link with data set
     const cy = get(cyStore);
     // Deep clone cytoscape instance to cy_save
     const cy_save = cytoscape();
-    cy_save.json(cy.json());
+    let json = cy.json().elements;
 
     // Remove link with data set
-    cy_save.nodes().unlink();
+    json.nodes.forEach((node) => {
+      node.classes = node.classes
+        .split(" ")
+        .filter((c) => c !== Constants.LINKED)
+        .join(" ");
+    });
 
-    // Convert diagram data to JSON string
-    const json = cy_save.json();
     const model = JSON.stringify(json);
     const modelOpt = JSON.stringify($modelOptions);
     const gridViewOpt = JSON.stringify($modelOptions);
@@ -225,6 +224,7 @@
   }
 
   function downloadModel() {
+    debugger;
     const combinedData = jsonModel();
 
     // Create a new Blob object using the JSON string
