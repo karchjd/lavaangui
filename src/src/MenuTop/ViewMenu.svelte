@@ -8,7 +8,7 @@
   import TextItem from "./helpers/TextItem.svelte";
 
   $: {
-    Shiny.setInputValue("confindence_level", $gridViewOptions.ci);
+    Shiny.setInputValue("ests-confindence_level", $gridViewOptions.ci);
   }
 </script>
 

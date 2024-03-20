@@ -10,15 +10,15 @@ lavaan_gui_server <- function(input, output, session) {
 
 
   ## init stuff
-  shinyjs::useShinyjs(html = TRUE)
-  future::plan(future::multisession)
-  `%...>%` <- promises::`%...>%`
+  shinyjs::useShinyjs(html = TRUE) ##TODO CHECK NEEDED
+  future::plan(future::multisession) ##TODO CHECK MOVE
+  `%...>%` <- promises::`%...>%` ##TODO CHECK NEEDED
 
   # reactive vals
   fit <- reactiveVal(NULL)
   forceEstimateUpdate <- reactiveVal()
   to_render <- reactiveVal(help_text)
-  first_run_layout <- reactiveVal(TRUE)
+  first_run_layout <- reactiveVal(TRUE) ##TODO CHECK NEEDED
 
 
   ## import model if present
@@ -61,19 +61,17 @@ lavaan_gui_server <- function(input, output, session) {
   ## layout
   serverLayout("layout", fit)
   
+  ## main server for running ladan
+  runRes <- serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit)
   
- 
-  
-  ## put this and getTextOut into serverExtractResults
-  ## cleanup the functions, there seems to be three functions that
-  ## extract results
+  serverEstimateUpdater("ests", forceEstimateUpdate, fit)
   
   output$lavaan_syntax_R <- renderPrint({
     req(to_render())
     ## for user model
     if (is.character(to_render())) {
       cat(to_render())
-    ## for partable TODO: can be removed i think
+      ## for partable TODO: can be removed i think
     } else if (any(class(to_render()) == "lavaan.data.frame")) {
       print(to_render())
     } else {
@@ -91,21 +89,6 @@ lavaan_gui_server <- function(input, output, session) {
         print(out$results)
       }
     }
-  })
-  
-  runRes <- serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit)
-  
-  
-  ## update estimates
-  observe({
-    req(fit())
-    req(input$confindence_level)
-    forceEstimateUpdate()
-    res <- list(
-      normal = parameterestimates(fit(), level = input$confindence_level),
-      std = standardizedsolution(fit(), level = input$confindence_level)
-    )
-    session$sendCustomMessage("lav_estimates", res)
   })
 
   ## put this into downloadModule
