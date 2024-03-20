@@ -16,7 +16,6 @@
 #' 4. Optionally uses the `fit` argument to pass a fit object to the Shiny application.
 #'
 #' @export
-start_gui <- function(fit = NULL){
+start_gui <- function(fit = NULL) {
   start_app(fit = fit, full = TRUE, where = "browser")
 }
-

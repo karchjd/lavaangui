@@ -1,7 +1,7 @@
 serverDataUploader <- function(id, getData) {
   moduleServer(id, function(input, output, session) {
     data <- reactiveVal(NULL)
-    observeEvent(input$fileInput,{
+    observeEvent(input$fileInput, {
       if (is.null(input$fileInput$content)) {
         data(list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name))
       } else {

@@ -1,7 +1,5 @@
-
-
 # extract results from model
-getResults <- function(result,  fromJavascriptJSON, session, df) {
+getResults <- function(result, fromJavascriptJSON, session, df) {
   fromJavascript <- jsonlite::fromJSON(fromJavascriptJSON)
   fromJavascript$fitted_model <- NULL
   text_res <- getTextOut(result)
@@ -34,9 +32,9 @@ getResults <- function(result,  fromJavascriptJSON, session, df) {
 serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
   moduleServer(id, function(input, output, session) {
     abort_file_global <- reactiveVal()
-    
+    future::plan(future::multisession)
     ## main loop
-    observeEvent(input$fromJavascript,{
+    observeEvent(input$fromJavascript, {
       req(input$fromJavascript)
       ## Mode == "User Model", just send R_script to output
       fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
@@ -44,7 +42,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
         to_render(fromJavascript$model$R_script)
         return(NULL)
       }
-      
+
       ## Mode = "Full Model" or "Estimate", send model
       modelJavascript <- fromJavascript$model
       model <- eval(parse(text = modelJavascript$syntax))
@@ -52,22 +50,22 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
       lavaan_model <- eval(parse(text = lavaan_parse_string))
       model_parsed <- parTable(lavaan_model)
       session$sendCustomMessage("lav_model", model_parsed)
-      
+
       ## Mode = "Full Model" send script to render and stop
       if (fromJavascript$mode == "full model") {
         to_render(modelJavascript$R_script)
         return(NULL)
       }
-      
+
       ## Mode == "Estimate", estimate model and send results or send results from cache
       stopifnot(fromJavascript$mode == "estimate")
-      
-      
+
+
       # cache is valid, return cached results
       cacheValid <- !is.null(fromJavascript$cache$lastFitModel) &&
         fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
         (is.null(getData()) || fromJavascript$cache$lastFitData == digest::digest(getData()))
-      if(cacheValid){
+      if (cacheValid) {
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
         fit(cacheResult)
         res <- getResults(cacheResult, input$fromJavascript, session, getData())
@@ -76,13 +74,13 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
         to_render(res)
         return(NULL)
       }
-      
+
       # Data missing, stop
-      if(!isTruthy(getData())){
+      if (!isTruthy(getData())) {
         session$sendCustomMessage("data_missing", 1)
         return(NULL)
       }
-      
+
       # not all variables available, stop
       data <- getData()
       missing_vars <- checkVarsInData(model_parsed, data)
@@ -90,7 +88,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
         session$sendCustomMessage("missing_vars", names(missing_vars)[missing_vars])
         return(NULL)
       }
-      
+
       ## fit model
       session$sendCustomMessage("fitting", "")
       abort_file <- tempfile()
@@ -103,8 +101,8 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
         {
           `%get%` <- function(pkg, fun) {
             get(fun,
-                envir = asNamespace(pkg),
-                inherits = FALSE
+              envir = asNamespace(pkg),
+              inherits = FALSE
             )
           }
           print("watching in promise")
@@ -113,7 +111,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
           original_function_string <- deparse(original_function)
           new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
           new_function <- eval(parse(text = new_function))
-          
+
           environment(new_function) <- asNamespace("lavaan")
           utils::assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
           eval(parse(text = lavaan_string))
@@ -123,14 +121,16 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
         seed = TRUE
       )
       ## sucesses fit
-      promises::then(fut,
-                     function(value) {
-                       fit(value)
-                       res <- getResults(value, input$fromJavascript, session, getData())
-                       to_render(res)
-                       session$sendCustomMessage("lav_sucess", "lav_error")
-                     })
-      
+      promises::then(
+        fut,
+        function(value) {
+          fit(value)
+          res <- getResults(value, input$fromJavascript, session, getData())
+          to_render(res)
+          session$sendCustomMessage("lav_sucess", "lav_error")
+        }
+      )
+
       ## fail fit
       promises::catch(
         fut,
@@ -140,7 +140,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
           to_render(e$message)
         }
       )
-      
+
       ## cleanup
       promises::finally(fut, function() {
         if (file.exists(abort_file)) {
@@ -149,14 +149,16 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
       })
       return(NULL) ## Never ever remove this. This stops the UI from blocking!!!
     })
-    
+
     observeEvent(input$abort, {
       print("creating")
       abort_file_global()
       file.create(abort_file_global())
     })
-    
-    list(to_render = to_render,
-         forceEstimateUpdate = forceEstimateUpdate)
+
+    list(
+      to_render = to_render,
+      forceEstimateUpdate = forceEstimateUpdate
+    )
   })
 }

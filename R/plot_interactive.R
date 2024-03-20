@@ -1,7 +1,7 @@
 #' Launch Interactive Plot for Lavaan Models
 #'
 #' The `plot_interactive` function launches an interactive plotting tool
-#' for visualizing lavaan models. The function can operate as either a 
+#' for visualizing lavaan models. The function can operate as either a
 #' standalone gadget or within a browser, based on the 'where' argument.
 #'
 #' @param fit The fit object that needs to be visualized interactively.
@@ -13,7 +13,7 @@
 #'
 #' @details
 #' This function leverages the `start_app` internal function to initialize the interactive
-#' plot. It passes the `fit` object for visualization and sets the display location based on the 
+#' plot. It passes the `fit` object for visualization and sets the display location based on the
 #' `where` parameter.
 #'
 #' @export

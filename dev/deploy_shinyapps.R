@@ -18,7 +18,7 @@
 ret_val <- system("cd src && npm run build:deploy")
 if (ret_val != 0) {
   stop("Failed to compile Svelte front end.")
-}  
+}
 # pkgload::load_all(export_all = FALSE,helpers = FALSE,attach_testthat = FALSE, compile = FALSE)
 
 # Deploy to Posit Connect or ShinyApps.io

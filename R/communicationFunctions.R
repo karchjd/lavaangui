@@ -1,11 +1,11 @@
-importModel <- function(session){
+importModel <- function(session) {
   imported <- FALSE
-  if(exists(".importedModel128498129481249124891284129", where = .GlobalEnv)){
+  if (exists(".importedModel128498129481249124891284129", where = .GlobalEnv)) {
     importedModel <- .GlobalEnv$.importedModel128498129481249124891284129
   }
-  full <- .GlobalEnv$.full12849812948124912489128412948 
+  full <- .GlobalEnv$.full12849812948124912489128412948
   session$sendCustomMessage("full", message = full)
-  
+
   # import model if present
   if ((!imported) && (exists("importedModel"))) {
     session$sendCustomMessage("imported_model", message = importedModel[c("parTable", "latent", "obs")])
@@ -19,7 +19,7 @@ importModel <- function(session){
   return(list(fit = importedModel$fit, to_render = to_render, data_react = df_full, imported = imported))
 }
 
-propagateData <- function(df, session, import = FALSE){
+propagateData <- function(df, session, import = FALSE) {
   data_info <- list(
     name = df$name, columns = colnames(df$df),
     summary = create_summary(df$df),
@@ -27,4 +27,3 @@ propagateData <- function(df, session, import = FALSE){
   )
   session$sendCustomMessage(type = "dataInfo", message = data_info)
 }
-
