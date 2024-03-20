@@ -241,9 +241,9 @@
   async function downloadModelData() {
     const str = jsonModel();
     // @ts-expect-error
-    Shiny.setInputValue("model", str);
+    Shiny.setInputValue("down-model", str);
     await new Promise((r) => setTimeout(r, 1));
-    document.getElementById("downloadData").click();
+    document.getElementById("down-downloadData").click();
   }
 
   function removeData() {

@@ -1,5 +1,5 @@
 <a
-  id="downloadData"
+  id="down-downloadData"
   class="btn btn-default shiny-download-link shinyjs-hide"
   href={"#"}
   target="_blank"
