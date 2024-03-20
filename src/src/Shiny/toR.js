@@ -26,7 +26,7 @@ export function tolavaan(mode) {
   }
   let for_R = createSyntax(mode);
   // @ts-expect-error
-  Shiny.setInputValue("fromJavascript", JSON.stringify(for_R));
+  Shiny.setInputValue("run-fromJavascript", JSON.stringify(for_R));
   // @ts-expect-error
   Shiny.setInputValue("runCounter", Math.random());
   if (mode === "user model") {

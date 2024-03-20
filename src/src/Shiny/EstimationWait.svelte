@@ -2,7 +2,7 @@
   import { appState } from "../stores";
   function abort() {
     // @ts-expect-error
-    Shiny.setInputValue("abort", Math.random());
+    Shiny.setInputValue("run-abort", Math.random());
   }
 </script>
 
