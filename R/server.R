@@ -93,11 +93,7 @@ lavaan_gui_server <- function(input, output, session) {
     }
   })
   
-  
-  ## put this into runModel module
-  checkDataAvail <- function() {
-    return(!is.null(getData()))
-  }
+
   
   # extract results from model
   getResults <- function(result) {
@@ -164,7 +160,7 @@ lavaan_gui_server <- function(input, output, session) {
     # cache is valid, return cached results
     cacheValid <- !is.null(fromJavascript$cache$lastFitModel) &&
       fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
-      (!checkDataAvail() || fromJavascript$cache$lastFitData == digest::digest(getData()))
+      (is.null(getData()) || fromJavascript$cache$lastFitData == digest::digest(getData()))
     if(cacheValid){
       cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
       fit(cacheResult)

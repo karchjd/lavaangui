@@ -19,7 +19,7 @@
   const standardErrors = [
     { value: "default", name: "Default" },
     { value: "robust", name: "Robust" },
-    // { value: "boot", name: "Bootstrap" },
+    { value: "boot", name: "Bootstrap" },
   ];
 
   const robustSupported = ["default", "ML", "ULS", "DWLS"];
