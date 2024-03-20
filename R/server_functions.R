@@ -1,6 +1,6 @@
 create_summary <- function(df) {
   sum_table <- paste0(utils::capture.output(vtable::sumtable(df, out = "htmlreturn", title = "")), collapse = "")
-  remove_string <- "<table class=\"headtab\"> <tr><td style=\"text-align:left\">sumtable {vtable}</td> <td style=\"text-align:right\">Summary Statistics</td></tr></table> <h1>  </h1>"
+  remove_string <- "<table class=\"headtab\"> <tr><td style=\"text-align:left\">sumtable {vtable}</td> <td style=\"text-align:right\">Summary Statistics</td></tr></table> <h1>  </h1>" # nolint: line_length_linter.
   sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)
   remove_string <- "<title>Summary Statistics</title>"
   sum_table <- gsub(remove_string, "", sum_table, fixed = TRUE)

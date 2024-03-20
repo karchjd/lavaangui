@@ -29,8 +29,9 @@ serverDataViewer <- function(id, getData) {
     output$tbl_data <- DT::renderDT(
       {
         df <- getData()
-        local_data <- df[sapply(df, labelled::is.labelled)] <- lapply(df[sapply(df, labelled::is.labelled)], labelled::to_factor)
-        DT::datatable(df,
+        local_data <- df[sapply(df, labelled::is.labelled)] <-
+          lapply(df[sapply(df, labelled::is.labelled)], labelled::to_factor)
+        DT::datatable(local_data,
           options = list(ordering = FALSE), callback = htmlwidgets::JS(callback)
         )
       },

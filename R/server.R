@@ -13,7 +13,6 @@ lavaan_gui_server <- function(input, output, session) {
   fit <- reactiveVal(NULL)
   forceEstimateUpdate <- reactiveVal()
   to_render <- reactiveVal(help_text)
-  first_run_layout <- reactiveVal(TRUE) ## TODO CHECK NEEDED
 
 
   ## import model if present
@@ -57,7 +56,7 @@ lavaan_gui_server <- function(input, output, session) {
   serverLayout("layout", fit)
 
   ## main server for running ladan
-  runRes <- serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit)
+  serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit)
 
   serverEstimateUpdater("ests", forceEstimateUpdate, fit)
 

@@ -29,7 +29,7 @@ getResults <- function(result, fromJavascriptJSON, session, df) {
   }
 }
 
-serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
+serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
     abort_file_global <- reactiveVal()
     future::plan(future::multisession)
@@ -45,7 +45,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
 
       ## Mode = "Full Model" or "Estimate", send model
       modelJavascript <- fromJavascript$model
-      model <- eval(parse(text = modelJavascript$syntax))
+      model <- eval(parse(text = modelJavascript$syntax)) # nolint: object_usage_linter.
       lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
       lavaan_model <- eval(parse(text = lavaan_parse_string))
       model_parsed <- parTable(lavaan_model)
@@ -59,8 +59,6 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) {
 
       ## Mode == "Estimate", estimate model and send results or send results from cache
       stopifnot(fromJavascript$mode == "estimate")
-
-
       # cache is valid, return cached results
       cacheValid <- !is.null(fromJavascript$cache$lastFitModel) &&
         fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&

@@ -5,7 +5,6 @@ start_app <- function(fit = NULL, full, where) {
     if (lavInspect(fit, "ngroups") > 1) {
       stop("Multiple groups model currently not supported")
     }
-    pars <- parameterEstimates(fit)
     varNames <- lavaanNames(fit, type = "ov")
     factNames <- lavaanNames(fit, type = "lv")
     factNames <- factNames[!factNames %in% varNames]
@@ -14,7 +13,8 @@ start_app <- function(fit = NULL, full, where) {
         as.data.frame(lavInspect(fit, what = "data"))
       },
       error = function(e) {
-        stop("Could not get data from fit object. Probably you fitted your model with a sample covariance matrix, which is currently not supported")
+        stop("Could not get data from fit object. Probably you fitted your model with a sample covariance matrix,
+        which is currently not supported")
       }
     )
     model <- list(obs = varNames, latent = factNames, parTable = parTable(fit), df = df, fit = fit)
