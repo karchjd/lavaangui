@@ -1,5 +1,5 @@
 <pre
-  id="lavaan_syntax_R"
+  id="res-results"
   class="shiny-html-output well"
   data-testid="result-text"
 />
