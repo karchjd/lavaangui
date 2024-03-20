@@ -127,7 +127,7 @@ lavaan_gui_server <- function(input, output, session) {
   }
   
   # state vars
-  abort_file <- NULL
+  abort_file_global <- reactiveVal()
   
   ## main loop
   observeEvent(input$fromJavascript,{
@@ -187,7 +187,8 @@ lavaan_gui_server <- function(input, output, session) {
     
     ## fit model
     session$sendCustomMessage("fitting", "")
-    abort_file <<- tempfile()
+    abort_file <- tempfile()
+    abort_file_global(abort_file)
     lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
     fut <- promises::future_promise(
       {
@@ -253,7 +254,7 @@ lavaan_gui_server <- function(input, output, session) {
   
   
   observeEvent(input$abort, {
-    file.create(abort_file)
+    file.create(abort_file_global())
   })
 
   ## put this into downloadModule
