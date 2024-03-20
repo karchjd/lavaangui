@@ -14,7 +14,7 @@ start_app <- function(fit = NULL, full, where){
     }, error = function(e) {
       stop("Could not get data from fit object. Probably you fitted your model with a sample covariance matrix, which is currently not supported")
     })
-    model <- list(obs = varNames, latent = factNames, parTable = parTable(fit), normal = pars, std = standardizedSolution(fit), df = df, fit = fit)
+    model <- list(obs = varNames, latent = factNames, parTable = parTable(fit), df = df, fit = fit)
     .GlobalEnv$.importedModel128498129481249124891284129 <- model
   }else{
     if (exists(".importedModel128498129481249124891284129", where = .GlobalEnv)) {

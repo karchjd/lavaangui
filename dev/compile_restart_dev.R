@@ -3,7 +3,7 @@
 # # Define the file where you want to save the commit info
 # file_path <- "version_info.txt"
 # 
-# # Get repository information
+# # Get repository information 
 # repo <- repository()
 # 
 # # Get the current commit hash
@@ -18,7 +18,7 @@
 
 
 
-recompile_front <- F
+recompile_front <- T
 
 if (recompile_front){
   # Compile Svelte front end

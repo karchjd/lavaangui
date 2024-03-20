@@ -138,6 +138,7 @@
       for (let i = 0; i < latent.length; i++) {
         importNode(LATENT, latent[i]);
       }
+      debugger;
       lav_model = lav_model.parTable;
     }
 
@@ -376,16 +377,12 @@
     // @ts-expect-error
     Shiny.addCustomMessageHandler("lav_results", function (all_res) {
       $appState.loadingMode = true;
-      const lav_result = all_res.normal;
-      const std_result = all_res.std;
       $fitCache.lastFitLavFit = all_res.fitted_model;
       $fitCache.lastFitModel = all_res.model;
       $fitCache.lastFitData = all_res.data;
-      updateEstimates(lav_result, std_result);
       $appState.fitting = false;
       $appState.result = "estimates_sucess";
       $appState.loadingMode = false;
-      setAlert("success", "Succesfully fitted model");
     });
 
     // get new estimates

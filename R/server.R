@@ -15,7 +15,8 @@ lavaan_gui_server <- function(input, output, session) {
   `%...>%` <- promises::`%...>%`
 
   # reactive vals
-  fit <- reactiveVal()
+  fit <- reactiveVal(NULL)
+  forceEstimateUpdate <- reactiveVal()
   to_render <- reactiveVal(help_text)
   first_run_layout <- reactiveVal(TRUE)
 
@@ -61,16 +62,7 @@ lavaan_gui_server <- function(input, output, session) {
   serverLayout("layout", fit)
   
   
-  ## update confidence level
-  observeEvent(input$confindence_level, {
-    req(fit())
-    res <- list(
-      normal = parameterestimates(fit(), level = input$confindence_level),
-      std = standardizedsolution(fit(), level = input$confindence_level)
-    )
-    session$sendCustomMessage("lav_estimates", res)
-  })
-  
+ 
   
   ## put this and getTextOut into serverExtractResults
   ## cleanup the functions, there seems to be three functions that
@@ -100,12 +92,15 @@ lavaan_gui_server <- function(input, output, session) {
       }
     }
   })
-
-
-
+  
+  
+  ## put this into runModel module
+  checkDataAvail <- function() {
+    return(!is.null(getData()))
+  }
+  
   # extract results from model
   getResults <- function(result) {
-    fit <- reactiveVal(result)
     fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
     fromJavascript$fitted_model <- NULL
     text_res <- getTextOut(result)
@@ -113,7 +108,6 @@ lavaan_gui_server <- function(input, output, session) {
       out <- tryCatch(
         {
           res <- list(
-            normal = parameterestimates(result, level = input$confindence_level), std = standardizedsolution(result, level = input$confindence_level),
             fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
             data = digest::digest(getData())
           )
@@ -136,12 +130,6 @@ lavaan_gui_server <- function(input, output, session) {
     }
   }
   
-  
-  ## put this into runModel module
-  checkDataAvail <- function() {
-    return(!is.null(getData()))
-  }
-
   # state vars
   abort_file <- NULL
   
@@ -179,7 +167,9 @@ lavaan_gui_server <- function(input, output, session) {
       (!checkDataAvail() || fromJavascript$cache$lastFitData == digest::digest(getData()))
     if(cacheValid){
       cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
+      fit(cacheResult)
       res <- getResults(cacheResult)
+      forceEstimateUpdate(rnorm(1))
       session$sendCustomMessage("usecache", "")
       to_render(res)
       return(NULL)
@@ -224,8 +214,17 @@ lavaan_gui_server <- function(input, output, session) {
       globals = c("data", "abort_file", "model", "lavaan_string"),
       seed = TRUE
     )
-    prom <- fut %...>% getResults %...>% to_render
-    prom <- promises::catch(
+    ## sucesses fit
+    promises::then(fut,
+         function(value) {
+           fit(value)
+           res <- getResults(value)
+           to_render(res)
+           session$sendCustomMessage("lav_sucess", "lav_error")
+         })
+    
+    ## fail fit
+    promises::catch(
       fut,
       function(e) {
         to_render(NULL)
@@ -233,13 +232,28 @@ lavaan_gui_server <- function(input, output, session) {
         to_render(e$message)
       }
     )
-    prom <- promises::finally(prom, function() {
+    
+    ## cleanup
+    promises::finally(fut, function() {
       if (file.exists(abort_file)) {
         file.remove(abort_file)
       }
     })
     return(NULL) ## Never ever remove this. This stops the UI from blocking!!!
   })
+  
+  ## update estimates
+  observe({
+    req(fit())
+    req(input$confindence_level)
+    forceEstimateUpdate()
+    res <- list(
+      normal = parameterestimates(fit(), level = input$confindence_level),
+      std = standardizedsolution(fit(), level = input$confindence_level)
+    )
+    session$sendCustomMessage("lav_estimates", res)
+  })
+  
   
   
   observeEvent(input$abort, {
