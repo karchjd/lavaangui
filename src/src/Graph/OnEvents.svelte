@@ -6,7 +6,7 @@
   let cy = get(cyStore);
 
   cy.on("add", "node", function (event) {
-    $appState.loadingMode = true;
+    // TODO: remove? $appState.loadingMode = true;
     const node = event.target;
     if (node.isObserved()) {
       let columnNames = $appState.columnNames;
@@ -15,7 +15,7 @@
         setAlert("success", `Variable ${node.getLabel()} linked to data`);
       }
     }
-    $appState.loadingMode = false;
+    // TODO: remove? $appState.loadingMode = false;
     tolavaan($modelOptions.mode);
     if ($appState.modelEmpty && cy.edges().length > 0) {
       $appState.modelEmpty = false;

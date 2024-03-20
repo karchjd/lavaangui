@@ -124,7 +124,7 @@
   function getModelLav(lav_model, imported) {
     $appState.result = "model";
     $appState.meansModelled = false;
-    $appState.loadingMode = true;
+    // TODO: remove? $appState.loadingMode = true;
     let cy = get(cyStore);
     if (!imported) {
       cy.edges().invalidate();
@@ -266,7 +266,7 @@
     if (cy.getUserEdges().length > 0) {
       $appState.modelEmpty = false;
     }
-    $appState.loadingMode = false;
+    // TODO: remove? $appState.loadingMode = false;
   }
 
   function updateEstimates(lav_result, std_result) {
@@ -375,13 +375,13 @@
     // save all results in data attributes of the correct edges
     // @ts-expect-error
     Shiny.addCustomMessageHandler("lav_results", function (all_res) {
-      $appState.loadingMode = true;
+      // TODO: remove?  $appState.loadingMode = true;
       $fitCache.lastFitLavFit = all_res.fitted_model;
       $fitCache.lastFitModel = all_res.model;
       $fitCache.lastFitData = all_res.data;
       $appState.fitting = false;
       $appState.result = "estimates_sucess";
-      $appState.loadingMode = false;
+      // TODO: remove? $appState.loadingMode = false;
     });
 
     // get new estimates

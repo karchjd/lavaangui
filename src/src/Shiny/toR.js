@@ -13,12 +13,12 @@ export function tolavaan(mode) {
   let cy = get(cyStore);
   const edges = cy.edges();
 
-  if (appState_local.loadingMode ||
+  if (
     cy.getUserEdges().length == 0) {
     return;
   }
 
-  appState_local.loadingMode = true;
+  // TODO: remove? appState_local.loadingMode = true;
 
 
   for (var i = 0; i < edges.length; i++) {
@@ -35,7 +35,7 @@ export function tolavaan(mode) {
       existingEdge.freePara()
     });
   }
-  appState_local.loadingMode = false;
+  // TODO: remove? appState_local.loadingMode = false;
 }
 
 function containsObject(list, obj) {

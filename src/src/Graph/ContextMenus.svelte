@@ -428,10 +428,10 @@
         let columnNames = $appState.columnNames;
         if (columnNames && columnNames.includes(node.getLabel())) {
           node.link();
-          if (!$appState.loadingMode) {
-            // @ts-expect-error
-            bootbox.alert("Variable linked with data set");
-          }
+          // if (!$appState.loadingMode) {
+          // @ts-expect-error
+          bootbox.alert("Variable linked with data set");
+          // }
         }
         tolavaan($modelOptions.mode);
       },

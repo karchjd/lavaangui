@@ -80,7 +80,7 @@
     }
 
     // Set loading mode, update diagram and perform checks
-    $appState.loadingMode = true;
+    // TODO: remove? $appState.loadingMode = true;
     cy.json({ elements: json });
     cy.style(graphStyles);
     cy.minZoom(graphSettings.minZoom);
