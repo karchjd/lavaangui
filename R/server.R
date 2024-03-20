@@ -9,10 +9,6 @@ lavaan_gui_server <- function(input, output, session) {
   onStop(function() options(op))
 
 
-  ## init stuff
-  future::plan(future::multisession) ##TODO CHECK MOVE
-  `%...>%` <- promises::`%...>%` ##TODO CHECK NEEDED
-
   # reactive vals
   fit <- reactiveVal(NULL)
   forceEstimateUpdate <- reactiveVal()
