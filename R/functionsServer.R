@@ -9,8 +9,7 @@ getTextOut <- function(result) {
         {
           sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
           sum_model$pe <- NULL
-          estimates <- parameterestimates(result)
-          list(summary = sum_model, estimates = estimates)
+          sum_model
         },
         error = function(e) {
           return(NULL)
