@@ -17,7 +17,7 @@
 # writeLines(paste("Commit:", current_hash, ", Status:", changes), file_path)
 
 
-recompile_front <- F # nolint
+recompile_front <- T # nolint
 
 if (recompile_front) {
   # Compile Svelte front end

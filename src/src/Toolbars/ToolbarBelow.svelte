@@ -20,6 +20,10 @@
   function showData() {
     window.$("#data-modal-2").modal();
   }
+
+  function showResults() {
+    window.$("#data-modal-extend-results").modal();
+  }
   let ready = false;
   onMount(() => {
     ready = true;
@@ -29,15 +33,15 @@
 </script>
 
 <div class="toolbox navbar-static-bottom">
+  <button
+    class="btn btn-lg {selected === 'data'
+      ? 'btn-primary active'
+      : 'btn-default'}"
+    on:click={() => showData()}
+  >
+    Show Data
+  </button>
   <div class="btn-group btn-toggle">
-    <button
-      class="btn btn-lg {selected === 'data'
-        ? 'btn-primary active'
-        : 'btn-default'}"
-      on:click={() => showData()}
-    >
-      Show Data
-    </button>
     <button
       class="btn btn-lg {selected === 'user model'
         ? 'btn-primary active'
@@ -66,6 +70,14 @@
       Show Estimate
     </button>
   </div>
+  <button
+    class="btn btn-lg {selected === 'data'
+      ? 'btn-primary active'
+      : 'btn-default'}"
+    on:click={() => showResults()}
+  >
+    More Results
+  </button>
 </div>
 
 <style>
@@ -78,5 +90,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-left: 20px;
+    margin-right: 20px;
   }
 </style>
