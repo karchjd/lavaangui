@@ -157,15 +157,14 @@ export const graphStyles = [
   {
     selector: "edge:selected",
     style: {
-      "line-color": "red",
-      "target-arrow-color": "red",
-      "source-arrow-color": "red",
+      'underlay-opacity': 0.5,
+      'underlay-color': "#928ff8",
     },
   },
   {
     selector: "node:selected",
     style: {
-      "border-color": "red",
+      'underlay-opacity': "#928ff8",
     },
   },
 ];

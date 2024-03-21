@@ -1,5 +1,5 @@
 <script>
-  import { cyStore, appState, setAlert, modelOptions } from "../stores.js";
+  import { cyStore, appState, setAlert, modelOptions, ur } from "../stores.js";
   import { get } from "svelte/store";
   let cy = get(cyStore);
   import cytoscape from "cytoscape";
@@ -10,9 +10,19 @@
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { tolavaan } from "../Shiny/toR.js";
   import * as Constants from "./classNames.js";
+  import iro from "@jaames/iro";
+  import { isNull } from "util";
 
   // register extension
   cytoscape.use(contextMenus);
+
+  // @ts-ignore
+  var colorPicker = new iro.ColorPicker("#picker", {
+    width: 200,
+    color: "rgb(255, 0, 0)",
+    borderWidth: 1,
+    borderColor: "#fff",
+  });
 
   function isValidName(str) {
     const rVarNameRegex = /^[a-zA-Z\._][a-zA-Z0-9\._]*(?<!\.)$/;
@@ -34,19 +44,33 @@
     return true;
   }
 
-  function validDegree(str) {
-    if (str == "") {
-      // @ts-expect-error
-      bootbox.alert("Provide a degree");
-      return false;
+  function getChange(target, selectedElements, check) {
+    var toChange;
+    if (selectedElements.length > 1) {
+      if (check === "nodes" && !selectedElements.every((ele) => ele.isNode())) {
+        // @ts-ignore
+        bootbox.alert("Not all selected elements are nodes. Aborting");
+        return null;
+      } else if (
+        check === "edges" &&
+        !selectedElements.every((ele) => ele.isEdge())
+      ) {
+        // @ts-ignore
+        bootbox.alert("Not all selected elements are edges. Aborting");
+        return null;
+      } else if (
+        check === "nodes.edges" &&
+        !selectedElements.every((ele) => ele.isEdge() && ele.isNode())
+      ) {
+        // @ts-ignore
+        bootbox.alert("Not all selected elements are nodes or edges. Aborting");
+        return null;
+      }
+      toChange = selectedElements;
+    } else {
+      toChange = target;
     }
-    const deg = parseInt(str);
-    if (deg < 0 || deg > 360) {
-      // @ts-expect-error
-      bootbox.alert("Provide a valid degree (0-360)");
-      return false;
-    }
-    return true;
+    return toChange;
   }
 
   const menu = [
@@ -368,7 +392,7 @@
     {
       id: "remove-node",
       content: "Delete Variable",
-      selector: "node",
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.remove();
@@ -436,6 +460,86 @@
         tolavaan($modelOptions.mode);
       },
     },
+    {
+      id: "color-node",
+      content: "Change Edge Color",
+      selector: "edge",
+      show: "both",
+      onClickFunction: function (event) {
+        var target = event.target || event.cyTarget;
+        const toChange = getChange(target, selectedElements, "edges");
+        if (isNull(toChange)) {
+          return null;
+        }
+        openColorPicker(target, toChange, "edge");
+      },
+    },
+    {
+      id: "change-line-width",
+      content: "Change Line Width",
+      show: "both",
+      selector: "edge", // Apply to both edges and nodes
+      onClickFunction: function (event) {
+        var target = event.target || event.cyTarget;
+        const toChange = getChange(target, selectedElements, "edges");
+        if (isNull(toChange)) {
+          return null;
+        }
+        var newWidth = prompt("Enter New Line Width:", target.style("width"));
+        if (newWidth !== null) {
+          $ur.do("style", {
+            eles: toChange,
+            style: { width: newWidth },
+          });
+        }
+      },
+    },
+    {
+      id: "change-border-width",
+      content: "Change Border Width",
+      show: "both",
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}`, // Apply to both edges and nodes
+      onClickFunction: function (event) {
+        var target = event.target || event.cyTarget;
+        const toChange = getChange(target, selectedElements, "nodes");
+        if (isNull(toChange)) {
+          return null;
+        }
+        var newWidth = prompt(
+          "Enter New Border Width:",
+          target.style("border-width"),
+        );
+        if (newWidth !== null) {
+          $ur.do("style", {
+            eles: toChange,
+            style: { "border-width": newWidth },
+          });
+        }
+      },
+    },
+    {
+      id: "change-font-size",
+      content: "Change Font Size",
+      show: "both",
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, edge`, // This applies to nodes only, as they display labels
+      onClickFunction: function (event) {
+        var target = event.target || event.cyTarget;
+        const toChange = getChange(target, selectedElements, "nodes.edges");
+        if (isNull(toChange)) {
+          return null;
+        }
+        var newFontSize = prompt(
+          "Enter New Font Size:",
+          target.style("font-size"),
+        );
+        if (newFontSize !== null) {
+          $ur.do("style", {
+            eles: toChange,
+            style: { "font-size": newFontSize },
+          });
+        }
+      },
+    },
   ];
 
   function selectMenu(menu, isFull) {
@@ -445,9 +549,70 @@
     );
   }
 
+  function openColorPicker(target, toChange, type) {
+    var pickerElement = document.getElementById("picker");
+    pickerElement.style.display = "block";
+    pickerElement.style.left = event.pageX + "px";
+    pickerElement.style.top = event.pageY + "px";
+
+    // Define the function to change the color so it can be removed later
+    const changeColor = function (color) {
+      var hexColor = color.hexString;
+      if (type == "edge") {
+        $ur.do("style", {
+          eles: toChange,
+          style: {
+            "line-color": hexColor,
+            "target-arrow-color": hexColor,
+            "source-arrow-color": hexColor,
+          },
+        });
+      } else {
+        $ur.do("style", {
+          eles: toChange,
+          style: { "background-color": hexColor },
+        });
+      }
+    };
+
+    // Listen to color change events
+    colorPicker.on("color:change", changeColor);
+
+    // Function to hide the picker and remove the color change listener
+    const closePicker = function (event) {
+      if (!pickerElement.contains(event.target)) {
+        pickerElement.style.display = "none";
+        // Remove the color change event listener
+        colorPicker.off("color:change", changeColor);
+        // Remove this click event listener to clean up
+        document.removeEventListener("click", closePicker);
+      }
+    };
+
+    // Use setTimeout to temporarily ignore the immediate click event that opens the picker
+    setTimeout(() => document.addEventListener("click", closePicker), 0);
+  }
   const menuSel = selectMenu(menu, $appState.full);
   onMount(() => {
     // Initialize the Cytoscape instance
     cy.contextMenus({ menuItems: menuSel });
+  });
+
+  let selectedElements = [];
+
+  // Listen for selection events
+  cy.on("select", "node, edge", function (event) {
+    // Add the selected element to the array
+    selectedElements.push(event.target);
+    console.log(selectedElements);
+  });
+
+  // Listen for unselection events
+  cy.on("unselect", "node, edge", function (event) {
+    // Remove the unselected element from the array
+    selectedElements = selectedElements.filter(
+      (el) => el.id() !== event.target.id(),
+    );
+    console.log(selectedElements);
   });
 </script>
