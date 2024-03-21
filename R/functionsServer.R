@@ -1,3 +1,35 @@
+getTextOut <- function(result) {
+  # Initialize empty lists to hold errors and warnings
+  errors <- NULL
+  warnings <- NULL
+
+  results <- withCallingHandlers(
+    {
+      tryCatch(
+        {
+          sum_model <- summary(result, fit.measures = TRUE, modindices = TRUE)
+          sum_model$pe <- NULL
+          estimates <- parameterestimates(result)
+          list(summary = sum_model, estimates = estimates)
+        },
+        error = function(e) {
+          return(NULL)
+        }
+      )
+    },
+    warning = function(w) {
+      # Capture warning
+      warnings <<- w
+    },
+    error = function(e) {
+      # Capture error
+      errors <<- e
+    }
+  )
+  problem <- !is.null(errors)
+  return(list(results = results, errors = errors, warnings = warnings, problem = problem))
+}
+
 importModel <- function(session) {
   imported <- FALSE
   if (exists(".importedModel128498129481249124891284129", where = .GlobalEnv)) {
@@ -10,8 +42,7 @@ importModel <- function(session) {
   if ((!imported) && (exists("importedModel"))) {
     session$sendCustomMessage("imported_model", message = importedModel[c("parTable", "latent", "obs")])
     to_render <- getTextOut(importedModel$fit)
-    df <- importedModel$df
-    df_full <- list(df = df, name = "Imported from R")
+    df_full <- list(df = importedModel$df, name = "Imported from R")
     propagateData(df_full, session, import = TRUE)
     imported <- TRUE
     session$sendCustomMessage("setToEstimate", message = rnorm(1))
@@ -22,7 +53,6 @@ importModel <- function(session) {
 propagateData <- function(df, session, import = FALSE) {
   data_info <- list(
     name = df$name, columns = colnames(df$df),
-    summary = create_summary(df$df),
     import = import
   )
   session$sendCustomMessage(type = "dataInfo", message = data_info)

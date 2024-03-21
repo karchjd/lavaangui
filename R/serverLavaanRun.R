@@ -29,6 +29,14 @@ getResults <- function(result, fromJavascriptJSON, session, df) {
   }
 }
 
+checkVarsInData <- function(model_parsed, data) {
+  names_model <- lavNames(model_parsed, type = "ov")
+  names_data <- names(data)
+  var_not_in_data <- !(names_model %in% names_data)
+  names(var_not_in_data) <- names_model
+  return(var_not_in_data)
+}
+
 serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
     abort_file_global <- reactiveVal()
