@@ -1,4 +1,7 @@
 <script>
+  import { appState } from "./stores";
+  import { get } from "svelte/store";
+
   window.onerror = function (message, source, lineno, colno, error) {
     showError(message, "Javascript");
   };
@@ -25,7 +28,10 @@
   if (serverAvail()) {
     // @ts-expect-error
     Shiny.addCustomMessageHandler("serverError", function (message) {
-      showError(message.msg, "Server");
+      debugger;
+      if (get(appState).showServerErrors) {
+        showError(message.msg, "Server");
+      }
     });
   }
 </script>

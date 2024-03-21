@@ -2,6 +2,7 @@
   import Dropdown from "./helpers/Dropdown.svelte";
   import { modelOptions } from "../stores.js";
   import RadioItem from "./helpers/RadioItem.svelte";
+  import TextItem from "./helpers/TextItem.svelte";
 
   const estimatorRadios = [
     { value: "default", name: "Default" },
@@ -12,7 +13,6 @@
       name: "Weighted Least Squares (WLS)",
     },
     { value: "ULS", name: "Unweighted Least Squares (ULS)" },
-    // { value: "DWLS", name: "Diagonally Weighted Least Squares (DWLS)" },
     { value: "DLS", name: "Distributionally-weighted Least Squares (DLW)" },
   ];
 
@@ -22,66 +22,16 @@
     { value: "boot", name: "Bootstrap" },
   ];
 
-  const robustSupported = ["default", "ML", "ULS", "DWLS"];
-
-  $: {
-    if (
-      $modelOptions.se == "robust" &&
-      !robustSupported.includes($modelOptions.estimator)
-    ) {
-      $modelOptions.se = "default";
-      // @ts-expect-error
-      bootbox.alert(
-        "Standard error reset to Default because selected estimator does not support robust standad errors.",
-      );
-    }
-  }
+  const test = [
+    { value: "default", name: "Default" },
+    { value: "boot", name: "Bootstrap" },
+  ];
 
   const missingValues = [
     { value: "listwise", name: "Listwise" },
     { value: "ml", name: "Full Information Maximum Likelihood (FIML)" },
   ];
 
-  const fimlSupported = ["default", "ML"];
-
-  $: {
-    if (
-      $modelOptions.missing == "ml" &&
-      !fimlSupported.includes($modelOptions.estimator)
-    ) {
-      $modelOptions.missing = "listwise";
-      // @ts-expect-error
-      bootbox.alert(
-        "Missing values set back to listwise. Only the default and maximum likelihood estimators supports Full information maximum likelihood.",
-      );
-    }
-  }
-
-  // let previousSE = null;
-
-  // $: {
-  //   if ($modelOptions.se == "boot" && previousSE !== "boot") {
-  //     // @ts-expect-error
-  //     bootbox.prompt({
-  //       title: "Enter the number of bootstrap draws:",
-  //       value: $modelOptions.n_boot,
-  //       callback: function (result) {
-  //         if (result !== null) {
-  //           const parsedValue = parseInt(result, 10);
-  //           if (Number.isInteger(parsedValue) && parsedValue > 0) {
-  //             $modelOptions.n_boot = parsedValue;
-  //             return true;
-  //           } else {
-  //             return false;
-  //             // @ts-expect-error
-  //             bootbox.alert("Please enter a positive whole number.");
-  //           }
-  //         }
-  //       },
-  //     });
-  //   }
-  //   previousSE = $modelOptions.se;
-  // }
   const name = "Estimation";
 </script>
 
@@ -106,10 +56,13 @@
           name={item.name}
           value={item.value}
           bind:group={$modelOptions.se}
-          isDisabled={item.value == "robust" &&
-            !robustSupported.includes($modelOptions.estimator)}
         />
       {/each}
+      <TextItem
+        name={"Number of Bootstrap Samples:"}
+        bind:value={$modelOptions.n_boot}
+        min={5}
+      />
     </ul>
   </li>
   <li class="dropdown-submenu">
@@ -120,8 +73,6 @@
           name={item.name}
           value={item.value}
           bind:group={$modelOptions.missing}
-          isDisabled={item.value == "ml" &&
-            !fimlSupported.includes($modelOptions.estimator)}
         />
       {/each}
     </ul>

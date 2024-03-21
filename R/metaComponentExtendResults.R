@@ -5,6 +5,7 @@ extendResultsUI <- function(id) {
     factorScoresUI(ns("factorScores")),
     modificationUI(ns("mod")),
     residualsUI(ns("residuals")),
+    exactTestUI(ns("exact")),
     waldTestUI(ns("wald")),
     lavInspectUI(ns("inspect")),
   )
@@ -19,5 +20,6 @@ extendResultsServer <- function(id, fit) {
     lavInspectServer("inspect", fit)
     waldTestServer("wald", fit)
     modificationServer("mod", fit)
+    exactTestServer("exact", fit)
   })
 }

@@ -61,6 +61,7 @@ export let appState = writable({
   parsedModel: false,
   meansModelled: null,
   buttonDown: false,
+  showServerErrors: true
 });
 
 export let dataInfo = writable(0);

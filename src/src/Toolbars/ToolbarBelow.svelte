@@ -21,8 +21,13 @@
     window.$("#data-modal-2").modal();
   }
 
+  window.$("#data-modal-extend-results").on("hidden.bs.modal", function () {
+    $appState.showServerErrors = true;
+  });
+
   function showResults() {
     window.$("#data-modal-extend-results").modal();
+    $appState.showServerErrors = false;
   }
   let ready = false;
   onMount(() => {

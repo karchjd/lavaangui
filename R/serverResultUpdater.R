@@ -20,7 +20,7 @@ serverResultUpdater <- function(id, to_render) {
       }
       if (!is.null(out$error)) {
         errors_html <- paste0(
-          "<span style='color: #D32F2F;'>Could not get results because of the following lavaan error.<br>Probably your model is not identified<br>",
+          "<span style='color: #D32F2F;'>Could not get results because of the following lavaan error.: <br><br>",
           out$error$message,
           "</span>"
         )

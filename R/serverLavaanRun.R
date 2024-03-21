@@ -55,7 +55,19 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       modelJavascript <- fromJavascript$model
       model <- eval(parse(text = modelJavascript$syntax)) # nolint: object_usage_linter.
       lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
-      lavaan_model <- eval(parse(text = lavaan_parse_string))
+      lavaan_model <- tryCatch(
+        {
+          eval(parse(text = lavaan_parse_string))
+        },
+        error = function(e) {
+          session$sendCustomMessage("lav_failed", "lav_error")
+          to_render(list(error = e))
+          return(NULL)
+        }
+      )
+      if (is.null(lavaan_model)) {
+        return(NULL)
+      }
       model_parsed <- parTable(lavaan_model)
       session$sendCustomMessage("lav_model", model_parsed)
 
@@ -99,10 +111,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       session$sendCustomMessage("fitting", "")
       abort_file <- tempfile()
       abort_file_global(abort_file)
-      print("watching")
-      print(abort_file)
       lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
-      print(lavaan_string)
       fut <- promises::future_promise(
         {
           `%get%` <- function(pkg, fun) {
@@ -111,8 +120,6 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
               inherits = FALSE
             )
           }
-          print("watching in promise")
-          print(abort_file)
           original_function <- "lavaan" %get% "lav_model_objective"
           original_function_string <- deparse(original_function)
           new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
@@ -141,9 +148,8 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       promises::catch(
         fut,
         function(e) {
-          to_render(NULL)
           session$sendCustomMessage("lav_failed", "lav_error")
-          to_render(e$message)
+          to_render(list(error = e))
         }
       )
 
@@ -157,7 +163,6 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
     })
 
     observeEvent(input$abort, {
-      print("creating")
       abort_file_global()
       file.create(abort_file_global())
     })
