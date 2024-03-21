@@ -1,14 +1,12 @@
 extendResultsUI <- function(id) {
   ns <- NS(id)
-  fluidPage(
-    tabsetPanel(
-      parameterEstimatesUI(ns("paraEsts")),
-      factorScoresUI(ns("factorScores")),
-      modificationUI(ns("mod")),
-      residualsUI(ns("residuals")),
-      waldTestUI(ns("wald")),
-      lavInspectUI(ns("inspect")),
-    )
+  tabsetPanel(
+    parameterEstimatesUI(ns("paraEsts")),
+    factorScoresUI(ns("factorScores")),
+    modificationUI(ns("mod")),
+    residualsUI(ns("residuals")),
+    waldTestUI(ns("wald")),
+    lavInspectUI(ns("inspect")),
   )
 }
 
