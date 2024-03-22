@@ -79,7 +79,7 @@
       content: "Add Observed Variable",
       coreAsWell: true,
       onClickFunction: function (event) {
-        const position = event.position || event.cyPosition;
+        const position = event.renderedPosition;
         addNode(Constants.OBSERVED, position);
       },
       show: "full",
@@ -89,7 +89,7 @@
       content: "Add Latent Variable",
       coreAsWell: true,
       onClickFunction: function (event) {
-        const position = event.position || event.cyPosition;
+        const position = event.renderedPosition;
         addNode(Constants.LATENT, position);
       },
       show: "full",
@@ -99,7 +99,7 @@
       content: "Add Constant Variable",
       coreAsWell: true,
       onClickFunction: function (event) {
-        const position = event.position || event.cyPosition;
+        const position = event.renderedPosition;
         addNode(Constants.CONSTANT, position);
       },
       show: "full",

@@ -1,19 +1,5 @@
 import { get } from "svelte/store";
 import { appState, cyStore, modelOptions, fitCache, gridViewOptions } from "../stores";
-import { construct_svelte_component } from "svelte/internal";
-
-function serverAvail() {
-  // @ts-expect-error
-  return typeof Shiny === "object" && Shiny !== null;
-}
-
-function getCurrentStack() {
-  try {
-    throw new Error();
-  } catch (e) {
-    return e.stack;
-  }
-}
 
 export function tolavaan(mode) {
   debugger;
@@ -165,7 +151,9 @@ export function createSyntax(mode) {
         nodeNames += addTerms(node, connectedEdges[sortedIndices[j]]);
       }
       syntax += " " + latentNode.getLabel() + " =~ " + nodeNames + "\n";
-    } else {
+    } else if (latentNode.connectedEdges(function (edge) {
+      return (edge.isUserAdded())
+    }).length > 0) {
       if (!shown) {
         syntax += "# measurement model" + "\n";
         shown = true;
