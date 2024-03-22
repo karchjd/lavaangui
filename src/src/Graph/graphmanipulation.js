@@ -1,7 +1,8 @@
-import { cyStore, ur } from "../stores.js";
+import { cyStore, modelOptions, setAlert, ur } from "../stores.js";
 import { get } from "svelte/store";
 import { v4 as uuidv4 } from "uuid";
 import { OBSERVED, LATENT } from "./classNames.js";
+import { tolavaan } from "../Shiny/toR.js";
 
 
 let obCounter;
@@ -15,12 +16,15 @@ export function resetCounters() {
 resetCounters();
 
 // Adding new nodes via mouse, toolbar, or hotkey
-export function addNode(nodeType, position, customLabel = null) {
+export function addNode(nodeType, position, fromUser = true, customLabel = null) {
   let cy = get(cyStore);
   let nodeId = uuidv4();
   let label;
-
   if (customLabel !== null) {
+    if (cy.nodes().find(node => node.data().label === customLabel)) {
+      setAlert('danger', "Node with the same label already exists.");
+      return;
+    }
     label = customLabel;
   } else {
     if (nodeType == OBSERVED) {
@@ -29,6 +33,9 @@ export function addNode(nodeType, position, customLabel = null) {
       label = "f" + latentCounter++;
     } else {
       label = undefined;
+    }
+    if (cy.nodes().find(node => node.data().label === label)) {
+      label = label + ".1";
     }
   }
 
@@ -49,6 +56,10 @@ export function addNode(nodeType, position, customLabel = null) {
       classes: [nodeType, "continous"],
       renderedPosition: position,
     });
+  }
+
+  if (fromUser) {
+    tolavaan(get(modelOptions).mode)
   }
 
   return nodeId;

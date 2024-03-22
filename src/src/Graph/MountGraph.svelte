@@ -151,7 +151,7 @@
     if ($appState.dragged != "observed-with-name") {
       const position = addNode($appState.dragged, pos);
     } else {
-      const position = addNode(OBSERVED, pos, $appState.draggedName);
+      const position = addNode(OBSERVED, pos, true, $appState.draggedName);
     }
   }
 

@@ -15,8 +15,6 @@
         setAlert("success", `Variable ${node.getLabel()} linked to data`);
       }
     }
-    // TODO: remove? $appState.loadingMode = false;
-    tolavaan($modelOptions.mode);
     if ($appState.modelEmpty && cy.edges().length > 0) {
       $appState.modelEmpty = false;
     }

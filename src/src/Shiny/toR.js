@@ -7,7 +7,16 @@ function serverAvail() {
   return typeof Shiny === "object" && Shiny !== null;
 }
 
+function getCurrentStack() {
+  try {
+    throw new Error();
+  } catch (e) {
+    return e.stack;
+  }
+}
+
 export function tolavaan(mode) {
+  debugger;
   var appState_local = get(appState);
   var viewOptions = get(gridViewOptions);
   let cy = get(cyStore);
@@ -55,7 +64,7 @@ function addTerms(node, edge) {
   }
   let premultiplier = false;
   let formula;
-  if (edge.isFixed() && edge.isUserAdded()) {
+  if (edge.isFixed() && !edge.isModifiedLavaan()) {
     formula = edge.getValue() + "*" + node_label;
     premultiplier = true;
   } else if (edge.isForceFree()) {

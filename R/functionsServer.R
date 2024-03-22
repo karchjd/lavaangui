@@ -45,8 +45,11 @@ importModel <- function(session) {
     propagateData(df_full, session, import = TRUE)
     imported <- TRUE
     session$sendCustomMessage("setToEstimate", message = rnorm(1))
+    return(list(fit = importedModel$fit, to_render = to_render, data_react = df_full, imported = imported))
+  }else{
+    return(list(imported=imported))
   }
-  return(list(fit = importedModel$fit, to_render = to_render, data_react = df_full, imported = imported))
+  
 }
 
 propagateData <- function(df, session, import = FALSE) {

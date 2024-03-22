@@ -33,7 +33,11 @@ serverDataViewer <- function(id, getData) {
         df[] <- lapply(df, function(x) if (haven::is.labelled(x)) haven::as_factor(x) else x)
 
         DT::datatable(df,
-          options = list(ordering = FALSE), callback = htmlwidgets::JS(callback)
+          options = list(ordering = FALSE, pageLength = -1,
+                         lengthMenu = list(
+                           c(15, 50, 100, -1),
+                           c("15", "50", "100", "All")
+                         )), callback = htmlwidgets::JS(callback)
         )
       },
       server = FALSE

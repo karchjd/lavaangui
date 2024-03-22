@@ -118,7 +118,7 @@
   }
 
   function importNode(type, label) {
-    addNode(type, undefined, label);
+    addNode(type, undefined, false, label);
   }
 
   function getModelLav(lav_model, imported) {
@@ -189,7 +189,11 @@
               continue;
             }
             if (!const_added) {
-              added_const_id = addNode(CONSTANT, getConstNodePosition(cy));
+              added_const_id = addNode(
+                CONSTANT,
+                getConstNodePosition(cy),
+                false,
+              );
               const_added = true;
               const added_node = cy.nodes(function (node) {
                 return node.id() == added_const_id;

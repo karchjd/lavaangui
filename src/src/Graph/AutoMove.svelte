@@ -11,9 +11,7 @@
     onMount(() => {
         // Initialize the Cytoscape instance
         cy.automove({
-            nodesMatching: function (node) {
-                return true;
-            },
+            nodesMatching: ".automove-viewport",
             reposition: "viewport",
         });
     });
