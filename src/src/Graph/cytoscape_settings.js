@@ -164,7 +164,8 @@ export const graphStyles = [
   {
     selector: "node:selected",
     style: {
-      'underlay-opacity': "#928ff8",
+      'underlay-color': "#928ff8",
+      'underlay-opacity': 0.5,
     },
   },
 ];

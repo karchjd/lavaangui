@@ -29,9 +29,10 @@ serverDataViewer <- function(id, getData) {
     output$tbl_data <- DT::renderDT(
       {
         df <- getData()
-        local_data <- df[sapply(df, labelled::is.labelled)] <-
-          lapply(df[sapply(df, labelled::is.labelled)], labelled::to_factor)
-        DT::datatable(local_data,
+        # write code that converts every colunm in df that is of class labelled::is.labelled to factor without using dplyr
+        df[] <- lapply(df, function(x) if (haven::is.labelled(x)) haven::as_factor(x) else x)
+
+        DT::datatable(df,
           options = list(ordering = FALSE), callback = htmlwidgets::JS(callback)
         )
       },

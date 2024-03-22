@@ -92,6 +92,12 @@
       applyLinkedClass($appState.columnNames, false);
     }
 
+    if ($modelOptions.mode !== "user model") {
+      $gridViewOptions.showLav = true;
+    } else {
+      $gridViewOptions.showLav = false;
+    }
+
     cy.nodes().forEach((node) => {
       checkNodeLoop(node.id());
     });
@@ -186,7 +192,9 @@
                 .async("base64")
                 .then(function (dataCsvContent) {
                   // @ts-expect-error
-                  Shiny.setInputValue("fileInput", { content: dataCsvContent });
+                  Shiny.setInputValue("dataUpload-fileInput", {
+                    content: dataCsvContent,
+                  });
                 });
             });
         });
@@ -305,7 +313,7 @@
       format: [width, height],
     });
     await svg2pdf(svgElement, pdf, { width, height });
-    pdf.save("test.pdf");
+    pdf.save("model.pdf");
   }
 
   let menuItems;
