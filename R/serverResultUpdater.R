@@ -1,21 +1,22 @@
 serverResultUpdater <- function(id, to_render) {
   moduleServer(id, function(input, output, session) {
+    observe(
+      {print(to_render())}
+    )
+    
     output$results <- renderPrint({
       req(to_render())
       out <- to_render()
-
       if (is.character(out)) {
         cat(out)
         return(NULL)
       }
 
-
       if (!is.null(out$warning)) {
-        print("Beware of the following lavaan warning(s) (lavaan call):")
-        browser()
+        cat("Beware of the following lavaan warning(s) (lavaan call):\n")
         for (i in seq_along(out$warning)) {
           if (!is.null(out$warning[i]$message)) {
-            print(out$warning[i]$message)
+            cat(paste0(out$warning[i]$message, "\n"))
           }
         }
       }
@@ -28,8 +29,8 @@ serverResultUpdater <- function(id, to_render) {
             sum_model$pe <- NULL
           },
           warning = function(w) {
-            print("Beware of the following lavaan warning (summary call):")
-            print(w$message)
+            cat("Beware of the following lavaan warning (summary call):\n")
+            cat(paste0(w$message, "\n"))
           }
         )
         print(sum_model)

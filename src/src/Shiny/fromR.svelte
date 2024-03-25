@@ -329,12 +329,10 @@
     });
 
     Shiny.addCustomMessageHandler("lav_warning_error", function (info) {
+      const what = info.type == "warning" ? "warning" : "error";
       setAlert(
         info.type,
-        "During " +
-          info.origin +
-          " the following error/warning occurred: " +
-          info.message,
+        `During ${info.origin} the following ${what} occurred: ${info.message}`,
       );
     });
     // @ts-expect-error

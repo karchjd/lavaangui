@@ -41,12 +41,17 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
             model_parsed <- parTable(lavaan_model)
           },
           error = function(e) {
-            session$sendCustomMessage("lav_warning_error", list(origin = "parsing the model", message = e$message, type = "danger"))
+            session$sendCustomMessage(
+              "lav_warning_error",
+              list(origin = "parsing the model", message = e$message, type = "danger")
+            )
             to_render(e$message)
           },
           warning = function(w) {
-            session$sendCustomMessage("lav_warning_error", list(origin = "parsing the model", message = w$message, type = "warning"))
-            print("there was a warning")
+            session$sendCustomMessage(
+              "lav_warning_error",
+              list(origin = "parsing the model", message = w$message, type = "warning")
+            )
           }
         ),
         error = function(e) {
@@ -75,9 +80,9 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         (is.null(getData()) || fromJavascript$cache$lastFitData == digest::digest(getData()))
       if (cacheValid) {
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
-        fit(cacheResult)
+        fit(cacheResult$fit)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
-        to_render(fit())
+        to_render(cacheResult)
         forceEstimateUpdate(rnorm(1))
         session$sendCustomMessage("usecache", "")
         return(NULL)
@@ -120,8 +125,6 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
           lastWarning <- c()
           withCallingHandlers(
             {
-              warning("some lavaan warning")
-              warning("some other lavaan warning")
               local_fit <- eval(parse(text = lavaan_string))
             },
             warning = function(w) {
@@ -139,7 +142,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         fut,
         function(value) {
           fit(value$fit)
-          sendResultsFront(session, value$fit, fromJavascript, getData())
+          sendResultsFront(session, value, fromJavascript, getData())
           to_render(value)
           session$sendCustomMessage("lav_sucess", "lav_error")
         }

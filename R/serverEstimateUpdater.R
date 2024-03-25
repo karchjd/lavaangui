@@ -5,11 +5,34 @@ serverEstimateUpdater <- function(id, forceEstimateUpdate, fit) {
       req(fit())
       req(input$confindence_level)
       forceEstimateUpdate()
-      res <- list(
-        normal = parameterestimates(fit(), level = input$confindence_level),
-        std = standardizedsolution(fit(), level = input$confindence_level)
+      tryCatch(
+        withCallingHandlers(
+          {
+            res <- list(
+              normal = parameterestimates(fit(), level = input$confindence_level),
+              std = standardizedsolution(fit(), level = input$confindence_level)
+            )
+            session$sendCustomMessage("lav_estimates", res)
+          },
+          error = function(e) {
+            session$sendCustomMessage(
+              "lav_warning_error",
+              list(origin = "updating estimates", message = e$message, type = "danger")
+            )
+            to_render(e$message)
+          },
+          warning = function(w) {
+            session$sendCustomMessage(
+              "lav_warning_error",
+              list(origin = "updating estimates", message = w$message, type = "warning")
+            )
+            print("there was a warning")
+          }
+        ),
+        error = function(e) {
+          return(NULL)
+        }
       )
-      session$sendCustomMessage("lav_estimates", res)
     })
   })
 }

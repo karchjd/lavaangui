@@ -49,6 +49,7 @@ export function updateVisibility(showVar, showLav, menuItems) {
 }
 
 function getStars(pval) {
+  if (pval === null) return "NA";
   if (pval < 0.001) {
     return "***";
   } else if (pval < 0.01) {
@@ -56,32 +57,31 @@ function getStars(pval) {
   } else if (pval < 0.05) {
     return "*";
   } else {
-    return "";
+    return "NA";
   }
 }
 
 
 function generateStyleEst(viewOption, postfix, number_digits) {
+  const formatValue = (value) => value === null ? "NA" : value.toFixed(number_digits);
+
   switch (viewOption) {
     case "est":
-      return (edge) => edge.data("estimates")["est" + postfix].toFixed(number_digits);
+      return (edge) => formatValue(edge.data("estimates")["est" + postfix]);
     case "ci":
       return (edge) =>
-        `[${edge.data("estimates")["ciLow" + postfix].toFixed(number_digits)}, ${edge.data("estimates")["ciHigh" + postfix].toFixed(number_digits)
-        }]`;
+        `[${formatValue(edge.data("estimates")["ciLow" + postfix])}, ${formatValue(edge.data("estimates")["ciHigh" + postfix])}]`;
     case "estPVal":
       return (edge) =>
-        `${edge.data("estimates")["est" + postfix].toFixed(number_digits)}${getStars(
-          edge.data("estimates")["p_value"]
-        )}`;
+        `${formatValue(edge.data("estimates")["est" + postfix])}${getStars(edge.data("estimates")["p_value"])}`;
     case "estSE":
       return (edge) =>
-        `${edge.data("estimates")["est" + postfix].toFixed(number_digits)} (${edge.data("estimates")["se" + postfix].toFixed(number_digits)
-        })`;
+        `${formatValue(edge.data("estimates")["est" + postfix])} (${formatValue(edge.data("estimates")["se" + postfix])})`;
     default:
-      return (edge) => ""; // Or some default behavior
+      return () => "NA"; // Or some default behavior
   }
 }
+
 
 function generateLabeledStyleEst(viewOption, postfix, number_digits) {
   const baseStyle = generateStyleEst(viewOption, postfix, number_digits);
