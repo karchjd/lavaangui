@@ -333,13 +333,20 @@
         info.type,
         "During " +
           info.origin +
-          " the following warning occurred: " +
+          " the following error/warning occurred: " +
           info.message,
       );
     });
     // @ts-expect-error
-    Shiny.addCustomMessageHandler("fitting", function (dummy) {
-      $appState.fitting = true;
+    Shiny.addCustomMessageHandler("lav_error_fitting", function (info) {
+      $appState.fitting = false;
+      setAlert(
+        info.type,
+        "During " +
+          info.origin +
+          " the following error occurred: " +
+          info.message,
+      );
     });
 
     // @ts-expect-error

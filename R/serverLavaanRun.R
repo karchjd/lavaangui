@@ -32,21 +32,20 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       modelJavascript <- fromJavascript$model
       model <- eval(parse(text = modelJavascript$syntax)) # nolint: object_usage_linter.
       lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
-      
+
       ## gotta love R error handling...
       wasError <- tryCatch(
         withCallingHandlers(
           {
-            stop("haha")
             lavaan_model <- eval(parse(text = lavaan_parse_string))
             model_parsed <- parTable(lavaan_model)
           },
           error = function(e) {
-            session$sendCustomMessage("lav_warning_error", list(origin = 'parsing the model', message=e$message, type = "danger"))
+            session$sendCustomMessage("lav_warning_error", list(origin = "parsing the model", message = e$message, type = "danger"))
             to_render(e$message)
           },
           warning = function(w) {
-            session$sendCustomMessage("lav_warning_error", list(origin = 'parsing the model', message=w$message, type = "warning"))
+            session$sendCustomMessage("lav_warning_error", list(origin = "parsing the model", message = w$message, type = "warning"))
             print("there was a warning")
           }
         ),
@@ -54,12 +53,12 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
           return(NULL)
         }
       )
-      
+
       ## there an error, exiting
-      if(is.null(wasError)){
+      if (is.null(wasError)) {
         return(NULL)
       }
-      
+
       session$sendCustomMessage("lav_model", model_parsed)
 
       ## Mode = "Full Model" send script to render and stop
@@ -118,7 +117,18 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
 
           environment(new_function) <- asNamespace("lavaan")
           utils::assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
-          eval(parse(text = lavaan_string))
+          lastWarning <- c()
+          withCallingHandlers(
+            {
+              warning("some lavaan warning")
+              warning("some other lavaan warning")
+              local_fit <- eval(parse(text = lavaan_string))
+            },
+            warning = function(w) {
+              lastWarning <<- c(lastWarning, w)
+            }
+          )
+          list(fit = local_fit, warning = lastWarning)
         },
         packages = "lavaan",
         globals = c("data", "abort_file", "model", "lavaan_string"),
@@ -128,9 +138,9 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       promises::then(
         fut,
         function(value) {
-          fit(value)
-          sendResultsFront(session, value, fromJavascript, getData())
-          to_render(fit())
+          fit(value$fit)
+          sendResultsFront(session, value$fit, fromJavascript, getData())
+          to_render(value)
           session$sendCustomMessage("lav_sucess", "lav_error")
         }
       )
@@ -139,8 +149,8 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       promises::catch(
         fut,
         function(e) {
-          session$sendCustomMessage("lav_failed", "lav_error")
-          to_render(list(error = e))
+          session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = e$message, type = "danger"))
+          to_render(e)
         }
       )
 

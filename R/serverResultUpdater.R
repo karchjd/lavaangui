@@ -9,14 +9,33 @@ serverResultUpdater <- function(id, to_render) {
         return(NULL)
       }
 
-      if ("lavaan" %in% class(out) ) {
-        modificationIndices(fit)
-        sum_model <- summary(out, fit.measures = TRUE)
-        sum_model$pe <- NULL
-        return(sum_model)
+
+      if (!is.null(out$warning)) {
+        print("Beware of the following lavaan warning(s) (lavaan call):")
+        browser()
+        for (i in seq_along(out$warning)) {
+          if (!is.null(out$warning[i]$message)) {
+            print(out$warning[i]$message)
+          }
+        }
       }
-      
-      if("error" %in% class(out)){
+
+      summary_warning <- NULL
+      if ("lavaan" %in% class(out$fit)) {
+        withCallingHandlers(
+          {
+            sum_model <- summary(out$fit, fit.measures = TRUE)
+            sum_model$pe <- NULL
+          },
+          warning = function(w) {
+            print("Beware of the following lavaan warning (summary call):")
+            print(w$message)
+          }
+        )
+        print(sum_model)
+      }
+
+      if ("error" %in% class(out)) {
         stop(out)
       }
     })
