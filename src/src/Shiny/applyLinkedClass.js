@@ -18,16 +18,10 @@ export function applyLinkedClass(columnNames, apply) {
     for (var i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       const label = node.getLabel();
-      if (apply) {
+      if (columnNames.includes(label) && !node.isLinked()) {
         node.link();
-      }
-      if (columnNames.includes(label)) {
-        if (apply) {
-          node.link();
-        }
-      } else {
-        all_linked = false;
-        return;
+      } else if (!columnNames.includes(label) && node.isLinked()) {
+        node.unlink();
       }
     }
   }

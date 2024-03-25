@@ -11,7 +11,7 @@ importModel <- function(session) {
     session$sendCustomMessage("imported_model", message = importedModel[c("parTable", "latent", "obs")])
     to_render <- (importedModel$fit)
     df_full <- list(df = importedModel$df, name = "Imported from R")
-    propagateData(df_full, session, import = TRUE)
+    propagateData(df_full, session, showData = FALSE)
     imported <- TRUE
     session$sendCustomMessage("setToEstimate", message = rnorm(1))
     return(list(fit = importedModel$fit, to_render = to_render, data_react = df_full, imported = imported))
@@ -20,10 +20,11 @@ importModel <- function(session) {
   }
 }
 
-propagateData <- function(df, session, import = FALSE) {
+propagateData <- function(df, session, showData = FALSE) {
   data_info <- list(
     name = df$name, columns = colnames(df$df),
-    import = import
+    showData = showData
   )
+  print("sending stuff")
   session$sendCustomMessage(type = "dataInfo", message = data_info)
 }

@@ -313,7 +313,7 @@
       $appState.ids = [...data_info.columns];
       $appState.loadedFileName = data_info.name;
       $appState.dataAvail = true;
-      if (!data_info.import) {
+      if (data_info.showData) {
         window.$("#data-modal-2").modal();
       }
     });

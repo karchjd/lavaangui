@@ -63,6 +63,7 @@
   }
 
   function parseModel(content) {
+    console.log("");
     reset();
 
     let combinedData = JSON.parse(content);
@@ -89,7 +90,7 @@
     cy.autoungrabify(graphSettings.autoungrabify);
 
     if ($appState.dataAvail) {
-      applyLinkedClass($appState.columnNames, false);
+      applyLinkedClass($appState.columnNames);
     }
 
     if ($modelOptions.mode !== "user model") {
@@ -232,7 +233,6 @@
   }
 
   function downloadModel() {
-    debugger;
     const combinedData = jsonModel();
 
     // Create a new Blob object using the JSON string

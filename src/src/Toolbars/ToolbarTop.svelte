@@ -255,7 +255,7 @@
 
   .draggable-list {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     list-style-type: none;
     padding: 0;
     margin: 0;
@@ -264,9 +264,9 @@
     width: 60%;
   }
   .draggable-item {
-    padding: 2px 5px;
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
+    padding: 3px 6px;
+    background-color: white;
+    border: 1px solid #000;
     cursor: grab;
   }
 

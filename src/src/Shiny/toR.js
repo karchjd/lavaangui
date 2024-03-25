@@ -2,7 +2,6 @@ import { get } from "svelte/store";
 import { appState, cyStore, modelOptions, fitCache, gridViewOptions } from "../stores";
 
 export function tolavaan(mode) {
-  debugger;
   var appState_local = get(appState);
   var viewOptions = get(gridViewOptions);
   let cy = get(cyStore);
