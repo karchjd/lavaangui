@@ -1,4 +1,4 @@
-recompile_front <- T # nolint
+recompile_front <- F # nolint
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -40,6 +40,12 @@ model <- '
     y4 ~~ y8
     y6 ~~ y8
 '
+
+# model <-'
+# # measurement model
+#  f1 =~ x1 + x2 + x3
+#  f2 =~ 2*x2 + x2 + 3*x3 + x3
+# '
 
 fit <- sem(model, data = PoliticalDemocracy)
 start_gui(fit)

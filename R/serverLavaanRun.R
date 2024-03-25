@@ -1,40 +1,17 @@
-# extract results from model
-getResults <- function(result, fromJavascriptJSON, session, df) {
-  fromJavascript <- jsonlite::fromJSON(fromJavascriptJSON)
-  fromJavascript$fitted_model <- NULL
-  text_res <- getTextOut(result)
-  if (!text_res$problem) {
-    out <- tryCatch(
-      {
-        res <- list(
-          fitted_model = base64enc::base64encode(serialize(result, NULL)), model = digest::digest(fromJavascript$model),
-          data = digest::digest(df)
-        )
-        session$sendCustomMessage("lav_results", res)
-        return(text_res)
-      },
-      error = function(e) {
-        session$sendCustomMessage("lav_failed", "lav_error")
-        return(list(error = e))
-      },
-      warning = function(w) {
-        session$sendCustomMessage("lav_failed", "lav_error")
-        return(list(warning = w))
-      }
-    )
-    return(out)
-  } else {
-    session$sendCustomMessage("lav_failed", "lav_error")
-    return(text_res)
-  }
-}
-
 checkVarsInData <- function(model_parsed, data) {
   names_model <- lavNames(model_parsed, type = "ov")
   names_data <- names(data)
   var_not_in_data <- !(names_model %in% names_data)
   names(var_not_in_data) <- names_model
   return(var_not_in_data)
+}
+
+sendResultsFront <- function(session, result, fromJavascript, df) {
+  res <- list(
+    fitted_model = base64enc::base64encode(serialize(result, NULL)),
+    model = digest::digest(fromJavascript$model), data = digest::digest(df)
+  )
+  session$sendCustomMessage("lav_results", res)
 }
 
 serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { # nolint: cyclocomp_linter.
@@ -55,20 +32,34 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       modelJavascript <- fromJavascript$model
       model <- eval(parse(text = modelJavascript$syntax)) # nolint: object_usage_linter.
       lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
-      lavaan_model <- tryCatch(
-        {
-          eval(parse(text = lavaan_parse_string))
-        },
+      
+      ## gotta love R error handling...
+      wasError <- tryCatch(
+        withCallingHandlers(
+          {
+            stop("haha")
+            lavaan_model <- eval(parse(text = lavaan_parse_string))
+            model_parsed <- parTable(lavaan_model)
+          },
+          error = function(e) {
+            session$sendCustomMessage("lav_warning_error", list(origin = 'parsing the model', message=e$message, type = "danger"))
+            to_render(e$message)
+          },
+          warning = function(w) {
+            session$sendCustomMessage("lav_warning_error", list(origin = 'parsing the model', message=w$message, type = "warning"))
+            print("there was a warning")
+          }
+        ),
         error = function(e) {
-          session$sendCustomMessage("lav_failed", "lav_error")
-          to_render(list(error = e))
           return(NULL)
         }
       )
-      if (is.null(lavaan_model)) {
+      
+      ## there an error, exiting
+      if(is.null(wasError)){
         return(NULL)
       }
-      model_parsed <- parTable(lavaan_model)
+      
       session$sendCustomMessage("lav_model", model_parsed)
 
       ## Mode = "Full Model" send script to render and stop
@@ -86,10 +77,10 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       if (cacheValid) {
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
         fit(cacheResult)
-        res <- getResults(cacheResult, input$fromJavascript, session, getData())
+        sendResultsFront(session, cacheResult, fromJavascript, getData())
+        to_render(fit())
         forceEstimateUpdate(rnorm(1))
         session$sendCustomMessage("usecache", "")
-        to_render(res)
         return(NULL)
       }
 
@@ -138,8 +129,8 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         fut,
         function(value) {
           fit(value)
-          res <- getResults(value, input$fromJavascript, session, getData())
-          to_render(res)
+          sendResultsFront(session, value, fromJavascript, getData())
+          to_render(fit())
           session$sendCustomMessage("lav_sucess", "lav_error")
         }
       )

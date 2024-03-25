@@ -1,8 +1,11 @@
-<div id="res-results" class="shiny-html-output"></div>
+<pre
+  id="res-results"
+  class="shiny-html-output well"
+  data-testid="result-text"
+/>
 
 <style>
-  div {
-    background-color: #f0f0f0;
+  pre {
     white-space: pre;
     text-align: left;
     min-height: 0;
@@ -14,7 +17,5 @@
     min-width: 0;
     min-height: 0;
     margin: 0;
-    padding: 0;
-    border-left: 1px solid lightgrey; /* Adds a 5px solid border on the left */
   }
 </style>

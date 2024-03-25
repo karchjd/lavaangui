@@ -1,14 +1,4 @@
 lavaan_gui_server <- function(input, output, session) {
-  # settings
-  # to send errors to frontend
-  op <- options(shiny.error = function() {
-    session <- getDefaultReactiveDomain()
-    error_message <- geterrmessage()
-    session$sendCustomMessage("serverError", list(msg = error_message))
-  })
-  onStop(function() options(op))
-
-
   # reactive vals
   fit <- reactiveVal(NULL)
   forceEstimateUpdate <- reactiveVal()

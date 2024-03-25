@@ -327,6 +327,16 @@
         setAlert("danger", "Fitting failed");
       }
     });
+
+    Shiny.addCustomMessageHandler("lav_warning_error", function (info) {
+      setAlert(
+        info.type,
+        "During " +
+          info.origin +
+          " the following warning occurred: " +
+          info.message,
+      );
+    });
     // @ts-expect-error
     Shiny.addCustomMessageHandler("fitting", function (dummy) {
       $appState.fitting = true;
