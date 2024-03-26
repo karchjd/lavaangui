@@ -21,21 +21,21 @@ jobs:
           use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@v2
       - name: Install dependencies
-        run: npm ci --prefix src
+        run: npm ci --prefix frontend
       - name: Compile
-        run: npm run build:deploy --prefix src
+        run: npm run build:deploy --prefix frontend
       - name: Compile & Start
         run: Rscript -e 'source("dev/start_for_tests.R")' &
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-        working-directory: src
+        working-directory: frontend
       - name: Run Playwright tests
         run: npx playwright test
-        working-directory: src
+        working-directory: frontend
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
-          path: src/playwright-report/
+          path: frontend/playwright-report/
           retention-days: 30
