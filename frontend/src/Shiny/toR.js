@@ -3,8 +3,6 @@ import { appState, cyStore, modelOptions, fitCache, gridViewOptions, setAlert } 
 import app from "../main";
 
 export function tolavaan(mode) {
-  console.log("tolavaan");
-  console.log((new Error()).stack.split("\n")[2].trim().split(" ")[1])
   var appState_local = get(appState);
   var viewOptions = get(gridViewOptions);
   let cy = get(cyStore);

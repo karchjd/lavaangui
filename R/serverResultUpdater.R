@@ -1,9 +1,5 @@
 serverResultUpdater <- function(id, to_render) {
   moduleServer(id, function(input, output, session) {
-    observe(
-      {print(to_render())}
-    )
-    
     output$results <- renderPrint({
       req(to_render())
       out <- to_render()

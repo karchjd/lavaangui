@@ -26,7 +26,6 @@ serverEstimateUpdater <- function(id, forceEstimateUpdate, fit) {
               "lav_warning_error",
               list(origin = "updating estimates", message = w$message, type = "warning")
             )
-            print("there was a warning")
           }
         ),
         error = function(e) {

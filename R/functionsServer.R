@@ -29,6 +29,5 @@ propagateData <- function(df, session, showData = FALSE) {
     name = df$name, columns = colnames(df$df),
     showData = showData
   )
-  print("sending stuff")
   session$sendCustomMessage(type = "dataInfo", message = data_info)
 }

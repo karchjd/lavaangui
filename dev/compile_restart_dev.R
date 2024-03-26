@@ -1,4 +1,4 @@
-recompile_front <- F # nolint
+recompile_front <- T # nolint
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -48,5 +48,5 @@ model <- '
 # '
 fit <- sem(model, sample.cov = cov(PoliticalDemocracy), sample.nobs = nrow(PoliticalDemocracy))
 # fit <- sem(model, data = PoliticalDemocracy)
-# start_gui(fit)
-plot_interactive(fit)
+start_gui(fit)
+# plot_interactive(fit)

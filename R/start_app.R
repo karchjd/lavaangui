@@ -13,6 +13,7 @@ start_app <- function(fit = NULL, full, where) {
         as.data.frame(lavInspect(fit, what = "data"))
       },
       error = function(e) {
+        message("Data not available only importing model")
         return(NULL)
       }
     )
