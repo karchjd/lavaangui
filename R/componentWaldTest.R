@@ -8,7 +8,7 @@ waldTestUI <- function(id) {
         h5("User-Specified Wald Test"),
         helpText("This field can be used to specify Wald tests based on names of model parameters."),
         helpText("Example:", tags$br(), "par1 == 0", tags$br(), "par2 == 0"),
-        tags$textarea(id = NS(id, "syntax"), rows = 5, cols = 40, ""),
+        textAreaInput(inputId = NS(id, "syntax"), label = NULL, value = "", rows = 5)
       ),
       mainPanel(
         verbatimTextOutput(NS(id, "result"))
