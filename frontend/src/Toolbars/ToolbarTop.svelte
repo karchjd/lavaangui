@@ -71,20 +71,22 @@
           alertEdge("undirected");
         }}>↔</button
       >
-      <button
+      <div
+        role="button"
         id="add-manifest-variable"
         title="Create Observed Variable"
         draggable="true"
         class="variable-button"
         data-button-type={OBSERVED}
+        tabindex="0"
         on:dragstart={() => {
+          event.dataTransfer.setData("text/plain", "node");
           dragStart(OBSERVED);
         }}
-        on:click={() => {
-          alertDrag();
-        }}
       />
-      <button
+      <div
+        role="button"
+        tabindex="0"
         id="add-latent-variable"
         title="Create Latent Variable"
         draggable="true"
@@ -93,11 +95,10 @@
         on:dragstart={() => {
           dragStart(LATENT);
         }}
-        on:click={() => {
-          alertDrag();
-        }}
       />
-      <button
+      <div
+        role="button"
+        tabindex="0"
         id="add-constant-variable"
         class="variable-button"
         title="Create Constant Variable"
@@ -105,9 +106,6 @@
         draggable="true"
         on:dragstart={() => {
           dragStart(CONSTANT);
-        }}
-        on:click={() => {
-          alertDrag();
         }}
       />
     </div>
@@ -212,11 +210,6 @@
     font-size: 20px;
   }
 
-  #buttonCont button {
-    height: 30px;
-    width: 30px;
-  }
-
   .variable-button {
     margin: 0 5px;
     padding: 8px 16px;
@@ -229,7 +222,7 @@
     cursor: grab;
   }
 
-  button::before {
+  .variable-button::before {
     content: "";
     position: absolute;
     top: 50%;

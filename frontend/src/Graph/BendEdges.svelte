@@ -20,6 +20,7 @@
       initAnchorsAutomatically: false,
       useTrailingDividersAfterContextMenuOptions: false,
       enableCreateAnchorOnDrag: true,
+      anchorShapeSizeFactor: 4,
     });
 
     cy.style().update();
