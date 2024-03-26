@@ -4,7 +4,14 @@
   import { cyStore, ehStore, appState, modelOptions } from "../stores.js";
   import { get } from "svelte/store";
   import { checkNodeLoop } from "./checkNodeLoop.js";
-  import { OBSERVED, LATENT, CONSTANT } from "./classNames.js";
+  import {
+    OBSERVED,
+    LATENT,
+    CONSTANT,
+    DIRECTED,
+    NODEWITH,
+    FIXED,
+  } from "./classNames.js";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -146,6 +153,8 @@
   }
 
   function handleCreateNode(event) {
+    let offset = 0;
+    const gap = 100;
     event.preventDefault();
     let pos = { x: event.offsetX, y: event.offsetY };
     if ($appState.dragged == "observed-with-name") {
@@ -173,7 +182,116 @@
                 true,
                 name,
               );
-              offset += 100; // Update offset for next node
+              offset += gap; // Update offset for next node
+            });
+          }
+        },
+      });
+    } else if ($appState.dragged == "factor") {
+      // @ts-ignore
+      let offset = 0;
+      bootbox.prompt({
+        title: "Select Items",
+        inputType: "select",
+        multiple: true,
+        value: "",
+        inputOptions: $appState.columnNames.map((name) => ({
+          text: name,
+          value: name,
+        })),
+        callback: function (result) {
+          if (result) {
+            const zoom = cy.zoom();
+            const latentID = addNode(LATENT, {
+              x:
+                pos.x +
+                (gap * zoom * result.length) / 2 -
+                (NODEWITH / 2) * zoom,
+              y: pos.y - gap * zoom * 3,
+            });
+            result.forEach((name) => {
+              const itemItem = addNode(
+                OBSERVED,
+                { x: pos.x + offset * zoom, y: pos.y },
+                true,
+                name,
+              );
+              offset += gap;
+              cy.add({
+                groups: "edges",
+                data: {
+                  source: latentID,
+                  target: itemItem,
+                },
+                classes: DIRECTED + " nolabel",
+              });
+            });
+          }
+        },
+      });
+    } else if ($appState.dragged == "growth") {
+      // @ts-ignore
+      let offset = 0;
+      bootbox.prompt({
+        title: "Select Time Points",
+        inputType: "select",
+        multiple: true,
+        value: "",
+        inputOptions: $appState.columnNames.map((name) => ({
+          text: name,
+          value: name,
+        })),
+        callback: function (result) {
+          if (result) {
+            const zoom = cy.zoom();
+            const interceptID = addNode(
+              LATENT,
+              {
+                x: pos.x + (NODEWITH / 2) * zoom,
+                y: pos.y - gap * zoom * 3,
+              },
+              true,
+              "Intercept",
+            );
+            const slopeID = addNode(
+              LATENT,
+              {
+                x: pos.x + gap * zoom * result.length - (NODEWITH / 2) * zoom,
+                y: pos.y - gap * zoom * 3,
+              },
+              true,
+              "Slope",
+            );
+            let counter = 1;
+            result.forEach((name) => {
+              const itemItem = addNode(
+                OBSERVED,
+                { x: pos.x + offset * zoom, y: pos.y },
+                true,
+                name,
+              );
+              offset += gap;
+              cy.add({
+                groups: "edges",
+                data: {
+                  source: interceptID,
+                  target: itemItem,
+                  value: 1,
+                },
+                classes: `${DIRECTED} ${FIXED} nolabel`,
+              });
+              if (counter != 1) {
+                cy.add({
+                  groups: "edges",
+                  data: {
+                    source: slopeID,
+                    target: itemItem,
+                    value: counter - 1,
+                  },
+                  classes: `${DIRECTED} ${FIXED} nolabel`,
+                });
+              }
+              counter += 1;
             });
           }
         },

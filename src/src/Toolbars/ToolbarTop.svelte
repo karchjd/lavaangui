@@ -26,6 +26,14 @@
     $appState.dragged = "multiple";
   }
 
+  function handleDragStarFactor(event) {
+    $appState.dragged = "factor";
+  }
+
+  function handleDragStarGrowth(event) {
+    $appState.dragged = "growth";
+  }
+
   function alertEdge(type) {
     if (type === "directed") {
       bootbox.alert(
@@ -108,7 +116,19 @@
         class="draggable-item"
         draggable="true"
         on:dragstart={(event) => handleDragStartMultiple(event)}
-        >Add Multiple Variables
+        >Multiple Variables
+      </button>
+      <button
+        class="draggable-item"
+        draggable="true"
+        on:dragstart={(event) => handleDragStarFactor(event)}
+        >Factor
+      </button>
+      <button
+        class="draggable-item"
+        draggable="true"
+        on:dragstart={(event) => handleDragStarGrowth(event)}
+        >Growth
       </button>
     </div>
     <div class="vertical-bar"></div>
@@ -124,18 +144,6 @@
       {/each}
     </ul>
   {/if}
-
-  <!-- <div id="messages">
-    {#if $appState.parsedModel}
-      <div id="means">
-        {#if $appState.meansModelled}
-          <span>Means are Modelled</span>
-        {:else}
-          <span>Means are NOT Modelled</span>
-        {/if}
-      </div>
-    {/if}
-  </div> -->
 </div>
 
 <style>

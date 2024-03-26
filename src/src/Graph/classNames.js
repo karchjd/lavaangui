@@ -19,3 +19,6 @@ export const HAS_EST = 'hasEst';
 export const VALIDATED = 'validated';
 export const CONTINOUS = 'continous';
 export const ORDERED = 'ordered';
+
+export const NODEWITH = 80;
+

@@ -5,7 +5,7 @@ export const graphStyles = [
   {
     selector: "node",
     style: {
-      width: "80", // Set the width of the nodes to 80
+      width: Constants.NODEWITH.toString(), // Set the width of the nodes to 80
       height: "80", // Set the height of the nodes to 80
       "background-color": "white",
       "border-color": "grey",
