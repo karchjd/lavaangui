@@ -17,7 +17,7 @@
       bendRemovalSensitivity: 16,
       enableMultipleAnchorRemovalOption: true,
       initAnchorsAutomatically: false,
-      useTrailingDividersAfterContextMenuOptions: true,
+      useTrailingDividersAfterContextMenuOptions: false,
       enableCreateAnchorOnDrag: true,
     });
 

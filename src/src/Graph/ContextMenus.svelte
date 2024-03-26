@@ -146,7 +146,7 @@
 
     {
       id: "remove-edge",
-      content: "Delete edge",
+      content: "Delete Edge",
       selector: `edge.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
@@ -474,67 +474,79 @@
     {
       id: "change-line-width",
       content: "Change Line Width",
-      show: "both",
-      selector: "edge", // Apply to both edges and nodes
+      show: "both", // Apply to both edges and nodes
+      selector: "edge",
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
         const toChange = getChange(target, selectedElements, "edges");
         if (isNull(toChange)) {
           return null;
         }
-        var newWidth = prompt("Enter New Line Width:", target.style("width"));
-        if (newWidth !== null) {
-          $ur.do("style", {
-            eles: toChange,
-            style: { width: newWidth },
-          });
-        }
+        // @ts-ignore
+        bootbox.prompt({
+          title: "Enter New Line Width:",
+          value: target.style("width"),
+          callback: function (newWidth) {
+            if (newWidth !== null) {
+              $ur.do("style", {
+                eles: toChange,
+                style: { width: newWidth },
+              });
+            }
+          },
+        });
       },
     },
+
     {
       id: "change-border-width",
       content: "Change Border Width",
-      show: "both",
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}`, // Apply to both edges and nodes
+      show: "both", // Apply to both edges and nodes
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}`,
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
         const toChange = getChange(target, selectedElements, "nodes");
         if (isNull(toChange)) {
           return null;
         }
-        var newWidth = prompt(
-          "Enter New Border Width:",
-          target.style("border-width"),
-        );
-        if (newWidth !== null) {
-          $ur.do("style", {
-            eles: toChange,
-            style: { "border-width": newWidth },
-          });
-        }
+        bootbox.prompt({
+          title: "Enter New Border Width:",
+          value: target.style("border-width"),
+          callback: function (newWidth) {
+            if (newWidth !== null) {
+              $ur.do("style", {
+                eles: toChange,
+                style: { "border-width": newWidth },
+              });
+            }
+          },
+        });
       },
     },
     {
       id: "change-font-size",
       content: "Change Font Size",
       show: "both",
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, edge`, // This applies to nodes only, as they display labels
+      hasTrailingDivider: true,
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, edge`,
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
         const toChange = getChange(target, selectedElements, "nodes.edges");
         if (isNull(toChange)) {
           return null;
         }
-        var newFontSize = prompt(
-          "Enter New Font Size:",
-          target.style("font-size"),
-        );
-        if (newFontSize !== null) {
-          $ur.do("style", {
-            eles: toChange,
-            style: { "font-size": newFontSize },
-          });
-        }
+        bootbox.prompt({
+          title: "Enter New Font Size:",
+          value: target.style("font-size"),
+          callback: function (newFontSize) {
+            if (newFontSize !== null) {
+              $ur.do("style", {
+                eles: toChange,
+                style: { "font-size": newFontSize },
+              });
+            }
+          },
+        });
       },
     },
   ];
