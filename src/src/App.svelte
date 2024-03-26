@@ -30,6 +30,7 @@
   import NodeEditing from "./Graph/NodeEditing.svelte";
   import ExtendCyto from "./Graph/ExtendCyto.svelte";
   import BendEdges from "./Graph/BendEdges.svelte";
+  import GridOptions from "./MenuTop/GridOptions.svelte";
 </script>
 
 <AppReady />
@@ -47,6 +48,7 @@
         <FileMenu full={false} />
         <ViewMenu minimal={true} />
         <Layouts minimal={true} />
+        <GridOptions minimal={true} />
       </MinContextMenu>
     {/if}
     <MainContainer>

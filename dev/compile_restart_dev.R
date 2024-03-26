@@ -48,5 +48,5 @@ model <- '
 # '
 
 fit <- sem(model, data = PoliticalDemocracy)
-start_gui(fit)
-# plot_interactive(fit)
+# start_gui(fit)
+plot_interactive(fit)

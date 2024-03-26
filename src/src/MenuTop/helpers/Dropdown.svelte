@@ -12,6 +12,7 @@
     aria-haspopup="true"
     aria-expanded="false"
     class:minimal
+    draggable="false"
   >
     {name}<span class="caret" /></a
   >
@@ -25,6 +26,7 @@
     color: black;
     text-decoration: none;
     padding: 8px 16px;
+    margin: 12px 0px;
   }
 
   .minimal:hover,

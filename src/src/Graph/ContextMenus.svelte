@@ -128,7 +128,7 @@
           },
         });
       },
-      show: "both",
+      show: "full",
       hasTrailingDivider: false,
     },
     {

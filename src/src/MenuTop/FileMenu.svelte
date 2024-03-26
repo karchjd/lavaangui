@@ -362,7 +362,7 @@
         action: exportPDF,
       },
     ];
-    menuItems = full ? allMenuItems : allMenuItems.slice(-2);
+    menuItems = full ? allMenuItems : allMenuItems.slice(-4);
   }
 </script>
 

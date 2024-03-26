@@ -1,12 +1,12 @@
 <script>
-    export let full = true;
+    export let minimal = false;
     import { gridViewOptions } from "../stores.js";
     import Dropdown from "./helpers/Dropdown.svelte";
     import CheckItem from "./helpers/CheckItem.svelte";
     import TextItem from "./helpers/TextItem.svelte";
 </script>
 
-<Dropdown minimal={!full} name={"Grid Options"}>
+<Dropdown {minimal} name={"Grid Options"}>
     <CheckItem name={"Show Grid"} bind:checked={$gridViewOptions.gridShow} />
     <CheckItem name={"Snap to Grid"} bind:checked={$gridViewOptions.gridSnap} />
     <CheckItem
