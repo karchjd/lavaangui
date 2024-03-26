@@ -1,7 +1,10 @@
 import { get } from "svelte/store";
-import { appState, cyStore, modelOptions, fitCache, gridViewOptions } from "../stores";
+import { appState, cyStore, modelOptions, fitCache, gridViewOptions, setAlert } from "../stores";
+import app from "../main";
 
 export function tolavaan(mode) {
+  console.log("tolavaan");
+  console.log((new Error()).stack.split("\n")[2].trim().split(" ")[1])
   var appState_local = get(appState);
   var viewOptions = get(gridViewOptions);
   let cy = get(cyStore);
@@ -12,7 +15,12 @@ export function tolavaan(mode) {
     return;
   }
 
-  // TODO: remove? appState_local.loadingMode = true;
+  if (
+    !appState_local.dataAvail && mode == "estimate") {
+    setAlert("danger", "Model not send to lavaan because no data available",);
+    return;
+  }
+
 
 
   for (var i = 0; i < edges.length; i++) {

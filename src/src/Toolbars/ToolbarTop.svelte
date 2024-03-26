@@ -22,6 +22,10 @@
     $appState.draggedName = name;
   }
 
+  function handleDragStartMultiple(event) {
+    $appState.dragged = "multiple";
+  }
+
   function alertEdge(type) {
     if (type === "directed") {
       bootbox.alert(
@@ -99,6 +103,15 @@
   </div>
   {#if $appState.dataAvail}
     <div class="vertical-bar"></div>
+    <div>
+      <button
+        class="draggable-item"
+        draggable="true"
+        on:dragstart={(event) => handleDragStartMultiple(event)}
+        >Add Multiple Variables
+      </button>
+    </div>
+    <div class="vertical-bar"></div>
     <ul class="draggable-list">
       {#each $appState.columnNames as name}
         <li
@@ -111,6 +124,7 @@
       {/each}
     </ul>
   {/if}
+
   <!-- <div id="messages">
     {#if $appState.parsedModel}
       <div id="means">
@@ -187,7 +201,7 @@
     font-size: 20px;
   }
 
-  button {
+  #buttonCont button {
     height: 30px;
     width: 30px;
   }
@@ -261,13 +275,15 @@
     margin: 0;
     overflow: hidden;
     overflow-x: auto;
-    width: 60%;
+    max-width: 0.5wv;
   }
+
   .draggable-item {
     padding: 3px 6px;
     background-color: white;
     border: 1px solid #000;
     cursor: grab;
+    white-space: nowrap;
   }
 
   #buttonCont {

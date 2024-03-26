@@ -48,7 +48,6 @@
         const newStyle = args.eles[0].style();
         Object.keys(args.style).forEach(function (id) {
           var ele = cy.getElementById(id);
-          debugger;
           ele.style(args.style[id]);
         });
         return {

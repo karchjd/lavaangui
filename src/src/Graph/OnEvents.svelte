@@ -23,8 +23,14 @@
   cy.on("remove", "edge, node", function (event) {
     if (cy.getUserEdges().length == 0) {
       $appState.modelEmpty = true;
+      $modelOptions.mode = "user model";
+      Shiny.setInputValue("show_help", Math.random());
     }
     tolavaan($modelOptions.mode);
+  });
+
+  cy.on("add", "edge", function (event) {
+    $appState.everEdge = true;
   });
 
   cy.on("position", "node", function (event) {

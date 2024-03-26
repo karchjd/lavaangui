@@ -21,6 +21,7 @@
   import { jsPDF } from "jspdf";
   import { svg2pdf } from "svg2pdf.js";
   import * as Constants from "../Graph/classNames.js";
+  import shinyClasses from "shiny";
 
   cytoscape.use(svg);
 
@@ -63,7 +64,6 @@
   }
 
   function parseModel(content) {
-    console.log("");
     reset();
 
     let combinedData = JSON.parse(content);
@@ -81,7 +81,7 @@
     }
 
     // Set loading mode, update diagram and perform checks
-    // TODO: remove? $appState.loadingMode = true;
+    $appState.loadingMode = true;
     cy.json({ elements: json });
     cy.style(graphStyles);
     cy.minZoom(graphSettings.minZoom);
@@ -102,6 +102,7 @@
     cy.nodes().forEach((node) => {
       checkNodeLoop(node.id());
     });
+    $appState.loadingMode = false;
   }
 
   async function uploadModel() {
@@ -262,6 +263,7 @@
     $appState.ids = null;
     $dataInfo = null;
     cy.nodes().unlink();
+    Shiny.setInputValue("dataUpload-deleteData", Math.random());
   }
 
   function startDownload(object, fileEnding) {

@@ -11,7 +11,7 @@
   display: block !important;
 }
 
-.navbar-nav > li,
+.navbar-nav>li,
 .navbar-nav {
   float: left !important;
 }
@@ -22,4 +22,8 @@
 
 .navbar-right {
   float: right !important;
+}
+
+.bootbox-body select[multiple] {
+  height: auto;
 }

@@ -76,10 +76,11 @@ read_auto <- function(filepath) {
 }
 
 
-serverDataUploader <- function(id, getData) {
+serverDataUploader <- function(id) {
   moduleServer(id, function(input, output, session) {
     data <- reactiveVal(NULL)
     import <- logical(1)
+
     observeEvent(input$fileInput, {
       if (is.null(input$fileInput$content)) {
         data(list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name))

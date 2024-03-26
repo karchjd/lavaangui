@@ -46,7 +46,7 @@ export let fitCache = writable({
 
 export let appState = writable({
   fitting: false,
-  loadingMode: false, // TODO: remove?
+  loadingMode: false,
   runCounter: 0,
   modelEmpty: true,
   dataAvail: false,
@@ -61,7 +61,8 @@ export let appState = writable({
   parsedModel: false,
   meansModelled: null,
   buttonDown: false,
-  showServerErrors: true
+  showServerErrors: true,
+  everEdge: false
 });
 
 export let dataInfo = writable(0);

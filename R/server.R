@@ -53,7 +53,7 @@ lavaan_gui_server <- function(input, output, session) {
   serverResultUpdater("res", to_render)
 
   serverDownloader("down", getData)
-  
+
   extendResultsServer("extend", fit)
 
   # showing help leave as is

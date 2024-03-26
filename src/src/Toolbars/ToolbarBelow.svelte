@@ -39,10 +39,9 @@
 
 <div class="toolbox navbar-static-bottom">
   <button
-    class="btn btn-lg {selected === 'data'
-      ? 'btn-primary active'
-      : 'btn-default'}"
+    class="btn btn-lg btn-default"
     on:click={() => showData()}
+    disabled={!$appState.dataAvail}
   >
     Show Data
   </button>
@@ -70,15 +69,14 @@
         ? 'btn-primary active'
         : 'btn-default'}"
       on:click={() => changeMode("estimate")}
-      disabled={!$appState.dataAvail}
+      disabled={!$appState.dataAvail || $appState.modelEmpty}
     >
       Show Estimate
     </button>
   </div>
   <button
-    class="btn btn-lg {selected === 'data'
-      ? 'btn-primary active'
-      : 'btn-default'}"
+    class="btn btn-lg btn-default"
+    disabled={$modelOptions.mode != "estimate"}
     on:click={() => showResults()}
   >
     More Results

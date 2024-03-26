@@ -147,11 +147,39 @@
 
   function handleCreateNode(event) {
     event.preventDefault();
-    const pos = { x: event.offsetX, y: event.offsetY };
-    if ($appState.dragged != "observed-with-name") {
-      const position = addNode($appState.dragged, pos);
+    let pos = { x: event.offsetX, y: event.offsetY };
+    if ($appState.dragged == "observed-with-name") {
+      addNode(OBSERVED, pos, true, $appState.draggedName);
+    } else if ($appState.dragged == "multiple") {
+      // @ts-ignore
+      let offset = 0;
+      bootbox.prompt({
+        title: "Select Variable to Add",
+        inputType: "select",
+        multiple: true,
+        value: "",
+        inputOptions: $appState.columnNames.map((name) => ({
+          text: name,
+          value: name,
+        })),
+        callback: function (result) {
+          if (result) {
+            const zoom = cy.zoom();
+            // pos.x = (pos.x + pan.x) / zoom;
+            result.forEach((name) => {
+              addNode(
+                OBSERVED,
+                { x: pos.x + offset * zoom, y: pos.y },
+                true,
+                name,
+              );
+              offset += 100; // Update offset for next node
+            });
+          }
+        },
+      });
     } else {
-      const position = addNode(OBSERVED, pos, true, $appState.draggedName);
+      addNode($appState.dragged, pos);
     }
   }
 
