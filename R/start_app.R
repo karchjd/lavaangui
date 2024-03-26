@@ -13,8 +13,7 @@ start_app <- function(fit = NULL, full, where) {
         as.data.frame(lavInspect(fit, what = "data"))
       },
       error = function(e) {
-        stop("Could not get data from fit object. Probably you fitted your model with a sample covariance matrix,
-        which is currently not supported")
+        return(NULL)
       }
     )
     model <- list(obs = varNames, latent = factNames, parTable = parTable(fit), df = df, fit = fit)

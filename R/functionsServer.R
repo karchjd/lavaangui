@@ -10,8 +10,12 @@ importModel <- function(session) {
   if ((!imported) && (exists("importedModel"))) {
     session$sendCustomMessage("imported_model", message = importedModel[c("parTable", "latent", "obs")])
     to_render <- (importedModel$fit)
-    df_full <- list(df = importedModel$df, name = "Imported from R")
-    propagateData(df_full, session, showData = FALSE)
+    if (!is.null(importedModel$df)) {
+      df_full <- list(df = importedModel$df, name = "Imported from R")
+      propagateData(df_full, session, showData = FALSE)
+    } else {
+      df_full <- NULL
+    }
     imported <- TRUE
     session$sendCustomMessage("setToEstimate", message = rnorm(1))
     return(list(fit = importedModel$fit, to_render = to_render, data_react = df_full, imported = imported))
