@@ -9,3 +9,8 @@
 ^app\.R$
 ^\.github$
 ^LICENSE\.md$
+^frontend$
+^init\.R$
+^run\.R$
+^\.lintr$
+^version_info\.txt$

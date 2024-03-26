@@ -15,7 +15,7 @@
 # Test your app
 
 ## fresh compile
-ret_val <- system("cd src && npm run build:deploy")
+ret_val <- system("cd frontend && npm run build:deploy")
 if (ret_val != 0) {
   stop("Failed to compile Svelte front end.")
 }

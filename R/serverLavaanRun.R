@@ -83,7 +83,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         fit(cacheResult$fit)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
         to_render(cacheResult)
-        forceEstimateUpdate(rnorm(1))
+        forceEstimateUpdate(stats::rnorm(1))
         session$sendCustomMessage("usecache", "")
         return(NULL)
       }

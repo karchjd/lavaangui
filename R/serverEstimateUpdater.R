@@ -1,4 +1,4 @@
-serverEstimateUpdater <- function(id, forceEstimateUpdate, fit) {
+serverEstimateUpdater <- function(id, forceEstimateUpdate, fit, to_render) {
   moduleServer(id, function(input, output, session) {
     ## update estimates
     observe({

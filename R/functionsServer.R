@@ -17,7 +17,7 @@ importModel <- function(session) {
       df_full <- NULL
     }
     imported <- TRUE
-    session$sendCustomMessage("setToEstimate", message = rnorm(1))
+    session$sendCustomMessage("setToEstimate", message = stats::rnorm(1))
     return(list(fit = importedModel$fit, to_render = to_render, data_react = df_full, imported = imported))
   } else {
     return(list(imported = imported))

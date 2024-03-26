@@ -37,7 +37,7 @@ exactTestServer <- function(id, fit) {
     moduleServer(id, function(input, output, session) {
         output$result <- renderPrint({
             req(input$test)
-            cat(paste0(capture.output(lavaan::lavTest(fit(),
+            cat(paste0(utils::capture.output(lavaan::lavTest(fit(),
                 test = input$test, output = "text"
             )), collapse = "\n"))
         })

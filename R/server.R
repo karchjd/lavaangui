@@ -48,7 +48,7 @@ lavaan_gui_server <- function(input, output, session) {
   ## main server for running ladan
   serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit)
 
-  serverEstimateUpdater("ests", forceEstimateUpdate, fit)
+  serverEstimateUpdater("ests", forceEstimateUpdate, fit, to_render)
 
   serverResultUpdater("res", to_render)
 

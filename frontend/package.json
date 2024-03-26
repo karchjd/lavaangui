@@ -20,6 +20,7 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
+    "@jaames/iro": "^5.5.2",
     "bootbox": "^5.5.3",
     "bootstrap": "^3.4.1",
     "cytoscape": "^3.25.0",
