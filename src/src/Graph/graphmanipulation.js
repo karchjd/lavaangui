@@ -1,7 +1,7 @@
 import { cyStore, modelOptions, setAlert, ur } from "../stores.js";
 import { get } from "svelte/store";
 import { v4 as uuidv4 } from "uuid";
-import { OBSERVED, LATENT } from "./classNames.js";
+import { OBSERVED, LATENT, FROM_USER, FROM_LAV, FIXED, FREE, NOT_LABEL, CONTINOUS, DIRECTED, UNDIRECTED } from "./classNames.js";
 import { tolavaan } from "../Shiny/toR.js";
 
 
@@ -45,7 +45,7 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null)
     urLocal.do("add", {
       group: "nodes",
       data: { id: nodeId, label: label },
-      classes: [nodeType, "continous"],
+      classes: [nodeType, CONTINOUS],
       renderedPosition: position,
     });
   } else {
@@ -53,7 +53,7 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null)
     cy.add({
       group: "nodes",
       data: { id: nodeId, label: label },
-      classes: [nodeType, "continous"],
+      classes: [nodeType, CONTINOUS],
       renderedPosition: position,
     });
   }
@@ -64,3 +64,22 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null)
 
   return nodeId;
 }
+
+
+export function addEdge(source, target, directed = true, fixed = false, fixedValue = null, fromUser = true) {
+  let cy = get(cyStore);
+  let edgeId = uuidv4();
+  let edge = cy.add({
+    group: "edges",
+    data: {
+      id: edgeId,
+      source: source,
+      target: target,
+      value: fixed ? fixedValue : undefined // Added fixedValue as input
+    },
+    classes: `${directed ? DIRECTED : UNDIRECTED} ${fromUser ? FROM_USER : FROM_LAV} ${fixed ? FIXED : FREE} ${NOT_LABEL}`
+  });
+  return edge;
+}
+
+
