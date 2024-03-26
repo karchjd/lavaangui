@@ -111,7 +111,7 @@
   </div>
   {#if $appState.dataAvail}
     <div class="vertical-bar"></div>
-    <div>
+    <div id="model-buttons">
       <button
         class="draggable-item"
         draggable="true"
@@ -299,6 +299,13 @@
     justify-content: space-around;
     align-items: center;
     flex-wrap: nowrap;
+  }
+
+  #model-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
   }
 
   #buttons {
