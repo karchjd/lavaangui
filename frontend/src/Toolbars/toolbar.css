@@ -1,0 +1,29 @@
+.toolbox {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.navbar-collapse.collapse {
+  display: block !important;
+}
+
+.navbar-nav>li,
+.navbar-nav {
+  float: left !important;
+}
+
+.navbar-nav.navbar-right:last-child {
+  margin-right: -15px !important;
+}
+
+.navbar-right {
+  float: right !important;
+}
+
+.bootbox-body select[multiple] {
+  height: auto;
+}

@@ -38,7 +38,10 @@ lavaan_residuals <- function(fit, type) {
   }
 
 
-  res <- data.frame(v1 = all_pairs$v1, v2 = all_pairs$v2, cov = all_pairs$cov, cov_abs = abs(all_pairs$cov), cov.se = all_pairs$cov.se, cov.z = all_pairs$cov.z)
+  res <- data.frame(
+    v1 = all_pairs$v1, v2 = all_pairs$v2, cov = all_pairs$cov,
+    cov_abs = abs(all_pairs$cov), cov.se = all_pairs$cov.se, cov.z = all_pairs$cov.z
+  )
   if (type != "raw") {
     what <- "Correlation"
   } else {

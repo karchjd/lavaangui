@@ -1,8 +1,8 @@
-recompile_front <- F # nolint
+recompile_front <- T # nolint
 
 if (recompile_front) {
   # Compile Svelte front end
-  ret_val <- system("cd src && npm run build:dev")
+  ret_val <- system("cd frontend && npm run build:dev")
   if (ret_val != 0) {
     stop("Failed to compile Svelte front end.")
   }

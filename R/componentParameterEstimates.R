@@ -39,10 +39,12 @@ parameterEstimatesServer <- function(id, fit) {
   })
 }
 
-tabPanel('Wald Test',
-         br(),
-         h5("User-Specified Wald Test"),
-         helpText('This text can be used to specify an additional (user-specified) Wald test based on names of model parameters.'),
-         helpText('Example: par1 == 0 ; par2 == 0'),
-         tags$textarea(id="add.syntax.wald", rows=5, cols=40, "")
+tabPanel(
+  "Wald Test",
+  br(),
+  h5("User-Specified Wald Test"),
+  helpText("This text can be used to specify an additional (user-specified)
+         Wald test based on names of model parameters."),
+  helpText("Example: par1 == 0 ; par2 == 0"),
+  tags$textarea(id = "add.syntax.wald", rows = 5, cols = 40, "")
 )

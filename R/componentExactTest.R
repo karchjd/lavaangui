@@ -43,20 +43,3 @@ exactTestServer <- function(id, fit) {
         })
     })
 }
-
-# ui <- fluidPage(
-#     exactTestUI("exact")
-# )
-#
-#
-# server <- function(input, output, session) {
-#     fit <- reactiveVal()
-#     HS.model <- " visual  =~ x1 + x2 + x3
-#               textual =~ x4 + x5 + x6
-#               speed   =~ x7 + x8 + x9 "
-#     fit_local <- cfa(HS.model, data = HolzingerSwineford1939)
-#     fit(fit_local)
-#     exactTestServer("exact", fit)
-# }
-#
-# shinyApp(ui = ui, server = server)
