@@ -57,7 +57,7 @@ function getStars(pval) {
   } else if (pval < 0.05) {
     return "*";
   } else {
-    return "NA";
+    return "";
   }
 }
 

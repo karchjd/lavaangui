@@ -21,4 +21,5 @@ export const CONTINOUS = 'continous';
 export const ORDERED = 'ordered';
 
 export const NODEWITH = 80;
+export const LABELWIDTH = 80;
 
