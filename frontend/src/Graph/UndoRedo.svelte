@@ -58,9 +58,21 @@
     );
 
     document.addEventListener("keydown", function (e) {
-      if ((e.ctrlKey || e.metaKey) && e.target.nodeName === "BODY")
+      if ((e.ctrlKey || e.metaKey) && e.target.nodeName === "BODY") {
+        e.preventDefault();
+        e.stopPropagation();
         if (e.which === 90) $ur.undo();
         else if (e.which === 89) $ur.redo();
+      }
+    });
+
+    // needed for safari https://stackoverflow.com/questions/32957841/intercepting-cmdz-cmdshiftz-and-cmdy-in-safari
+    document.addEventListener("keyup", function (e) {
+      if (e.metaKey && e.target.nodeName === "BODY")
+        if (e.which === 90 || e.which === 89) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
     });
   });
 </script>

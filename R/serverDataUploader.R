@@ -82,17 +82,27 @@ serverDataUploader <- function(id) {
     import <- logical(1)
 
     observeEvent(input$fileInput, {
-      if (is.null(input$fileInput$content)) {
-        loadedData(list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name))
-        showData <- TRUE
-      } else {
-        content <- input$fileInput$content
-        decoded <- base64enc::base64decode(content)
-        loadedData(list(df = readr::read_csv(decoded), name = "data.csv"))
-        showData <- FALSE
-      }
-      propagateData(loadedData(), session, showData)
+      tryCatch(
+        {
+          if (!is.null(input$fileInput$datapath)) {
+            loadedData(list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name))
+            showData <- TRUE
+          } else {
+            content <- input$fileInput$content
+            decoded <- base64enc::base64decode(content)
+            loadedData(list(df = readr::read_csv(decoded), name = "data.csv"))
+            showData <- FALSE
+          }
+          propagateData(loadedData(), session, showData)
+        },
+        error = function(e) {
+          session$sendCustomMessage(
+            "lav_warning_error",
+            list(origin = "loading data", message = e$message, type = "danger")
+          )
+        }
+      )
     })
-    loadedData
+    return(loadedData)
   })
 }

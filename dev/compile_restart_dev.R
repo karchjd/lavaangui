@@ -46,7 +46,7 @@ model <- '
 #  f1 =~ x1 + x2 + x3
 #  f2 =~ 2*x2 + x2 + 3*x3 + x3
 # '
-fit <- sem(model, sample.cov = cov(PoliticalDemocracy), sample.nobs = nrow(PoliticalDemocracy))
+# fit <- sem(model, sample.cov = cov(PoliticalDemocracy), sample.nobs = nrow(PoliticalDemocracy))
 # fit <- sem(model, data = PoliticalDemocracy)
 start_gui(fit)
 # plot_interactive(fit)
