@@ -12,6 +12,10 @@ serverEstimateUpdater <- function(id, forceEstimateUpdate, fit, to_render) {
               normal = parameterestimates(fit(), level = input$confindence_level),
               std = standardizedsolution(fit(), level = input$confindence_level)
             )
+            if (lavInspect(fit(), "ngroups") > 1) {
+              res$normal <- getGroupTable(res$normal)
+              res$std <- getGroupTable(res$std)
+            }
             session$sendCustomMessage("lav_estimates", res)
           },
           error = function(e) {

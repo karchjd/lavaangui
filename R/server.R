@@ -10,7 +10,7 @@ lavaan_gui_server <- function(input, output, session) {
   imported <- importRes$imported
   if (imported) {
     fit(importRes$fit)
-    to_render(importRes$to_render)
+    to_render(list(fit = importRes$fit))
   }
 
   ## View data

@@ -46,7 +46,7 @@ if (serverAvail()) {
     layout_R = objectOfArraysToArrayOfObjects(layout_R);
     // Determine scale and translation factors
     const differenceX = 125;
-    const differenceY = 300;
+    const differenceY = 200;
     let minDiffX = Infinity;
     let minDiffY = Infinity;
 

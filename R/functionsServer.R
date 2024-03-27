@@ -1,3 +1,10 @@
+getGroupTable <- function(parTable) {
+  parTable$lhs <- paste0(parTable$lhs, ".", parTable$group)
+  parTable$rhs <- paste0(parTable$rhs, ".", parTable$group)
+  return(parTable)
+}
+
+
 importModel <- function(session) {
   imported <- FALSE
   if (exists(".importedModel128498129481249124891284129", where = .GlobalEnv)) {
@@ -6,10 +13,22 @@ importModel <- function(session) {
   full <- .GlobalEnv$.full12849812948124912489128412948
   session$sendCustomMessage("full", message = full)
 
+  makeNewVars <- function(vars, groups) {
+    allCombs <- expand.grid(vars, groups)
+    paste0(allCombs$Var1, ".", allCombs$Var2)
+  }
   # import model if present
   if ((!imported) && (exists("importedModel"))) {
-    session$sendCustomMessage("imported_model", message = importedModel[c("parTable", "latent", "obs")])
-    to_render <- (importedModel$fit)
+    parTable <- importedModel$parTable
+    observed <- importedModel$obs
+    latent <- importedModel$latent
+    if (lavInspect(importedModel$fit, "ngroups") > 1) {
+      parTable <- getGroupTable(parTable)
+      groups <- unique(parTable$group)
+      observed <- makeNewVars(observed, groups)
+      latent <- makeNewVars(latent, groups)
+    }
+    session$sendCustomMessage("imported_model", message = list(parTable = parTable, latent = latent, obs = observed))
     if (!is.null(importedModel$df)) {
       df_full <- list(df = importedModel$df, name = "Imported from R")
       propagateData(df_full, session, showData = FALSE)
@@ -18,7 +37,7 @@ importModel <- function(session) {
     }
     imported <- TRUE
     session$sendCustomMessage("setToEstimate", message = stats::rnorm(1))
-    return(list(fit = importedModel$fit, to_render = to_render, data_react = df_full, imported = imported))
+    return(list(fit = importedModel$fit, data_react = df_full, imported = imported))
   } else {
     return(list(imported = imported))
   }

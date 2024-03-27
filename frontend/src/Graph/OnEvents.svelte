@@ -3,7 +3,7 @@
   import { get } from "svelte/store";
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { tolavaan } from "../Shiny/toR.js";
-  import { LABELWIDTH } from "./classNames.js";
+  import { DIRECTED } from "./classNames.js";
   let cy = get(cyStore);
 
   cy.on("add", "node", function (event) {
@@ -53,23 +53,25 @@
     let minDistance = Infinity;
     const clickThreshold = 30; // Adjust based on your needs
     cy.edges().forEach(function (edge) {
-      const labelOffsetX = convertPxToNumber(edge.style("text-margin-x"));
-      const labelOffsetY = convertPxToNumber(edge.style("text-margin-y"));
+      if (edge.isDirected()) {
+        const labelOffsetX = convertPxToNumber(edge.style("text-margin-x"));
+        const labelOffsetY = convertPxToNumber(edge.style("text-margin-y"));
 
-      // Calculate the adjusted label position
-      const edgeMidpoint = edge.midpoint();
-      const labelPosition = {
-        x: edgeMidpoint.x + labelOffsetX,
-        y: edgeMidpoint.y + labelOffsetY,
-      };
+        // Calculate the adjusted label position
+        const edgeMidpoint = edge.midpoint();
+        const labelPosition = {
+          x: edgeMidpoint.x + labelOffsetX,
+          y: edgeMidpoint.y + labelOffsetY,
+        };
 
-      const dx = Math.abs(mousePosition.x - labelPosition.x);
-      const dy = mousePosition.y - labelPosition.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      // Check if this is the nearest label so far
-      if (distance < minDistance && distance < clickThreshold) {
-        nearestEdge = edge;
-        minDistance = distance;
+        const dx = Math.abs(mousePosition.x - labelPosition.x);
+        const dy = mousePosition.y - labelPosition.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        // Check if this is the nearest label so far
+        if (distance < minDistance && distance < clickThreshold) {
+          nearestEdge = edge;
+          minDistance = distance;
+        }
       }
     });
 
@@ -112,13 +114,21 @@
       };
 
       // Project the midpointToMouseVector onto the normalized edge vector to get the displacement along the edge
-      const displacementAlongEdge =
+      let displacementAlongEdge =
         midpointToMouseVector.x * normalizedEdgeVector.x +
         midpointToMouseVector.y * normalizedEdgeVector.y;
 
+      const TargetMax =
+        (edgeTargetPos.y - edgeMidpoint.y) / normalizedEdgeVector.y - 70;
+      const SourceMin =
+        (edgeSourcePos.y - edgeMidpoint.y) / normalizedEdgeVector.y + 70;
+
+      let displacementAlongEdgeCut = Math.min(TargetMax, displacementAlongEdge);
+      displacementAlongEdgeCut = Math.max(SourceMin, displacementAlongEdgeCut);
+
       // Calculate the new margin positions
-      const newMarginX = displacementAlongEdge * normalizedEdgeVector.x;
-      const newMarginY = displacementAlongEdge * normalizedEdgeVector.y;
+      const newMarginX = displacementAlongEdgeCut * normalizedEdgeVector.x;
+      const newMarginY = displacementAlongEdgeCut * normalizedEdgeVector.y;
 
       selectedEdge.style({
         "text-margin-x": newMarginX,

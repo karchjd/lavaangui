@@ -1,4 +1,4 @@
-recompile_front <- T # nolint
+recompile_front <- F # nolint
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -47,6 +47,13 @@ model <- '
 #  f2 =~ 2*x2 + x2 + 3*x3 + x3
 # '
 # fit <- sem(model, sample.cov = cov(PoliticalDemocracy), sample.nobs = nrow(PoliticalDemocracy))
-# fit <- sem(model, data = PoliticalDemocracy)
-start_gui(fit)
-# plot_interactive(fit)
+HS.model <- ' visual  =~ x1 + x2 + x3
+              textual =~ x4 + x5 + x6
+              speed   =~ x7 + x8 + x9 '
+
+fit_g <- cfa(HS.model,
+           data = HolzingerSwineford1939,
+           group = "school")
+ fit <- sem(model, data = PoliticalDemocracy)
+# start_gui(fit)
+plot_interactive(fit_g)

@@ -261,6 +261,7 @@
       });
     } else {
       applySemLayout("tree", false);
+      cy.fit();
     }
 
     if (!$appState.parsedModel) {
@@ -379,12 +380,14 @@
     // parse model
     // @ts-expect-error
     Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
+      debugger;
       getModelLav(lav_model, false);
     });
 
     //import model
     // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
+      debugger;
       getModelLav(lav_model, true);
       $modelOptions.fix_first = false;
     });

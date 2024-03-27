@@ -3,22 +3,29 @@
 
 start_app <- function(fit = NULL, full, where) {
   if (!is.null(fit)) {
-    if (lavInspect(fit, "ngroups") > 1) {
-      stop("Multiple groups model currently not supported")
-    }
+     
     varNames <- lavaanNames(fit, type = "ov")
     factNames <- lavaanNames(fit, type = "lv")
     factNames <- factNames[!factNames %in% varNames]
-    df <- tryCatch(
-      {
-        as.data.frame(lavInspect(fit, what = "data"))
-      },
-      error = function(e) {
-        message("Data not available only importing model")
-        return(NULL)
+    if (lavInspect(fit, "ngroups") == 1){
+      df <- tryCatch(
+        {
+          as.data.frame(lavInspect(fit, what = "data"))
+        },
+        error = function(e) {
+          message("Data not available only importing model")
+          return(NULL)
+        }
+      )  
+    }else{
+      if(!full){
+        stop("Multipe group models are currently not supported. But you can plot your model using plot_interactive")
       }
-    )
-    model <- list(obs = varNames, latent = factNames, parTable = parTable(fit), df = df, fit = fit)
+      df = NULL
+    }
+    parTable <- parTable(fit)
+    parTable <- parTable[!parTable$op%in%c(':=','<','>','==','|','<', '>'),]
+    model <- list(obs = varNames, latent = factNames, parTable = parTable, df = df, fit = fit)
     .GlobalEnv$.importedModel128498129481249124891284129 <- model
   } else {
     if (exists(".importedModel128498129481249124891284129", where = .GlobalEnv)) {
