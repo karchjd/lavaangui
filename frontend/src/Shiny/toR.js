@@ -70,6 +70,7 @@ function addTerms(node, edge) {
   if (edge.hasLabel()) {
     const label = edge.getLabel();
     if (!premultiplier) {
+      premultiplier = true;
       formula = label + "*" + node_label;
     } else {
       formula += " + " + label + "*" + node_label;
@@ -77,8 +78,6 @@ function addTerms(node, edge) {
   } else {
     if (!premultiplier) {
       formula = node_label;
-    } else {
-      formula += " + " + node_label;
     }
   }
   return formula;

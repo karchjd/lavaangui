@@ -12,7 +12,6 @@
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { OBSERVED, LATENT, CONSTANT, NODEWITH } from "./classNames.js";
   import { tolavaan } from "../Shiny/toR.js";
-  import { debug } from "console";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -162,15 +161,20 @@
     let pos = { x: event.offsetX, y: event.offsetY };
 
     function createBootPrompt(title, callback) {
+      let inputOptions;
+      if ($appState.dataAvail) {
+        inputOptions = $appState.columnNames.map((item) => {
+          return { text: item, value: item };
+        });
+      } else {
+        inputOptions = Array.from({ length: 100 }, (_, i) => `var${i + 1}`);
+      }
       const promptSettings = {
         title: title,
         inputType: "select",
         multiple: true,
         value: "",
-        inputOptions: $appState.columnNames.map((name) => ({
-          text: name,
-          value: name,
-        })),
+        inputOptions: inputOptions,
         callback: callback, // Include the callback function here
       };
       // @ts-ignore
@@ -256,7 +260,7 @@
             LATENT,
             {
               x: pos.x + (NODEWITH / 2) * zoom,
-              y: pos.y + 0.5 * ygap * zoom,
+              y: pos.y + 1 * ygap * zoom,
             },
             true,
             "Intercept",
@@ -268,7 +272,7 @@
                 pos.x +
                 gap * zoom * (result.length - 1) -
                 (NODEWITH / 2) * zoom,
-              y: pos.y + 0.5 * ygap * zoom,
+              y: pos.y + 1 * ygap * zoom,
             },
             true,
             "Slope",
@@ -279,7 +283,7 @@
           result.forEach((name) => {
             const itemItem = addNode(
               OBSERVED,
-              { x: pos.x + offset * zoom, y: pos.y + 1.5 * ygap * zoom },
+              { x: pos.x + offset * zoom, y: pos.y + 2 * ygap * zoom },
               true,
               name,
             );
