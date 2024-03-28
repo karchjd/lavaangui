@@ -196,3 +196,13 @@ export const ehSettings = {
     ).length;
   },
 };
+
+export const edgeBendingSettings = {
+  undoable: true,
+  bendRemovalSensitivity: 16,
+  enableMultipleAnchorRemovalOption: true,
+  initAnchorsAutomatically: false,
+  useTrailingDividersAfterContextMenuOptions: false,
+  enableCreateAnchorOnDrag: true,
+  anchorShapeSizeFactor: 4,
+}

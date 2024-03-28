@@ -12,7 +12,11 @@
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
-  import { graphSettings, graphStyles } from "../Graph/cytoscape_settings.js";
+  import {
+    graphSettings,
+    graphStyles,
+    edgeBendingSettings,
+  } from "../Graph/cytoscape_settings.js";
   import { resetCounters } from "../Graph/graphmanipulation.js";
   import cytoscape from "cytoscape";
   import svg from "cytoscape-svg";
@@ -22,7 +26,6 @@
   import { jsPDF } from "jspdf";
   import { svg2pdf } from "svg2pdf.js";
   import * as Constants from "../Graph/classNames.js";
-  import shinyClasses from "shiny";
 
   cytoscape.use(svg);
 
@@ -85,6 +88,8 @@
     $appState.loadingMode = true;
     cy.json({ elements: json });
     cy.style(graphStyles);
+    cy.edgeEditing(edgeBendingSettings);
+    cy.style().update();
     cy.minZoom(graphSettings.minZoom);
     cy.maxZoom(graphSettings.maxZoom);
     cy.autolock(graphSettings.autolock);
