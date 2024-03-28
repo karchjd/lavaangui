@@ -33,6 +33,9 @@
 
   cy.on("add", "edge", function (event) {
     $appState.everEdge = true;
+    if ($appState.modelEmpty && cy.edges().length > 0) {
+      $appState.modelEmpty = false;
+    }
   });
 
   cy.on("position", "node", function (event) {
