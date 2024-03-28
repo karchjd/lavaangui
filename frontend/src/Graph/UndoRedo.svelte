@@ -32,23 +32,23 @@
           // For each element, save its style properties
           let styleValues = [];
           keys.forEach((key) => {
-            styleValues.push(ele.style(key));
+            styleValues.push(ele.data(key) || ele.style(key));
+            ele.data(key, args.style[key]);
           });
           originalStyles[ele.id()] = arraysToObject(keys, styleValues);
-          ele.style(args.style);
         });
-        // Return the original width for the undo action
         return {
           eles: args.eles,
           style: originalStyles,
         };
       },
       function (args) {
-        // Use the original width to undo the resizing
         const newStyle = args.eles[0].style();
         Object.keys(args.style).forEach(function (id) {
           var ele = cy.getElementById(id);
-          ele.style(args.style[id]);
+          for (var key in args.style[id]) {
+            ele.data(key, args.style[id][key]);
+          }
         });
         return {
           eles: args.eles,

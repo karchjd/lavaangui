@@ -3,16 +3,29 @@ import * as Constants from "./classNames.js";
 
 export const graphStyles = [
   {
+    selector: "element",
+    style: {
+      "font-size": function (ele) {
+        return ele.data("font-size") || 14;
+      }
+    }
+  },
+  {
     selector: "node",
     style: {
       width: Constants.NODEWITH.toString(), // Set the width of the nodes to 80
       height: "80", // Set the height of the nodes to 80
       "background-color": "white",
-      "border-color": "grey",
-      "border-width": "2px", // Set border width of nodes to 2 pixels
+      "border-color": function (ele) {
+        return ele.data("border-color") || "grey";
+      },
+      "border-width": function (ele) {
+        return ele.data("border-width") || "2px";
+      },
       label: "data(label)", // Use the 'label' property from the data for the node's label
       "text-valign": "center",
       "text-halign": "center",
+
     },
   },
   {
@@ -54,10 +67,18 @@ export const graphStyles = [
   {
     selector: "edge",
     style: {
-      width: 3,
-      "line-color": "#000",
-      "target-arrow-color": "#000",
-      "source-arrow-color": "#000",
+      width: function (ele) {
+        return ele.data("width") || 3;
+      },
+      "line-color": function (ele) {
+        return ele.data("line-color") || "#000";
+      },
+      "target-arrow-color": function (ele) {
+        return ele.data("target-arrow-color") || "#000";
+      },
+      "source-arrow-color": function (ele) {
+        return ele.data("source-arrow-color") || "#000";
+      },
       "target-arrow-shape": "triangle",
       "curve-style": "bezier",
       "text-valign": "center",

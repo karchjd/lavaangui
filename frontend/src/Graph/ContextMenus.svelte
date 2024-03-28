@@ -410,7 +410,7 @@
         tolavaan($modelOptions.mode);
       },
       show: "full",
-      hasTrailingDivider: false,
+      hasTrailingDivider: true,
     },
 
     // {
@@ -445,6 +445,7 @@
       show: "full",
       content: "Change to Observed",
       selector: `node.${Constants.LATENT}`,
+      hasTrailingDivider: true,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.makeObserved();
