@@ -12,6 +12,7 @@
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { OBSERVED, LATENT, CONSTANT, NODEWITH } from "./classNames.js";
   import { tolavaan } from "../Shiny/toR.js";
+  import { debug } from "console";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -213,18 +214,23 @@
           const zoom = cy.zoom();
           const latentID = addNode(LATENT, {
             x: pos.x + (gap * zoom * result.length) / 2 - (NODEWITH / 2) * zoom,
-            y: pos.y - zoom * ygap,
+            y: pos.y,
           });
           result.forEach((name) => {
             const itemItem = addNode(
               OBSERVED,
-              { x: pos.x + offset * zoom, y: pos.y },
+              { x: pos.x + offset * zoom, y: pos.y + zoom * ygap },
               true,
               name,
             );
             offset += gap;
             addEdge(latentID, itemItem);
           });
+          $modelOptions.fix_first = true;
+          $modelOptions.fix_single = true;
+          $modelOptions.auto_var = true;
+          $modelOptions.intOvFree = true;
+          $modelOptions.intLvFree = false;
         } else {
           showError();
         }
@@ -233,12 +239,24 @@
       let offset = 0;
       createBootPrompt("Select Time Points", function (result) {
         if (checkValid(result)) {
+          debugger;
           const zoom = cy.zoom();
+          const constantID = addNode(
+            CONSTANT,
+            {
+              x:
+                pos.x +
+                (gap * zoom * result.length) / 2 -
+                (NODEWITH / 2) * zoom,
+              y: pos.y,
+            },
+            true,
+          );
           const interceptID = addNode(
             LATENT,
             {
               x: pos.x + (NODEWITH / 2) * zoom,
-              y: pos.y - ygap * zoom,
+              y: pos.y + 0.5 * ygap * zoom,
             },
             true,
             "Intercept",
@@ -246,17 +264,22 @@
           const slopeID = addNode(
             LATENT,
             {
-              x: pos.x + gap * zoom * result.length - (NODEWITH / 2) * zoom,
-              y: pos.y - ygap * zoom,
+              x:
+                pos.x +
+                gap * zoom * (result.length - 1) -
+                (NODEWITH / 2) * zoom,
+              y: pos.y + 0.5 * ygap * zoom,
             },
             true,
             "Slope",
           );
+          addEdge(constantID, interceptID, true, false);
+          addEdge(constantID, slopeID, true, false);
           let counter = 1;
           result.forEach((name) => {
             const itemItem = addNode(
               OBSERVED,
-              { x: pos.x + offset * zoom, y: pos.y },
+              { x: pos.x + offset * zoom, y: pos.y + 1.5 * ygap * zoom },
               true,
               name,
             );
@@ -267,6 +290,9 @@
             }
             counter += 1;
           });
+          $modelOptions.auto_var = true;
+          $modelOptions.intOvFree = false;
+          $modelOptions.intLvFree = true;
         }
       });
     } else {
