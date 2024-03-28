@@ -3,14 +3,17 @@ lavaan_gui_server <- function(input, output, session) {
   fit <- reactiveVal(NULL)
   forceEstimateUpdate <- reactiveVal()
   to_render <- reactiveVal(help_text)
+  full <- TRUE
 
 
   ## import model if present
   importRes <- importModel(session)
   imported <- importRes$imported
+  full <- importRes$full
   if (imported) {
-    fit(importRes$fit)
-    to_render(list(fit = importRes$fit))
+    if (!full) {
+      fit(importRes$fit)
+    }
   }
 
   ## View data
@@ -43,7 +46,7 @@ lavaan_gui_server <- function(input, output, session) {
   })
 
   ## layout
-  serverLayout("layout", fit)
+  serverLayout("layout", fit, full, imported)
 
   ## main server for running ladan
   serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit)

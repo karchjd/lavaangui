@@ -4,6 +4,10 @@ import app from "../main";
 
 export function tolavaan(mode) {
   var appState_local = get(appState);
+  //just in case I forgot a call to tolavaan somewhere
+  if (!appState_local.full) {
+    return
+  }
   var viewOptions = get(gridViewOptions);
   let cy = get(cyStore);
   const edges = cy.edges();

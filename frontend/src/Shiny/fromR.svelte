@@ -1,11 +1,5 @@
 <script>
-  import {
-    appState,
-    dataInfo,
-    setAlert,
-    fitCache,
-    modelOptions,
-  } from "../stores";
+  import { appState, setAlert, fitCache, modelOptions } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass.js";
   import { get } from "svelte/store";
   import { cyStore } from "../stores";
@@ -143,10 +137,6 @@
     let const_added = false;
     let added_const_id;
     for (let i = 0; i < lav_model.lhs.length; i++) {
-      //skip equality constraints
-      if (lav_model.op[i] == "==") {
-        continue;
-      }
       // validate and remove existing edges
       let existingEdge = findEdge(
         lav_model.lhs[i],
@@ -175,6 +165,9 @@
             lav_model.op[i],
             lav_model.rhs[i],
           );
+          if (imported && $appState.full && lav_model.user[i] == 0) {
+            continue;
+          }
           let sourceId;
           if (desiredEdge.source !== 1) {
             sourceId = cy
@@ -380,7 +373,6 @@
     // parse model
     // @ts-expect-error
     Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
-      debugger;
       getModelLav(lav_model, false);
     });
 
@@ -390,6 +382,10 @@
       debugger;
       getModelLav(lav_model, true);
       $modelOptions.fix_first = false;
+      setAlert(
+        "warning",
+        "start_gui only imports user edges. Your full model is very likely different than what you fitted in lavaan because of different options used. To display the model, as you fitted it in lavaan, use plot_interactive",
+      );
     });
 
     // save all results in data attributes of the correct edges
