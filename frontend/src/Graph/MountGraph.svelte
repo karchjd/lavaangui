@@ -134,7 +134,8 @@
 
     if (edge.isDirected() && sourceNode.isConstant()) {
       const conConstant = targetNode.connectedEdges(
-        (edge_local) => edge_local.isUserAdded() && edge.source().isConstant(),
+        (edge_local) =>
+          edge_local.isUserAdded() && edge_local.source().isConstant(),
       );
       if (conConstant.length > 1) {
         cy.remove(edge);

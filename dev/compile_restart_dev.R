@@ -1,4 +1,4 @@
-recompile_front <- F # nolint
+recompile_front <- T # nolint
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -73,5 +73,5 @@ model.syntax <- '
 '
 
 fit <- growth(model.syntax, data = Demo.growth)
-start_gui(fit_g)
-plot_interactive(fit)
+start_gui()
+# plot_interactive(fit, where = "browser")

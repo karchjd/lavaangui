@@ -26,7 +26,9 @@
       $modelOptions.mode = "user model";
       Shiny.setInputValue("show_help", Math.random());
     }
-    tolavaan($modelOptions.mode);
+    if (!$appState.loadingMode) {
+      tolavaan($modelOptions.mode);
+    }
   });
 
   cy.on("add", "edge", function (event) {
