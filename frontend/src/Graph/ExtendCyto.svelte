@@ -117,6 +117,10 @@
         return this;
     });
 
+    cytoscape("collection", "isMean", function () {
+        return this.data("isMean") === "1" || this.isConstant();
+    });
+
     cytoscape("collection", "makeOtherEdge", function () {
         this.data("isMean", "0");
         return this;
@@ -159,6 +163,10 @@
 
     cytoscape("collection", "isUserAdded", function () {
         return this.hasClass(Constants.FROM_USER);
+    });
+
+    cytoscape("collection", "isLavaanAdded", function () {
+        return this.hasClass(Constants.FROM_LAV);
     });
 
     cytoscape("collection", "getValue", function () {

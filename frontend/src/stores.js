@@ -32,6 +32,7 @@ export let gridViewOptions = writable({
   gridResize: false,
   showLav: true,
   showVar: true,
+  showMean: true,
   std: false,
   view: "est",
   ci: .95,

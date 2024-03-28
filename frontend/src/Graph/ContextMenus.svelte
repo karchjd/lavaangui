@@ -614,7 +614,6 @@
   cy.on("select", "node, edge", function (event) {
     // Add the selected element to the array
     selectedElements.push(event.target);
-    console.log(selectedElements);
   });
 
   // Listen for unselection events
@@ -623,6 +622,5 @@
     selectedElements = selectedElements.filter(
       (el) => el.id() !== event.target.id(),
     );
-    console.log(selectedElements);
   });
 </script>

@@ -5,9 +5,9 @@ export const edgeItems = [
   {
     name: "Arrows Created by Lavaan",
     modelSlot: "showLav",
-    class: "fromLav",
   },
-  { name: "Variance Arrows", modelSlot: "showVar", class: "loop" },
+  { name: "Variance Arrows", modelSlot: "showVar" },
+  { name: "Show Mean", modelSlot: "showMean" },
 ];
 
 export let viewRadios = [
@@ -31,20 +31,35 @@ export function updateLabels(viewOption, std, number_digits) {
     .update();
 }
 
-export function updateVisibility(showVar, showLav, menuItems) {
+export function updateVisibility(showVar, showLav, showMean, menuItems) {
+  function which(logicalVector) {
+    return logicalVector.reduce((indices, value, index) => {
+      if (value) {
+        indices.push(index);
+      }
+      return indices;
+    }, []);
+  }
+
   const cy = get(cyStore);
-  if (showLav && showVar) {
-    cy.elements("." + menuItems[0].class).show();
-    cy.elements("." + menuItems[1].class).show();
-  } else if (showLav && !showVar) {
-    cy.elements("." + menuItems[0].class).show();
-    cy.elements("." + menuItems[1].class).hide();
-  } else if (!showLav && showVar) {
-    cy.elements("." + menuItems[1].class).show();
-    cy.elements("." + menuItems[0].class).hide();
-  } else {
-    cy.elements("." + menuItems[1].class).hide();
-    cy.elements("." + menuItems[0].class).hide();
+  const logicalVector = [showLav, showVar, showMean];
+  const trueIndices = which(logicalVector);
+  const falseIndices = which(logicalVector.map((x) => !x));
+
+  function applyFunction(i, elements) {
+    const functionsArray = [
+      elements => elements.isLavaanAdded(),
+      elements => elements.isLoop(),
+      elements => elements.isMean(),
+      // Add more functions as needed
+    ];
+    return functionsArray[i](elements);
+  }
+  for (let i of trueIndices) {
+    cy.elements(function (ele) { return applyFunction(i, ele) }).show();
+  }
+  for (let i of falseIndices) {
+    cy.elements(function (ele) { return applyFunction(i, ele) }).hide();
   }
 }
 

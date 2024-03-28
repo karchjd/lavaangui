@@ -23,7 +23,7 @@ HS.model <- " visual  =~ x1 + x2 + myLabel * x3
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
 
-model <- ' 
+model <- "
   # latent variable definitions
      ind60 =~ x1 + x2 + x3
      dem60 =~ y1 + a*y2 + b*y3 + c*y4
@@ -39,7 +39,7 @@ model <- '
     y3 ~~ y7
     y4 ~~ y8
     y6 ~~ y8
-'
+"
 
 # model <-'
 # # measurement model
@@ -47,13 +47,31 @@ model <- '
 #  f2 =~ 2*x2 + x2 + 3*x3 + x3
 # '
 # fit <- sem(model, sample.cov = cov(PoliticalDemocracy), sample.nobs = nrow(PoliticalDemocracy))
-HS.model <- ' visual  =~ x1 + x2 + x3
+HS.model <- " visual  =~ x1 + x2 + x3
               textual =~ x4 + x5 + x6
-              speed   =~ x7 + x8 + x9 '
+              speed   =~ x7 + x8 + x9 "
 
 fit_g <- cfa(HS.model,
-           data = HolzingerSwineford1939,
-           group = "school")
- fit <- sem(model, data = PoliticalDemocracy)
-# start_gui(fit)
-plot_interactive(fit_g)
+  data = HolzingerSwineford1939,
+  group = "school"
+)
+fit <- sem(model, data = PoliticalDemocracy)
+model.syntax <- '
+  # intercept and slope with fixed coefficients
+    i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
+    s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
+
+  # regressions
+    i ~ x1 + x2
+    s ~ x1 + x2
+
+  # time-varying covariates
+    t1 ~ c1
+    t2 ~ c2
+    t3 ~ c3
+    t4 ~ c4
+'
+
+fit <- growth(model.syntax, data = Demo.growth)
+start_gui(fit_g)
+plot_interactive(fit)

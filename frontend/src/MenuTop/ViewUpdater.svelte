@@ -9,6 +9,7 @@
     updateVisibility(
       $gridViewOptions.showVar,
       $gridViewOptions.showLav,
+      $gridViewOptions.showMean,
       edgeItems,
     );
   }
