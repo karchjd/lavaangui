@@ -43,12 +43,14 @@
     return true;
   }
 
-  function getChange(target, selectedElements, check) {
+  function getChange(target, check) {
     var toChange;
+    const selectedElements = cy.$(":selected");
     if (selectedElements.length > 1) {
       if (check === "nodes" && !selectedElements.every((ele) => ele.isNode())) {
         // @ts-ignore
         bootbox.alert("Not all selected elements are nodes. Aborting");
+        debugger;
         return null;
       } else if (
         check === "edges" &&
@@ -252,7 +254,6 @@
         const edge = event.target || event.cyTarget;
         edge.removeClass("fixDeg");
         checkNodeLoop(edge.source().id());
-        tolavaan($modelOptions.mode);
       },
       show: "both",
       hasTrailingDivider: true,
@@ -276,7 +277,7 @@
       show: "both",
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
-        const toChange = getChange(target, selectedElements, "edges");
+        const toChange = getChange(target, "edges");
         if (toChange === null) {
           return null;
         }
@@ -290,7 +291,7 @@
       selector: "edge",
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
-        const toChange = getChange(target, selectedElements, "edges");
+        const toChange = getChange(target, "edges");
         if (null === toChange) {
           return null;
         }
@@ -476,7 +477,7 @@
       show: "both",
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
-        const toChange = getChange(target, selectedElements, "nodes");
+        const toChange = getChange(target, "nodes");
         if (toChange === null) {
           return null;
         }
@@ -490,7 +491,7 @@
       selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}`,
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
-        const toChange = getChange(target, selectedElements, "nodes");
+        const toChange = getChange(target, "nodes");
         if (toChange === null) {
           return null;
         }
@@ -517,7 +518,7 @@
       selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, edge`,
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
-        const toChange = getChange(target, selectedElements, "nodes.edges");
+        const toChange = getChange(target, "nodes.edges");
         if (toChange === null) {
           return null;
         }
@@ -592,21 +593,5 @@
   onMount(() => {
     // Initialize the Cytoscape instance
     cy.contextMenus({ menuItems: menuSel });
-  });
-
-  let selectedElements = [];
-
-  // Listen for selection events
-  cy.on("select", "node, edge", function (event) {
-    // Add the selected element to the array
-    selectedElements.push(event.target);
-  });
-
-  // Listen for unselection events
-  cy.on("unselect", "node, edge", function (event) {
-    // Remove the unselected element from the array
-    selectedElements = selectedElements.filter(
-      (el) => el.id() !== event.target.id(),
-    );
   });
 </script>
