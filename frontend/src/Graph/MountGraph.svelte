@@ -13,6 +13,7 @@
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { OBSERVED, LATENT, CONSTANT, NODEWITH } from "./classNames.js";
   import { tolavaan } from "../Shiny/toR.js";
+  import { edgeBendingSettings } from "./cytoscape_settings.js";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -306,12 +307,14 @@
 
   let isMouseDown = false;
   let currentEdge = null;
+  let startDeg;
 
   cy.on("mousedown", "edge.loop", function (event) {
     isMouseDown = true;
     currentEdge = event.target;
     currentEdge.unpanify();
     currentEdge.addClass("fixDeg");
+    startDeg = currentEdge.style("loop-direction");
   });
 
   function vectorAngleDegrees(x, y) {
@@ -320,13 +323,15 @@
     return angle;
   }
 
+  let angle;
+
   cy.on("mousemove", function (event) {
     console.log(isMouseDown, currentEdge);
     if (!isMouseDown || !currentEdge) return;
 
     let sourceNode = currentEdge.source();
     let nodePosition = sourceNode.renderedPosition();
-    let angle = vectorAngleDegrees(m.x - nodePosition.x, m.y - nodePosition.y);
+    angle = vectorAngleDegrees(m.x - nodePosition.x, m.y - nodePosition.y);
 
     const tolerance = 5;
     const targetAngles = [0, 90, 180, 270];
@@ -336,15 +341,17 @@
         break;
       }
     }
-    $ur.do("style", {
-      eles: currentEdge,
-      style: { "loop-direction": `${angle}deg` },
-    });
+    currentEdge.data("loop-direction", `${angle}deg`);
   });
 
   window.addEventListener("mouseup", function () {
     if (isMouseDown) {
       isMouseDown = false;
+      currentEdge.data("loop-direction", startDeg);
+      $ur.do("style", {
+        eles: currentEdge,
+        style: { "loop-direction": `${angle}deg` },
+      });
       currentEdge = null;
     }
   });

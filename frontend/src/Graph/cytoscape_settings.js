@@ -98,6 +98,7 @@ export const graphStyles = [
     selector: "edge.loop",
     style: {
       "curve-style": "bezier",
+      "source-arrow-shape": "triangle",
       "loop-direction": function (ele) {
         return ele.data("loop-direction") || 0;
       },
