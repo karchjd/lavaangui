@@ -53,6 +53,8 @@
     {/if}
     <MainContainer>
       <Graph />
+      <!-- UndoRedo must be before all components that use it -->
+      <UndoRedo />
       <ExtendCyto />
       <GridGuides />
       <AutoMove />
@@ -60,7 +62,6 @@
       <Zoom />
       <ContextMenus />
       <OnEvents />
-      <UndoRedo />
       <ViewUpdater />
       <BendEdges />
       {#if $appState.full}

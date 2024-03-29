@@ -11,6 +11,9 @@
 
     onMount(() => {
         // Initialize the Cytoscape instance
-        cy.nodeEditing({ resizeToContentCueImage: "" });
+        cy.nodeEditing({
+            resizeToContentCueImage: "",
+            undoable: true,
+        });
     });
 </script>

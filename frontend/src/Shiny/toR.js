@@ -281,7 +281,7 @@ function produceLavaanOptions(ordered_labels) {
   )},
 \t\t missing = ${addQuotes(modelOpt.missing)}, auto.fix.first = ${boolToString(
     modelOpt.fix_first
-  )} ,
+  )},
 \t\t auto.fix.single = ${boolToString(
     modelOpt.fix_single
   )}, auto.var = ${boolToString(modelOpt.auto_var)},
