@@ -243,7 +243,6 @@
       let offset = 0;
       createBootPrompt("Select Time Points", function (result) {
         if (checkValid(result)) {
-          debugger;
           const zoom = cy.zoom();
           const constantID = addNode(
             CONSTANT,

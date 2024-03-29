@@ -8,7 +8,7 @@ export function tolavaan(mode) {
   if (!appState_local.full) {
     return
   }
-  var viewOptions = get(gridViewOptions);
+
   let cy = get(cyStore);
   const edges = cy.edges();
 
@@ -24,10 +24,12 @@ export function tolavaan(mode) {
   }
 
 
-
-  for (var i = 0; i < edges.length; i++) {
-    edges[i].removeEstimates();
+  if (mode != "estimate") {
+    for (var i = 0; i < edges.length; i++) {
+      edges[i].removeEstimates();
+    }
   }
+
   let for_R = createSyntax(mode);
   // @ts-expect-error
   Shiny.setInputValue("run-fromJavascript", JSON.stringify(for_R));

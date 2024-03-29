@@ -11,10 +11,7 @@
     } else {
       $gridViewOptions.showLav = false;
     }
-    modelOptions.update((options) => {
-      options.mode = newMode;
-      return options;
-    });
+    $modelOptions.mode = newMode;
   }
 
   function showData() {
@@ -51,8 +48,9 @@
         ? 'btn-primary active'
         : 'btn-default'}"
       on:click={() => changeMode("user model")}
+      disabled={selected == "user model"}
     >
-      Show User Model
+      User Model
     </button>
 
     <!-- Show Full Model Button -->
@@ -61,17 +59,20 @@
         ? 'btn-primary active'
         : 'btn-default'}"
       on:click={() => changeMode("full model")}
+      disabled={selected == "full model"}
     >
-      Show Full Model
+      Full Model
     </button>
     <button
       class="btn btn-lg {selected === 'estimate'
         ? 'btn-primary active'
         : 'btn-default'}"
       on:click={() => changeMode("estimate")}
-      disabled={!$appState.dataAvail || $appState.modelEmpty}
+      disabled={!$appState.dataAvail ||
+        $appState.modelEmpty ||
+        $modelOptions.mode == "estimate"}
     >
-      Show Estimates
+      Estimates
     </button>
   </div>
   <button

@@ -268,6 +268,7 @@
 
   function updateEstimates(lav_result, std_result) {
     let cy = get(cyStore);
+
     for (let i = 0; i < lav_result.lhs.length; i++) {
       let existingEdge = findEdge(
         lav_result.lhs[i],
@@ -379,7 +380,6 @@
     //import model
     // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
-      debugger;
       getModelLav(lav_model, true);
       $modelOptions.fix_first = false;
       setAlert(
