@@ -24,11 +24,11 @@ export function tolavaan(mode) {
   }
 
 
-  if (mode != "estimate") {
-    for (var i = 0; i < edges.length; i++) {
-      edges[i].removeEstimates();
-    }
+
+  for (var i = 0; i < edges.length; i++) {
+    edges[i].removeEstimates();
   }
+
 
   let for_R = createSyntax(mode);
   // @ts-expect-error

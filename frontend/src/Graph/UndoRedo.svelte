@@ -37,12 +37,14 @@
           });
           originalStyles[ele.id()] = arraysToObject(keys, styleValues);
         });
+        debugger;
         return {
           eles: args.eles,
           style: originalStyles,
         };
       },
       function (args) {
+        debugger;
         const newStyle = args.eles[0].style();
         Object.keys(args.style).forEach(function (id) {
           var ele = cy.getElementById(id);

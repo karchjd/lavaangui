@@ -291,7 +291,7 @@
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
         const toChange = getChange(target, selectedElements, "edges");
-        if (isNull(toChange)) {
+        if (null === toChange) {
           return null;
         }
         // @ts-ignore

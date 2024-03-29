@@ -15,7 +15,9 @@ export const graphStyles = [
     style: {
       width: Constants.NODEWITH.toString(), // Set the width of the nodes to 80
       height: "80", // Set the height of the nodes to 80
-      "background-color": "white",
+      "background-color": function (ele) {
+        return ele.data("background-color") || "white";
+      },
       "border-color": function (ele) {
         return ele.data("border-color") || "grey";
       },
