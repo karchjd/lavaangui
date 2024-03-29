@@ -27,12 +27,6 @@
       return false;
     },
     fitAnimationDuration: 1000, // duration of animation on fit
-
-    // icon class names
-    sliderHandleIcon: "fa fa-minus",
-    zoomInIcon: "fa fa-plus",
-    zoomOutIcon: "fa fa-minus",
-    resetIcon: "fa fa-expand",
   };
 
   // add the panzoom control

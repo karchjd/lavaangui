@@ -190,20 +190,26 @@
 
         JSZip.loadAsync(arrayBuffer).then(function (zip) {
           zip
-            .file("model.json")
-            .async("text")
-            .then(function (modelJsonContent) {
-              parseModel(modelJsonContent);
+            .file("data.csv")
+            .async("base64")
+            .then(function (dataCsvContent) {
+              // @ts-expect-error
+              Shiny.setInputValue("dataUpload-fileInput", {
+                content: dataCsvContent,
+              });
 
-              zip
-                .file("data.csv")
-                .async("base64")
-                .then(function (dataCsvContent) {
-                  // @ts-expect-error
-                  Shiny.setInputValue("dataUpload-fileInput", {
-                    content: dataCsvContent,
-                  });
-                });
+              const checkDataAvailability = setInterval(() => {
+                if ($appState.dataAvail) {
+                  clearInterval(checkDataAvailability);
+
+                  zip
+                    .file("model.json")
+                    .async("text")
+                    .then(function (modelJsonContent) {
+                      parseModel(modelJsonContent);
+                    });
+                }
+              }, 100); // Check every 100 milliseconds
             });
         });
       };
