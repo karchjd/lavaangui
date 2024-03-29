@@ -323,6 +323,10 @@
       }
     });
 
+    Shiny.addCustomMessageHandler("fitting", function (ignored) {
+      $appState.fitting = true;
+    });
+
     Shiny.addCustomMessageHandler("lav_warning_error", function (info) {
       const what = info.type == "warning" ? "warning" : "error";
       setAlert(
