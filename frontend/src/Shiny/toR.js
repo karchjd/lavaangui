@@ -110,7 +110,7 @@ export function createSyntax(mode) {
 
   R_script += "library(lavaan)" + "\n";
   if (appSt.dataAvail) {
-    R_script += "data <- read.csv(" + appSt.loadedFileName + ")" + "\n";
+    R_script += `data <- read.csv(\"${appSt.loadedFileName}\")\n`;
   } else {
     R_script +=
       "#make sure your data is loaded into the 'data' variable" + "\n";
@@ -300,6 +300,8 @@ function produceLavaanOptions(ordered_labels) {
     const ordered_arg = 'c("' + ordered_labels.join('", "') + '")'
     options = `ordered = ${ordered_arg}, ${options}`
   }
+
+  debugger;
 
   return options;
 }

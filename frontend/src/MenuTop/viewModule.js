@@ -7,7 +7,7 @@ export const edgeItems = [
     modelSlot: "showLav",
   },
   { name: "Variance Arrows", modelSlot: "showVar" },
-  { name: "Show Mean", modelSlot: "showMean" },
+  { name: "Mean Arrows", modelSlot: "showMean" },
 ];
 
 export let viewRadios = [

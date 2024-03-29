@@ -47,6 +47,7 @@ export const graphStyles = [
     selector: `node.${Constants.LATENT}`,
     style: {
       shape: "ellipse",
+      "border-color": "black",
     },
   },
   {
@@ -56,6 +57,7 @@ export const graphStyles = [
       label: "1",
       "text-valign": "center",
       "text-margin-y": "10px",
+      "border-color": "black",
     },
   },
   {

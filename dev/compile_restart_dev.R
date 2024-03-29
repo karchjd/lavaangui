@@ -1,4 +1,4 @@
-recompile_front <- T # nolint
+recompile_front <- F # nolint
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -75,3 +75,24 @@ HS.model <- " visual  =~ x1 + x2 + x3
 # fit <- growth(model.syntax, data = Demo.growth)
 start_gui(fit)
 #plot_interactive(fit, where = "browser")
+
+
+library(lavaan)
+model <-'
+# measurement model
+ Intercept =~ 1*x1 + 1*x2 + 1*x3 + 1*x4 + 1*x5
+ Slope =~ 1*x2 + 2*x3 + 3*x4 + 4*x5
+
+# intercepts
+Intercept ~ 1
+Slope ~ 1
+'
+
+data <- HolzingerSwineford1939
+result <- lavaan(model, data, meanstructure = TRUE,
+                 int.ov.free = FALSE, int.lv.free = TRUE,
+                 estimator = "default", se = "default",
+                 missing = "listwise", auto.fix.first = TRUE ,
+                 auto.fix.single = TRUE, auto.var = TRUE,
+                 auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
+                 fixed.x = TRUE)

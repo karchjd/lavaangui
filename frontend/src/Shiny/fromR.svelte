@@ -5,6 +5,7 @@
   import { cyStore } from "../stores";
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { addNode } from "../Graph/graphmanipulation.js";
+  import { tolavaan } from "./toR.js";
   import { applySemLayout } from "../MenuTop/semPlotLayouts.js";
   import {
     OBSERVED,
@@ -308,6 +309,7 @@
       $appState.ids = [...data_info.columns];
       $appState.loadedFileName = data_info.name;
       $appState.dataAvail = true;
+      tolavaan($modelOptions.mode);
       if (data_info.showData) {
         window.$("#data-modal-2").modal();
       }
