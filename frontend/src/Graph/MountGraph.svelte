@@ -102,6 +102,7 @@
     const edge = addedEdge;
     const sourceNodeId = sourceNode.id();
     const targetNodeId = targetNode.id();
+    edge.remove();
     edge.init();
     if (sourceNodeId !== targetNodeId) {
       if (spaceKeyDown) {
@@ -120,11 +121,11 @@
       (edge.isUndirected() || edge.myIsLoop()) &&
       (sourceNode.isConstant() || targetNode.isConstant())
     ) {
-      cy.remove(edge);
+      return;
     }
 
     if (edge.isDirected() && targetNode.isConstant()) {
-      cy.remove(edge);
+      return;
     }
 
     if (edge.isDirected() && sourceNode.isConstant()) {
@@ -133,7 +134,7 @@
           edge_local.isUserAdded() && edge_local.source().isConstant(),
       );
       if (conConstant.length > 1) {
-        cy.remove(edge);
+        return;
       }
     }
 
@@ -142,6 +143,7 @@
     } else {
       edge.makeOtherEdge();
     }
+    $ur.do("add", edge);
   });
 
   function handleDragOver(event) {

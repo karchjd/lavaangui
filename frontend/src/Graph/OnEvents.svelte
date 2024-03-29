@@ -36,6 +36,9 @@
     if ($appState.modelEmpty && cy.edges().length > 0) {
       $appState.modelEmpty = false;
     }
+    if (!$appState.loadingMode) {
+      tolavaan($modelOptions.mode);
+    }
   });
 
   cy.on("position", "node", function (event) {
