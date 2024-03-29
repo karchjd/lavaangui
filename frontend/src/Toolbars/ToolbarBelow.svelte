@@ -48,7 +48,6 @@
         ? 'btn-primary active'
         : 'btn-default'}"
       on:click={() => changeMode("user model")}
-      disabled={selected == "user model"}
     >
       User Model
     </button>
@@ -59,7 +58,6 @@
         ? 'btn-primary active'
         : 'btn-default'}"
       on:click={() => changeMode("full model")}
-      disabled={selected == "full model"}
     >
       Full Model
     </button>
@@ -68,9 +66,7 @@
         ? 'btn-primary active'
         : 'btn-default'}"
       on:click={() => changeMode("estimate")}
-      disabled={!$appState.dataAvail ||
-        $appState.modelEmpty ||
-        $modelOptions.mode == "estimate"}
+      disabled={!$appState.dataAvail || $appState.modelEmpty}
     >
       Estimates
     </button>

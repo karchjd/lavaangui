@@ -93,6 +93,7 @@ class DataForR {
         options: lavOptions,
         syntax: syntax,
         R_script: R_script,
+        forceUpdate: Math.random()
       },
       cache: fitCache
     });
