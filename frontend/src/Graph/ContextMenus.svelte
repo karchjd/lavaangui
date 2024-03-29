@@ -544,31 +544,18 @@
       (obj) => obj.show === valueToMatch || obj.show === "both",
     );
   }
-
+  let toChangeGlobal;
   function openColorPicker(target, toChange, type) {
     var pickerElement = document.getElementById("picker");
     pickerElement.style.display = "block";
     pickerElement.style.left = event.pageX + "px";
     pickerElement.style.top = event.pageY + "px";
 
+    let hexColor;
+    toChangeGlobal = toChange;
     // Define the function to change the color so it can be removed later
     const changeColor = function (color) {
-      var hexColor = color.hexString;
-      if (type == "edge") {
-        $ur.do("style", {
-          eles: toChange,
-          style: {
-            "line-color": hexColor,
-            "target-arrow-color": hexColor,
-            "source-arrow-color": hexColor,
-          },
-        });
-      } else {
-        $ur.do("style", {
-          eles: toChange,
-          style: { "background-color": hexColor },
-        });
-      }
+      hexColor = color.hexString;
     };
 
     // Listen to color change events
@@ -577,6 +564,21 @@
     // Function to hide the picker and remove the color change listener
     const closePicker = function (event) {
       if (!pickerElement.contains(event.target)) {
+        if (type == "edge") {
+          $ur.do("style", {
+            eles: toChangeGlobal,
+            style: {
+              "line-color": hexColor,
+              "target-arrow-color": hexColor,
+              "source-arrow-color": hexColor,
+            },
+          });
+        } else {
+          $ur.do("style", {
+            eles: toChangeGlobal,
+            style: { "background-color": hexColor },
+          });
+        }
         pickerElement.style.display = "none";
         // Remove the color change event listener
         colorPicker.off("color:change", changeColor);
