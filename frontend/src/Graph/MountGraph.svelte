@@ -19,7 +19,7 @@
   let cyContainer;
   let m = { x: 0, y: 0 };
 
-  let spaceKeyDown = false;
+  let undirected;
 
   onMount(() => {
     // Initialize the Cytoscape instance
@@ -28,14 +28,15 @@
 
   function handleKeyDown(event) {
     $appState.buttonDown = true;
-    if (event.key === "Meta" || event.key === "Control" || " ") {
+    if (event.key === "Alt" || event.key === " ") {
       eh.enableDrawMode();
+      undirected = false;
       $appState.drawing = true;
+      if (event.key === "Alt") {
+        undirected = true;
+      }
     }
 
-    if (event.key === "Shift") {
-      spaceKeyDown = true;
-    }
     // Handle Backspace key
     if (event.key === "Backspace") {
       let selectedElements = cy.$(":selected");
@@ -71,13 +72,10 @@
   }
 
   function handleKeyUp() {
-    if (event.key === "Meta" || event.key === "Control" || "Shift") {
+    if (event.key === "Alt" || event.key === " ") {
       eh.disableDrawMode();
       $appState.drawing = false;
       makeNodesGrabbable();
-    }
-    if (event.key === "Shift") {
-      spaceKeyDown = false;
     }
   }
 
@@ -90,7 +88,6 @@
     document.removeEventListener("keydown", handleKeyDown, false);
     document.removeEventListener("keyup", handleKeyUp, false);
     eh.disableDrawMode();
-    spaceKeyDown = false;
   }
 
   function handleMousemove(event) {
@@ -105,7 +102,7 @@
     edge.remove();
     edge.init();
     if (sourceNodeId !== targetNodeId) {
-      if (spaceKeyDown) {
+      if (undirected) {
         edge.setUndirected();
       } else {
         edge.setDirected();
