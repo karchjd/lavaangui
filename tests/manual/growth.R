@@ -15,5 +15,5 @@ model.syntax <- '
 '
 
 fit <- growth(model.syntax, data = Demo.growth)
-start_gui(fit)
+#start_gui(fit)
 plot_interactive(fit)

@@ -10,10 +10,9 @@ export function checkNodeLoop(nodeID) {
 }
 
 function checkDefaultsFree(goalAngle, angles) {
-  const defaultAngles = [0, 90, 180, 270];
+  const defaultAngles = [0, 180, 90, 270];
   const minDist = 35;
 
-  // Sort default angles by their shortest distance to goalAngle considering angle wrap-around
   const sortedDefaultAngles = defaultAngles.sort((a, b) => {
     const diffA = Math.min(
       Math.abs(a - goalAngle),
@@ -26,8 +25,12 @@ function checkDefaultsFree(goalAngle, angles) {
     return diffA - diffB;
   });
 
-  // Check each default angle starting from the closest
-  for (const defaultAngle of sortedDefaultAngles) {
+  const priorityGroups = [[0, 180], [90, 270]];
+  const sortedByPriority = priorityGroups.flatMap(group =>
+    sortedDefaultAngles.filter(angle => group.includes(angle))
+  );
+
+  for (const defaultAngle of sortedByPriority) {
     const isFree = !angles.some((angle) => {
       const diff = Math.abs(defaultAngle - angle);
       return Math.min(diff, 360 - diff) <= minDist;
@@ -40,6 +43,7 @@ function checkDefaultsFree(goalAngle, angles) {
 
   return goalAngle;
 }
+
 
 function getEdgePositions(nodeID) {
   const node = cy.getElementById(nodeID);
