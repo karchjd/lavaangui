@@ -7,6 +7,7 @@
     appState,
     modelOptions,
     setAlert,
+    ur,
   } from "../stores.js";
   import { get } from "svelte/store";
   import { checkNodeLoop } from "./checkNodeLoop.js";
@@ -39,13 +40,7 @@
     if (event.key === "Backspace") {
       let selectedElements = cy.$(":selected");
       if (selectedElements.length > 0) {
-        selectedElements.forEach(function (element) {
-          if (element.isNode()) {
-            element.remove();
-          } else if (element.isEdge()) {
-            element.remove();
-          }
-        });
+        $ur.do("remove", selectedElements);
       }
       $appState.buttonDown = false;
     }

@@ -85,7 +85,6 @@ export const graphStyles = [
       "text-halign": "center",
       "text-wrap": "wrap",
       "text-max-width": Constants.LABELWIDTH,
-      "font-size": "14px",
       "z-index": 10,
       color: "#000",
       "text-outline-color": "#fff",

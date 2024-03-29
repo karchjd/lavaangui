@@ -59,7 +59,7 @@
         return null;
       } else if (
         check === "nodes.edges" &&
-        !selectedElements.every((ele) => ele.isEdge() && ele.isNode())
+        !selectedElements.every((ele) => ele.isEdge() || ele.isNode())
       ) {
         // @ts-ignore
         bootbox.alert("Not all selected elements are nodes or edges. Aborting");
@@ -244,34 +244,6 @@
       show: "full",
       hasTrailingDivider: true,
     },
-
-    {
-      id: "change-curve",
-      content: "Change Curvature",
-      selector: `edge.${Constants.UNDIRECTED}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        // @ts-expect-error
-        bootbox.prompt({
-          title:
-            "Enter a New Value \n (Larger absolute values → more curvature. Switching the sign → reverts curvature)",
-          inputType: "number",
-          value: parseInt(edge.style().controlPointDistances),
-          callback: function (value) {
-            if (value == "") {
-              // @ts-expect-error
-              bootbox.alert("Provide a value");
-              return false;
-            }
-            if (value !== null) {
-              edge.style("controlPointDistances", value);
-            }
-          },
-        });
-      },
-      show: "both",
-      hasTrailingDivider: true,
-    },
     {
       id: "free-orientation",
       content: "Free Loop Orientation",
@@ -283,7 +255,7 @@
         tolavaan($modelOptions.mode);
       },
       show: "both",
-      hasTrailingDivider: false,
+      hasTrailingDivider: true,
     },
     {
       id: "change-fromUser",
@@ -295,7 +267,47 @@
         tolavaan($modelOptions.mode);
       },
       show: "full",
-      hasTrailingDivider: false,
+      hasTrailingDivider: true,
+    },
+    {
+      id: "color-edge",
+      content: "Change Edge Color",
+      selector: "edge",
+      show: "both",
+      onClickFunction: function (event) {
+        var target = event.target || event.cyTarget;
+        const toChange = getChange(target, selectedElements, "edges");
+        if (toChange === null) {
+          return null;
+        }
+        openColorPicker(target, toChange, "edge");
+      },
+    },
+    {
+      id: "change-line-width",
+      content: "Change Line Width",
+      show: "both", // Apply to both edges and nodes
+      selector: "edge",
+      onClickFunction: function (event) {
+        var target = event.target || event.cyTarget;
+        const toChange = getChange(target, selectedElements, "edges");
+        if (isNull(toChange)) {
+          return null;
+        }
+        // @ts-ignore
+        bootbox.prompt({
+          title: "Enter New Line Width:",
+          value: target.style("width"),
+          callback: function (newWidth) {
+            if (newWidth !== null) {
+              $ur.do("style", {
+                eles: toChange,
+                style: { width: newWidth },
+              });
+            }
+          },
+        });
+      },
     },
 
     //node menus
@@ -426,19 +438,19 @@
     //   hasTrailingDivider: false,
     // },
 
-    {
-      id: "change-continous",
-      content: "Change to Continous",
-      selector: `node.${Constants.OBSERVED}.${Constants.ORDERED}`,
+    // {
+    //   id: "change-continous",
+    //   content: "Change to Continous",
+    //   selector: `node.${Constants.OBSERVED}.${Constants.ORDERED}`,
 
-      onClickFunction: function (event) {
-        const node = event.target || event.cyTarget;
-        node.makeContinous();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: false,
-    },
+    //   onClickFunction: function (event) {
+    //     const node = event.target || event.cyTarget;
+    //     node.makeContinous();
+    //     tolavaan($modelOptions.mode);
+    //   },
+    //   show: "full",
+    //   hasTrailingDivider: false,
+    // },
 
     {
       id: "change-observed",
@@ -459,49 +471,22 @@
     },
     {
       id: "color-node",
-      content: "Change Edge Color",
-      selector: "edge",
+      content: "Change Background Color",
+      selector: "node",
       show: "both",
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
-        const toChange = getChange(target, selectedElements, "edges");
+        const toChange = getChange(target, selectedElements, "nodes");
         if (toChange === null) {
           return null;
         }
-        openColorPicker(target, toChange, "edge");
+        openColorPicker(target, toChange, "nodes");
       },
     },
-    {
-      id: "change-line-width",
-      content: "Change Line Width",
-      show: "both", // Apply to both edges and nodes
-      selector: "edge",
-      onClickFunction: function (event) {
-        var target = event.target || event.cyTarget;
-        const toChange = getChange(target, selectedElements, "edges");
-        if (isNull(toChange)) {
-          return null;
-        }
-        // @ts-ignore
-        bootbox.prompt({
-          title: "Enter New Line Width:",
-          value: target.style("width"),
-          callback: function (newWidth) {
-            if (newWidth !== null) {
-              $ur.do("style", {
-                eles: toChange,
-                style: { width: newWidth },
-              });
-            }
-          },
-        });
-      },
-    },
-
     {
       id: "change-border-width",
       content: "Change Border Width",
-      show: "both", // Apply to both edges and nodes
+      show: "both",
       selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}`,
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
