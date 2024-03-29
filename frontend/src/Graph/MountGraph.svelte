@@ -321,6 +321,7 @@
   }
 
   cy.on("mousemove", function (event) {
+    console.log(isMouseDown, currentEdge);
     if (!isMouseDown || !currentEdge) return;
 
     let sourceNode = currentEdge.source();

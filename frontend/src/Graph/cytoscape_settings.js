@@ -47,7 +47,6 @@ export const graphStyles = [
     selector: `node.${Constants.LATENT}`,
     style: {
       shape: "ellipse",
-      "border-color": "black",
     },
   },
   {
@@ -57,7 +56,6 @@ export const graphStyles = [
       label: "1",
       "text-valign": "center",
       "text-margin-y": "10px",
-      "border-color": "black",
     },
   },
   {
@@ -100,14 +98,10 @@ export const graphStyles = [
     selector: "edge.loop",
     style: {
       "curve-style": "bezier",
-      "loop-direction": 0,
+      "loop-direction": function (ele) {
+        return ele.data("loop-direction") || 0;
+      },
       "loop-sweep": 0.8, // rounding of the loop, in radians
-      "target-arrow-shape": "triangle",
-      "source-arrow-shape": "triangle",
-      "target-arrow-fill": "filled",
-      "source-arrow-fill": "filled",
-      "target-arrow-color": "#000",
-      "source-arrow-color": "#000",
       "control-point-step-size": (edge) => {
         const sourceNode = edge.source();
         const height = parseInt(sourceNode.style('height'));
@@ -125,21 +119,11 @@ export const graphStyles = [
     },
   },
   {
-    selector: "edge.loop.fixDeg",
-    style: {
-      "loop-direction": function (ele) {
-        return ele.data("loop-direction") || 0;
-      },
-    }
-
-  },
-  {
     selector: `edge.${Constants.UNDIRECTED}`,
     style: {
       "curve-style": "unbundled-bezier",
       "control-point-distances": [-100],
       "control-point-weights": [0.5],
-      "target-arrow-shape": "triangle",
       "source-arrow-shape": "triangle",
     },
   },

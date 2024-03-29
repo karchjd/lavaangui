@@ -5,7 +5,7 @@ export function checkNodeLoop(nodeID) {
     const angles = getOccupiedAngles(edgePostions);
     let goalAngle = getBestFreeAngle(angles);
     goalAngle = checkDefaultsFree(goalAngle, angles);
-    selfLoop.style("loop-direction", `${goalAngle}deg`);
+    selfLoop.data("loop-direction", `${goalAngle}deg`);
   }
 }
 

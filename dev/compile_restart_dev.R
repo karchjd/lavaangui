@@ -73,5 +73,5 @@ HS.model <- " visual  =~ x1 + x2 + x3
 # '
 
 # fit <- growth(model.syntax, data = Demo.growth)
-start_gui()
+start_gui(fit)
 #plot_interactive(fit, where = "browser")

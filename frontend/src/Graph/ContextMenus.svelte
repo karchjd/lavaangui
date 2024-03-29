@@ -50,7 +50,6 @@
       if (check === "nodes" && !selectedElements.every((ele) => ele.isNode())) {
         // @ts-ignore
         bootbox.alert("Not all selected elements are nodes. Aborting");
-        debugger;
         return null;
       } else if (
         check === "edges" &&
