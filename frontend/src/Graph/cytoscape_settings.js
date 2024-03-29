@@ -100,7 +100,7 @@ export const graphStyles = [
     selector: "edge.loop",
     style: {
       "curve-style": "bezier",
-      "loop-direction": 0, // -Math.PI / 2 in radians to position at top
+      "loop-direction": 0,
       "loop-sweep": 0.8, // rounding of the loop, in radians
       "target-arrow-shape": "triangle",
       "source-arrow-shape": "triangle",
@@ -123,6 +123,15 @@ export const graphStyles = [
         return maxVal / 80 * 60;
       },
     },
+  },
+  {
+    selector: "edge.loop.fixDeg",
+    style: {
+      "loop-direction": function (ele) {
+        return ele.data("loop-direction") || 0;
+      },
+    }
+
   },
   {
     selector: `edge.${Constants.UNDIRECTED}`,

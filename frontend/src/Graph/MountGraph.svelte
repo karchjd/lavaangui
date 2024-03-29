@@ -335,8 +335,9 @@
         break;
       }
     }
-    currentEdge.style({
-      "loop-direction": `${angle}deg`,
+    $ur.do("style", {
+      eles: currentEdge,
+      style: { "loop-direction": `${angle}deg` },
     });
   });
 
