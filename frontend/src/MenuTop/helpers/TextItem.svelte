@@ -6,5 +6,5 @@
 
 <li style="padding-left: 28px;">
     {name}
-    <input style="width: 4em" type="number" id="gridSpacing" bind:value {min} />
+    <input style="width: 4em" type="number" bind:value {min} />
 </li>
