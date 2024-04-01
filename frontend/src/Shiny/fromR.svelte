@@ -73,7 +73,6 @@
           edge.source().isConstant() &&
           edge.target().getLabel() == goal_edge.target;
       }
-      console.log(user);
       if (goal_edge.user != undefined) {
         if (goal_edge.user == 1) {
           res = res && edge.isUserAdded();
@@ -153,7 +152,6 @@
     let const_added = false;
     let added_const_id;
     for (let i = 0; i < lav_model.lhs.length; i++) {
-      debugger;
       // validate and remove existing edges
       let existingEdge = findEdge(
         lav_model.lhs[i],
@@ -227,13 +225,6 @@
             },
             classes: desiredEdge.directed + " nolabel",
           });
-
-          console.log(
-            lav_model.lhs[i],
-            lav_model.op[i],
-            lav_model.rhs[i],
-            "added",
-          );
           if (lav_model.label[i] != "") {
             edge.addLabelImport(lav_model.label[i]);
           }
@@ -253,12 +244,6 @@
             edge.fixPara(lav_model.ustart[i]);
           } else {
             edge.remove();
-            console.log(
-              lav_model.lhs[i],
-              lav_model.op[i],
-              lav_model.rhs[i],
-              "removed",
-            );
           }
         } else {
           edge.setFree();

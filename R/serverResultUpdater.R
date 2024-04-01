@@ -30,6 +30,10 @@ serverResultUpdater <- function(id, to_render) {
           print(sum_model)
         }
 
+        if ("data.frame" %in% class(out)) {
+          print(out)
+        }
+
         if ("error" %in% class(out)) {
           stop(out)
         }

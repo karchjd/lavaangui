@@ -68,7 +68,8 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
 
       ## Mode = "Full Model" send script to render and stop
       if (fromJavascript$mode == "full model") {
-        to_render(modelJavascript$R_script)
+        to_render(model_parsed)
+        # to_render(modelJavascript$R_script)
         return(NULL)
       }
 
