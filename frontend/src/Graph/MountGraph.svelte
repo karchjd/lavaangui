@@ -73,10 +73,10 @@
   }
 
   function handleKeyUp() {
+    $appState.drawing = false;
+    makeNodesGrabbable();
     if (event.key === "Alt" || event.key === " ") {
       eh.disableDrawMode();
-      $appState.drawing = false;
-      makeNodesGrabbable();
     }
   }
 

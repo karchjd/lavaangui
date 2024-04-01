@@ -39,7 +39,7 @@ importModel <- function(session) {
     if (!full) {
       session$sendCustomMessage("setToEstimate", message = stats::rnorm(1))
     }
-    return(list(fit = fit, data_react = df_full, imported = imported, full = full))
+    return(list(fit = importedModel$fit, data_react = df_full, imported = imported, full = full))
   } else {
     return(list(imported = imported))
   }

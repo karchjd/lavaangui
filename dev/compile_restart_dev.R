@@ -1,4 +1,4 @@
-recompile_front <- T # nolint
+recompile_front <- F # nolint
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -24,6 +24,7 @@ HS.model <- " visual  =~ x1 + x2 + myLabel * x3
 
 # fit <- cfa(HS.model, data = HolzingerSwineford1939)
 # start_gui(fit)
+# plot_interactive(fit)
 
 
 model <-'
@@ -38,4 +39,4 @@ result <- lavaan(model, HolzingerSwineford1939, meanstructure = "default",
                  auto.fix.single = TRUE, auto.var = TRUE,
                  auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
                  fixed.x = FALSE)
-start_gui(result)
+plot_interactive(result, where = "browser")
