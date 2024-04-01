@@ -300,9 +300,6 @@ function produceLavaanOptions(ordered_labels) {
     const ordered_arg = 'c("' + ordered_labels.join('", "') + '")'
     options = `ordered = ${ordered_arg}, ${options}`
   }
-
-  debugger;
-
   return options;
 }
 

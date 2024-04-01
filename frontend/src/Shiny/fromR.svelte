@@ -50,8 +50,9 @@
     return { directed: directed, source: source, target: target };
   }
 
-  function findEdge(lhs, op, rhs) {
-    const goal_edge = getEdge(lhs, op, rhs);
+  function findEdge(lhs, op, rhs, user) {
+    let goal_edge = getEdge(lhs, op, rhs);
+    goal_edge.user = user;
     let cy = get(cyStore);
     const correct_edge = cy.edges(function (edge) {
       let res;
@@ -72,8 +73,22 @@
           edge.source().isConstant() &&
           edge.target().getLabel() == goal_edge.target;
       }
+      console.log(user);
+      if (goal_edge.user != undefined) {
+        if (goal_edge.user == 1) {
+          res = res && edge.isUserAdded();
+        } else if (goal_edge.user == 0) {
+          res = res && edge.isLavaanAdded();
+        } else {
+          throw new Error("User was neither 0 nor 1");
+        }
+      }
+
       return res;
     });
+    if (correct_edge.length > 1) {
+      throw new Error("Multiple edges found");
+    }
     return correct_edge;
   }
 
@@ -138,11 +153,13 @@
     let const_added = false;
     let added_const_id;
     for (let i = 0; i < lav_model.lhs.length; i++) {
+      debugger;
       // validate and remove existing edges
       let existingEdge = findEdge(
         lav_model.lhs[i],
         lav_model.op[i],
         lav_model.rhs[i],
+        lav_model.user[i],
       );
       if (!imported && lav_model.user[i] == 1) {
         //If it is a user row make sure the path is in, otherwise throw an error
@@ -211,6 +228,12 @@
             classes: desiredEdge.directed + " nolabel",
           });
 
+          console.log(
+            lav_model.lhs[i],
+            lav_model.op[i],
+            lav_model.rhs[i],
+            "added",
+          );
           if (lav_model.label[i] != "") {
             edge.addLabelImport(lav_model.label[i]);
           }
@@ -230,6 +253,12 @@
             edge.fixPara(lav_model.ustart[i]);
           } else {
             edge.remove();
+            console.log(
+              lav_model.lhs[i],
+              lav_model.op[i],
+              lav_model.rhs[i],
+              "removed",
+            );
           }
         } else {
           edge.setFree();

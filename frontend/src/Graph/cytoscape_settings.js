@@ -205,13 +205,16 @@ export const ehSettings = {
   handleSize: 10, // increase the size
   canConnect: function (sourceNode, targetNode) {
     // Allow connection if it doesn't create a parallel edge
-    return !cy.elements(
-      'edge[source = "' +
-      sourceNode.id() +
-      '"][target = "' +
-      targetNode.id() +
-      '"]'
-    ).length;
+    const existingEdges = cy.edges(function (ele) {
+      if (!ele.isUserAdded()) {
+        return false
+      }
+      const hasEdge = ele.source().id() == sourceNode.id() && ele.target().id() == targetNode.id()
+      const hasRevert = ele.source().id() == targetNode.id() && ele.target().id() == sourceNode.id()
+      return hasEdge || hasRevert
+    }).length;
+    return !existingEdges
+
   },
 };
 

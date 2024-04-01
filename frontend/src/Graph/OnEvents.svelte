@@ -23,7 +23,6 @@
   cy.on("remove", "edge, node", function (event) {
     if (cy.getUserEdges().length == 0) {
       $appState.modelEmpty = true;
-      $modelOptions.mode = "user model";
       Shiny.setInputValue("show_help", Math.random());
     }
     if (!$appState.loadingMode) {
@@ -31,14 +30,18 @@
     }
   });
 
+  cy.on("remove", "edge", function (event) {
+    checkNodeLoop(event.target.source().id());
+    checkNodeLoop(event.target.target().id());
+  });
+
   cy.on("add", "edge", function (event) {
     $appState.everEdge = true;
     if ($appState.modelEmpty && cy.edges().length > 0) {
       $appState.modelEmpty = false;
     }
-    if (!$appState.loadingMode) {
-      tolavaan($modelOptions.mode);
-    }
+    checkNodeLoop(event.target.source().id());
+    checkNodeLoop(event.target.target().id());
   });
 
   cy.on("position", "node", function (event) {

@@ -66,20 +66,22 @@ pkgload::load_all()
 # 
 # start_gui()
 
-library(lavaan)
-#make sure your data is loaded into the 'data' variable
-model <-'
-# measurement model
- f2 =~ A1 + A2 + A3 + A4 + A5
- f3 =~ C1 + C2 + C3 + C4 + C5
- f4 =~ E1 + E2 + E3 + E4 + E5
- f5 =~ N1 + N2 + N3 + N4 + N5
- f6 =~ O1 + O2 + O3 + O4 + O5
-'
+# library(lavaan)
+# #make sure your data is loaded into the 'data' variable
+# model <-'
+# # measurement model
+#  f2 =~ A1 + A2 + A3 + A4 + A5
+#  f3 =~ C1 + C2 + C3 + C4 + C5
+#  f4 =~ E1 + E2 + E3 + E4 + E5
+#  f5 =~ N1 + N2 + N3 + N4 + N5
+#  f6 =~ O1 + O2 + O3 + O4 + O5
+# '
 
+model <- "A1 ~ A2 + A4"
 
-fit <- sem(model, data = bfi_1_)
-plot_interactive(fit, where = "browser")
+fit <- sem(model, data = bfi_1_, fixed.x = FALSE)
+start_gui(fit)
+# plot_interactive(fit, where = "browser")
 
 
 # library(lavaan)
@@ -93,6 +95,9 @@ plot_interactive(fit, where = "browser")
 # Slope ~ 1
 # '
 # 
+
+
+
 # data <- HolzingerSwineford1939
 # result <- lavaan(model, data, meanstructure = TRUE,
 #                  int.ov.free = FALSE, int.lv.free = TRUE,

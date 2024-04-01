@@ -132,7 +132,9 @@
     });
 
     cytoscape("collection", "isFree", function () {
-        return this.hasClass(Constants.FREE);
+        return (
+            this.hasClass(Constants.FREE) || this.hasClass(Constants.FORCE_FREE)
+        );
     });
 
     cytoscape("collection", "isForceFree", function () {

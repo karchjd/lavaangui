@@ -114,7 +114,7 @@
       edge.makeLoop();
       checkNodeLoop(targetNodeId);
     }
-    //removers
+    //only directed edges from constant
     if (
       (edge.isUndirected() || edge.myIsLoop()) &&
       (sourceNode.isConstant() || targetNode.isConstant())
@@ -122,10 +122,12 @@
       return;
     }
 
+    //no directed egdes to constant
     if (edge.isDirected() && targetNode.isConstant()) {
       return;
     }
 
+    //only one directed edge from constant
     if (edge.isDirected() && sourceNode.isConstant()) {
       const conConstant = targetNode.connectedEdges(
         (edge_local) =>
@@ -142,6 +144,7 @@
       edge.makeOtherEdge();
     }
     $ur.do("add", edge);
+    tolavaan($modelOptions.mode);
   });
 
   function handleDragOver(event) {
