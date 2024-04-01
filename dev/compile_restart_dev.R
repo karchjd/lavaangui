@@ -39,4 +39,5 @@ result <- lavaan(model, HolzingerSwineford1939, meanstructure = "default",
                  auto.fix.single = TRUE, auto.var = TRUE,
                  auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
                  fixed.x = FALSE)
-plot_interactive(result, where = "browser")
+# plot_interactive(result, where = "browser")
+start_gui()

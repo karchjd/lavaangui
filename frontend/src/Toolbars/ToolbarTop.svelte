@@ -38,12 +38,12 @@
     if (type === "directed") {
       // @ts-ignore
       bootbox.alert(
-        "Connect two nodes with a directed edge by dragging from one to another while holding the CTRL or CMD key. The direction will be from the first node you click to the second.",
+        "Connect two nodes with a directed edge by dragging from one to another while holding the SPACEC key. The direction will be from the first node you click to the second.",
       );
     } else if (type === "undirected") {
       // @ts-ignore
       bootbox.alert(
-        "Connect two nodes with a directed edge by dragging from one to another while holding the SHIFT key.",
+        "Connect two nodes with an undirected edge by dragging from one to another while holding the ALT or OPTION key.",
       );
     } else {
       // @ts-ignore
