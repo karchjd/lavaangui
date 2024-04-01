@@ -137,12 +137,18 @@
     if (!imported) {
       cy.edges().invalidate();
     } else {
-      const observed = lav_model.obs;
+      const observed = Array.isArray(lav_model.obs)
+        ? lav_model.obs
+        : [lav_model.obs];
+
       for (let i = 0; i < observed.length; i++) {
         importNode(OBSERVED, observed[i]);
       }
 
-      const latent = lav_model.latent;
+      const latent = Array.isArray(lav_model.latent)
+        ? lav_model.latent
+        : [lav_model.latent];
+
       for (let i = 0; i < latent.length; i++) {
         importNode(LATENT, latent[i]);
       }

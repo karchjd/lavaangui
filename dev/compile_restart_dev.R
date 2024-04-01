@@ -7,7 +7,7 @@ if (recompile_front) {
     stop("Failed to compile Svelte front end.")
   }
 }
-
+  
   
 # Detach all loaded packages and clean your environment
 golem::detach_all_attached()
@@ -22,5 +22,20 @@ HS.model <- " visual  =~ x1 + x2 + myLabel * x3
               textual =~ x4 + x5 + x6
               speed   =~ x7 + x8 + x9 "
 
-fit <- cfa(HS.model, data = HolzingerSwineford1939)
-start_gui(fit)
+# fit <- cfa(HS.model, data = HolzingerSwineford1939)
+# start_gui(fit)
+
+
+model <-'
+# measurement model
+ f1 =~ x1 + x2 + x3 + x4 + x5
+'
+
+result <- lavaan(model, HolzingerSwineford1939, meanstructure = "default",
+                 int.ov.free = TRUE, int.lv.free = FALSE,
+                 estimator = "ML", se = "default",
+                 missing = "ml", auto.fix.first = TRUE,
+                 auto.fix.single = TRUE, auto.var = TRUE,
+                 auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
+                 fixed.x = FALSE)
+start_gui(result)
