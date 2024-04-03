@@ -17,7 +17,7 @@ There are three main ways to use the `lavaangui` package.
 
 ## Web application
 
-For the web application, no installation is necessary. Simply go to <http://lavaangui.org/>. The web application requires a modern browser. It is continuously being tested on Chrome, Firefox, and Edge, which I thus recommend. It unfortunately does not work with Safari.
+For the web application, no installation is necessary. Simply go to <http://lavaangui.org/>. The web application requires a modern browser. It is continuously being tested on Chrome. However, it should also work on Firefox, Safari, and Edge. Please let me know if you find any bugs.
 
 ## R Package
 
@@ -31,8 +31,6 @@ if (!requireNamespace("remotes", quietly = TRUE)) {
 }
 remotes::install_github("karchjd/lavaangui")
 ```
-
-You will also need a modern web browser, which typically should already be installed on your system. However, note that Safari is not supported, as explained earlier.
 
 ### `start_gui`
 
