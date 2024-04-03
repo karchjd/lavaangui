@@ -38,7 +38,7 @@
     if (type === "directed") {
       // @ts-ignore
       bootbox.alert(
-        "Connect two nodes with a directed edge by dragging from one to another while holding the SPACEC key. The direction will be from the first node you click to the second.",
+        "Connect two nodes with a directed edge by dragging from one to another while holding the SPACE key. The direction will be from the first node you click to the second.",
       );
     } else if (type === "undirected") {
       // @ts-ignore
