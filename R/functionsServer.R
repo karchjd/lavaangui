@@ -28,7 +28,10 @@ importModel <- function(session) {
       observed <- makeNewVars(observed, groups)
       latent <- makeNewVars(latent, groups)
     }
-    session$sendCustomMessage("imported_model", message = list(parTable = parTable, latent = latent, obs = observed))
+    session$sendCustomMessage("imported_model", message = list(
+      parTable = parTable, latent = latent, obs = observed,
+      ordered = lavInspect(importedModel$fit, , what = "ordered")
+    ))
     if (!is.null(importedModel$df)) {
       df_full <- list(df = importedModel$df, name = "Imported from R")
       propagateData(df_full, session, showData = FALSE)

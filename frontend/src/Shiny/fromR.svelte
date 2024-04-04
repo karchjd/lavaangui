@@ -410,6 +410,15 @@
     // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
       getModelLav(lav_model, true);
+      let cy = get(cyStore);
+      if (!Array.isArray(lav_model.ordered)) {
+        lav_model.ordered = [lav_model.ordered];
+      }
+      lav_model.ordered.forEach((label) => {
+        cy.nodes(function (node) {
+          return node.getLabel() == label;
+        })[0].makeOrdered();
+      });
       $modelOptions.fix_first = false;
       setAlert(
         "warning",

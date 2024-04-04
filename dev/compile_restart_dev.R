@@ -34,10 +34,9 @@ model <-'
 
 result <- lavaan(model, HolzingerSwineford1939, meanstructure = "default",
                  int.ov.free = TRUE, int.lv.free = FALSE,
-                 estimator = "ML", se = "default",
-                 missing = "ml", auto.fix.first = TRUE,
+                 estimator = "default", se = "default", auto.fix.first = TRUE,
                  auto.fix.single = TRUE, auto.var = TRUE,
                  auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
-                 fixed.x = FALSE)
+                 fixed.x = FALSE, ordered = c("x1"))
 # plot_interactive(result, where = "browser")
 start_gui(result)
