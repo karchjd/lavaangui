@@ -32,11 +32,11 @@ model <-'
  f1 =~ x1 + x2 + x3 + x4 + x5
 '
 
-result <- lavaan(model, HolzingerSwineford1939, meanstructure = "default",
+result <- lavaan(model, meanstructure = "default",
                  int.ov.free = TRUE, int.lv.free = FALSE,
                  estimator = "default", se = "default", auto.fix.first = TRUE,
                  auto.fix.single = TRUE, auto.var = TRUE,
                  auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
                  fixed.x = FALSE, ordered = c("x1"))
-# plot_interactive(result, where = "browser")
-start_gui(result)
+plot_interactive(result, where = "browser")
+# start_gui(result)
