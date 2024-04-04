@@ -584,11 +584,19 @@
         colorPicker.off("color:change", changeColor);
         // Remove this click event listener to clean up
         document.removeEventListener("click", closePicker);
+        document.removeEventListener("keydown", closePickerEnter);
       }
     };
 
     // Use setTimeout to temporarily ignore the immediate click event that opens the picker
     setTimeout(() => document.addEventListener("click", closePicker), 0);
+
+    const closePickerEnter = function (event) {
+      if (event.key === "Enter") {
+        closePicker(event);
+      }
+    };
+    document.addEventListener("keydown", closePickerEnter);
   }
   const menuSel = selectMenu(menu, $appState.full);
   onMount(() => {
