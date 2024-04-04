@@ -94,6 +94,16 @@
     cy.maxZoom(graphSettings.maxZoom);
     cy.autolock(graphSettings.autolock);
     cy.autoungrabify(graphSettings.autoungrabify);
+    cy.nodeEditing({
+      resizeToContentCueImage: "",
+      undoable: true,
+    });
+
+    cy.nodes().forEach((node) => {
+      console.log(node.data("width"));
+      node.style({ width: node.data("width") });
+      node.style({ height: node.data("height") });
+    });
 
     if ($appState.dataAvail) {
       applyLinkedClass($appState.columnNames);
@@ -222,6 +232,11 @@
     const cy = get(cyStore);
     // Deep clone cytoscape instance to cy_save
     const cy_save = cytoscape();
+    //save node size because edge editing extention does not do it
+    cy.nodes().forEach((node) => {
+      node.data("width", node.width());
+      node.data("height", node.height());
+    });
     let json = cy.json().elements;
 
     // Remove link with data set
