@@ -1,4 +1,4 @@
-recompile_front <- F # nolint
+recompile_front <- T # nolint
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -40,4 +40,4 @@ result <- lavaan(model, HolzingerSwineford1939, meanstructure = "default",
                  auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
                  fixed.x = FALSE)
 # plot_interactive(result, where = "browser")
-start_gui()
+start_gui(result)
