@@ -23,7 +23,7 @@ For the web application, no installation is necessary. Simply go to <http://lava
 
 ### Installation
 
-Only Windows users first need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank"}. Then, you can install the latest version of the R package via the following commands.
+Only Windows users first need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/). Then, you can install the latest version of the R package via the following commands.
 
 ```
 if (!requireNamespace("remotes", quietly = TRUE)) {
