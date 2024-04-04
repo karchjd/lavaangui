@@ -291,12 +291,15 @@
     let cy = get(cyStore);
 
     for (let i = 0; i < lav_result.lhs.length; i++) {
+      if (lav_result.op[i] == "~*~") {
+        continue;
+      }
       let existingEdge = findEdge(
         lav_result.lhs[i],
         lav_result.op[i],
         lav_result.rhs[i],
       );
-      if (existingEdge.isFree()) {
+      if (existingEdge.length > 0 && existingEdge.isFree()) {
         // Object to store all the estimates
         let allEstimates = {};
 
