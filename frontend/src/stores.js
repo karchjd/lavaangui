@@ -28,7 +28,7 @@ export let gridViewOptions = writable({
   gridWidth: 1,
   gridMovePan: false,
   gridSnap: false,
-  gridAlign: false,
+  gridAlign: true,
   gridResize: false,
   showLav: true,
   showVar: true,
