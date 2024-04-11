@@ -30,7 +30,7 @@ importModel <- function(session) {
     }
     session$sendCustomMessage("imported_model", message = list(
       parTable = parTable, latent = latent, obs = observed,
-      ordered = lavInspect(importedModel$fit, , what = "ordered")
+      ordered = lavInspect(importedModel$fit, what = "ordered")
     ))
     if (!is.null(importedModel$df)) {
       df_full <- list(df = importedModel$df, name = "Imported from R")
