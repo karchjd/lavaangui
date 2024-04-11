@@ -251,6 +251,30 @@ export function createSyntax(mode) {
   }
 
   syntax = "'\n" + syntax + "'" + "\n\n";
+  function splitLongLines(inputStr, threshold = 60) {
+    return inputStr.split('\n').map(line => {
+      if (line.includes('+') && line.length > threshold) {
+        const parts = line.split(' + ');
+        let newLines = [];
+        let currentLine = parts[0];
+        const initialIndent = line.match(/^\s*/)[0]; // Capture leading whitespace for indentation
+        const indentLength = currentLine.indexOf('~') + 1;
+        for (let i = 1; i < parts.length; i++) {
+          if (currentLine.length + parts[i].length + 3 > threshold) {
+            newLines.push(currentLine + ' + ');
+            currentLine = initialIndent + ' '.repeat(indentLength) + parts[i];
+          } else {
+            currentLine += ' + ' + parts[i];
+          }
+        }
+        newLines.push(currentLine); // Push the last line
+        return newLines.join('\n');
+      }
+      return line;
+    }).join('\n');
+  }
+
+  syntax = splitLongLines(syntax);
 
   // check for ordered nodes
   let ordered_nodes = cy.nodes(function (node) {
