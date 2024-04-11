@@ -1,6 +1,6 @@
 <script>
   import { addNode } from "../Graph/graphmanipulation.js";
-  import { appState } from "../stores";
+  import { appState, cyStore } from "../stores";
   import { OBSERVED, LATENT, CONSTANT } from "../Graph/classNames.js";
   let state = {};
 
@@ -48,6 +48,21 @@
     } else {
       // @ts-ignore
       bootbox.alert("Error: Unknown edge type.");
+    }
+  }
+  let varNames;
+
+  $: {
+    if (
+      typeof $cyStore.getObservedNodes === "function" &&
+      $appState.columnNames !== null
+    ) {
+      const inModel = $cyStore.getObservedNodes().map((node) => {
+        return node.data("label");
+      });
+      varNames = $appState.columnNames.filter((name) => {
+        return !inModel.includes(name);
+      });
     }
   }
 </script>
@@ -134,7 +149,7 @@
     </div>
     <div class="vertical-bar"></div>
     <ul class="draggable-list">
-      {#each $appState.columnNames as name}
+      {#each varNames as name}
         <li
           draggable="true"
           class="draggable-item"

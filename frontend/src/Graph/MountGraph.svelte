@@ -161,7 +161,14 @@
     function createBootPrompt(title, callback) {
       let inputOptions;
       if ($appState.dataAvail) {
-        inputOptions = $appState.columnNames.map((item) => {
+        const observedNames = cy
+          .getObservedNodes()
+          .map((node) => node.data().label);
+        const inputNames = $appState.columnNames.filter(
+          (x) => !observedNames.includes(x),
+        );
+
+        inputOptions = inputNames.map((item) => {
           return { text: item, value: item };
         });
       } else {
@@ -306,6 +313,7 @@
     ) {
       tolavaan($modelOptions.mode);
     }
+    $appState.dragged = null;
   }
 
   let isMouseDown = false;
