@@ -126,10 +126,6 @@
     }
   }
 
-  function importNode(type, label) {
-    addNode(type, undefined, false, label);
-  }
-
   function getModelLav(lav_model, imported) {
     $appState.meansModelled = false;
     $appState.loadingMode = true;
@@ -141,15 +137,21 @@
         ? lav_model.obs
         : [lav_model.obs];
 
+      function importNode(type, label, position) {
+        addNode(type, position, false, label);
+      }
+      let position = { x: 200, y: 200 };
       for (let i = 0; i < observed.length; i++) {
-        importNode(OBSERVED, observed[i]);
+        position.x = position.x + 50;
+        importNode(OBSERVED, observed[i], position);
       }
 
       const latent = Array.isArray(lav_model.latent)
         ? lav_model.latent
         : [lav_model.latent];
-
+      position = { x: 200, y: 100 };
       for (let i = 0; i < latent.length; i++) {
+        position.x = position.x + 50;
         importNode(LATENT, latent[i]);
       }
       lav_model = lav_model.parTable;
