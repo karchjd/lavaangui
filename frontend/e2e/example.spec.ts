@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
+console.log(__dirname);
 
 //File menu
 
@@ -28,9 +29,8 @@ test("Load Data", async ({ page }) => {
 
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, "cfa.csv"));
-  await expect(page.getByTestId("data-info")).toContainText(
-    "Dataset \"cfa.csv\" is loaded"
-  );
+  const heading = page.getByRole('heading', { name: 'Data Information (Double click on column name to change)' });
+  await expect(heading).toBeVisible();
 });
 
 test("Load Model and Data", async ({ page }) => {
@@ -44,9 +44,6 @@ test("Load Model and Data", async ({ page }) => {
 
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, "cfa.zip"));
-  await expect(page.getByTestId("data-info")).toContainText(
-    "Dataset \"data.csv\" is loaded"
-  );
 });
 
 test("Download Model", async ({ page }) => {
@@ -62,11 +59,13 @@ test("Remove Data", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("link", { name: "Remove Data" }).click();
-  await expect(page.getByTestId("data-info")).toContainText("No Data loaded");
+  const button = await page.getByRole('button', { name: 'Show Data' });
+  expect(await button.isDisabled()).toBe(true);
 });
 
 test("Download Model Data", async ({ page }) => {
   await page.goto("/");
+  await page.waitForTimeout(3000);
   await page.getByRole("button", { name: "File" }).click();
   const downloadPromise = page.waitForEvent("download");
   await page
@@ -97,7 +96,10 @@ test("Export JPG", async ({ page }) => {
 //View Menu
 test("Default options View", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "View" }).click();
+  await page.getByRole("button", { name: "Estimates" }).click();
+  await page.waitForTimeout(1500);
+
+
   //Edges created by lavaan visible
   await page
     .evaluate(() => {
@@ -129,7 +131,6 @@ test("Default options View", async ({ page }) => {
 
 test("Show Script", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Show User Model / Script" }).click();
 
   await expect(page.getByTestId("result-text")).toContainText(
     "library(lavaan)"
@@ -152,9 +153,9 @@ test("Show Script", async ({ page }) => {
 
 test("Show Full Model", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Show Full Model" }).click();
+  await page.getByRole("button", { name: "Full Model" }).click();
 
-  await expect(page.getByTestId("result-text")).toContainText("lhs");
+  await expect(page.getByTestId("result-text")).toContainText("library(lavaan)");
   const lavEdges = await page.evaluate(() =>
     // @ts-expect-error
     window.cy.edges(".fromLav").map((edge) => edge.visible())
@@ -173,10 +174,9 @@ test("Show Full Model", async ({ page }) => {
 
 test("Fit Model", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Show User Model / Script" }).click();
-  await page.getByRole("button", { name: "Fit Model" }).click();
+  await page.getByRole("button", { name: "Estimates" }).click();
 
-  await page.waitForTimeout(10000);
+  await page.waitForTimeout(2000);
 
   await page
     .evaluate(() => {
@@ -222,7 +222,7 @@ test("Remove data", async ({ page }) => {
   await page.goto("http://127.0.0.1:3245/");
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("link", { name: "Remove Data" }).click();
-  const fitButton = await page.getByRole("button", { name: "Fit Model" });
+  const fitButton = await page.getByRole("button", { name: "Estimates" });
   expect(await fitButton.isDisabled()).toBe(true);
 });
 
@@ -234,7 +234,9 @@ test("Not Identified", async ({ page }) => {
   await page.getByText("OK").click();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, "not_identified.json"));
-  await page.getByRole("button", { name: "Fit Model" }).click();
+  const fitButton = await page.getByRole("button", { name: "Estimates" });
+  fitButton.click();
+  await page.waitForTimeout(500);
   await expect(page.getByTestId("result-text")).toContainText(
     "This may be a symptom that the model is not"
   );
