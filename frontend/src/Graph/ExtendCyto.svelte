@@ -176,6 +176,10 @@
         return this.data("value");
     });
 
+    cytoscape("collection", "setValue", function (value) {
+        this.data("value", value);
+    });
+
     cytoscape("collection", "invalidate", function () {
         this.removeClass(Constants.VALIDATED);
         return this;
@@ -195,7 +199,9 @@
     });
 
     cytoscape("collection", "removeEstimates", function () {
-        this.removeData("est").removeClass(Constants.HAS_EST);
+        this.removeData("estimates")
+            .removeClass(Constants.HAS_EST)
+            .removeClass(Constants.HAS_EST_FIXED);
         return this;
     });
 

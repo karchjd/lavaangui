@@ -425,32 +425,32 @@
       hasTrailingDivider: true,
     },
 
-    // {
-    //   id: "change-ordered",
-    //   content: "Change to Ordered",
-    //   selector: `node.${Constants.OBSERVED}.${Constants.CONTINOUS}`,
-    //   onClickFunction: function (event) {
-    //     const node = event.target || event.cyTarget;
-    //     node.makeOrdered();
-    //     tolavaan($modelOptions.mode);
-    //   },
-    //   show: "full",
-    //   hasTrailingDivider: false,
-    // },
+    {
+      id: "change-ordered",
+      content: "Change to Ordered",
+      selector: `node.${Constants.OBSERVED}.${Constants.CONTINOUS}`,
+      onClickFunction: function (event) {
+        const node = event.target || event.cyTarget;
+        node.makeOrdered();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
 
-    // {
-    //   id: "change-continous",
-    //   content: "Change to Continous",
-    //   selector: `node.${Constants.OBSERVED}.${Constants.ORDERED}`,
+    {
+      id: "change-continous",
+      content: "Change to Continous",
+      selector: `node.${Constants.OBSERVED}.${Constants.ORDERED}`,
 
-    //   onClickFunction: function (event) {
-    //     const node = event.target || event.cyTarget;
-    //     node.makeContinous();
-    //     tolavaan($modelOptions.mode);
-    //   },
-    //   show: "full",
-    //   hasTrailingDivider: false,
-    // },
+      onClickFunction: function (event) {
+        const node = event.target || event.cyTarget;
+        node.makeContinous();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
 
     {
       id: "change-observed",

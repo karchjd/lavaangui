@@ -129,6 +129,7 @@
   function getModelLav(lav_model, imported) {
     $appState.meansModelled = false;
     $appState.loadingMode = true;
+
     let cy = get(cyStore);
     if (!imported) {
       cy.edges().invalidate();
@@ -157,9 +158,19 @@
       lav_model = lav_model.parTable;
     }
 
+    const orderedVariables = new Set();
+    for (let i = 0; i < lav_model.lhs.length; i++) {
+      if (lav_model.op[i] === "|") {
+        orderedVariables.add(lav_model.lhs[i]);
+      }
+    }
+
     let const_added = false;
     let added_const_id;
     for (let i = 0; i < lav_model.lhs.length; i++) {
+      if (lav_model.op[i] == "~*~" || lav_model.op[i] == "|") {
+        continue;
+      }
       // validate and remove existing edges
       let existingEdge = findEdge(
         lav_model.lhs[i],
@@ -249,7 +260,15 @@
         }
         if (lav_model.free[i] == 0) {
           if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
-            edge.fixPara(lav_model.ustart[i]);
+            debugger;
+            if (
+              orderedVariables.has(edge.target().getLabel()) &&
+              lav_model.op[i] == "~~"
+            ) {
+              edge.fixPara("Total Variance 1");
+            } else {
+              edge.fixPara(lav_model.ustart[i]);
+            }
           } else {
             edge.remove();
           }
@@ -291,33 +310,44 @@
 
   function updateEstimates(lav_result, std_result) {
     let cy = get(cyStore);
+    const ordered = lav_result.op.some((op) => op.includes("~~"));
 
     for (let i = 0; i < lav_result.lhs.length; i++) {
+      if (lav_result.op[i] == "~*~" || lav_result.op[i] == "|") {
+        continue;
+      }
       let existingEdge = findEdge(
         lav_result.lhs[i],
         lav_result.op[i],
         lav_result.rhs[i],
       );
-      if (existingEdge.isFree()) {
-        // Object to store all the estimates
+      if (existingEdge.length > 0) {
         let allEstimates = {};
+        if (existingEdge.isFree()) {
+          // Object to store all the estimates
 
-        // Populate the object with estimates from lav_result
-        allEstimates.est = lav_result.est[i];
-        allEstimates.p_value = lav_result.pvalue[i];
-        allEstimates.se = lav_result.se[i];
-        allEstimates.ciLow = lav_result["ci.lower"][i];
-        allEstimates.ciHigh = lav_result["ci.upper"][i];
+          // Populate the object with estimates from lav_result
+          allEstimates.est = lav_result.est[i];
+          allEstimates.p_value = lav_result.pvalue[i];
+          allEstimates.se = lav_result.se[i];
+          allEstimates.ciLow = lav_result["ci.lower"][i];
+          allEstimates.ciHigh = lav_result["ci.upper"][i];
 
-        // Populate the object with estimates from std_result
-        allEstimates.est_std = std_result["est.std"][i];
-        allEstimates.se_std = std_result.se[i];
-        allEstimates.ciLow_std = std_result["ci.lower"][i];
-        allEstimates.ciHigh_std = std_result["ci.upper"][i];
+          // Populate the object with estimates from std_result
+          allEstimates.est_std = std_result["est.std"][i];
+          allEstimates.se_std = std_result.se[i];
+          allEstimates.ciLow_std = std_result["ci.lower"][i];
+          allEstimates.ciHigh_std = std_result["ci.upper"][i];
 
-        // Store the consolidated estimates object in a single data attribute
+          existingEdge.addClass("hasEst");
+        } else if (ordered && lav_result.op[i] == "~~") {
+          allEstimates.estFixed = lav_result.est[i];
+          {
+            allEstimates.estFixed_std = std_result["est.std"][i];
+            existingEdge.addClass("hasEstFixed");
+          }
+        }
         existingEdge.data("estimates", allEstimates);
-        existingEdge.addClass("hasEst");
       }
     }
   }
@@ -409,6 +439,15 @@
     // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
       getModelLav(lav_model, true);
+      let cy = get(cyStore);
+      if (!Array.isArray(lav_model.ordered)) {
+        lav_model.ordered = [lav_model.ordered];
+      }
+      lav_model.ordered.forEach((label) => {
+        cy.nodes(function (node) {
+          return node.getLabel() == label;
+        })[0].makeOrdered();
+      });
       $modelOptions.fix_first = false;
       setAlert(
         "warning",

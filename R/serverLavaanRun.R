@@ -31,6 +31,12 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       ## Mode = "Full Model" or "Estimate", send model
       modelJavascript <- fromJavascript$model
       model <- eval(parse(text = modelJavascript$syntax)) # nolint: object_usage_linter.
+      if(length(modelJavascript$ordered_labels) > 0){
+        model <- paste0(model,'\n')
+        for(i in 1:length(modelJavascript$ordered_labels)){
+          model <- paste0(model,  modelJavascript$ordered_labels[i], "|t1\n")
+        }
+      }
       lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
 
       ## gotta love R error handling...

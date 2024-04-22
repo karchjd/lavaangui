@@ -86,13 +86,14 @@ function addTerms(node, edge) {
 }
 
 class DataForR {
-  constructor(mode, R_script, lavOptions = null, syntax = null, fitCache = null) {
+  constructor(mode, R_script, lavOptions = null, syntax = null, fitCache = null, ordered_labels = null) {
     this.mode = mode;
     Object.assign(this, {
       model: {
         options: lavOptions,
         syntax: syntax,
         R_script: R_script,
+        ordered_labels: ordered_labels
       },
       forceUpdate: Math.random(),
       cache: fitCache
@@ -288,7 +289,7 @@ export function createSyntax(mode) {
 
   R_script += "model <-" + syntax;
   R_script += "result <- lavaan(model, data, " + lavOptions;
-  const for_R = new DataForR(mode, R_script, lavOptions, syntax = syntax, get(fitCache))
+  const for_R = new DataForR(mode, R_script, lavOptions, syntax = syntax, get(fitCache), ordered_labels)
   return for_R;
 }
 

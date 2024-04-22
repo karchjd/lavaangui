@@ -24,11 +24,15 @@ export function updateLabels(viewOption, std, number_digits) {
   const styleEst = generateStyleEst(viewOption, postfix, number_digits);
   cy.style().selector("edge.hasEst").style({ label: styleEst }).update();
 
+
   const labeledStyleEst = generateLabeledStyleEst(viewOption, postfix, number_digits);
   cy.style()
     .selector("edge.hasEst.label")
     .style({ label: labeledStyleEst })
     .update();
+
+  const fixedEstStyle = generateFixedEstStyle(viewOption, postfix, number_digits);
+  cy.style().selector("edge.hasEstFixed").style({ label: fixedEstStyle }).update();
 }
 
 export function updateVisibility(showVar, showLav, showMean, menuItems) {
@@ -101,4 +105,12 @@ function generateStyleEst(viewOption, postfix, number_digits) {
 function generateLabeledStyleEst(viewOption, postfix, number_digits) {
   const baseStyle = generateStyleEst(viewOption, postfix, number_digits);
   return (edge) => `${edge.data("label")} = ${baseStyle(edge)}`;
+}
+
+function generateFixedEstStyle(viewOption, postfix, number_digits) {
+  const formatValue = (value) => value === null ? "NA" : value.toFixed(number_digits);
+  return (edge) => {
+    debugger; // Inserted debugger statement
+    return "@" + formatValue(edge.data("estimates")["estFixed" + postfix]);
+  };
 }

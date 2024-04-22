@@ -8,7 +8,7 @@ export let modelOptions = writable({
   meanStruc: "default",
   intOvFree: true,
   intLvFree: false,
-  estimator: "ML",
+  estimator: "default",
   se: "default",
   missing: "listwise",
   n_boot: 1000,
