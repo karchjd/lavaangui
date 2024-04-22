@@ -357,7 +357,9 @@
   window.addEventListener("mouseup", function () {
     if (isMouseDown) {
       isMouseDown = false;
+      if (angle === undefined || startDeg === `${angle}deg`) return;
       currentEdge.data("loop-direction", startDeg);
+      currentEdge.addClass("fixDeg");
       $ur.do("style", {
         eles: currentEdge,
         style: { "loop-direction": `${angle}deg` },
