@@ -390,7 +390,15 @@
         action: exportPDF,
       },
     ];
-    menuItems = full ? allMenuItems : allMenuItems.slice(-4);
+    if (full) {
+      menuItems = allMenuItems;
+    } else {
+      menuItems = allMenuItems.filter(
+        (item) =>
+          ["Download Model", "Load Model"].includes(item.name) ||
+          allMenuItems.indexOf(item) >= allMenuItems.length - 4,
+      );
+    }
   }
 </script>
 
