@@ -67,6 +67,10 @@
     }
   }
 
+  function startDownload(object, fileEnding) {
+    saveAs(object, "model." + fileEnding);
+  }
+
   function parseModel(content) {
     reset();
 
@@ -262,16 +266,10 @@
 
   function downloadModel() {
     const combinedData = jsonModel();
-
-    // Create a new Blob object using the JSON string
     let blob = new Blob([combinedData], {
       type: "application/json;charset=utf-8",
     });
-    let url = URL.createObjectURL(blob);
-
-    // Create and trigger download link for the JSON data
-    // @ts-expect-error
-    window.$("<a>").attr({ href: url, download: "diagram.json" })[0].click();
+    saveAs(blob, "diagram.json");
   }
 
   async function downloadModelData() {
@@ -292,10 +290,6 @@
     cy.nodes().unlink();
     // @ts-ignore
     Shiny.setInputValue("dataUpload-deleteData", Math.random());
-  }
-
-  function startDownload(object, fileEnding) {
-    saveAs(object, "model." + fileEnding);
   }
 
   function exportPNG() {
