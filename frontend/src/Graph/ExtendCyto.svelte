@@ -176,6 +176,10 @@
         return this.data("value");
     });
 
+    cytoscape("collection", "setValue", function (value) {
+        this.data("value", value);
+    });
+
     cytoscape("collection", "invalidate", function () {
         this.removeClass(Constants.VALIDATED);
         return this;

@@ -292,6 +292,7 @@
 
   function updateEstimates(lav_result, std_result) {
     let cy = get(cyStore);
+    const ordered = lav_result.op.some((op) => op.includes("~~"));
 
     for (let i = 0; i < lav_result.lhs.length; i++) {
       if (lav_result.op[i] == "~*~" || lav_result.op[i] == "|") {
@@ -302,26 +303,33 @@
         lav_result.op[i],
         lav_result.rhs[i],
       );
-      if (existingEdge.length > 0 && existingEdge.isFree()) {
-        // Object to store all the estimates
+      if (existingEdge.length > 0) {
         let allEstimates = {};
+        if (existingEdge.isFree()) {
+          // Object to store all the estimates
 
-        // Populate the object with estimates from lav_result
-        allEstimates.est = lav_result.est[i];
-        allEstimates.p_value = lav_result.pvalue[i];
-        allEstimates.se = lav_result.se[i];
-        allEstimates.ciLow = lav_result["ci.lower"][i];
-        allEstimates.ciHigh = lav_result["ci.upper"][i];
+          // Populate the object with estimates from lav_result
+          allEstimates.est = lav_result.est[i];
+          allEstimates.p_value = lav_result.pvalue[i];
+          allEstimates.se = lav_result.se[i];
+          allEstimates.ciLow = lav_result["ci.lower"][i];
+          allEstimates.ciHigh = lav_result["ci.upper"][i];
 
-        // Populate the object with estimates from std_result
-        allEstimates.est_std = std_result["est.std"][i];
-        allEstimates.se_std = std_result.se[i];
-        allEstimates.ciLow_std = std_result["ci.lower"][i];
-        allEstimates.ciHigh_std = std_result["ci.upper"][i];
+          // Populate the object with estimates from std_result
+          allEstimates.est_std = std_result["est.std"][i];
+          allEstimates.se_std = std_result.se[i];
+          allEstimates.ciLow_std = std_result["ci.lower"][i];
+          allEstimates.ciHigh_std = std_result["ci.upper"][i];
 
-        // Store the consolidated estimates object in a single data attribute
+          existingEdge.addClass("hasEst");
+        } else if (ordered && lav_result.op[i] == "~~") {
+          allEstimates.estFixed = lav_result.est[i];
+          {
+            allEstimates.estFixed_std = std_result["est.std"][i];
+            existingEdge.addClass("hasEstFixed");
+          }
+        }
         existingEdge.data("estimates", allEstimates);
-        existingEdge.addClass("hasEst");
       }
     }
   }
