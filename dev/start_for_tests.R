@@ -2,6 +2,10 @@
 if (!requireNamespace("golem", quietly = TRUE)) {
   install.packages("golem")
 }
+if (!requireNamespace("golem", quietly = TRUE)) {
+  install.packages("pkgload")
+}
+
 golem::detach_all_attached()
 
 # Document and reload your package
