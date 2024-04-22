@@ -20,7 +20,7 @@
     }
   });
 
-  cy.on("remove", "edge, node", function (event) {
+  cy.on("remove", "node", function (event) {
     if (cy.getUserEdges().length == 0) {
       $appState.modelEmpty = true;
       Shiny.setInputValue("show_help", Math.random());

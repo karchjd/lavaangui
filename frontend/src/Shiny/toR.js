@@ -12,8 +12,13 @@ export function tolavaan(mode) {
   let cy = get(cyStore);
   const edges = cy.edges();
 
-  if (
-    cy.getUserEdges().length == 0) {
+  for (var i = 0; i < edges.length; i++) {
+    edges[i].removeEstimates();
+  }
+
+  if (cy.getUserEdges().length == 0) {
+    cy.getLavaanNodes().remove()
+    cy.getLavaanEdges().remove()
     return;
   }
 
@@ -25,9 +30,7 @@ export function tolavaan(mode) {
 
 
 
-  for (var i = 0; i < edges.length; i++) {
-    edges[i].removeEstimates();
-  }
+
 
 
   let for_R = createSyntax(mode);

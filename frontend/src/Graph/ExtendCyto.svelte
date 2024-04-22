@@ -263,6 +263,10 @@
         return this.nodes(`.${Constants.FROM_LAV}`);
     });
 
+    cytoscape("core", "getLavaanEdges", function () {
+        return this.edges(`.${Constants.FROM_LAV}`);
+    });
+
     cytoscape("core", "getObservedNodes", function () {
         return this.nodes(`.${Constants.OBSERVED}`);
     });

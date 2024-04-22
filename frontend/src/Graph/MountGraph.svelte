@@ -13,7 +13,6 @@
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { OBSERVED, LATENT, CONSTANT, NODEWITH } from "./classNames.js";
   import { tolavaan } from "../Shiny/toR.js";
-  import { edgeBendingSettings } from "./cytoscape_settings.js";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -43,6 +42,7 @@
       let selectedElements = cy.$(":selected");
       if (selectedElements.length > 0) {
         $ur.do("remove", selectedElements);
+        tolavaan($modelOptions.mode);
       }
       $appState.buttonDown = false;
     }
