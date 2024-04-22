@@ -422,7 +422,7 @@
         tolavaan($modelOptions.mode);
       },
       show: "full",
-      hasTrailingDivider: true,
+      hasTrailingDivider: false,
     },
 
     {
@@ -435,7 +435,7 @@
         tolavaan($modelOptions.mode);
       },
       show: "full",
-      hasTrailingDivider: false,
+      hasTrailingDivider: true,
     },
 
     {
@@ -449,7 +449,7 @@
         tolavaan($modelOptions.mode);
       },
       show: "full",
-      hasTrailingDivider: false,
+      hasTrailingDivider: true,
     },
 
     {

@@ -1,4 +1,4 @@
-recompile_front <- F # nolint
+recompile_front <- T # nolint
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -27,8 +27,7 @@ fit <- cfa(HS.model, data = HolzingerSwineford1939)
 data <- read.csv("~/Downloads/bfi (3).csv")
 model <-'
 # measurement model
- f2 =~ A1 + A2 + A3 + A4 + A5 + C1 + C2 + C3 + C4 + C5 + E1 + E2 + E3 + E4 + 
-       E5 + N1 + N2 + N3 + N4 + N5 + O1 + O2 + O3 + O4 + O5
+ f2 =~ A1 + A2 + A3 + A4 + A5
 '
 
 

@@ -324,7 +324,6 @@
     isMouseDown = true;
     currentEdge = event.target;
     currentEdge.unpanify();
-    currentEdge.addClass("fixDeg");
     startDeg = currentEdge.style("loop-direction");
   });
 
