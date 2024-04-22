@@ -133,6 +133,7 @@
   function getModelLav(lav_model, imported) {
     $appState.meansModelled = false;
     $appState.loadingMode = true;
+
     let cy = get(cyStore);
     if (!imported) {
       cy.edges().invalidate();
@@ -153,6 +154,13 @@
         importNode(LATENT, latent[i]);
       }
       lav_model = lav_model.parTable;
+    }
+
+    const orderedVariables = new Set();
+    for (let i = 0; i < lav_model.lhs.length; i++) {
+      if (lav_model.op[i] === "|") {
+        orderedVariables.add(lav_model.lhs[i]);
+      }
     }
 
     let const_added = false;
@@ -250,7 +258,15 @@
         }
         if (lav_model.free[i] == 0) {
           if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
-            edge.fixPara(lav_model.ustart[i]);
+            debugger;
+            if (
+              orderedVariables.has(edge.target().getLabel()) &&
+              lav_model.op[i] == "~~"
+            ) {
+              edge.fixPara("Total Variance 1");
+            } else {
+              edge.fixPara(lav_model.ustart[i]);
+            }
           } else {
             edge.remove();
           }

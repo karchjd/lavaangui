@@ -40,7 +40,7 @@ result <- lavaan(model, ordered = c("A1"), data, meanstructure = "default",
                  auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
                  fixed.x = TRUE, parameterization = "theta")
 # start_gui(result)
-plot_interactive(result, where = "browser")
+start_gui(result)
 
 
 # model <-'

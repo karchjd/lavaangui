@@ -199,7 +199,9 @@
     });
 
     cytoscape("collection", "removeEstimates", function () {
-        this.removeData("est").removeClass(Constants.HAS_EST);
+        this.removeData("estimates")
+            .removeClass(Constants.HAS_EST)
+            .removeClass(Constants.HAS_EST_FIXED);
         return this;
     });
 

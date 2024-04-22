@@ -19,7 +19,7 @@ export const HAS_EST = 'hasEst';
 export const VALIDATED = 'validated';
 export const CONTINOUS = 'continous';
 export const ORDERED = 'ordered';
-
+export const HAS_EST_FIXED = "hasEstFixed"
 export const NODEWITH = 80;
 export const LABELWIDTH = 80;
 
