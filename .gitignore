@@ -39,4 +39,3 @@ semPathTest.R
 /playwright/.cache/
 src/test-results
 src/playwright-report
-frontend
