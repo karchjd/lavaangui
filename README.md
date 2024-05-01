@@ -7,7 +7,7 @@ The `lavaangui` package provides a free, open-source graphical user interface fo
 
 There are three main ways to use the `lavaangui` package.
 
-1.  **Web application:** The easiest is visit <http://lavaangui.org/> and use it as a web application. This requires no additional software besides a web browser. The main downside of this is that the webserver is likely slower than your computer. So, fitting complicated models might take a long time.
+1.  **Web application:** The easiest is to visit <http://lavaangui.org/> and use it as a web application. This requires no additional software besides a web browser. The main downside of this is that the webserver is likely slower than your computer. So, fitting complicated models might take a long time.
 
 2. **Local web application:** After installing the  `lavaangui` package (see below), you can start a local version of the web application via the `start_gui()` command.
 
