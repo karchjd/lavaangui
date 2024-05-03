@@ -346,7 +346,7 @@
           message: `
       <div>
         <label>Enter a label:</label>
-        <input type="text" class="form-control" id="new-label">
+        <input type="text" class="form-control" id="new-label" value=${node.getLabel()}>
         ${dropdownHTML}
       </div>
     `,
