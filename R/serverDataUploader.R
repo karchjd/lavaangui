@@ -40,7 +40,7 @@ determine_seperator_header <- function(filepath) {
 
   # Check if the first line is a header: assume header if all segments are non-numeric
   header <- readr::read_delim(filepath, delim = separator, n_max = 1, col_names = FALSE, trim_ws = TRUE)
-  has_header <- all(sapply(header, is.character))
+  has_header <- all(sapply(header, is.character) | sapply(header, is.na))
   list(separator = separator, has_header = has_header)
 }
 
