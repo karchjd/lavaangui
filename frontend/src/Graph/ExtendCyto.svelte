@@ -31,7 +31,7 @@
     cytoscape("collection", "removeLabel", function () {
         this.removeClass(Constants.LABEL)
             .addClass(Constants.NOT_LABEL)
-            .data("label", undefined);
+            .data("label", null);
         return this;
     });
 
@@ -199,9 +199,10 @@
     });
 
     cytoscape("collection", "removeEstimates", function () {
-        this.removeData("estimates")
-            .removeClass(Constants.HAS_EST)
-            .removeClass(Constants.HAS_EST_FIXED);
+        this.removeClass(Constants.HAS_EST).removeClass(
+            Constants.HAS_EST_FIXED,
+        );
+        this.removeData("estimates");
         return this;
     });
 

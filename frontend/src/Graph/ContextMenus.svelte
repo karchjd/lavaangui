@@ -116,12 +116,14 @@
         // @ts-expect-error
         bootbox.prompt({
           title: "Enter a Label",
+          value: edge.getLabel(), // initializing the text input with the current label
           callback: function (result) {
             if (!validLabel(result)) {
               return false;
             }
 
-            if (result !== null) {
+            if (result !== edge.getLabel() && result !== null) {
+              // checking if the new label is different from the old label
               edge.addLabel(result);
               tolavaan($modelOptions.mode);
             }
