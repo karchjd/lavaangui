@@ -2,13 +2,13 @@
   import { appState } from "./stores";
   import { get } from "svelte/store";
 
-  window.onerror = function (message, source, lineno, colno, error) {
-    showError(message, "Javascript");
-  };
+  // window.onerror = function (message, source, lineno, colno, error) {
+  //   showError(message, "Javascript");
+  // };
 
-  window.addEventListener("unhandledrejection", function (event) {
-    showError(event.reason, "Javascript");
-  });
+  // window.addEventListener("unhandledrejection", function (event) {
+  //   showError(event.reason, "Javascript");
+  // });
 
   function showError(message, source) {
     // @ts-expect-error

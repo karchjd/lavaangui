@@ -3,7 +3,6 @@
   import { get } from "svelte/store";
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { tolavaan } from "../Shiny/toR.js";
-  import { DIRECTED } from "./classNames.js";
   let cy = get(cyStore);
 
   cy.on("add", "node", function (event) {
