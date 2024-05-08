@@ -8,6 +8,7 @@
   font-size: 11px;
   z-index: 99999;
   box-sizing: content-box;
+  right: 5%;
 }
 
 .cy-panzoom-zoom-button {
