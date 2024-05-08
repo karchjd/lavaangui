@@ -2,7 +2,7 @@ serverDownloader <- function(id, getData) {
   moduleServer(id, function(input, output, session) {
     output$downloadData <- downloadHandler(
       filename = function() {
-        paste("lavaangui-", Sys.Date(), ".zip", sep = "")
+        paste("lavaangui-", Sys.Date(), ".lvd", sep = "")
       },
 
       # Define the content of the file
@@ -11,7 +11,7 @@ serverDownloader <- function(id, getData) {
         tempDir <- tempdir()
 
         # Define the names of the JSON and CSV files
-        jsonFile <- file.path(tempDir, "model.json")
+        jsonFile <- file.path(tempDir, "model.lvm")
         csvFile <- file.path(tempDir, "data.csv")
 
 
@@ -21,7 +21,7 @@ serverDownloader <- function(id, getData) {
         utils::write.csv(getData(), csvFile, row.names = FALSE)
 
         # Create a zip archive of the directory containing the JSON and CSV files
-        zip::zip(zipfile = file, files = c("model.json", "data.csv"), root = tempDir)
+        zip::zip(zipfile = file, files = c("model.lvm", "data.csv"), root = tempDir)
       }
     )
 

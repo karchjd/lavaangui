@@ -129,7 +129,7 @@
     // Create file input element
     const input = document.createElement("input");
     input.setAttribute("type", "file");
-    input.setAttribute("accept", ".json");
+    input.setAttribute("accept", ".lvm");
 
     // Await file selection by user
     const file = await new Promise((resolve) => {
@@ -190,7 +190,7 @@
     // Create file input element
     const input = document.createElement("input");
     input.setAttribute("type", "file");
-    input.setAttribute("accept", ".zip");
+    input.setAttribute("accept", ".lvd");
 
     input.addEventListener("change", function (e) {
       // @ts-expect-error
@@ -217,7 +217,7 @@
                   clearInterval(checkDataAvailability);
 
                   zip
-                    .file("model.json")
+                    .file("model.lvm")
                     .async("text")
                     .then(function (modelJsonContent) {
                       parseModel(modelJsonContent);
@@ -269,7 +269,7 @@
     let blob = new Blob([combinedData], {
       type: "application/json;charset=utf-8",
     });
-    saveAs(blob, "diagram.json");
+    saveAs(blob, "model.lvm");
   }
 
   async function downloadModelData() {

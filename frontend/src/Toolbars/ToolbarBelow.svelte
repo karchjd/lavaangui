@@ -59,7 +59,7 @@
         : 'btn-default'}"
       on:click={() => changeMode("full model")}
     >
-      Full Model
+      Lavaan Model
     </button>
     <button
       class="btn btn-lg {selected === 'estimate'

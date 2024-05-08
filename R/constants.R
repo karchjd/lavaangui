@@ -20,6 +20,14 @@ help_text <- paste(
   "CTRL+Y                Redo Graph Appearance Changes",
   "",
   "Mac Users Replace CTRL with CMD, and ALT with OPTION",
+  "",
+  "",
+  "Standard Workflow",
+  "--------------------------------------------------",
+  "1. Load your data (File --> Load Data)",
+  "2. Draw your Model",
+  "3. Check lavaan's autocomplete is correct (\"Lavaan model\")",
+  "4. Fit Model (\"Estimates\")",
   sep = "\n"
 )
 class(help_text) <- "help_text"
