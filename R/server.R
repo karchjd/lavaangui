@@ -39,8 +39,8 @@ lavaan_gui_server <- function(input, output, session) {
   ## rename data
   getData <- reactive({
     local_data <- data_react()
-    if (!is.null(input$newnames)) {
-      names(local_data$df) <- input$newnames
+    if (!is.null(input$newnames$newnames)) {
+      names(local_data$df) <- unlist(input$newnames$newnames)
     }
     return(local_data$df)
   })

@@ -414,8 +414,16 @@
 
     // @ts-expect-error
     Shiny.addCustomMessageHandler("columnames", function (cnames) {
-      $appState.columnNames = cnames;
-      applyLinkedClass(cnames, true);
+      const cy = get(cyStore);
+      const oldName = $appState.columnNames[cnames.index];
+      $appState.columnNames[cnames.index] = cnames.newcolname;
+      cy.getObservedNodes().forEach((node) => {
+        if (node.getLabel() == oldName) {
+          node.setLabel(cnames.newcolname);
+          tolavaan($modelOptions.mode);
+        }
+      });
+      applyLinkedClass($appState.columnNames, true);
     });
 
     // @ts-expect-error
