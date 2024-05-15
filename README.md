@@ -40,6 +40,7 @@ remotes::install_github("karchjd/lavaangui")
 You can start the `lavaangui` web application by typing 
 
 ```
+library(lavaangui)
 start_gui()
 ```
 
@@ -49,6 +50,7 @@ Alternatively, you can also use the command `start_gui(fit)`, where `fit` is any
 
 ```{r, eval = FALSE}
 library(lavaan)
+library(lavaangui)
 HS.model <- ' visual  =~ x1 + x2 + x3
               textual =~ x4 + x5 + x6
               speed   =~ x7 + x8 + x9 '
@@ -63,6 +65,7 @@ To obtain an interactive plot of your fitted model without leaving R Studio, use
 
 ```{r, eval = FALSE}
 library(lavaan)
+library(lavaangui)
 HS.model <- ' visual  =~ x1 + x2 + x3
               textual =~ x4 + x5 + x6
               speed   =~ x7 + x8 + x9 '
