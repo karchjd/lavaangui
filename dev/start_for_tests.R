@@ -8,6 +8,7 @@ if (!requireNamespace("golem", quietly = TRUE)) {
 
 golem::detach_all_attached()
 
+print("hallo")
 # Document and reload your package
 # roxygen2::roxygenise()
 pkgload::load_all()
