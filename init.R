@@ -1,6 +1,3 @@
 if (!require(remotes)) install.packages("remotes")
-if (!require(OpenMx)) install.packages("Rcpp")
-if (!require(OpenMx)) install.packages("RcppEigen")
-# if (!require(OpenMx)) install.packages("OpenMx")
-# remotes::install_deps()
+remotes::install_deps()
 if (!require(pkgload)) install.packages("pkgload")
