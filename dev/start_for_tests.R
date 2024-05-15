@@ -2,7 +2,7 @@
 if (!requireNamespace("golem", quietly = TRUE)) {
   install.packages("golem")
 }
-if (!requireNamespace("golem", quietly = TRUE)) {
+if (!requireNamespace("pkgload", quietly = TRUE)) {
   install.packages("pkgload")
 }
 
