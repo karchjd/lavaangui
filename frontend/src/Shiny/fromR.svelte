@@ -260,7 +260,6 @@
         }
         if (lav_model.free[i] == 0) {
           if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
-            debugger;
             if (
               orderedVariables.has(edge.target().getLabel()) &&
               lav_model.op[i] == "~~"

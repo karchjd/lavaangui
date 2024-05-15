@@ -4,7 +4,7 @@ lavaan_gui_server <- function(input, output, session) {
   forceEstimateUpdate <- reactiveVal()
   to_render <- reactiveVal(help_text)
   full <- TRUE
-
+  
 
   ## import model if present
   importRes <- importModel(session)
@@ -13,13 +13,16 @@ lavaan_gui_server <- function(input, output, session) {
   if (imported) {
     if (!full) {
       fit(importRes$fit)
+    }else{
+      session$sendCustomMessage("version", message = packageVersion("lavaangui"))
+      print(packageVersion("lavaangui"))
     }
   }
 
   ## View data
   serverDataViewer("dataViewer", getData)
 
-  ## TODO: investigate this one
+  ## seems needed but probably can be done better
   observeEvent(input$sendnames, {
     session$sendCustomMessage("columnames", message = input$newnames)
   })

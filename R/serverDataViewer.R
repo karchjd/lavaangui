@@ -11,7 +11,6 @@ serverDataViewer <- function(id, getData) {
       "  $th.empty().append($input);",
       "  $input.on('change', function(){",
       "    newcolname = $input.val();",
-      "     debugger;",
       "    if(validLabel(newcolname) && newcolname != colname){",
       "      $(table.column(index).header()).text(newcolname);",
       "      colnames[index] = newcolname;",
@@ -42,20 +41,20 @@ serverDataViewer <- function(id, getData) {
       "  return rVarNameRegex.test(str);",
       "}"
     )
-    
+
     output$tbl_data <- DT::renderDT(
       {
         df <- getData()
         df[] <- lapply(df, function(x) if (haven::is.labelled(x)) haven::as_factor(x) else x)
-        
+
         DT::datatable(df,
-                      options = list(
-                        ordering = FALSE, pageLength = 100,
-                        lengthMenu = list(
-                          c(15, 50, 100, -1),
-                          c("15", "50", "100", "All")
-                        )
-                      ), callback = htmlwidgets::JS(callback)
+          options = list(
+            ordering = FALSE, pageLength = 100,
+            lengthMenu = list(
+              c(15, 50, 100, -1),
+              c("15", "50", "100", "All")
+            )
+          ), callback = htmlwidgets::JS(callback)
         )
       },
       server = FALSE

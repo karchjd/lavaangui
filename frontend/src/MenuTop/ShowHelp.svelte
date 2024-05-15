@@ -1,5 +1,6 @@
 <script>
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
+  let version;
 
   const menuItems = [
     {
@@ -9,6 +10,10 @@
     {
       name: "Open Manual",
       action: openManual,
+    },
+    {
+      name: "About",
+      action: openAbout,
     },
   ];
 
@@ -20,6 +25,18 @@
   function openManual() {
     window.open("https://karchjd.github.io/docs.lavaangui/", "_blank");
   }
+
+  function openAbout() {
+    bootbox.alert({
+      title: "About Lavaangui",
+      message: `Version: ${version}<br> Autor: Julian D. Karch<br> Email: j.d.karch@fsw.leidenuniv.nl`,
+    });
+  }
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("version", function (lavguiVersion) {
+    version = lavguiVersion[0].join(".");
+  });
 </script>
 
 <DropdownLinks name={"Help"} {menuItems} />

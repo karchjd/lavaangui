@@ -1,8 +1,14 @@
 recompile_front <- T # nolint
+release <- FALSE
 
 if (recompile_front) {
   # Compile Svelte front end
-  ret_val <- system("cd frontend && npm run build:dev")
+  if(!release){
+    ret_val <- system("cd frontend && npm run build:dev")  
+  }else{
+    ret_val <- system("cd frontend && npm run build:deploy")  
+  }
+  
   if (ret_val != 0) {
     stop("Failed to compile Svelte front end.")
   }
@@ -38,8 +44,8 @@ result <- lavaan(model, data, meanstructure = "default",
                  auto.fix.single = TRUE, auto.var = TRUE,
                  auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
                  fixed.x = TRUE)
-#start_gui(result)
-plot_interactive(result)
+start_gui(result)
+#plot_interactive(result)
 
 
 # model <-'
