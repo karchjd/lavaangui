@@ -14,8 +14,7 @@ lavaan_gui_server <- function(input, output, session) {
     if (!full) {
       fit(importRes$fit)
     }else{
-      session$sendCustomMessage("version", message = packageVersion("lavaangui"))
-      print(packageVersion("lavaangui"))
+      session$sendCustomMessage("version", message = utils::packageVersion("lavaangui"))
     }
   }
 

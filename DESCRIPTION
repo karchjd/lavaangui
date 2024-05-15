@@ -2,8 +2,10 @@ Package: lavaangui
 Title: Graphical User Interface for lavaan
 Version: 0.0.0.9000
 Authors@R: 
-    person("Julian D.", "Karch", "j.d.karch@fsw.leidenuniv.nl", role = c("aut", "cre"))
-Description: Graphical User Interface for lavaan
+    person(c("Julian",  "D."), "Karch", email = "j.d.karch@fsw.leidenuniv.nl", role = c("aut", "cre"))
+Description:  Provides a graphical user interface for latent variable models from the lavaan package. 
+              There are two core features. First, models can be specified by drawing path diagrams (start_gui). 
+              Second, interactive path diagrams can be created from models specified in lavaan (plot_interactive).
 License: GPL (>= 3)
 Imports: 
     base64enc (>= 0.1.3),
