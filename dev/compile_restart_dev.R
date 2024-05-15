@@ -38,8 +38,8 @@ result <- lavaan(model, data, meanstructure = "default",
                  auto.fix.single = TRUE, auto.var = TRUE,
                  auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
                  fixed.x = TRUE)
-start_gui(result)
-# plot_interactive(result)
+#start_gui(result)
+plot_interactive(result)
 
 
 # model <-'

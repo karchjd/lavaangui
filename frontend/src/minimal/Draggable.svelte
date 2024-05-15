@@ -3,15 +3,19 @@
   export let top = 100;
 
   let moving = false;
+  let offsetX = 0;
+  let offsetY = 0;
 
-  function onMouseDown() {
+  function onMouseDown(e) {
     moving = true;
+    offsetX = e.clientX - left;
+    offsetY = e.clientY - top;
   }
 
   function onMouseMove(e) {
     if (moving) {
-      left += e.movementX;
-      top += e.movementY;
+      left = e.clientX - offsetX;
+      top = e.clientY - offsetY;
     }
   }
 

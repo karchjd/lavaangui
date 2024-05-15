@@ -25,8 +25,8 @@
   .minimal {
     color: black;
     text-decoration: none;
-    padding: 8px 16px;
-    margin: 12px 0px;
+    padding: 3px 16px;
+    margin: 12px 8px;
   }
 
   .minimal:hover,
