@@ -17,6 +17,7 @@ Imports:
     promises (>= 1.2.0.1),
     readr (>= 2.1.4),
     readxl (>= 1.4.3),
+    semPlot,
     shiny (>= 1.7.4),
     tools,
     utils,
