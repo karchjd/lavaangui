@@ -260,7 +260,6 @@
         }
         if (lav_model.free[i] == 0) {
           if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
-            debugger;
             if (
               orderedVariables.has(edge.target().getLabel()) &&
               lav_model.op[i] == "~~"
@@ -414,8 +413,16 @@
 
     // @ts-expect-error
     Shiny.addCustomMessageHandler("columnames", function (cnames) {
-      $appState.columnNames = cnames;
-      applyLinkedClass(cnames, true);
+      const cy = get(cyStore);
+      const oldName = $appState.columnNames[cnames.index];
+      $appState.columnNames[cnames.index] = cnames.newcolname;
+      cy.getObservedNodes().forEach((node) => {
+        if (node.getLabel() == oldName) {
+          node.setLabel(cnames.newcolname);
+          tolavaan($modelOptions.mode);
+        }
+      });
+      applyLinkedClass($appState.columnNames, true);
     });
 
     // @ts-expect-error

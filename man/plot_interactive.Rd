@@ -2,23 +2,32 @@
 % Please edit documentation in R/plot_interactive.R
 \name{plot_interactive}
 \alias{plot_interactive}
-\title{Launch Interactive Plot for Lavaan Models}
+\title{Create Interactive Path Diagrams for Lavaan Models}
 \usage{
 plot_interactive(fit, where = "gadget")
 }
 \arguments{
-\item{fit}{The fit object that needs to be visualized interactively.}
+\item{fit}{A lavaan model, as returned by the functions \code{lavaan}, \code{sem}, or \code{cfa} from the \code{lavaan} package.}
 
-\item{where}{A character string to specify where the interactive tool should be launched.
-Takes one of two values: "gadget" or "browser". Default is "gadget".}
+\item{where}{A character string to specify where the path diagram should be shown.
+The default value "gadget" shows it directly in Rstudio. For "browser", it's shown in your default browser.}
 }
 \description{
-The \code{plot_interactive} function launches an interactive plotting tool
-for visualizing lavaan models. The function can operate as either a
-standalone gadget or within a browser, based on the 'where' argument.
+The \code{plot_interactive} function creates path diagrams for lavaan model.
+Crucially, the created path diagram  is interactive.
+That is, its appearance can be changed easily, for example, by dragging
+around nodes with the mouse.
 }
-\details{
-This function leverages the \code{start_app} internal function to initialize the interactive
-plot. It passes the \code{fit} object for visualization and sets the display location based on the
-\code{where} parameter.
+\examples{
+library(lavaan)
+model <- ' 
+  visual  =~ x1 + loadingx2*x2 + x3
+  textual =~ x4 + x5 + x6
+  speed   =~ x7 + x8 + x9
+'
+fit <- cfa(model, data = HolzingerSwineford1939)
+plot_interactive(fit)
+
+
+
 }

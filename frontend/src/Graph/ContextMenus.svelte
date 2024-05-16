@@ -359,13 +359,17 @@
               label: "Rename",
               className: "btn-primary",
               callback: function () {
-                const inputLabel = document.getElementById("new-label").value;
+                let inputLabel = document.getElementById("new-label").value;
                 const selectedLabel =
                   $appState.dataAvail && node.isObserved()
                     ? document.getElementById("label-dropdown").value
                     : "";
-
-                const result = inputLabel || selectedLabel;
+                let result;
+                if (inputLabel == node.getLabel()) {
+                  result = selectedLabel;
+                } else {
+                  result = inputLabel;
+                }
 
                 if (!validLabel(result)) {
                   return false;

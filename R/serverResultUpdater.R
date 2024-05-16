@@ -35,7 +35,7 @@ serverResultUpdater <- function(id, to_render) {
         }
 
         if ("error" %in% class(out)) {
-          stop(out)
+          stop(safeError(out))
         }
       }
     })

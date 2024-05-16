@@ -110,7 +110,6 @@ function generateLabeledStyleEst(viewOption, postfix, number_digits) {
 function generateFixedEstStyle(viewOption, postfix, number_digits) {
   const formatValue = (value) => value === null ? "NA" : value.toFixed(number_digits);
   return (edge) => {
-    debugger; // Inserted debugger statement
     return "@" + formatValue(edge.data("estimates")["estFixed" + postfix]);
   };
 }

@@ -8,14 +8,14 @@ serverLayout <- function(id, fit, full, imported) {
           fromJavascript <- jsonlite::fromJSON(input$layout)
           fitObject <- FALSE
           if (imported && first_run_layout() && !full) {
-            semPlotModel <- semPlot::semPlotModel(fit())
+            semPlotModel <- semPlotModel(fit())
             first_run_layout(FALSE)
             fitObject <- TRUE
           } else {
             model <- eval(parse(text = fromJavascript$model$syntax))
-            semPlotModel <- semPlot::semPlotModel(model)
+            semPlotModel <- semPlotModel_lavaanModel(model)
           }
-          semPlotRes <- semPlot::semPaths(semPlotModel,
+          semPlotRes <- semPaths(semPlotModel,
             layout = fromJavascript$name,
             nCharNodes = 0, nCharEdges = 0,
             DoNotPlot = TRUE, reorder = TRUE

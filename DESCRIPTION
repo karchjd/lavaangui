@@ -1,10 +1,11 @@
 Package: lavaangui
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Graphical User Interface for lavaan
+Version: 0.0.0.9001
 Authors@R: 
-    person("First", "Last", , "j.d.karch@fsw.leidenuniv.nl", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person(c("Julian",  "D."), "Karch", email = "j.d.karch@fsw.leidenuniv.nl", role = c("aut", "cre"))
+Description:  Provides a graphical user interface for latent variable models from the lavaan package. 
+              There are two core features. First, models can be specified by drawing path diagrams (start_gui). 
+              Second, interactive path diagrams can be created from models specified in lavaan (plot_interactive).
 License: GPL (>= 3)
 Imports: 
     base64enc (>= 0.1.3),
@@ -16,12 +17,12 @@ Imports:
     promises (>= 1.2.0.1),
     readr (>= 2.1.4),
     readxl (>= 1.4.3),
-    semPlot,
     shiny (>= 1.7.4),
+    igraph,
+    qgraph,
     tools,
     utils,
     DT,
-    zip (>= 2.3.0),
     htmlwidgets
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

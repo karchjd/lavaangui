@@ -28,7 +28,11 @@
 
   function handleKeyDown(event) {
     $appState.buttonDown = true;
-    if (event.key === "Alt" || event.key === " ") {
+    if (
+      event.key === "Alt" ||
+      event.key === " " ||
+      event.key.toLowerCase() === "x"
+    ) {
       eh.enableDrawMode();
       undirected = false;
       $appState.drawing = true;
@@ -72,10 +76,14 @@
     cy.nodes().grabify();
   }
 
-  function handleKeyUp() {
+  function handleKeyUp(event) {
     $appState.drawing = false;
     makeNodesGrabbable();
-    if (event.key === "Alt" || event.key === " ") {
+    if (
+      event.key === "Alt" ||
+      event.key === " " ||
+      event.key.toLowerCase() === "x"
+    ) {
       eh.disableDrawMode();
     }
   }

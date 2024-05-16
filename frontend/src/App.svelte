@@ -10,7 +10,6 @@
   import DataInput from "./Shiny/DataInput.svelte";
   import ToolbarBelow from "./Toolbars/ToolbarBelow.svelte";
   import FromR from "./Shiny/fromR.svelte";
-  import DownloadModelData from "./Shiny/DownloadModelData.svelte";
   import Zoom from "./Graph/Zoom.svelte";
   import MainContainer from "./Graph/MainContainer.svelte";
   import DuckTapeFixes from "./DuckTapeFixes.svelte";
@@ -81,7 +80,6 @@
 <!-- Warning: never ever put this inside ready, this will break them
 Shiny needs to see them to attach listeners -->
 <DataInput />
-<DownloadModelData />
 <Errors />
 
 <style>

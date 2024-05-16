@@ -4,7 +4,9 @@ lavaan_gui_server <- function(input, output, session) {
   forceEstimateUpdate <- reactiveVal()
   to_render <- reactiveVal(help_text)
   full <- TRUE
-
+  
+  session$sendCustomMessage("version", message = utils::packageVersion("lavaangui"))
+  
 
   ## import model if present
   importRes <- importModel(session)
@@ -19,7 +21,7 @@ lavaan_gui_server <- function(input, output, session) {
   ## View data
   serverDataViewer("dataViewer", getData)
 
-  ## TODO: investigate this one
+  ## seems needed but probably can be done better
   observeEvent(input$sendnames, {
     session$sendCustomMessage("columnames", message = input$newnames)
   })
@@ -39,8 +41,8 @@ lavaan_gui_server <- function(input, output, session) {
   ## rename data
   getData <- reactive({
     local_data <- data_react()
-    if (!is.null(input$newnames)) {
-      names(local_data$df) <- input$newnames
+    if (!is.null(input$newnames$newnames)) {
+      names(local_data$df) <- unlist(input$newnames$newnames)
     }
     return(local_data$df)
   })

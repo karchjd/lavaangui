@@ -1,20 +1,28 @@
-#' Initialize and Run lavaan GUI Shiny Application
+#' Start lavaangui Shiny Application
 #'
-#' The `start_gui` function launches a Shiny application for lavaan GUI.
-#' It sets up the UI from an HTML template and starts the application server.
-#'
-#' @param fit An optional argument to pass the fit object to the Shiny application.
-#' This is `NULL` by default.
-#'
-#' @usage start_gui(fit = NULL)
-#'
+#' The `start_gui` function launches the lavaangui Shiny application.
+#' 
+#' @param fit A lavaan model, as returned by the functions `lavaan`, `sem`, or `cfa` from the `lavaan` package. 
+#' If passed, lavaangui imports the model and data. 
+#' 
+#' @examples 
+#' # Without importing lavaan model
+#' start_gui()
+#' 
+#' # Importing a lavaan model
+#' library(lavaan)
+#' model <- ' 
+#'   visual  =~ x1 + loadingx2*x2 + x3
+#'   textual =~ x4 + x5 + x6
+#'   speed   =~ x7 + x8 + x9
+#' '
+#' fit <- cfa(model, data = HolzingerSwineford1939)
+#' start_gui(fit)
+#' 
 #' @details
-#' This function performs the following tasks:
-#' 1. Locates the "index.html" file within the "www" directory of the "lavaangui" package.
-#' 2. Adds a resource path for the "assets" directory.
-#' 3. Initializes and runs the Shiny application using the `lavaan_gui_server` server function.
-#' 4. Optionally uses the `fit` argument to pass a fit object to the Shiny application.
-#'
+#' Currently, multiple-group models are not supported. However, you can create an
+#' interactive plot of those models using \code{\link{plot_interactive}}
+#' 
 #' @export
 start_gui <- function(fit = NULL) {
   start_app(fit = fit, full = TRUE, where = "browser")

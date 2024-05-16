@@ -24,7 +24,6 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.shinyapps ? 'http://lavaangui.org/' : 'http://127.0.0.1:3245',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
   },
@@ -32,17 +31,38 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: "chromium local",
+      use: {
+        ...devices["Desktop Chrome"], baseURL: 'http://127.0.0.1:3245'
+      },
     },
 
     {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
+      name: "firefox local",
+      use: { ...devices["Desktop Firefox"], baseURL: 'http://127.0.0.1:3245' },
     },
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: 'webkit local',
+      use: {
+        ...devices['Desktop Safari'], baseURL: 'http://127.0.0.1:3245'
+      },
+    },
+    {
+      name: "chromium global",
+      use: {
+        ...devices["Desktop Chrome"], baseURL: 'https://lavaangui.org/'
+      },
+    },
+
+    {
+      name: "firefox local",
+      use: { ...devices["Desktop Firefox"], baseURL: 'https://lavaangui.org/' },
+    },
+    {
+      name: 'webkit local',
+      use: {
+        ...devices['Desktop Safari'], baseURL: 'https://lavaangui.org/'
+      },
     },
 
     /* Test against mobile viewports. */

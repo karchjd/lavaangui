@@ -11,25 +11,40 @@ serverDataViewer <- function(id, getData) {
       "  $th.empty().append($input);",
       "  $input.on('change', function(){",
       "    newcolname = $input.val();",
-      "    if(newcolname != colname){",
+      "    if(validLabel(newcolname) && newcolname != colname){",
       "      $(table.column(index).header()).text(newcolname);",
       "      colnames[index] = newcolname;",
-      "      Shiny.setInputValue('newnames', colnames.slice(1));",
+      "      Shiny.setInputValue('newnames', {index: index, newcolname: newcolname, newnames: colnames.slice(1)});",
       "      Shiny.setInputValue('sendnames', Math.random());",
+      "    } else {",
+      "      $(table.column(index).header()).text(colname);",
       "    }",
       "    $input.remove();",
       "  }).on('blur', function(){",
       "    $(table.column(index).header()).text(newcolname);",
       "    $input.remove();",
       "  });",
-      "});"
+      "});",
+      "function validLabel(str) {",
+      "  if (str == '') {",
+      "    bootbox.alert('Provide a label');",
+      "    return false;",
+      "  }",
+      "  if (!isValidName(str)) {",
+      "    bootbox.alert('Only valid lavaan names are allowed as column labels');",
+      "    return false;",
+      "  }",
+      "  return true;",
+      "}",
+      "function isValidName(str) {",
+      "  const rVarNameRegex = /^[a-zA-Z\\._][a-zA-Z0-9\\._]*(?<!\\.)$/;",
+      "  return rVarNameRegex.test(str);",
+      "}"
     )
-
 
     output$tbl_data <- DT::renderDT(
       {
         df <- getData()
-        # labelled and datatable dont like each other see https://github.com/rstudio/htmltools/issues/398
         df[] <- lapply(df, function(x) if (haven::is.labelled(x)) haven::as_factor(x) else x)
 
         DT::datatable(df,

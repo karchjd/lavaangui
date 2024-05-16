@@ -8,9 +8,20 @@ console.log(__dirname);
 
 //File menu
 
-test("new model", async ({ page }) => {
-  await page.goto('/');
+test.beforeEach(async ({ page }) => {
+  const fileChooserPromise = page.waitForEvent("filechooser");
+  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole("link", { name: "Load Model and Data", exact: true }).click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles(path.join(__dirname, "cfa.lvd"));
+});
+
+
+test("new model", async ({ page }) => {
+  await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
   await page.getByRole("link", { name: "New Model" }).click();
   await page.getByText("OK").click();
   // @ts-expect-error
@@ -21,10 +32,11 @@ test("new model", async ({ page }) => {
   await expect(page.getByTestId("result-text")).toContainText("Command");
 });
 
+
 test("Load Data", async ({ page }) => {
   const fileChooserPromise = page.waitForEvent("filechooser");
-  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
   await page.getByRole("link", { name: "Load Data", exact: true }).click();
 
   const fileChooser = await fileChooserPromise;
@@ -33,51 +45,37 @@ test("Load Data", async ({ page }) => {
   await expect(heading).toBeVisible();
 });
 
-test("Load Model and Data", async ({ page }) => {
-  const fileChooserPromise = page.waitForEvent("filechooser");
-  await page.goto("/");
-  await page.getByRole("button", { name: "File" }).click();
-  await page
-    .getByRole("link", { name: "Load Model and Data", exact: true })
-    .click();
-  await page.getByText("OK").click();
-
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(path.join(__dirname, "cfa.zip"));
-});
-
 test("Download Model", async ({ page }) => {
-  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("link", { name: "Download Model", exact: true }).click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe("diagram.json");
+  expect(download.suggestedFilename()).toMatch(/^model.*\.lvm$/);
 });
 
 test("Remove Data", async ({ page }) => {
-  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
   await page.getByRole("link", { name: "Remove Data" }).click();
   const button = await page.getByRole('button', { name: 'Show Data' });
   expect(await button.isDisabled()).toBe(true);
 });
 
 test("Download Model Data", async ({ page }) => {
-  await page.goto("/");
-  await page.waitForTimeout(3000);
   await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
   const downloadPromise = page.waitForEvent("download");
   await page
     .getByRole("link", { name: "Download Model and Data", exact: true })
     .click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toMatch(/^lavaangui.*\.zip$/);
+  expect(download.suggestedFilename()).toMatch(/^model.*\.lvd$/);
 });
 
 test("Export PNG", async ({ page }) => {
-  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("link", { name: "PNG", exact: false }).click();
   const download = await downloadPromise;
@@ -85,8 +83,8 @@ test("Export PNG", async ({ page }) => {
 });
 
 test("Export JPG", async ({ page }) => {
-  await page.goto("/");
   await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("link", { name: "JPG", exact: false }).click();
   const download = await downloadPromise;
@@ -95,7 +93,6 @@ test("Export JPG", async ({ page }) => {
 
 //View Menu
 test("Default options View", async ({ page }) => {
-  await page.goto("/");
   await page.getByRole("button", { name: "Estimates" }).click();
   await page.waitForTimeout(1500);
 
@@ -130,8 +127,7 @@ test("Default options View", async ({ page }) => {
 });
 
 test("Show Script", async ({ page }) => {
-  await page.goto("/");
-
+  await page.waitForTimeout(500);
   await expect(page.getByTestId("result-text")).toContainText(
     "library(lavaan)"
   );
@@ -152,9 +148,9 @@ test("Show Script", async ({ page }) => {
 });
 
 test("Show Full Model", async ({ page }) => {
-  await page.goto("/");
-  await page.getByRole("button", { name: "Full Model" }).click();
-
+  await page.waitForTimeout(500);
+  await page.getByRole("button", { name: "Lavaan Model" }).click();
+  await page.waitForTimeout(500);
   await expect(page.getByTestId("result-text")).toContainText("library(lavaan)");
   const lavEdges = await page.evaluate(() =>
     // @ts-expect-error
@@ -173,7 +169,6 @@ test("Show Full Model", async ({ page }) => {
 });
 
 test("Fit Model", async ({ page }) => {
-  await page.goto("/");
   await page.getByRole("button", { name: "Estimates" }).click();
 
   await page.waitForTimeout(2000);
@@ -219,7 +214,6 @@ test("Fit Model", async ({ page }) => {
 // });
 
 test("Remove data", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3245/");
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("link", { name: "Remove Data" }).click();
   const fitButton = await page.getByRole("button", { name: "Estimates" });
@@ -228,12 +222,13 @@ test("Remove data", async ({ page }) => {
 
 test("Not Identified", async ({ page }) => {
   const fileChooserPromise = page.waitForEvent("filechooser");
-  await page.goto("http://127.0.0.1:3245/");
   await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
   await page.getByRole("link", { name: "Load Model", exact: true }).click();
   await page.getByText("OK").click();
+  await page.waitForTimeout(500);
   const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(path.join(__dirname, "not_identified.json"));
+  await fileChooser.setFiles(path.join(__dirname, "not_identified.lvm"));
   const fitButton = await page.getByRole("button", { name: "Estimates" });
   fitButton.click();
   await page.waitForTimeout(500);

@@ -129,7 +129,7 @@
     // Create file input element
     const input = document.createElement("input");
     input.setAttribute("type", "file");
-    input.setAttribute("accept", ".json");
+    input.setAttribute("accept", ".lvm");
 
     // Await file selection by user
     const file = await new Promise((resolve) => {
@@ -190,7 +190,7 @@
     // Create file input element
     const input = document.createElement("input");
     input.setAttribute("type", "file");
-    input.setAttribute("accept", ".zip");
+    input.setAttribute("accept", ".lvd");
 
     input.addEventListener("change", function (e) {
       // @ts-expect-error
@@ -217,7 +217,7 @@
                   clearInterval(checkDataAvailability);
 
                   zip
-                    .file("model.json")
+                    .file("model.lvm")
                     .async("text")
                     .then(function (modelJsonContent) {
                       parseModel(modelJsonContent);
@@ -264,21 +264,46 @@
     return combinedData;
   }
 
+  function getDate() {
+    const now = new Date();
+    const formattedDate = `${now.getFullYear()}-${String(
+      now.getMonth() + 1,
+    ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(
+      now.getHours(),
+    ).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
+      now.getSeconds(),
+    ).padStart(2, "0")}`;
+    return formattedDate;
+  }
+
   function downloadModel() {
-    const combinedData = jsonModel();
-    let blob = new Blob([combinedData], {
+    const model = jsonModel();
+    let blob = new Blob([model], {
       type: "application/json;charset=utf-8",
     });
-    saveAs(blob, "diagram.json");
+    saveAs(blob, "model_" + getDate() + ".lvm");
   }
 
   async function downloadModelData() {
-    const str = jsonModel();
     // @ts-expect-error
-    Shiny.setInputValue("down-model", str);
-    await new Promise((r) => setTimeout(r, 1));
-    document.getElementById("down-downloadData").click();
+    Shiny.setInputValue("down-requestData", Math.random());
   }
+
+  // @ts-ignore
+  Shiny.addCustomMessageHandler("dataForDownload", function (data) {
+    (async () => {
+      const model = jsonModel();
+      const zip = new JSZip();
+      debugger;
+      zip.file("model.lvm", model);
+      zip.file("data.csv", data);
+      const content = await zip.generateAsync({ type: "blob" });
+      const file = new File([content], "model_" + getDate() + ".lvd", {
+        type: "application/zip",
+      });
+      saveAs(file);
+    })();
+  });
 
   function removeData() {
     const cy = get(cyStore);

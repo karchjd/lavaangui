@@ -1,5 +1,6 @@
 #' @import shiny
 #' @import lavaan
+#' @importFrom igraph graph.edgelist layout.reingold.tilford
 
 start_app <- function(fit = NULL, full, where) {
   if (!is.null(fit)) {
