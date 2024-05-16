@@ -2,10 +2,11 @@
 
 ![R CMD CHECK](https://github.com/karchjd/lavaangui/actions/workflows/R-CMD-check.yaml/badge.svg
 )
-[![](https://tokei.rs/b1/github/XAMPPRocky/tokei)](https://github.com/karchjd/lavaangui).
-![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
 ![Playwright Tests](https://github.com/karchjd/lavaangui/actions/workflows/playwright-test.yaml/badge.svg
 )
+[![](https://tokei.rs/b1/github/XAMPPRocky/tokei)](https://github.com/karchjd/lavaangui).
+![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
+
 
 The `lavaangui` package provides a free, open-source graphical user interface for the [lavaan](https://lavaan.org/) package. The core feature is that models can be specified by drawing path diagrams and fitted models visualized via interactive path diagrams.
 
