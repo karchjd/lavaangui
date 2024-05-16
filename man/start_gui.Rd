@@ -2,24 +2,33 @@
 % Please edit documentation in R/start_gui.R
 \name{start_gui}
 \alias{start_gui}
-\title{Initialize and Run lavaan GUI Shiny Application}
+\title{Start lavaangui Shiny Application}
 \usage{
 start_gui(fit = NULL)
 }
 \arguments{
-\item{fit}{An optional argument to pass the fit object to the Shiny application.
-This is \code{NULL} by default.}
+\item{fit}{A lavaan model, as returned by the functions \code{lavaan}, \code{sem}, or \code{cfa} from the \code{lavaan} package.
+If passed, lavaangui imports the model and data.}
 }
 \description{
-The \code{start_gui} function launches a Shiny application for lavaan GUI.
-It sets up the UI from an HTML template and starts the application server.
+The \code{start_gui} function launches the lavaangui Shiny application.
 }
 \details{
-This function performs the following tasks:
-\enumerate{
-\item Locates the "index.html" file within the "www" directory of the "lavaangui" package.
-\item Adds a resource path for the "assets" directory.
-\item Initializes and runs the Shiny application using the \code{lavaan_gui_server} server function.
-\item Optionally uses the \code{fit} argument to pass a fit object to the Shiny application.
+Currently, multiple-group models are not supported. However, you can create an
+interactive plot of those models using \code{\link{plot_interactive}}
 }
+\examples{
+# Without importing lavaan model
+start_gui()
+
+# Importing a lavaan model
+library(lavaan)
+model <- ' 
+  visual  =~ x1 + loadingx2*x2 + x3
+  textual =~ x4 + x5 + x6
+  speed   =~ x7 + x8 + x9
+'
+fit <- cfa(model, data = HolzingerSwineford1939)
+start_gui(fit)
+
 }

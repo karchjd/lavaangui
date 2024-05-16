@@ -1,3 +1,26 @@
+semPlotModel <- function (object, ...) 
+{
+  call <- paste(deparse(substitute(object)), collapse = "")
+  if (grepl("\\+", call) & !grepl("\"", call) & !grepl("'", 
+                                                       call)) {
+    args <- unlist(strsplit(call, split = "\\+"))
+    obs <- lapply(args, function(x) semPlotModel(eval(parse(text = x))))
+    Res <- obs[[1]]
+    for (i in 2:length(obs)) Res <- Res + obs[[i]]
+    return(Res)
+  }
+  if ("MxRAMModel" %in% class(object)) 
+    return(semPlotModel_MxRAMModel(object))
+  if ("MxModel" %in% class(object)) 
+    return(semPlotModel_MxModel(object))
+  if (isS4(object)) {
+    semPlotModel_S4(object)
+  }
+  else {
+    UseMethod("semPlotModel", object)
+  }
+}
+
 ## SemPlotModel
 # Note on edge specification:
 # '->' is factor loading
@@ -137,91 +160,26 @@ semPlotModel.default <- function(object,...)
 # })
 # 
 
-defExo <- function(object,layout="tree")
-{
-  manNames <- object@Vars$name[object@Vars$manifest]
-  latNames <- object@Vars$name[!object@Vars$manifest]
-  
-  # Define exogenous variables (only if any is NA):
-  if (any(is.na(object@Vars$exogenous)))
-  {
-    if (any(!is.na(object@Vars$exogenous)))
-    {
-      exoOrig <- object@Vars$exogenous
-      repExo <- TRUE
-    } else repExo <- FALSE
-    object@Vars$exogenous <- FALSE
-    for (i in which(!object@Vars$manifest))
-    {
-      if (!any(object@Pars$edge[object@Pars$rhs==object@Vars$name[i]] %in% c("~>","->") & object@Pars$lhs[object@Pars$rhs==object@Vars$name[i]]%in%latNames))
-      {
-        object@Vars$exogenous[i] <- TRUE
-      }
-    }
-    for (i in which(object@Vars$manifest))
-    {
-      if (all(object@Pars$lhs[object@Pars$rhs==object@Vars$name[i] & object@Pars$lhs%in%latNames]%in%object@Vars$name[object@Vars$exogenous]) &
-          all(object@Pars$rhs[object@Pars$lhs==object@Vars$name[i] & object@Pars$rhs%in%latNames]%in%object@Vars$name[object@Vars$exogenous]) &
-          !any(object@Pars$rhs==object@Vars$name[i] & object@Pars$edge=="~>"))
-      {
-        object@Vars$exogenous[i] <- TRUE
-      }
-    }
-    
-    # If all exo, treat all as endo:
-    if (all(object@Vars$exogenous) | layout%in%c("circle","circle2","circle3"))
-    {
-      object@Vars$exogenous <- FALSE
-    }
-    # If al endo, treat formative manifest as exo (MIMIC mode), unless all manifest are formative.
-    if (!any(object@Vars$exogenous))
-    {
-      if (any(object@Vars$manifest & (object@Vars$name%in%object@Pars$rhs[object@Pars$edge %in% c("~>","--","->")])))
-        object@Vars$exogenous[object@Vars$manifest & !(object@Vars$name%in%object@Pars$rhs[object@Pars$edge %in% c("~>","--","->")])] <- TRUE
-    }
-    if (repExo)
-    {
-      object@Vars$exogenous[!is.na(exoOrig)] <- exoOrig[!is.na(exoOrig)]
-    }
-  }
-  
-  return(object)
-}
-
-isColor <- function(x) {
-  sapply(x, function(X) {
-    if (!is.logical(X)) tryCatch(is.matrix(col2rgb(X)), 
-                                 error = function(e) FALSE) else FALSE
-  })
-}
-
-rtLayout <- function(roots,GroupPars,Edgelist,layout,exoMan)
-{
-  # Reverse intercepts in graph:
-  #   revNodes <- which((GroupPars$edge == "int" | Edgelist[,2] %in% exoMan) & !Edgelist[,1] %in% roots )
-  #   revNodes <- which((GroupPars$edge == "int" & !Edgelist[,1] %in% roots) | Edgelist[,2] %in% exoMan )
-  #   Edgelist[revNodes,1:2] <- Edgelist[revNodes,2:1]
-  # Remove double headed arrows:
-  Edgelist <- Edgelist[GroupPars$edge != "<->",]
-  
-  # Make igraph object:
-  Graph <- graph.edgelist(Edgelist, FALSE)
-  # Compute layout:
-  Layout <- layout.reingold.tilford(Graph,root=roots,circular = FALSE) 
-  
-  return(Layout)
-}
 
 ## EXTRACT MODEL ###
-semPlotModel_lavaanModel <- function(object, ...)
-{
+setMethod("semPlotModel_S4",signature("lavaan"),function(object){
   
-  # Check if parTable, otherwise run lavaanify:
-  if (!is.data.frame(object) &  !is.list(object))
-  {
-    object <- lavaanify(object, ...)
-  }
+  if (is(object,"blavaan")) class(object) <- 'lavaan'
+  if (!is(object,"lavaan")) stop("Input must me a 'lavaan' object")
   
+  
+  # Extract parameter estimates:
+  pars <- parameterEstimates(object,standardized=TRUE)
+  list <- inspect(object,"list")
+  
+  # Remove mean structure (TEMP SOLUTION)
+  # meanstructure <- pars$op=="~1"
+  # pars <- pars[!meanstructure,]
+  
+  # Extract variable and factor names:
+  # varNames <- fit@Model@dimNames$lambda[[1]]
+  # factNames <- fit@Model@dimNames$lambda[[2]]
+  #   Lambda <- inspect(object,"coef")$lambda
   varNames <- lavaanNames(object, type="ov")
   factNames <- lavaanNames(object, type="lv")
   #   rm(Lambda)
@@ -233,43 +191,41 @@ semPlotModel_lavaanModel <- function(object, ...)
   k <- length(factNames)
   
   # Extract parameter names:
-  if (is.null(object$label)) object$label <- rep("",nrow(object))
+  if (is.null(pars$label)) pars$label <- rep("",nrow(pars))
   
   semModel <- new("semPlotModel")
   
-  # Set estimates to 1 or ustart:
-  object$est <- ifelse(is.na(object$ustart),1,object$ustart)
-  
-  if (is.null(object$group)) object$group <- ""
+  if (is.null(pars$group)) pars$group <- ""
   
   # Create edges dataframe
   semModel@Pars <- data.frame(
-    label = object$label,
-    lhs = ifelse(object$op=="~"|object$op=="~1",object$rhs,object$lhs),
+    label = pars$label,
+    lhs = ifelse(pars$op=="~"|pars$op=="~1",pars$rhs,pars$lhs),
     edge = "--",
-    rhs = ifelse(object$op=="~"|object$op=="~1",object$lhs,object$rhs),
-    est = object$est,
-    std = NA,
-    group = object$group,
-    fixed = object$free==0,
-    par = object$free,
+    rhs = ifelse(pars$op=="~"|pars$op=="~1",pars$lhs,pars$rhs),
+    est = pars$est,
+    std = pars$std.all,
+    group = pars$group,
+    fixed = list$free[list$op!="=="]==0,
+    par = list$free[list$op!="=="],
     stringsAsFactors=FALSE)
   
-  semModel@Pars$edge[object$op=="~~"] <- "<->"  
-  semModel@Pars$edge[object$op=="~*~"] <- "<->"  
-  semModel@Pars$edge[object$op=="~"] <- "~>"
-  semModel@Pars$edge[object$op=="=~"] <- "->"
-  semModel@Pars$edge[object$op=="~1"] <- "int"
-  semModel@Pars$edge[grepl("\\|",object$op)] <- "|"
+  
+  semModel@Pars$edge[pars$op=="~~"] <- "<->"  
+  semModel@Pars$edge[pars$op=="~*~"] <- "<->"  
+  semModel@Pars$edge[pars$op=="~"] <- "~>"
+  semModel@Pars$edge[pars$op=="=~"] <- "->"
+  semModel@Pars$edge[pars$op=="~1"] <- "int"
+  semModel@Pars$edge[grepl("\\|",pars$op)] <- "|"
   
   # Move thresholds to Thresholds slot:
   semModel@Thresholds <- semModel@Pars[grepl("\\|",semModel@Pars$edge),-(3:4)]
+  
+  # Remove constraints and weird stuff:
+  semModel@Pars  <- semModel@Pars[!pars$op %in% c('<', '>',':=','<','>','==','|'),]
+  
   # Remove thresholds from Pars:
   #   semModel@Pars <- semModel@Pars[!grepl("\\|",semModel@Pars$edge),]
-  
-  # Remove weird edges:
-  semModel@Pars <- semModel@Pars[!object$op%in%c(':=','<','>','==','|','<', '>'),]
-  
   
   semModel@Vars <- data.frame(
     name = c(varNames,factNames),
@@ -277,13 +233,45 @@ semPlotModel_lavaanModel <- function(object, ...)
     exogenous = NA,
     stringsAsFactors=FALSE)
   
-  semModel@ObsCovs <- list()  
-  semModel@ImpCovs <- list()
-  semModel@Computed <- FALSE
+  # res.cov <- lavTech(object, "sampstat")$res.cov
+  # lavTech(object, "sampstat")$cov
+  # if (!is.null(res.cov) && !length(res.cov) == 0){
+  # if (!is.null(res.cov[[1]])){
+  #   semModel@ObsCovs <- object@SampleStats@res.cov    
+  # } else {
+  #   semModel@ObsCovs <- object@SampleStats@cov
+  # }    
+  # } else {
+  #   semModel@ObsCovs <- list(matrix(NA,
+  #          length(varNames),length(varNames)))
+  # } 
+  
+  if (lavInspect(object, "options")$conditional.x){
+    semModel@ObsCovs <- lapply(lavTech(object, "sampstat"),"[[","res.cov")
+  } else {
+    semModel@ObsCovs <- lapply(lavTech(object, "sampstat"),"[[","cov")
+  }
+  
+  names(semModel@ObsCovs) <- lavInspect(object, "group.label")
+  for (i in 1:length(semModel@ObsCovs))
+  {
+    rownames(semModel@ObsCovs[[i]]) <- colnames(semModel@ObsCovs[[i]]) <- lavaanNames(object, type="ov") #object@Data@ov.names[[i]]
+  }
+  
+  semModel@ImpCovs <- lapply(lavTech(object, "implied"), "[[", "cov")
+  names(semModel@ImpCovs) <- lavInspect(object, "group.label") # object@Data@group.label
+  
+  for (i in 1:length(semModel@ImpCovs))
+  {
+    rownames(semModel@ImpCovs[[i]]) <- colnames(semModel@ImpCovs[[i]]) <- lavaanNames(object, type="ov") 
+  }
+  
+  semModel@Computed <- TRUE
+  
   semModel@Original <- list(object)
   
   return(semModel)
-}
+})
 
 # Arguments:
 # rotation: 1 = normal (endo manifests under), 2 3 and 4 flip counterclockwise.
@@ -1983,4 +1971,301 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   par(ask=askOrig)
   if (length(qgraphRes)==1) qgraphRes <- qgraphRes[[1]]
   invisible(qgraphRes)
+}
+
+defExo <- function(object,layout="tree")
+{
+  manNames <- object@Vars$name[object@Vars$manifest]
+  latNames <- object@Vars$name[!object@Vars$manifest]
+  
+  # Define exogenous variables (only if any is NA):
+  if (any(is.na(object@Vars$exogenous)))
+  {
+    if (any(!is.na(object@Vars$exogenous)))
+    {
+      exoOrig <- object@Vars$exogenous
+      repExo <- TRUE
+    } else repExo <- FALSE
+    object@Vars$exogenous <- FALSE
+    for (i in which(!object@Vars$manifest))
+    {
+      if (!any(object@Pars$edge[object@Pars$rhs==object@Vars$name[i]] %in% c("~>","->") & object@Pars$lhs[object@Pars$rhs==object@Vars$name[i]]%in%latNames))
+      {
+        object@Vars$exogenous[i] <- TRUE
+      }
+    }
+    for (i in which(object@Vars$manifest))
+    {
+      if (all(object@Pars$lhs[object@Pars$rhs==object@Vars$name[i] & object@Pars$lhs%in%latNames]%in%object@Vars$name[object@Vars$exogenous]) &
+          all(object@Pars$rhs[object@Pars$lhs==object@Vars$name[i] & object@Pars$rhs%in%latNames]%in%object@Vars$name[object@Vars$exogenous]) &
+          !any(object@Pars$rhs==object@Vars$name[i] & object@Pars$edge=="~>"))
+      {
+        object@Vars$exogenous[i] <- TRUE
+      }
+    }
+    
+    # If all exo, treat all as endo:
+    if (all(object@Vars$exogenous) | layout%in%c("circle","circle2","circle3"))
+    {
+      object@Vars$exogenous <- FALSE
+    }
+    # If al endo, treat formative manifest as exo (MIMIC mode), unless all manifest are formative.
+    if (!any(object@Vars$exogenous))
+    {
+      if (any(object@Vars$manifest & (object@Vars$name%in%object@Pars$rhs[object@Pars$edge %in% c("~>","--","->")])))
+        object@Vars$exogenous[object@Vars$manifest & !(object@Vars$name%in%object@Pars$rhs[object@Pars$edge %in% c("~>","--","->")])] <- TRUE
+    }
+    if (repExo)
+    {
+      object@Vars$exogenous[!is.na(exoOrig)] <- exoOrig[!is.na(exoOrig)]
+    }
+  }
+  
+  return(object)
+}
+
+isColor <- function(x) {
+  sapply(x, function(X) {
+    if (!is.logical(X)) tryCatch(is.matrix(col2rgb(X)), 
+                                 error = function(e) FALSE) else FALSE
+  })
+}
+
+### Path diagrams ###
+# 
+# setMethod("semPaths.S4",signature("lavaan"),function(object,...){
+#   invisible(semPaths(semPlotModel(object),...))
+# })
+# 
+
+
+## EXTRACT MODEL ###
+semPlotModel_lavaanModel <- function(object, ...)
+{
+  
+  # Check if parTable, otherwise run lavaanify:
+  if (!is.data.frame(object) &  !is.list(object))
+  {
+    object <- lavaanify(object, ...)
+  }
+  
+  varNames <- lavaanNames(object, type="ov")
+  factNames <- lavaanNames(object, type="lv")
+  #   rm(Lambda)
+  
+  factNames <- factNames[!factNames%in%varNames]
+  
+  # Extract number of variables and factors
+  n <- length(varNames)
+  k <- length(factNames)
+  
+  # Extract parameter names:
+  if (is.null(object$label)) object$label <- rep("",nrow(object))
+  
+  semModel <- new("semPlotModel")
+  
+  # Set estimates to 1 or ustart:
+  object$est <- ifelse(is.na(object$ustart),1,object$ustart)
+  
+  if (is.null(object$group)) object$group <- ""
+  
+  # Create edges dataframe
+  semModel@Pars <- data.frame(
+    label = object$label,
+    lhs = ifelse(object$op=="~"|object$op=="~1",object$rhs,object$lhs),
+    edge = "--",
+    rhs = ifelse(object$op=="~"|object$op=="~1",object$lhs,object$rhs),
+    est = object$est,
+    std = NA,
+    group = object$group,
+    fixed = object$free==0,
+    par = object$free,
+    stringsAsFactors=FALSE)
+  
+  semModel@Pars$edge[object$op=="~~"] <- "<->"  
+  semModel@Pars$edge[object$op=="~*~"] <- "<->"  
+  semModel@Pars$edge[object$op=="~"] <- "~>"
+  semModel@Pars$edge[object$op=="=~"] <- "->"
+  semModel@Pars$edge[object$op=="~1"] <- "int"
+  semModel@Pars$edge[grepl("\\|",object$op)] <- "|"
+  
+  # Move thresholds to Thresholds slot:
+  semModel@Thresholds <- semModel@Pars[grepl("\\|",semModel@Pars$edge),-(3:4)]
+  # Remove thresholds from Pars:
+  #   semModel@Pars <- semModel@Pars[!grepl("\\|",semModel@Pars$edge),]
+  
+  # Remove weird edges:
+  semModel@Pars <- semModel@Pars[!object$op%in%c(':=','<','>','==','|','<', '>'),]
+  
+  
+  semModel@Vars <- data.frame(
+    name = c(varNames,factNames),
+    manifest = c(varNames,factNames)%in%varNames,
+    exogenous = NA,
+    stringsAsFactors=FALSE)
+  
+  semModel@ObsCovs <- list()  
+  semModel@ImpCovs <- list()
+  semModel@Computed <- FALSE
+  semModel@Original <- list(object)
+  
+  return(semModel)
+}
+
+
+## Mode function:
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+# Function to scale and rotate layouts:
+LayoutScaler <- function(x, xrange=1, yrange=1)
+{
+  if ((max(x[,1]) - min(x[,1])) == 0) x[,1] <- mean(xrange) else x[,1] <- (x[,1] - min(x[,1])) / (max(x[,1]) - min(x[,1])) * 2 - 1
+  if ((max(x[,2]) - min(x[,2])) == 0) x[,2] <- mean(yrange) else x[,2] <- (x[,2] - min(x[,2])) / (max(x[,2]) - min(x[,2])) * 2 - 1
+  
+  x[,1] <- x[,1] * xrange
+  x[,2] <- x[,2] * yrange
+  
+  return(x)
+}
+
+# Rotation function:
+RotMat <- function(d,w2hrat=1) 
+{
+  matrix(c(cos(-d),sin(-d),-sin(-d),cos(-d)),2,2)
+}
+
+
+## Function to compute reingold-tilford layout using igraph:
+rtLayout <- function(roots,GroupPars,Edgelist,layout,exoMan)
+{
+  # Reverse intercepts in graph:
+  #   revNodes <- which((GroupPars$edge == "int" | Edgelist[,2] %in% exoMan) & !Edgelist[,1] %in% roots )
+  #   revNodes <- which((GroupPars$edge == "int" & !Edgelist[,1] %in% roots) | Edgelist[,2] %in% exoMan )
+  #   Edgelist[revNodes,1:2] <- Edgelist[revNodes,2:1]
+  # Remove double headed arrows:
+  Edgelist <- Edgelist[GroupPars$edge != "<->",]
+  
+  # Make igraph object:
+  Graph <- graph.edgelist(Edgelist, FALSE)
+  # Compute layout:
+  Layout <- layout.reingold.tilford(Graph,root=roots,circular = FALSE) 
+  
+  return(Layout)
+}
+
+## Function to mix color vector x with weight w
+mixColfun <- function(x,w)
+{
+  # x = vector of colors
+  # w = weights
+  if (missing(w)) w <- rep(1,length(x))
+  if (length(w)==1) w <- rep(w,length(x))
+  ## w == 0 leads to NaN from weighted.mean()
+  w[w <= 0] <- 0.0000001
+  
+  RGB <- col2rgb(x)
+  wMeans <- apply(RGB,1,weighted.mean,w=w)
+  return(rgb(wMeans[1],wMeans[2],wMeans[3],maxColorValue=255))
+}
+
+loopOptim <- function(x,Degrees)
+{
+  NotinRange <- sum(sapply(Degrees,function(d)!any(c(d,d-2*pi,d+2*pi)>(x-pi/4) & c(d,d-2*pi,d+2*pi)<(x+pi/4))))
+  Dist2Edges <- sapply(Degrees,function(d)min(abs(x - c(d,d-2*pi,d+2*pi))))
+  return(NotinRange * 2 * pi * 2 + sum(sort(Dist2Edges)[1:2]))
+}
+
+# RotMat <- function(d) matrix(c(cos(-d),sin(-d),-sin(-d),cos(-d)),2,2)
+
+mixInts <- function(vars,intMap,Layout,trim=FALSE,intAtSide=TRUE)
+{
+  n <- length(vars)
+  
+  if (intAtSide)
+  {
+    if (!trim)
+    {
+      if (n+nrow(intMap)==1)
+      {
+        sq <- 0
+      }
+      if (n+nrow(intMap) == 2)
+      {
+        sq <- c(0,0.5) 
+      } else {
+        sq <- seq(-1,1,length=n+nrow(intMap))
+      }
+    } else {
+      if (n+nrow(intMap) == 2)
+      {
+        sq <- c(0,0.5) 
+      } else {
+        sq <- seq(-1,1,length=n+nrow(intMap)+2)[-c(1,n+nrow(intMap)+2)]
+      }
+    }
+    cent <- median(1:n)
+    c <- 1
+    for (i in seq_along(vars))
+    {
+      if (vars[i]%in%intMap[,2])
+      {
+        if (i < cent)
+        {
+          Layout[intMap[intMap[,2]==vars[i],1],1] <- sq[c]
+          Layout[vars[i],1] <- sq[c+1]
+          c <- c+2
+        } else
+        {
+          Layout[intMap[intMap[,2]==vars[i],1],1] <- sq[c+1]
+          Layout[vars[i],1] <- sq[c]
+          c <- c+2                   
+        }
+      } else
+      {
+        Layout[vars[i],1] <- sq[c]
+        c <- c+1
+      }
+    }
+  } else {
+    if (!trim)
+    {
+      if (n==1)
+      {
+        sq <- 0
+      } else if (n == 2)
+      {
+        sq <- c(-1,1) 
+      } else {
+        sq <- seq(-1,1,length=n)
+      }
+    } else {
+      if (n == 1)
+      {
+        sq <- 0
+      } else if (n == 2)
+      {
+        sq <- c(-0.5,0.5) 
+      } else {
+        sq <- seq(-1,1,length=n+2)[-c(1,n+2)]
+      }
+    }
+    c <- 1
+    for (i in seq_along(vars))
+    {
+      if (vars[i]%in%intMap[,2])
+      {
+        Layout[intMap[intMap[,2]==vars[i],1],1] <- sq[c]
+        Layout[vars[i],1] <- sq[c]
+        c <- c + 1 
+      } else
+      {
+        Layout[vars[i],1] <- sq[c]
+        c <- c+1
+      }
+    }    
+  }
+  return(Layout)
 }

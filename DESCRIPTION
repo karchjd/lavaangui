@@ -23,7 +23,6 @@ Imports:
     tools,
     utils,
     DT,
-    zip (>= 2.3.0),
     htmlwidgets
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
