@@ -51,7 +51,7 @@ test("Download Model", async ({ page }) => {
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("link", { name: "Download Model", exact: true }).click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe("model.lvm");
+  expect(download.suggestedFilename()).toMatch(/^model.*\.lvm$/);
 });
 
 test("Remove Data", async ({ page }) => {
@@ -62,16 +62,16 @@ test("Remove Data", async ({ page }) => {
   expect(await button.isDisabled()).toBe(true);
 });
 
-// test("Download Model Data", async ({ page }) => {
-//   await page.getByRole("button", { name: "File" }).click();
-//   await page.waitForTimeout(500);
-//   const downloadPromise = page.waitForEvent("download");
-//   await page
-//     .getByRole("link", { name: "Download Model and Data", exact: true })
-//     .click();
-//   const download = await downloadPromise;
-//   expect(download.suggestedFilename()).toMatch(/^lavaangui.*\.lvd$/);
-// });
+test("Download Model Data", async ({ page }) => {
+  await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
+  const downloadPromise = page.waitForEvent("download");
+  await page
+    .getByRole("link", { name: "Download Model and Data", exact: true })
+    .click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/^model.*\.lvd$/);
+});
 
 test("Export PNG", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();

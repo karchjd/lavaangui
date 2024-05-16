@@ -5,6 +5,8 @@ lavaan_gui_server <- function(input, output, session) {
   to_render <- reactiveVal(help_text)
   full <- TRUE
   
+  session$sendCustomMessage("version", message = utils::packageVersion("lavaangui"))
+  
 
   ## import model if present
   importRes <- importModel(session)
@@ -13,8 +15,6 @@ lavaan_gui_server <- function(input, output, session) {
   if (imported) {
     if (!full) {
       fit(importRes$fit)
-    }else{
-      session$sendCustomMessage("version", message = utils::packageVersion("lavaangui"))
     }
   }
 
