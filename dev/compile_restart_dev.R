@@ -1,4 +1,4 @@
-recompile_front <- F # nolint
+recompile_front <- T # nolint
 release <- F
 
 if (recompile_front) {

@@ -1,5 +1,4 @@
 <script>
-  import { addNode } from "../Graph/graphmanipulation.js";
   import { appState, cyStore } from "../stores";
   import { OBSERVED, LATENT, CONSTANT } from "../Graph/classNames.js";
   let state = {};
@@ -38,7 +37,7 @@
     if (type === "directed") {
       // @ts-ignore
       bootbox.alert(
-        "Connect two nodes with a directed edge by dragging from one to another while holding the SPACE key.",
+        "Connect two nodes with a directed edge by dragging from one to another while holding the SPACE key or the X key.",
       );
     } else if (type === "undirected") {
       // @ts-ignore

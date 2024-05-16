@@ -9,7 +9,7 @@ help_text <- paste(
   "                      at Mouse Location",
   "c                     Create Constant Variable",
   "                      at Mouse Location",
-  "Hold Space            Draw Directed Arrows",
+  "Hold Space/X          Draw Directed Arrows",
   "                      by Connecting Variables With Mouse",
   "Hold ALT              Draw Undirected Arrows",
   "                      by Connecting Variables With Mouse",
