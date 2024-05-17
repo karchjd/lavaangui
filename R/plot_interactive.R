@@ -11,6 +11,7 @@
 #' The default value "gadget" shows it directly in Rstudio. For "browser", it's shown in your default browser.
 #' 
 #' @examples
+#' \dontrun{
 #' library(lavaan)
 #' model <- ' 
 #'   visual  =~ x1 + loadingx2*x2 + x3
@@ -19,6 +20,7 @@
 #' '
 #' fit <- cfa(model, data = HolzingerSwineford1939)
 #' plot_interactive(fit)
+#' }
 #' 
 #'
 #'

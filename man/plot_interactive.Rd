@@ -19,6 +19,7 @@ That is, its appearance can be changed easily, for example, by dragging
 around nodes with the mouse.
 }
 \examples{
+\dontrun{
 library(lavaan)
 model <- ' 
   visual  =~ x1 + loadingx2*x2 + x3
@@ -27,6 +28,7 @@ model <- '
 '
 fit <- cfa(model, data = HolzingerSwineford1939)
 plot_interactive(fit)
+}
 
 
 

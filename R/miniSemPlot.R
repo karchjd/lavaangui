@@ -9,10 +9,6 @@ semPlotModel <- function (object, ...)
     for (i in 2:length(obs)) Res <- Res + obs[[i]]
     return(Res)
   }
-  if ("MxRAMModel" %in% class(object)) 
-    return(semPlotModel_MxRAMModel(object))
-  if ("MxModel" %in% class(object)) 
-    return(semPlotModel_MxModel(object))
   if (isS4(object)) {
     semPlotModel_S4(object)
   }
@@ -40,23 +36,6 @@ setClass( "semPlotModel", representation(
 setGeneric("semPlotModel_S4", function(object,...) {
   standardGeneric("semPlotModel_S4")
 })
-# 
-# setGeneric("semPaths.S4", function(object,...) {
-#   standardGeneric("semPaths.S4")
-# })
-# 
-# semPaths <- function(object,...)
-# {
-#   if ("MxRAMModel"%in%class(object)) return(semPaths_MxRAMModel(object,...)) 
-#   if ("MxModel"%in%class(object)) return(semPaths_MxModel(object,...))
-#   if(isS4(object)) 
-#   {
-#     semPaths.S4(object, ...)
-#   } else
-#   {
-#     UseMethod("semPaths", object)
-#   }
-# }
 
 semPlotModel <- function (object, ...) {
   # Check if call contains a + operator, if so combine models:
@@ -71,8 +50,6 @@ semPlotModel <- function (object, ...) {
     return(Res)
   }
   
-  if ("MxRAMModel"%in%class(object)) return(semPlotModel_MxRAMModel(object)) 
-  if ("MxModel"%in%class(object)) return(semPlotModel_MxModel(object))
   if(isS4(object)) 
   {
     semPlotModel_S4(object)
@@ -85,17 +62,9 @@ semPlotModel <- function (object, ...) {
 semPlotModel.semPlotModel <- function(object,...) object
 
 
-# semPaths.default <- function(object,...)
-# {
-#   if (is.character(object) && grepl("\\.out",object))
-#   {
-#     return(semPaths(readModels(object),...))
-#   }
-# }
-
 semPlotModel.default <- function(object,...)
 {
-  if (is(object,'data.frame'))
+  if (methods::is(object,'data.frame'))
   {
     mod <- try(semPlotModel_lavaanModel(object,...),silent=TRUE)
     if (!"try-error"%in%class(mod)) return(mod)
@@ -111,42 +80,29 @@ semPlotModel.default <- function(object,...)
     # Find file:
     if (grepl("\\.xml",object,ignore.case=TRUE))
     {
-      return(semPlotModel_Onyx(object))
+      # return(semPlotModel_Onyx(object))
     }
     if (grepl("\\.AmosOutput",object,ignore.case=TRUE))
     {
-      return(semPlotModel_Amos(object))
+      # return(semPlotModel_Amos(object))
     }
     
     # Read first 100 lines:
     head <- readLines(object, 10)
     if (any(grepl("mplus",head,ignore.case=TRUE)))
     {
-      return(semPlotModel.mplus.model(object,...))
+      # return(semPlotModel.mplus.model(object,...))
     }
     
     if (any(grepl("l\\s*i\\s*s\\s*r\\s*e\\s*l",head,ignore.case=TRUE)))
     {
-      return(semPlotModel(readLisrel(object)))
+       # return(semPlotModel(readLisrel(object)))
     }
     
     # If all else fais, just try everything and assume you get errors 
     # if it is wrong:
     mod <- try(semPlotModel_lavaanModel(object,...),silent=TRUE)
     if (!"try-error"%in%class(mod)) return(mod)
-    
-    mod <- try(semPlotModel.mplus.model(object,...),silent=TRUE)
-    if (!"try-error"%in%class(mod)) return(mod)
-    
-    mod <- try(semPlotModel(readLisrel(object)),silent=TRUE)
-    if (!"try-error"%in%class(mod)) return(mod)
-    
-    mod <- try(semPlotModel_Onyx(object),silent=TRUE)
-    if (!"try-error"%in%class(mod)) return(mod)
-    
-    mod <- try(semPlotModel_Amos(object),silent=TRUE)
-    if (!"try-error"%in%class(mod)) return(mod)
-    
     # Well, we failed...
   }
   
@@ -154,35 +110,22 @@ semPlotModel.default <- function(object,...)
 }
 
 ### Path diagrams ###
-# 
-# setMethod("semPaths.S4",signature("lavaan"),function(object,...){
-#   invisible(semPaths(semPlotModel(object),...))
-# })
-# 
-
 
 ## EXTRACT MODEL ###
 setMethod("semPlotModel_S4",signature("lavaan"),function(object){
   
-  if (is(object,"blavaan")) class(object) <- 'lavaan'
-  if (!is(object,"lavaan")) stop("Input must me a 'lavaan' object")
+  if (methods::is(object,"blavaan")) class(object) <- 'lavaan'
+  if (!methods::is(object,"lavaan")) stop("Input must me a 'lavaan' object")
   
   
   # Extract parameter estimates:
   pars <- parameterEstimates(object,standardized=TRUE)
   list <- inspect(object,"list")
   
-  # Remove mean structure (TEMP SOLUTION)
-  # meanstructure <- pars$op=="~1"
-  # pars <- pars[!meanstructure,]
   
   # Extract variable and factor names:
-  # varNames <- fit@Model@dimNames$lambda[[1]]
-  # factNames <- fit@Model@dimNames$lambda[[2]]
-  #   Lambda <- inspect(object,"coef")$lambda
   varNames <- lavaanNames(object, type="ov")
   factNames <- lavaanNames(object, type="lv")
-  #   rm(Lambda)
   
   factNames <- factNames[!factNames%in%varNames]
   
@@ -193,7 +136,7 @@ setMethod("semPlotModel_S4",signature("lavaan"),function(object){
   # Extract parameter names:
   if (is.null(pars$label)) pars$label <- rep("",nrow(pars))
   
-  semModel <- new("semPlotModel")
+  semModel <- methods::new("semPlotModel")
   
   if (is.null(pars$group)) pars$group <- ""
   
@@ -224,27 +167,11 @@ setMethod("semPlotModel_S4",signature("lavaan"),function(object){
   # Remove constraints and weird stuff:
   semModel@Pars  <- semModel@Pars[!pars$op %in% c('<', '>',':=','<','>','==','|'),]
   
-  # Remove thresholds from Pars:
-  #   semModel@Pars <- semModel@Pars[!grepl("\\|",semModel@Pars$edge),]
-  
   semModel@Vars <- data.frame(
     name = c(varNames,factNames),
     manifest = c(varNames,factNames)%in%varNames,
     exogenous = NA,
     stringsAsFactors=FALSE)
-  
-  # res.cov <- lavTech(object, "sampstat")$res.cov
-  # lavTech(object, "sampstat")$cov
-  # if (!is.null(res.cov) && !length(res.cov) == 0){
-  # if (!is.null(res.cov[[1]])){
-  #   semModel@ObsCovs <- object@SampleStats@res.cov    
-  # } else {
-  #   semModel@ObsCovs <- object@SampleStats@cov
-  # }    
-  # } else {
-  #   semModel@ObsCovs <- list(matrix(NA,
-  #          length(varNames),length(varNames)))
-  # } 
   
   if (lavInspect(object, "options")$conditional.x){
     semModel@ObsCovs <- lapply(lavTech(object, "sampstat"),"[[","res.cov")
@@ -306,7 +233,6 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
                      equalizeManifests = FALSE,  covAtResiduals = TRUE, bifactor, optimPoints = 1:8 * (pi/4),
                      ...){
   
-  #   c("exo cov","load dest","endo man cov")
   
   
   # Check if input is combination of models:
@@ -321,8 +247,6 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   
   if (!"semPlotModel"%in%class(object)) object <- do.call(semPlotModel,c(list(object),modelOpts))
   stopifnot("semPlotModel"%in%class(object))
-  
-  # if (gui) return(do.call(semPathsGUI,as.list(match.call())[-1]))
   
   ### edgeConnectPoints dummy:
   ECP <- NULL
@@ -380,10 +304,6 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   }
   curveDefault <- curve
   
-  #   if (missing(curvePivot))
-  #   {
-  #     curvePivot <- grepl("tree",layout)
-  #   }
   
   if (missing(whatLabels))
   {
@@ -411,7 +331,6 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   }
   if (grepl("ram",style,ignore.case=TRUE)) style <- "OpenMx"
   if (!grepl("mx|lisrel",style,ignore.case=TRUE)) stop("Only OpenMx (ram) or LISREL style is currently supported.")
-  #   if (grepl("mx",style,ignore.case=TRUE) & !missing(residScale)) warning("'residScale' ingored in OpenMx style")
   if (missing(residScale)) residScale <- sizeMan
   
   # Set exoVar default:
@@ -547,10 +466,10 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
       if (pastel)
       {
         if (length(groups) == 1) color <- "white" else 
-          color <- rainbow_hcl(length(groups), start = rainbowStart * 360, end = (360 * rainbowStart + 360*(length(groups)-1)/length(groups)))
+          color <- colorspace::rainbow_hcl(length(groups), start = rainbowStart * 360, end = (360 * rainbowStart + 360*(length(groups)-1)/length(groups)))
       } else {
         if (length(groups) == 1) color <- "white" else 
-          color <- rainbow(length(groups), start = rainbowStart, end = (rainbowStart + (max(1,length(groups)-1))/length(groups)) %% 1)   
+          color <- grDevices::rainbow(length(groups), start = rainbowStart, end = (rainbowStart + (max(1,length(groups)-1))/length(groups)) %% 1)   
       }
     }
   } else {
@@ -561,48 +480,6 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   }
   
   
-  #   # Define exogenous variables (only if any is NA):
-  #   if (any(is.na(object@Vars$exogenous)))
-  #   {
-  #     if (any(!is.na(object@Vars$exogenous)))
-  #     {
-  #       exoOrig <- object@Vars$exogenous
-  #       repExo <- TRUE
-  #     } else repExo <- FALSE
-  #     object@Vars$exogenous <- FALSE
-  #     for (i in which(!object@Vars$manifest))
-  #     {
-  #       if (!any(object@Pars$edge[object@Pars$rhs==object@Vars$name[i]] %in% c("~>","->") & object@Pars$lhs[object@Pars$rhs==object@Vars$name[i]]%in%latNames))
-  #       {
-  #         object@Vars$exogenous[i] <- TRUE
-  #       }
-  #     }
-  #     for (i in which(object@Vars$manifest))
-  #     {
-  #       if (all(object@Pars$lhs[object@Pars$rhs==object@Vars$name[i] & object@Pars$lhs%in%latNames]%in%object@Vars$name[object@Vars$exogenous]) &
-  #             all(object@Pars$rhs[object@Pars$lhs==object@Vars$name[i] & object@Pars$rhs%in%latNames]%in%object@Vars$name[object@Vars$exogenous]) &
-  #             !any(object@Pars$rhs==object@Vars$name[i] & object@Pars$edge=="~>"))
-  #       {
-  #         object@Vars$exogenous[i] <- TRUE
-  #       }
-  #     }
-  #     
-  #     # If all exo, treat all as endo:
-  #     if (all(object@Vars$exogenous) | layout%in%c("circle","circle2","circle3"))
-  #     {
-  #       object@Vars$exogenous <- FALSE
-  #     }
-  #     # If al endo, treat formative manifest as exo (MIMIC mode), unless all manifest are formative.
-  #     if (!any(object@Vars$exogenous))
-  #     {
-  #       if (any(object@Vars$manifest & (object@Vars$name%in%object@Pars$rhs[object@Pars$edge %in% c("~>","--","->")])))
-  #         object@Vars$exogenous[object@Vars$manifest & !(object@Vars$name%in%object@Pars$rhs[object@Pars$edge %in% c("~>","--","->")])] <- TRUE
-  #     }
-  #     if (repExo)
-  #     {
-  #       object@Vars$exogenous[!is.na(exoOrig)] <- exoOrig[!is.na(exoOrig)]
-  #     }
-  #   }
   object <- defExo(object, layout)
   
   Groups <- unique(object@Pars$group)
@@ -611,7 +488,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   {
     if (length(Groups)>1) ask <- TRUE else ask <- FALSE
   }
-  askOrig <- par("ask")
+  askOrig <- graphics::par("ask")
   
   if (missing(include)) include <- 1:length(Groups)
   
@@ -625,7 +502,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   AllMan <- manNames
   AllLat <- latNames
   
-  par(ask=ask)
+  graphics::par(ask=ask)
   
   ### If no sub, set sub to 0 (root sub)
   
@@ -842,7 +719,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
           if (any(GroupPars$edge=="int"))
           {
             sq <- seq(-1,1,length=nL+1)
-            cent <- floor(median(1:(nL+1)))
+            cent <- floor(stats::median(1:(nL+1)))
             Layout[!Labels%in%manNames,1] <- sq[c(which(1:(nL+1) < cent),which(1:(nL+1) > cent),cent)]
           } else
           {
@@ -980,11 +857,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
         }
         
         Layout <- rtLayout(roots,GroupPars,Edgelist,layout,exoMan)
-        # Fix top level to use entire range:
-        # Layout[Layout[,2]==max(Layout[,2]),1] <- seq(min(Layout[,1]),max(Layout[,1]),length.out=sum(Layout[,2]==max(Layout[,2])))
-        # Center all horizontal levels:
-        #         if (centerLevels) if (length(roots)>1) Layout[,1] <- ave(Layout[,1],Layout[,2],FUN = function(x) scale(x,TRUE,FALSE))
-        if (centerLevels) Layout[,1] <- ave(Layout[,1],Layout[,2],FUN = function(x) scale(x,TRUE,FALSE))
+        if (centerLevels) Layout[,1] <- stats::ave(Layout[,1],Layout[,2],FUN = function(x) scale(x,TRUE,FALSE))
         
       } else if (layout%in%c("tree3","circle3"))
       {
@@ -1003,7 +876,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
         }
         
         iG <- graph.edgelist(Edgelist2)
-        sp <- shortest.paths(iG,mode="out")
+        sp <- igraph::shortest.paths(iG,mode="out")
         sp[!is.finite(sp)] <- 0
         maxPaths <- apply(sp,1,max)
         # Mix in intercepts:
@@ -1020,10 +893,10 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
         if (springLevels)
         {
           Cons <- cbind(NA,maxPaths)
-          Layout <- qgraph.layout.fruchtermanreingold(Edgelist,vcount=length(maxPaths),constraints=Cons*sqrt(length(maxPaths)))
+          Layout <- qgraph::qgraph.layout.fruchtermanreingold(Edgelist,vcount=length(maxPaths),constraints=Cons*sqrt(length(maxPaths)))
         } else {
           Layout <- cbind(NA,maxPaths)
-          Layout[,1] <- ave(Layout[,2],Layout[,2],FUN=function(x)seq(-1,1,length=length(x)+2)[-c(1,length(x)+2)])
+          Layout[,1] <- stats::ave(Layout[,2],Layout[,2],FUN=function(x)seq(-1,1,length=length(x)+2)[-c(1,length(x)+2)])
           
           # Mix intercepts:
           if (any(GroupPars$edge=="int"))
@@ -1217,7 +1090,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
         if (length(cardinal) > 0 && !identical(cardinal,FALSE) && !all(grepl("none",cardinal)))
         {
           
-          if (packageDescription("qgraph")$Version == "1.2.3") warning("'cardinal' argument requires qgraph version 1.2.4")
+          if (utils::packageDescription("qgraph")$Version == "1.2.3") warning("'cardinal' argument requires qgraph version 1.2.4")
           
           ECP <- matrix(NA,nrow(Edgelist),2)
           
@@ -1355,7 +1228,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
       {
         if (is.character(Layout))
         {
-          Layout <- qgraph(Edgelist, layout = Layout, DoNotPlot = TRUE, edgelist=TRUE)$layout
+          Layout <- qgraph::qgraph(Edgelist, layout = Layout, DoNotPlot = TRUE, edgelist=TRUE)$layout
         }
         ## Store in submodel list (could well be moved earlier but whatever)
         subModList[[Sub]] <- list(
@@ -1374,13 +1247,13 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
     {
       
       ### Rescale subScale to height in width relative to diameter of device in inches ###
-      din <- par("din")
+      din <- graphics::par("din")
       diamet <- sqrt(sum(din^2))
       subDim <- diamet * c(subScale, subScale2)
       
       if (is.character(Layout))
       {
-        Layout <- qgraph(Edgelist, layout = Layout, DoNotPlot = TRUE)$layout
+        Layout <- qgraph::qgraph(Edgelist, layout = Layout, DoNotPlot = TRUE)$layout
       }
       # Rescale main layout:
       Layout <- LayoutScaler(Layout,  din[1]/2, din[2]/2)
@@ -1403,7 +1276,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
       centAngles <- atan2(srot*sin(centAngles),cos(centAngles))
       if (subRes != 0)
       {
-        centAngles <- round_any(centAngles%%(2*pi), (2*pi)/subRes)  
+        centAngles <- plyr::round_any(centAngles%%(2*pi), (2*pi)/subRes)  
       }      
       # Rescale and rotate sub layouts and enter in main layout:
       for (g in rev(seq_along(subModList)))
@@ -1513,9 +1386,9 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
       unPar <- unique(object@Pars$par[object@Pars$par>0 & duplicated(object@Pars$par)])
       if (pastel)
       {
-        cols <- rainbow_hcl(max(c(object@Pars$par,GroupThresh$par)), c = 35, l = 85)
+        cols <- colorspace::rainbow_hcl(max(c(object@Pars$par,GroupThresh$par)), c = 35, l = 85)
       } else {
-        cols <- rainbow(max(c(object@Pars$par,GroupThresh$par)))
+        cols <- grDevices::rainbow(max(c(object@Pars$par,GroupThresh$par)))
       }
       for (i in unPar)
       {
@@ -1886,7 +1759,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
           } else {
             barSide[node] <- sum((atan2(scale(Layout[,1])[node],scale(Layout[,2])[node])+pi)%%(2*pi) > c(0,pi/2,pi,1.5*pi))
           }
-          bars[[node]] <- pnorm(GroupThresh$est[GroupThresh$lhs == GroupVars$name[node]])
+          bars[[node]] <- stats::pnorm(GroupThresh$est[GroupThresh$lhs == GroupVars$name[node]])
         }
       }
     }
@@ -1931,36 +1804,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
                                                      edge.label.cex = edge.label.cex,
                                                      edgeConnectPoints = ECP,
                                                      ...)
-    
-    #     if (thresholds)
-    #     {
-    #       # Overwrite color to white if bg is dark (temporary solution)
-    #       if (missing(thresholdColor) & missing(edge.color)) 
-    #       {
-    #         if (mean(col2rgb(qgraphRes[[which(Groups==gr)]]$plotOptions$background)/255) <= 0.5) tColor <- rep("white",length(tColor))
-    #       }
-    #       if (nrow(GroupThresh) > 0)
-    #       {
-    #         for (i in 1:nrow(GroupThresh))
-    #         {
-    #           node <- which(Labels==GroupThresh$lhs[i])
-    #           # Compute side:
-    #           IntSide <- 1
-    #           if (layout=="tree")
-    #           {
-    #             if (rotation%in%c(1,3))
-    #             {
-    #               IntSide <- ifelse(Layout[node,2]>mean(Layout[,2]),3,1)
-    #             } else {
-    #               IntSide <- ifelse(Layout[node,1]>mean(Layout[,1]),4,2)
-    #             }
-    #           } else {
-    #             IntSide <- sum((atan2(qgraphRes[[which(Groups==gr)]]$layout[node,1],qgraphRes[[which(Groups==gr)]]$layout[node,2])+pi)%%(2*pi) > c(0,pi/2,pi,1.5*pi))
-    #           }
-    #           IntInNode(qgraphRes[[which(Groups==gr)]]$layout[node,,drop=FALSE],vSize[node],Shape[node],pnorm(GroupThresh$est[i]),width=0.5,triangles=FALSE,col=tColor[i],IntSide,!ThreshAtSide)
-    #         }
-    #       }
-    #     }
+  
     
     if (title)
     {
@@ -1968,7 +1812,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
       title(gr, col.main=title.color, adj = title.adj, outer = TRUE, cex.main = title.cex, line = title.line)
     }
   }
-  par(ask=askOrig)
+  graphics::par(ask=askOrig)
   if (length(qgraphRes)==1) qgraphRes <- qgraphRes[[1]]
   invisible(qgraphRes)
 }
@@ -2026,7 +1870,7 @@ defExo <- function(object,layout="tree")
 
 isColor <- function(x) {
   sapply(x, function(X) {
-    if (!is.logical(X)) tryCatch(is.matrix(col2rgb(X)), 
+    if (!is.logical(X)) tryCatch(is.matrix(grDevices::col2rgb(X)), 
                                  error = function(e) FALSE) else FALSE
   })
 }
@@ -2062,7 +1906,7 @@ semPlotModel_lavaanModel <- function(object, ...)
   # Extract parameter names:
   if (is.null(object$label)) object$label <- rep("",nrow(object))
   
-  semModel <- new("semPlotModel")
+  semModel <- methods::new("semPlotModel")
   
   # Set estimates to 1 or ustart:
   object$est <- ifelse(is.na(object$ustart),1,object$ustart)
@@ -2166,9 +2010,9 @@ mixColfun <- function(x,w)
   ## w == 0 leads to NaN from weighted.mean()
   w[w <= 0] <- 0.0000001
   
-  RGB <- col2rgb(x)
-  wMeans <- apply(RGB,1,weighted.mean,w=w)
-  return(rgb(wMeans[1],wMeans[2],wMeans[3],maxColorValue=255))
+  RGB <- grDevices::col2rgb(x)
+  wMeans <- apply(RGB,1,stats::weighted.mean,w=w)
+  return(grDevices::rgb(wMeans[1],wMeans[2],wMeans[3],maxColorValue=255))
 }
 
 loopOptim <- function(x,Degrees)
@@ -2206,7 +2050,7 @@ mixInts <- function(vars,intMap,Layout,trim=FALSE,intAtSide=TRUE)
         sq <- seq(-1,1,length=n+nrow(intMap)+2)[-c(1,n+nrow(intMap)+2)]
       }
     }
-    cent <- median(1:n)
+    cent <- stats::median(1:n)
     c <- 1
     for (i in seq_along(vars))
     {
@@ -2268,4 +2112,65 @@ mixInts <- function(vars,intMap,Layout,trim=FALSE,intAtSide=TRUE)
     }    
   }
   return(Layout)
+}
+
+# grepl on varnames with special keywords:
+# - MAN
+# - LAT
+# - ENDO
+# - EXO
+# - INT
+
+matchVar <- function(x, Vars, manIntsExo, manIntsEndo, latIntsExo, latIntsEndo)
+{
+  
+  n <- nrow(Vars) + nrow(manIntsEndo)  + nrow(manIntsExo)  + nrow(latIntsEndo)  + nrow(latIntsExo) 
+  
+  Man <- c(Vars$manifest, rep(FALSE,n-nrow(Vars)))
+  Man[c(manIntsEndo[,1],manIntsExo[,1])] <- TRUE
+  
+  Exo <- c(Vars$exogenous, rep(FALSE,n-nrow(Vars)))
+  Exo[c(manIntsExo[,1],latIntsExo[,1])] <- TRUE
+  
+  isInt <- c(rep(FALSE,nrow(Vars)), rep(TRUE, n-nrow(Vars)))
+  
+  # match:
+  matchRes <- match(x,Vars$name)
+  matchRes <- matchRes[!is.na(matchRes)]
+  
+  # keywords:
+  select <- rep(grepl("(EXO)|(ENDO)|(MAN)|(LAT)|(INT)|(VAR)",x),n)
+  
+  if (any(select))
+  {
+    
+    if (grepl("(ENDO)|(EXO)",x))
+    {      
+      # First node first / endo:
+      select <- select & ((grepl("ENDO",x) & !Exo) | 
+                            (grepl("EXO",x) & Exo )
+      )
+    }
+    
+    if (grepl("(LAT)|(MAN)",x))
+    {
+      
+      # Any node man / latent
+      select <- select & ((grepl("LAT",x) & !Man) | 
+                            (grepl("MAN",x) & Man )
+      )
+    }
+    
+    if (grepl("(INT)|(VAR)",x))
+    {
+      
+      # Any node man / latent
+      select <- select & ((grepl("VAR",x) & !isInt) | 
+                            (grepl("INT",x) & isInt )
+      )
+    }
+    
+  }
+  
+  return(c(matchRes,which(select)))
 }

@@ -6,9 +6,10 @@
 #' If passed, lavaangui imports the model and data. 
 #' 
 #' @examples 
+#' \dontrun{
 #' # Without importing lavaan model
 #' start_gui()
-#' 
+#'
 #' # Importing a lavaan model
 #' library(lavaan)
 #' model <- ' 
@@ -18,7 +19,8 @@
 #' '
 #' fit <- cfa(model, data = HolzingerSwineford1939)
 #' start_gui(fit)
-#' 
+#' }
+
 #' @details
 #' Currently, multiple-group models are not supported. However, you can create an
 #' interactive plot of those models using \code{\link{plot_interactive}}

@@ -2,7 +2,7 @@
 
 ![R CMD CHECK](https://github.com/karchjd/lavaangui/actions/workflows/R-CMD-check.yaml/badge.svg
 )
-![Playwright Tests](https://github.com/karchjd/lavaangui/actions/workflows/playwright-test.yaml/badge.svg
+![Tests](https://github.com/karchjd/lavaangui/actions/workflows/playwright-test.yaml/badge.svg
 )
 [![](https://tokei.rs/b1/github/XAMPPRocky/tokei)](https://github.com/karchjd/lavaangui).
 ![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)

@@ -18,6 +18,7 @@ Currently, multiple-group models are not supported. However, you can create an
 interactive plot of those models using \code{\link{plot_interactive}}
 }
 \examples{
+\dontrun{
 # Without importing lavaan model
 start_gui()
 
@@ -30,5 +31,5 @@ model <- '
 '
 fit <- cfa(model, data = HolzingerSwineford1939)
 start_gui(fit)
-
+}
 }
