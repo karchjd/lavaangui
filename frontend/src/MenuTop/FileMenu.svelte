@@ -6,26 +6,21 @@
     modelOptions,
     dataInfo,
     fitCache,
-    gridViewOptions,
   } from "../stores.js";
   import { get } from "svelte/store";
-  import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
-  import {
-    graphSettings,
-    graphStyles,
-    edgeBendingSettings,
-  } from "../Graph/cytoscape_settings.js";
-  import { resetCounters } from "../Graph/graphmanipulation.js";
   import cytoscape from "cytoscape";
   import svg from "cytoscape-svg";
   // @ts-ignore
   import { saveAs } from "file-saver";
-  import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
-  import { jsPDF } from "jspdf";
-  import { svg2pdf } from "svg2pdf.js";
   import * as Constants from "../Graph/classNames.js";
+  import {
+    exportPNG,
+    exportJPG,
+    exportSVG,
+    exportPDF,
+  } from "./exportImport.js";
 
   cytoscape.use(svg);
 
@@ -43,86 +38,6 @@
     } else {
       reset();
     }
-  }
-
-  function reset() {
-    let cy = get(cyStore);
-    cy.elements().remove();
-    resetCounters();
-    $appState.parsedModel = false;
-    $modelOptions.fix_first = true;
-    $modelOptions.mode = "user model";
-    // @ts-expect-error
-    Shiny.setInputValue("show_help", Math.random());
-    for (let key in $fitCache) {
-      $fitCache[key] = null;
-    }
-  }
-
-  function mergeExistingProperties(target, source) {
-    for (let key in source) {
-      if (source.hasOwnProperty(key) && source[key] !== undefined) {
-        target[key] = source[key];
-      }
-    }
-  }
-
-  function startDownload(object, fileEnding) {
-    saveAs(object, "model." + fileEnding);
-  }
-
-  function parseModel(content) {
-    reset();
-
-    let combinedData = JSON.parse(content);
-    let cy = get(cyStore);
-    // for backwards compatibility, remove eventually
-    let json;
-    json = JSON.parse(combinedData.model);
-    const modelOpt = JSON.parse(combinedData.modelOpt);
-    const gridViewOpt = JSON.parse(combinedData.gridViewOpt);
-    mergeExistingProperties($modelOptions, modelOpt);
-    mergeExistingProperties($gridViewOptions, gridViewOpt);
-    if (combinedData.fitCache != undefined) {
-      const localCache = JSON.parse(combinedData.fitCache);
-      $fitCache = localCache;
-    }
-
-    // Set loading mode, update diagram and perform checks
-    $appState.loadingMode = true;
-    cy.json({ elements: json });
-    cy.style(graphStyles);
-    cy.edgeEditing(edgeBendingSettings);
-    cy.style().update();
-    cy.minZoom(graphSettings.minZoom);
-    cy.maxZoom(graphSettings.maxZoom);
-    cy.autolock(graphSettings.autolock);
-    cy.autoungrabify(graphSettings.autoungrabify);
-    cy.nodeEditing({
-      resizeToContentCueImage: "",
-      undoable: true,
-    });
-
-    cy.nodes().forEach((node) => {
-      console.log(node.data("width"));
-      node.style({ width: node.data("width") });
-      node.style({ height: node.data("height") });
-    });
-
-    if ($appState.dataAvail) {
-      applyLinkedClass($appState.columnNames);
-    }
-
-    if ($modelOptions.mode !== "user model") {
-      $gridViewOptions.showLav = true;
-    } else {
-      $gridViewOptions.showLav = false;
-    }
-
-    cy.nodes().forEach((node) => {
-      checkNodeLoop(node.id());
-    });
-    $appState.loadingMode = false;
   }
 
   async function uploadModel() {
@@ -294,7 +209,6 @@
     (async () => {
       const model = jsonModel();
       const zip = new JSZip();
-      debugger;
       zip.file("model.lvm", model);
       zip.file("data.csv", data);
       const content = await zip.generateAsync({ type: "blob" });
@@ -317,52 +231,9 @@
     Shiny.setInputValue("dataUpload-deleteData", Math.random());
   }
 
-  function exportPNG() {
-    const cy = get(cyStore);
-
-    startDownload(cy.png({ bg: "white" }), "png");
-  }
-
-  function exportJPG() {
-    const cy = get(cyStore);
-    startDownload(cy.jpg(), "jpg");
-  }
-
-  function getSVG() {
-    const cy = get(cyStore);
-    const svgContent = cy.svg({ scale: 1, full: true });
-    return svgContent;
-  }
-
-  function exportSVG() {
-    const svgContent = getSVG();
-    const blob = new Blob([svgContent], {
-      type: "image/svg+xml;charset=utf-8",
-    });
-    startDownload(blob, "svg");
-  }
-
-  async function exportPDF() {
-    const svgContent = getSVG();
-    const parser = new DOMParser();
-    const svgElement = parser.parseFromString(
-      svgContent,
-      "image/svg+xml",
-    ).documentElement;
-    svgElement.style.position = "absolute";
-    svgElement.style.left = "-9999px"; // Move the SVG off-screen
-    document.body.appendChild(svgElement); // Temporarily add the SVG to the document
-    const rect = svgElement.getBoundingClientRect(); // Get the actual size
-    document.body.removeChild(svgElement); // Remove the SVG from the document
-    const width = rect.width;
-    const height = rect.height;
-    const pdf = new jsPDF({
-      orientation: width > height ? "landscape" : "portrait",
-      unit: "pt",
-      format: [width, height],
-    });
-    await svg2pdf(svgElement, pdf, { width, height });
-    pdf.save("model.pdf");
+  function saveChangesForR() {
+    const model = jsonModel();
+    Shiny.setInputValue("modelForR", model);
   }
 
   let menuItems;
@@ -389,6 +260,12 @@
         divider: true,
       },
       {
+        name: "Save Changes For R",
+        disable: $appState.modelEmpty || !$appState.dataAvail,
+        action: saveChangesForR,
+        divider: true,
+      },
+      {
         name: "Export Diagram to PNG",
         disable: $appState.modelEmpty,
         action: exportPNG,
@@ -410,12 +287,15 @@
       },
     ];
     if (full) {
-      menuItems = allMenuItems;
+      menuItems = allMenuItems.filter(
+        (item) => !["Save Changes For R"].includes(item.name),
+      );
     } else {
       menuItems = allMenuItems.filter(
         (item) =>
-          ["Download Model", "Load Model"].includes(item.name) ||
-          allMenuItems.indexOf(item) >= allMenuItems.length - 4,
+          ["Download Model", "Load Model", "Save Changes For R"].includes(
+            item.name,
+          ) || allMenuItems.indexOf(item) >= allMenuItems.length - 4,
       );
     }
   }

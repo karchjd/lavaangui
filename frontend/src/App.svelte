@@ -30,6 +30,7 @@
   import ExtendCyto from "./Graph/ExtendCyto.svelte";
   import BendEdges from "./Graph/BendEdges.svelte";
   import GridOptions from "./MenuTop/GridOptions.svelte";
+  import AutoExporter from "./MenuTop/AutoExporter.svelte";
 </script>
 
 <AppReady />
@@ -71,6 +72,8 @@
       <Alert />
       <ToolbarBelow />
       <Reactive />
+    {:else}
+      <AutoExporter />
     {/if}
   </div>
   <Debug />

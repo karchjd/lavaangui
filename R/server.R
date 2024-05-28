@@ -4,9 +4,11 @@ lavaan_gui_server <- function(input, output, session) {
   forceEstimateUpdate <- reactiveVal()
   to_render <- reactiveVal(help_text)
   full <- TRUE
-  
+  savedModelHash <- NULL
+  print("hallo")
+
   session$sendCustomMessage("version", message = utils::packageVersion("lavaangui"))
-  
+
 
   ## import model if present
   importRes <- importModel(session)
@@ -15,6 +17,7 @@ lavaan_gui_server <- function(input, output, session) {
   if (imported) {
     if (!full) {
       fit(importRes$fit)
+      savedModelHash <- importRes$hash
     }
   }
 
@@ -65,4 +68,25 @@ lavaan_gui_server <- function(input, output, session) {
   observeEvent(input$show_help, {
     to_render(help_text)
   })
+  
+  observeEvent(input$modelForR,
+               {
+                 if (!dir.exists("lavaangui-models-R")) {
+                   dir.create("lavaangui-models-R")
+                 }
+                 fName <- paste0(savedModelHash,'.lvm')
+                 fPath <- file.path("lavaangui-models-R", fName)
+                 writeLines(input$modelForR, fPath)
+               },
+               ignoreNULL = TRUE,
+               ignoreInit = TRUE
+  )
+
+  observeEvent(input$exportedGraph,
+    {
+      stopApp(input$exportedGraph)
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE
+  )
 }
