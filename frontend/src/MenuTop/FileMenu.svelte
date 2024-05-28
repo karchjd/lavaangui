@@ -246,6 +246,10 @@
     await svg2pdf(svgElement, pdf, { width, height });
     pdf.save("model.pdf");
   }
+  function saveChangesForR() {
+    const model = jsonModel();
+    Shiny.setInputValue("modelForR", model);
+  }
 
   let menuItems;
   $: {
@@ -272,6 +276,12 @@
         divider: true,
       },
       {
+        name: "Save Changes For R",
+        disable: $appState.modelEmpty || !$appState.dataAvail,
+        action: saveChangesForR,
+        divider: true,
+      },
+      {
         name: "Export Diagram to PNG",
         disable: $appState.modelEmpty,
         action: exportPNG,
@@ -293,12 +303,15 @@
       },
     ];
     if (full) {
-      menuItems = allMenuItems;
+      menuItems = allMenuItems.filter(
+        (item) => !["Save Changes For R"].includes(item.name),
+      );
     } else {
       menuItems = allMenuItems.filter(
         (item) =>
-          ["Save Model", "Load Model"].includes(item.name) ||
-          allMenuItems.indexOf(item) >= allMenuItems.length - 4,
+          ["Download Model", "Load Model", "Save Changes For R"].includes(
+            item.name,
+          ) || allMenuItems.indexOf(item) >= allMenuItems.length - 4,
       );
     }
   }
