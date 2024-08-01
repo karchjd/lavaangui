@@ -5,6 +5,7 @@
 
   let cy = get(cyStore);
 
+  // fixes bug of cytoscape that makes things ungrabbable
   setInterval(() => {
     if (!$appState.drawing && cy) {
       cy.autoungrabify(false);
@@ -12,6 +13,7 @@
     }
   }, 1000); // every 1000 milliseconds or 1 second
 
+  // prevents users from losing their work
   window.addEventListener("beforeunload", (event) => {
     // Cancel the event as stated by the standard.
     event.preventDefault();
