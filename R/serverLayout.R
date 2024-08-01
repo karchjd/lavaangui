@@ -18,7 +18,7 @@ serverLayout <- function(id, fit, full, imported) {
           semPlotRes <- semPaths(semPlotModel,
             layout = fromJavascript$name,
             nCharNodes = 0, nCharEdges = 0,
-            DoNotPlot = TRUE, reorder = TRUE
+            DoNotPlot = TRUE, reorder = TRUE, intercepts = FALSE
           )
           if (!fitObject) {
             ngroups <- 1

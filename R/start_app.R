@@ -4,7 +4,6 @@
 
 start_app <- function(fit = NULL, full, where) {
   if (!is.null(fit)) {
-     
     varNames <- lavaanNames(fit, type = "ov")
     factNames <- lavaanNames(fit, type = "lv")
     factNames <- factNames[!factNames %in% varNames]
@@ -19,7 +18,7 @@ start_app <- function(fit = NULL, full, where) {
         }
       )  
     }else{
-      if(!full){
+      if(full){
         stop("Multipe group models are currently not supported. But you can plot your model using plot_interactive")
       }
       df = NULL

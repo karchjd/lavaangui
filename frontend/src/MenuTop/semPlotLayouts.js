@@ -57,10 +57,11 @@ if (serverAvail()) {
 
         if (diffX < minDiffX && layout_R[i].y === layout_R[j].y)
           minDiffX = diffX;
-        if (diffY < minDiffY && layout_R[i].x === layout_R[j].x)
+        if (diffY < minDiffY && diffY !== 0)
           minDiffY = diffY;
       }
     }
+
     const xScale = differenceX / minDiffX;
     const yScale = differenceY / minDiffY;
 
@@ -83,6 +84,7 @@ if (serverAvail()) {
       padding: 60,
       animate: true,
     };
+    debugger;
     // Run the layout
     if (undo) {
       const lur = get(ur);
