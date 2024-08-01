@@ -1,4 +1,4 @@
-recompile_front <- F # nolint
+recompile_front <- T # nolint
 release <- F
 
 if (recompile_front) {
@@ -29,5 +29,5 @@ HS.model <- " visual  =~ x1 + x2 + myLabel * x3
               speed   =~ x7 + x8 + x9"
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
-# start_gui(fit)
-plot_interactive(fit)
+start_gui(fit)
+# plot_interactive(fit)

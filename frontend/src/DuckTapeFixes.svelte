@@ -12,6 +12,13 @@
     }
   }, 1000); // every 1000 milliseconds or 1 second
 
+  window.addEventListener("beforeunload", (event) => {
+    // Cancel the event as stated by the standard.
+    event.preventDefault();
+    // Chrome requires returnValue to be set.
+    event.returnValue = "";
+  });
+
   onMount(() => {
     // @ts-ignore
     Shiny.unbindAll();

@@ -294,7 +294,6 @@
     (async () => {
       const model = jsonModel();
       const zip = new JSZip();
-      debugger;
       zip.file("model.lvm", model);
       zip.file("data.csv", data);
       const content = await zip.generateAsync({ type: "blob" });
