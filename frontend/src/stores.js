@@ -56,14 +56,14 @@ export let appState = writable({
   ids: null,
   dragged: null,
   draggedName: null,
-  drawing: false,
   full: true,
   ready: false,
   parsedModel: false,
   meansModelled: null,
   buttonDown: false,
   showServerErrors: true,
-  everEdge: false
+  everEdge: false,
+  drawing: "none",
 });
 
 export let dataInfo = writable(0);

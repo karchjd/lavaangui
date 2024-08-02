@@ -1,6 +1,8 @@
 <script>
-  import { appState, cyStore } from "../stores";
+  import { appState, cyStore, ehStore } from "../stores";
   import { OBSERVED, LATENT, CONSTANT } from "../Graph/classNames.js";
+  import { get } from "svelte/store";
+
   let state = {};
 
   let unsubscribe = appState.subscribe((newState) => {
@@ -51,6 +53,18 @@
   }
   let varNames;
 
+  let eh = get(ehStore);
+
+  function toggleArrowState(direction) {
+    if ($appState.drawing === direction) {
+      eh.disableDrawMode();
+      $appState.drawing = "none";
+    } else {
+      eh.enableDrawMode();
+      $appState.drawing = direction;
+    }
+  }
+
   $: {
     if (
       typeof $cyStore.getObservedNodes === "function" &&
@@ -72,17 +86,19 @@
       <button
         id="directed-arrow"
         class="arrow-btn"
-        title="Directed Arrow"
+        title="Draw Directed Arrows"
+        class:active={$appState.drawing === "directed"}
         on:click={() => {
-          alertEdge("directed");
+          toggleArrowState("directed");
         }}>➔</button
       >
       <button
         id="undirected-arrow"
         class="arrow-btn"
-        title="Undirected Arrow"
+        title="Draw Undirected Arrows"
+        class:active={$appState.drawing === "undirected"}
         on:click={() => {
-          alertEdge("undirected");
+          toggleArrowState("undirected");
         }}>↔</button
       >
       <div
@@ -211,9 +227,9 @@
     font-size: 20px; /* Adjust font size as needed */
     text-align: center; /* Ensure the arrow is centered horizontally */
     cursor: pointer;
-    border: none;
     background: none;
     vertical-align: middle;
+    border: 1px solid transparent;
   }
 
   #directed-arrow {
@@ -323,5 +339,17 @@
     justify-content: space-between;
     align-items: center;
     gap: 0px; /* Adjust the gap as necessary */
+  }
+
+  .arrow-btn.active {
+    background-color: #e0e0e0;
+    border: 1px solid #888;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+
+  .arrow-btn:active {
+    background-color: #d0d0d0;
+    border-color: #777;
   }
 </style>

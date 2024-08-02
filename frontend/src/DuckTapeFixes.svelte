@@ -7,7 +7,7 @@
 
   // fixes bug of cytoscape that makes things ungrabbable
   setInterval(() => {
-    if (!$appState.drawing && cy) {
+    if ($appState.drawing == "none" && cy) {
       cy.autoungrabify(false);
       cy.nodes().grabify();
     }

@@ -19,8 +19,6 @@
   let cyContainer;
   let m = { x: 0, y: 0 };
 
-  let undirected;
-
   onMount(() => {
     // Initialize the Cytoscape instance
     cy.mount(cyContainer);
@@ -34,10 +32,10 @@
       event.key.toLowerCase() === "x"
     ) {
       eh.enableDrawMode();
-      undirected = false;
-      $appState.drawing = true;
       if (event.key === "Alt") {
-        undirected = true;
+        $appState.drawing = "undirected";
+      } else {
+        $appState.drawing = "directed";
       }
     }
 
@@ -77,14 +75,14 @@
   }
 
   function handleKeyUp(event) {
-    $appState.drawing = false;
-    makeNodesGrabbable();
     if (
       event.key === "Alt" ||
       event.key === " " ||
       event.key.toLowerCase() === "x"
     ) {
       eh.disableDrawMode();
+      $appState.drawing = "none";
+      makeNodesGrabbable();
     }
   }
 
@@ -96,7 +94,6 @@
   function handleMouseOut() {
     document.removeEventListener("keydown", handleKeyDown, false);
     document.removeEventListener("keyup", handleKeyUp, false);
-    eh.disableDrawMode();
   }
 
   function handleMousemove(event) {
@@ -111,7 +108,7 @@
     edge.remove();
     edge.init();
     if (sourceNodeId !== targetNodeId) {
-      if (undirected) {
+      if ($appState.drawing === "undirected") {
         edge.setUndirected();
       } else {
         edge.setDirected();
