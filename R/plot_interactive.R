@@ -1,17 +1,18 @@
 #' Create Interactive Path Diagrams for Lavaan Models
 #'
 #' The `plot_interactive` function creates path diagrams for lavaan model.
-#' Crucially, the created path diagram  is interactive. 
-#' That is, its appearance can be changed easily, for example, by dragging 
-#' around nodes with the mouse.
+#' The created paths diagrams  are interactive. 
+#' That is, their appearance can be customized easily, for example, by dragging 
+#' around nodes representing variable with the mouse.
 #'
 #' @param fit A lavaan model, as returned by the functions `lavaan`, `sem`, or `cfa` from the `lavaan` package.
 #'
 #' @param where A character string to specify where the path diagram should be shown.
 #' The default value "gadget" shows it directly in Rstudio. For "browser", it's shown in your default browser.
+#' For non-RStudio users, the parameter has no effect, and the path diagram is always shown in the browser.
+#' @return nothing
 #' 
-#' @examples
-#' \dontrun{
+#' @examplesIf interactive()
 #' library(lavaan)
 #' model <- ' 
 #'   visual  =~ x1 + loadingx2*x2 + x3
@@ -20,7 +21,6 @@
 #' '
 #' fit <- cfa(model, data = HolzingerSwineford1939)
 #' plot_interactive(fit)
-#' }
 #' 
 #'
 #'

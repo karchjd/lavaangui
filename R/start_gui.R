@@ -2,11 +2,12 @@
 #'
 #' The `start_gui` function launches the lavaangui Shiny application.
 #' 
-#' @param fit A lavaan model, as returned by the functions `lavaan`, `sem`, or `cfa` from the `lavaan` package. 
-#' If passed, lavaangui imports the model and data. 
+#' @param fit A lavaan model, as returned by the `lavaan`, `sem`, or `cfa` functions from the `lavaan` package.
+#' If provided, lavaangui imports the model and data. If left empty, lavaangui starts without importing.
 #' 
-#' @examples 
-#' \dontrun{
+#' @return nothing
+#' 
+#' @examplesIf interactive()
 #' # Without importing lavaan model
 #' start_gui()
 #'
@@ -19,7 +20,7 @@
 #' '
 #' fit <- cfa(model, data = HolzingerSwineford1939)
 #' start_gui(fit)
-#' }
+#' 
 
 #' @details
 #' Currently, multiple-group models are not supported. However, you can create an

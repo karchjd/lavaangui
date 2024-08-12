@@ -1,11 +1,19 @@
 Package: lavaangui
-Title: Graphical User Interface for lavaan
+Title: Graphical User Interface with Integrated Diagrammer for Lavaan
 Version: 0.1.0
 Authors@R: 
-    person(c("Julian",  "D."), "Karch", email = "j.d.karch@fsw.leidenuniv.nl", role = c("aut", "cre"))
-Description: Provides a graphical user interface for latent variable models from the lavaan package. 
-              There are two core features. First, models can be specified by drawing path diagrams (start_gui). 
-              Second, interactive path diagrams can be created from models specified in lavaan (plot_interactive).
+    person(c("Julian",  "D."), "Karch",
+    email = "j.d.karch@fsw.leidenuniv.nl", 
+    role = c("aut", "cre", "cph"),
+    comment = c(ORCID = "0000-0002-1625-2822"))
+Description: Provides a graphical user interface with an 
+    integrated diagrammer for latent variables from the 'lavaan' package. 
+    It offers two core functions:  first, 'start_gui' launches a web application
+    that allows users to specify models by drawing path diagrams, fitting them, 
+    assessing model fit, and more; second, 'plot_interactive' creates 
+    interactive path diagrams from models specified in 'lavaan'.
+URL: https://lavaangui.org/, https://github.com/karchjd/lavaangui
+BugReports: https://github.com/karchjd/lavaangui/issues
 License: GPL (>= 3)
 Imports: 
     base64enc (>= 0.1.3),
