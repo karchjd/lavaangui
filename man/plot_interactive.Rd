@@ -10,16 +10,20 @@ plot_interactive(fit, where = "gadget")
 \item{fit}{A lavaan model, as returned by the functions \code{lavaan}, \code{sem}, or \code{cfa} from the \code{lavaan} package.}
 
 \item{where}{A character string to specify where the path diagram should be shown.
-The default value "gadget" shows it directly in Rstudio. For "browser", it's shown in your default browser.}
+The default value "gadget" shows it directly in Rstudio. For "browser", it's shown in your default browser.
+For non-RStudio users, the parameter has no effect, and the path diagram is always shown in the browser.}
+}
+\value{
+nothing
 }
 \description{
 The \code{plot_interactive} function creates path diagrams for lavaan model.
-Crucially, the created path diagram  is interactive.
-That is, its appearance can be changed easily, for example, by dragging
-around nodes with the mouse.
+The created paths diagrams  are interactive.
+That is, their appearance can be customized easily, for example, by dragging
+around nodes representing variable with the mouse.
 }
 \examples{
-\dontrun{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(lavaan)
 model <- ' 
   visual  =~ x1 + loadingx2*x2 + x3
@@ -28,8 +32,7 @@ model <- '
 '
 fit <- cfa(model, data = HolzingerSwineford1939)
 plot_interactive(fit)
-}
 
 
-
+\dontshow{\}) # examplesIf}
 }

@@ -7,8 +7,11 @@
 start_gui(fit = NULL)
 }
 \arguments{
-\item{fit}{A lavaan model, as returned by the functions \code{lavaan}, \code{sem}, or \code{cfa} from the \code{lavaan} package.
-If passed, lavaangui imports the model and data.}
+\item{fit}{A lavaan model, as returned by the \code{lavaan}, \code{sem}, or \code{cfa} functions from the \code{lavaan} package.
+If provided, lavaangui imports the model and data. If left empty, lavaangui starts without importing.}
+}
+\value{
+nothing
 }
 \description{
 The \code{start_gui} function launches the lavaangui Shiny application.
@@ -18,7 +21,7 @@ Currently, multiple-group models are not supported. However, you can create an
 interactive plot of those models using \code{\link{plot_interactive}}
 }
 \examples{
-\dontrun{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Without importing lavaan model
 start_gui()
 
@@ -31,5 +34,5 @@ model <- '
 '
 fit <- cfa(model, data = HolzingerSwineford1939)
 start_gui(fit)
-}
+\dontshow{\}) # examplesIf}
 }

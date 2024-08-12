@@ -12,7 +12,7 @@ The `lavaangui` package provides a free, open-source graphical user interface fo
 
 There are three main ways to use the `lavaangui` package.
 
-1.  **Web application:** The easiest is to visit <http://lavaangui.org/> and use it as a web application. This requires no additional software besides a web browser. The main downside of this is that the webserver is likely slower than your computer. So, fitting complicated models might take a long time. The app is likely also more responsive on your computer.
+1.  **Web application:** The easiest is to visit <https://lavaangui.org/> and use it as a web application. This requires no additional software besides a web browser. The main downside of this is that the webserver is likely slower than your computer. So, fitting complicated models might take a long time. The app is likely also more responsive on your computer.
 
 2. **Local web application:** After installing the  `lavaangui` package (see below), you can start a local version of the web application via the `start_gui()` command.
 
@@ -28,13 +28,10 @@ For the web application, no installation is necessary. Simply go to <http://lava
 
 ### Installation
 
-Only Windows users first need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/). Then, you can install the latest version of the R package via the following commands.
+You can install the latest version of the R package as usual using the following command:
 
 ```
-if (!requireNamespace("remotes", quietly = TRUE)) {
-  install.packages("remotes")
-}
-remotes::install_github("karchjd/lavaangui")
+install.packages("lavaangui")
 ```
 
 ### `start_gui`
