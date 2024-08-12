@@ -41,3 +41,4 @@ src/test-results
 src/playwright-report
 frontend/test-results
 lavaangui-models-R
+plot_for_paper.R
