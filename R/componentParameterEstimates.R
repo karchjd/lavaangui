@@ -29,6 +29,8 @@ parameterEstimatesServer <- function(id, fit) {
       } else {
         ests <- lavaan::standardizedSolution(fit(), level = input$level)
       }
+
+      ests <- modifyResTable(ests)
       return(ests)
     })
 

@@ -55,3 +55,14 @@ propagateData <- function(df, session, showData = FALSE) {
   )
   session$sendCustomMessage(type = "dataInfo", message = data_info)
 }
+
+
+modifyResTable <- function(ests) {
+  names(ests)[names(ests) == "lhs"] <- "source"
+  names(ests)[names(ests) == "op"] <- "arrow"
+  names(ests)[names(ests) == "rhs"] <- "target"
+  ests$arrow[ests$arrow == "~"] <- "→"
+  ests$arrow[ests$arrow == "=~"] <- "→"
+  ests$arrow[ests$arrow == "~~"] <- "↔"
+  return(ests)
+}
