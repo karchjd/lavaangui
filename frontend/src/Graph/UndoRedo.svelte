@@ -3,8 +3,9 @@
   import { onMount } from "svelte";
   import cytoscape from "cytoscape";
 
-  import { cyStore, ur } from "../stores.js";
+  import { cyStore, ur, modelOptions } from "../stores.js";
   import { get } from "svelte/store";
+  import { tolavaan } from "../Shiny/toR.js";
   let cy = get(cyStore);
 
   function arraysToObject(keys, values) {
@@ -56,6 +57,18 @@
         };
       },
     );
+
+    cy.on("afterUndo", function (e, name) {
+      if (name !== "style" && name !== "move") {
+        tolavaan($modelOptions.mode);
+      }
+    });
+
+    cy.on("afterRedo", function (e, name) {
+      if (name !== "style" && name !== "move") {
+        tolavaan($modelOptions.mode);
+      }
+    });
 
     document.addEventListener("keydown", function (e) {
       if (
