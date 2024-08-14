@@ -64,6 +64,8 @@ export let appState = writable({
   showServerErrors: true,
   everEdge: false,
   drawing: "none",
+  undoEmpty: true,
+  redoEmpty: true,
 });
 
 export let dataInfo = writable(0);

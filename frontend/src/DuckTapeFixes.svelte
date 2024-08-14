@@ -1,5 +1,5 @@
 <script>
-  import { cyStore, appState } from "./stores.js";
+  import { cyStore, appState, ur } from "./stores.js";
   import { get } from "svelte/store";
   import { onMount } from "svelte";
 
@@ -10,6 +10,8 @@
     if ($appState.drawing == "none" && cy) {
       cy.autoungrabify(false);
       cy.nodes().grabify();
+      $appState.undoEmpty = $ur.isUndoStackEmpty();
+      $appState.redoEmpty = $ur.isRedoStackEmpty();
     }
   }, 1000); // every 1000 milliseconds or 1 second
 
