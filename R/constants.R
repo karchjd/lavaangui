@@ -4,7 +4,7 @@ help_text <- paste(
   "Right-Click           Right-Click Anywhere",
   "                      to get an Appropriate Menu",
   "o                     Create Observed Variable",
-  "                      at Mouse Location",                    
+  "                      at Mouse Location",
   "l                     Create Latent Variable",
   "                      at Mouse Location",
   "c                     Create Constant Variable",
@@ -26,7 +26,7 @@ help_text <- paste(
   "--------------------------------------------------",
   "1. Load your data (File --> Load Data)",
   "2. Draw your Model",
-  "3. Check lavaan's autocomplete is correct (\"Lavaan model\")",
+  "3. Check that autocomplete is correct (\"Autocompleted Model\")",
   "4. Fit Model (\"Estimates\")",
   sep = "\n"
 )
