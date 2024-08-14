@@ -289,9 +289,9 @@
     position: absolute;
     width: 0;
     height: 0;
-    border-left: 11.5px solid transparent; /* Approximately half of 23.09px */
-    border-right: 11.5px solid transparent;
-    border-bottom: 20px solid white; /* Same height as the manifest variable */
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 16px solid white; /* Same height as the manifest variable */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
