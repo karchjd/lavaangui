@@ -84,23 +84,21 @@
   <div id="buttonCont">
     <div id="buttons">
       <button
-        id="directed-arrow"
-        class="arrow-btn"
+        class="arrow-btn direct-arrow"
         title="Draw Directed Arrows"
         class:active={$appState.drawing === "directed"}
         on:click={() => {
           toggleArrowState("directed");
-        }}>➔</button
-      >
+        }}
+      ></button>
       <button
-        id="undirected-arrow"
-        class="arrow-btn"
+        class="arrow-btn undirected-arrow"
         title="Draw Undirected Arrows"
         class:active={$appState.drawing === "undirected"}
         on:click={() => {
           toggleArrowState("undirected");
-        }}>↔</button
-      >
+        }}
+      ></button>
       <div
         role="button"
         id="add-manifest-variable"
@@ -226,18 +224,16 @@
   .arrow-btn {
     font-size: 20px; /* Adjust font size as needed */
     text-align: center; /* Ensure the arrow is centered horizontally */
-    cursor: pointer;
     background: none;
     vertical-align: middle;
     border: 1px solid transparent;
   }
 
-  #directed-arrow {
-    font-size: 20px;
+  .direct-arrow::after {
+    content: "→";
   }
-
-  #undirected-arrow {
-    font-size: 20px;
+  .undirected-arrow::after {
+    content: "↔";
   }
 
   .variable-button {
