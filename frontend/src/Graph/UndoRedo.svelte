@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import cytoscape from "cytoscape";
 
-  import { cyStore, ur, modelOptions } from "../stores.js";
+  import { cyStore, ur, modelOptions, appState } from "../stores.js";
   import { get } from "svelte/store";
   import { tolavaan } from "../Shiny/toR.js";
   let cy = get(cyStore);
@@ -74,7 +74,8 @@
       if (
         (e.ctrlKey || e.metaKey) &&
         e.target.nodeName === "BODY" &&
-        e.which === 90
+        e.which === 90 &&
+        !$appState.fitting
       ) {
         e.preventDefault();
         e.stopPropagation();
