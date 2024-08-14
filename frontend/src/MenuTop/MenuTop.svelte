@@ -9,10 +9,12 @@
   import ShowHelp from "./ShowHelp.svelte";
   import GridOptions from "./GridOptions.svelte";
   import DropDownOpenhover from "./DropDownOpenhover.svelte";
+  import EditMenu from "./EditMenu.svelte";
 </script>
 
 <Navbar>
   <FileMenu />
+  <EditMenu />
   <ViewMenu />
   <MeanMenu />
   <AddMenu />

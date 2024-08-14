@@ -1,10 +1,16 @@
 <script>
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
-  function nothing() {}
+  import { ur } from "../stores.js";
+  function undo() {
+    $ur.undo();
+  }
+
+  function redo() {
+    $ur.redo();
+  }
   let menuItems = [
-    { name: "Cut", action: nothing, divider: false },
-    { name: "Copy", action: nothing, divider: false },
-    { name: "Paste", action: nothing, divider: false },
+    { name: "Undo", action: undo, divider: false },
+    { name: "Redo", action: redo, divider: false },
   ];
 </script>
 
