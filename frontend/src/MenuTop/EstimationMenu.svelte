@@ -28,7 +28,7 @@
   ];
 
   const missingValues = [
-    { value: "listwise", name: "Listwise" },
+    { value: "listwise", name: "Listwise Deletion" },
     { value: "ml", name: "Full Information Maximum Likelihood (FIML)" },
   ];
 

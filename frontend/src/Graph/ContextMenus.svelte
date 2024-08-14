@@ -261,7 +261,7 @@
     },
     {
       id: "change-fromUser",
-      content: "Explicitly Include in Model",
+      content: "Include in User Model",
       selector: `edge.${Constants.FROM_LAV}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
