@@ -192,7 +192,7 @@ export const graphSettings = {
   autoungrabify: false,
   autolock: false,
   style: graphStyles,
-  minZoom: 0.2,
+  minZoom: 0.02,
   maxZoom: 5,
 };
 

@@ -29,5 +29,5 @@ HS.model <- " visual  =~ x1 + x2 + myLabel * x3
               speed   =~ x7 + x8 + x9"
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
-start_gui(fit)
-# plot_interactive(fit)
+start_gui(fit_big)
+plot_interactive(fit_big)

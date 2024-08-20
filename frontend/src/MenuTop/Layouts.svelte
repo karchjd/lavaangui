@@ -68,6 +68,11 @@
       disable: $appState.modelEmpty,
     },
     {
+      name: "Recommended: Tree3",
+      action: () => applySemLayout("tree3"),
+      disable: $appState.modelEmpty,
+    },
+    {
       name: "Experimental: Tree",
       action: applyDagre,
       disable: $appState.modelEmpty,
