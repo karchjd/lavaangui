@@ -1,6 +1,5 @@
 import { get } from "svelte/store";
 import { appState, cyStore, modelOptions, fitCache, gridViewOptions, setAlert } from "../stores";
-import app from "../main";
 
 export function tolavaan(mode) {
   var appState_local = get(appState);
@@ -105,6 +104,41 @@ class DataForR {
 }
 
 
+function getNodeNames(connectedEdges, positionWhich = "target") {
+  let nodeNames = "";
+  const xRange =
+    Math.max(...connectedEdges.map((edge) => edge[positionWhich]().position().x)) -
+    Math.min(...connectedEdges.map((edge) => edge[positionWhich]().position().x));
+
+  const yRange =
+    Math.max(...connectedEdges.map((edge) => edge[positionWhich]().position().y)) -
+    Math.min(...connectedEdges.map((edge) => edge[positionWhich]().position().y));
+
+  const sortBy = xRange >= yRange ? "x" : "y";
+
+  const sortedIndices = connectedEdges
+    .map((edge, index) => ({
+      index,
+      value: edge.source().position()[sortBy],
+    }))
+    .sort((a, b) => a.value - b.value)
+    .map((item) => item.index);
+
+
+
+  for (let j = 0; j < connectedEdges.length; j++) {
+    const node = connectedEdges[sortedIndices[j]][positionWhich]();
+    if (j > 0) {
+      nodeNames += " + ";
+    }
+
+    nodeNames += addTerms(node, connectedEdges[sortedIndices[j]]);
+  }
+
+  return nodeNames;
+}
+
+
 export function createSyntax(mode) {
   let cy = get(cyStore);
   let appSt = get(appState);
@@ -120,8 +154,31 @@ export function createSyntax(mode) {
       "#make sure your data is loaded into the 'data' variable" + "\n";
   }
 
+
+  // all outgoing edges point to latent variables
+  let hierachicalFactors = cy.getLatentNodes()
+  hierachicalFactors = hierachicalFactors.nodes(function (node) {
+    const outgoing = node.connectedEdges(function (edge) {
+      return edge.isDirected() && edge.source().id() == node.id()
+    })
+    return outgoing.length > 0 && outgoing.every(edge => edge.target().isLatent())
+  })
+
+  // to help detect formative factors, only incoming arrows
+  let formativeFactors = cy.getLatentNodes()
+  formativeFactors = formativeFactors.nodes(function (node) {
+    const incoming = node.connectedEdges(function (edge) {
+      return edge.isDirected() && edge.target().id() == node.id()
+    })
+    const all = node.connectedEdges(function (edge) {
+      return edge.isDirected()
+    })
+    return all.length > 0 && incoming.length == all.length
+  })
+
+
   // measurement model
-  const latentNodes = cy.getLatentNodes()
+  let latentNodes = cy.getLatentNodes()
   let shown = false;
   for (let i = 0; i < latentNodes.length; i++) {
     const latentNode = latentNodes[i];
@@ -130,7 +187,7 @@ export function createSyntax(mode) {
       return (
         edge.isDirected() &&
         edge.source().id() == latentNode.id() &&
-        edge.target().isObserved()
+        (edge.target().isObserved() || hierachicalFactors.some(node => node.id() === latentNode.id())) //add measurement equation also if source is a hierachical factor
       );
     });
     if (connectedEdges.length > 0) {
@@ -138,42 +195,7 @@ export function createSyntax(mode) {
         syntax += "# measurement model" + "\n";
         shown = true;
       }
-
-      const xRange =
-        Math.max(...connectedEdges.map((edge) => edge.target().position().x)) -
-        Math.min(...connectedEdges.map((edge) => edge.target().position().x));
-
-      const yRange =
-        Math.max(...connectedEdges.map((edge) => edge.target().position().y)) -
-        Math.min(...connectedEdges.map((edge) => edge.target().position().y));
-
-      const sortBy = xRange >= yRange ? "x" : "y";
-
-      const sortedIndices = connectedEdges
-        .map((edge, index) => ({
-          index,
-          value: edge.target().position()[sortBy],
-        }))
-        .sort((a, b) => a.value - b.value)
-        .map((item) => item.index);
-
-      for (let j = 0; j < connectedEdges.length; j++) {
-        const node = connectedEdges[sortedIndices[j]].target();
-        if (j > 0) {
-          nodeNames += " + ";
-        }
-
-        nodeNames += addTerms(node, connectedEdges[sortedIndices[j]]);
-      }
-      syntax += " " + latentNode.getLabel() + " =~ " + nodeNames + "\n";
-    } else if (latentNode.connectedEdges(function (edge) {
-      return (edge.isUserAdded())
-    }).length > 0) {
-      if (!shown) {
-        syntax += "# measurement model" + "\n";
-        shown = true;
-      }
-      syntax += " " + latentNode.getLabel() + " =~ 0" + "\n";
+      syntax += " " + latentNode.getLabel() + " =~ " + getNodeNames(connectedEdges, "target") + "\n";
     }
   }
 
@@ -185,7 +207,7 @@ export function createSyntax(mode) {
       !(
         edge.source().isLatent() &&
         edge.target().isObserved()
-      ) && (edge.isUserAdded() || edge.isModifiedLavaan())
+      ) && !(edge.source().isLatent() && hierachicalFactors.some(node => node.id() === edge.source().id()) && edge.target().isLatent()) && (edge.isUserAdded() || edge.isModifiedLavaan()) && !(formativeFactors.some(node => node.id() === edge.target().id()));
     return res;
 
   }
@@ -224,7 +246,7 @@ export function createSyntax(mode) {
     );
   });
   if (cov_edges.length > 0) {
-    syntax += "\n\n" + "# residual (co)variances";
+    syntax += "\n\n" + "# (residual) (co)variances";
     for (let i = 0; i < cov_edges.length; i++) {
       let node1 = cov_edges[i].source().data("label");
       syntax +=
@@ -254,6 +276,29 @@ export function createSyntax(mode) {
     }
   }
 
+  // formative factors
+  shown = false;
+  for (let i = 0; i < formativeFactors.length; i++) {
+    const formativeNode = formativeFactors[i];
+    let nodeNames = "";
+    const connectedEdges = formativeNode.connectedEdges(function (edge) {
+      return (
+        edge.isDirected() &&
+        edge.target().id() == formativeNode.id() // should even be unnecessary because of how formative factors are defined (all directed edges are incoming)
+      );
+    });
+    if (connectedEdges.length > 0) {
+      if (!shown) {
+        syntax += "\n\n #  formative factors" + "\n";
+        shown = true;
+      }
+      syntax += " " + formativeNode.getLabel() + " <~ " + getNodeNames(connectedEdges, "source") + "\n";
+    }
+  }
+
+
+
+  // split lines that are two long
   syntax = "'\n" + syntax + "'" + "\n\n";
   function splitLongLines(inputStr, threshold = 60) {
     return inputStr.split('\n').map(line => {
