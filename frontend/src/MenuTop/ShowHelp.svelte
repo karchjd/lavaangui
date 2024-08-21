@@ -29,7 +29,7 @@
   function openAbout() {
     bootbox.alert({
       title: "About Lavaangui",
-      message: `Version: ${version}<br> Autor: Julian D. Karch<br> Email: j.d.karch@fsw.leidenuniv.nl`,
+      message: `Version: ${version}<br> Author: Julian D. Karch<br> Email: j.d.karch@fsw.leidenuniv.nl`,
     });
   }
 
