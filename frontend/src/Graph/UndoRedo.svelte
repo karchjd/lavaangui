@@ -17,6 +17,19 @@
     return obj;
   }
 
+  function subsetObjectByKeys(obj, keysObj) {
+    const keys = Object.keys(keysObj);
+    let subset = {};
+
+    keys.forEach((key) => {
+      if (obj.hasOwnProperty(key)) {
+        subset[key] = obj[key];
+      }
+    });
+
+    return subset;
+  }
+
   onMount(() => {
     cytoscape.use(undoRedo);
     const options = { isDebug: true };
@@ -44,7 +57,10 @@
         };
       },
       function (args) {
-        const newStyle = args.eles[0].style();
+        const newStyle = subsetObjectByKeys(
+          args.eles[0].style(),
+          args.style[Object.keys(args.style)[0]],
+        );
         Object.keys(args.style).forEach(function (id) {
           var ele = cy.getElementById(id);
           for (var key in args.style[id]) {
