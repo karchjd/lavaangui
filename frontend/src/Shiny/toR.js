@@ -18,6 +18,8 @@ export function tolavaan(mode) {
   if (cy.getUserEdges().length == 0) {
     cy.getLavaanNodes().remove()
     cy.getLavaanEdges().remove()
+    // @ts-ignore
+    Shiny.setInputValue("show_help", Math.random());
     return;
   }
 
