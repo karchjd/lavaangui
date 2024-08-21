@@ -17,5 +17,5 @@ model <- '
 '
 
 fit <- sem(model, data = PoliticalDemocracy)
-# start_gui(fit)
+lavaangui(fit)
 plot_interactive(fit)

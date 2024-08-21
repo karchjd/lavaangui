@@ -14,7 +14,7 @@ There are three main ways to use the `lavaangui` package.
 
 1.  **Web application:** The easiest is to visit <https://lavaangui.org/> and use it as a web application. This requires no additional software besides a web browser. The main downside of this is that the webserver is likely slower than your computer. So, fitting complicated models might take a long time. The app is likely also more responsive on your computer.
 
-2. **Local web application:** After installing the  `lavaangui` package (see below), you can start a local version of the web application via the `start_gui()` command.
+2. **Local web application:** After installing the  `lavaangui` package (see below), you can start a local version of the web application via the `lavaangui()` command.
 
 3. **Interactive plots:** `lavaangui` can also be used for plotting `lavaan` models that were created in R. For this, use `plot_interactive(fit)`. This will create a path diagram of your model. The core difference compared to other packages for plotting `lavaan` models is that the resulting plot is interactive. That is, you can change its appearance easily, for example, by dragging around nodes with your mouse.
 
@@ -34,18 +34,18 @@ You can install the latest version of the R package as usual using the following
 install.packages("lavaangui")
 ```
 
-### `start_gui`
+### `lavaangui()`
 
 You can start the `lavaangui` web application by typing 
 
 ```
 library(lavaangui)
-start_gui()
+lavaangui()
 ```
 
 into your R console.
 
-Alternatively, you can also use the command `start_gui(fit)`, where `fit` is any supported fitted lavaan object. This will initialize the web application with the model (and data) contained in fit. For example, the following code initializes the web application with a three factor model.
+Alternatively, you can also use the command `lavaangui(fit)`, where `fit` is any supported fitted lavaan object. This will initialize the web application with the model (and data) contained in fit. For example, the following code initializes the web application with a three factor model.
 
 ```{r, eval = FALSE}
 library(lavaan)
@@ -55,10 +55,10 @@ HS.model <- ' visual  =~ x1 + x2 + x3
               speed   =~ x7 + x8 + x9 '
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
-start_gui(fit)
+lavangui(fit)
 ```
 
-### `plot_interactive`
+### `plot_interactive()`
 
 To obtain an interactive plot of your fitted model without leaving R Studio, use the `plot_interactive(fit)` function:
 

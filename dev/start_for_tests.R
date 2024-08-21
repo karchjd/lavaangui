@@ -9,4 +9,4 @@ if (!requireNamespace("pkgload", quietly = TRUE)) {
 golem::detach_all_attached()
 pkgload::load_all()
 options(shiny.port = 3245)
-start_gui()
+lavaangui()

@@ -1,6 +1,6 @@
 #' Start lavaangui Shiny Application
 #'
-#' The `start_gui` function launches the lavaangui Shiny application.
+#' The `lavaangui` function launches the lavaangui Shiny application.
 #' 
 #' @param fit A lavaan model, as returned by the `lavaan`, `sem`, or `cfa` functions from the `lavaan` package.
 #' If provided, lavaangui imports the model and data. If left empty, lavaangui starts without importing.
@@ -9,7 +9,7 @@
 #' 
 #' @examplesIf interactive()
 #' # Without importing lavaan model
-#' start_gui()
+#' lavaangui()
 #'
 #' # Importing a lavaan model
 #' library(lavaan)
@@ -19,7 +19,7 @@
 #'   speed   =~ x7 + x8 + x9
 #' '
 #' fit <- cfa(model, data = HolzingerSwineford1939)
-#' start_gui(fit)
+#' lavaangui(fit)
 #' 
 
 #' @details
@@ -27,6 +27,6 @@
 #' interactive plot of those models using \code{\link{plot_interactive}}
 #' 
 #' @export
-start_gui <- function(fit = NULL) {
+lavaangui <- function(fit = NULL) {
   start_app(fit = fit, full = TRUE, where = "browser")
 }
