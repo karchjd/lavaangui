@@ -365,7 +365,7 @@
                     ? document.getElementById("label-dropdown").value
                     : "";
                 let result;
-                if (inputLabel == node.getLabel()) {
+                if (inputLabel == node.getLabel() && selectedLabel != "") {
                   result = selectedLabel;
                 } else {
                   result = inputLabel;
