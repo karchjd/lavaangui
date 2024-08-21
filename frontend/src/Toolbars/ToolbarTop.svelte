@@ -299,13 +299,13 @@
 
   .draggable-list {
     display: flex;
+    flex: 1;
     gap: 15px;
     list-style-type: none;
     padding: 0;
     margin: 0;
     overflow: hidden;
     overflow-x: auto;
-    max-width: 0.5wv;
   }
 
   .draggable-item {
