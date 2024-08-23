@@ -41,7 +41,7 @@ test("Load Data", async ({ page }) => {
 
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, "cfa.csv"));
-  const heading = page.getByRole('heading', { name: 'Data Information (Double click on column name to change)' });
+  const heading = page.getByRole('heading', { name: 'Data Viewer (Double click on column name to change)' });
   await expect(heading).toBeVisible();
 });
 
@@ -149,7 +149,7 @@ test("Show Script", async ({ page }) => {
 
 test("Show Full Model", async ({ page }) => {
   await page.waitForTimeout(500);
-  await page.getByRole("button", { name: "Lavaan Model" }).click();
+  await page.getByRole("button", { name: "Autocompleted Model" }).click();
   await page.waitForTimeout(500);
   await expect(page.getByTestId("result-text")).toContainText("library(lavaan)");
   const lavEdges = await page.evaluate(() =>

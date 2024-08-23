@@ -48,18 +48,18 @@ export default defineConfig({
       },
     },
     {
-      name: "chromium global",
+      name: "chromium remote",
       use: {
         ...devices["Desktop Chrome"], baseURL: 'https://lavaangui.org/'
       },
     },
 
     {
-      name: "firefox local",
+      name: "firefox remote",
       use: { ...devices["Desktop Firefox"], baseURL: 'https://lavaangui.org/' },
     },
     {
-      name: 'webkit local',
+      name: 'webkit remote',
       use: {
         ...devices['Desktop Safari'], baseURL: 'https://lavaangui.org/'
       },
