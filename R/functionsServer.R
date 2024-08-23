@@ -61,8 +61,8 @@ modifyResTable <- function(ests) {
   names(ests)[names(ests) == "lhs"] <- "source"
   names(ests)[names(ests) == "op"] <- "arrow"
   names(ests)[names(ests) == "rhs"] <- "target"
-  ests$arrow[ests$arrow == "~"] <- "→"
-  ests$arrow[ests$arrow == "=~"] <- "→"
-  ests$arrow[ests$arrow == "~~"] <- "↔"
+  ests$arrow[ests$arrow == "~"] <- "\u2192" #→
+  ests$arrow[ests$arrow == "=~"] <- "\u2192" #→
+  ests$arrow[ests$arrow == "~~"] <- "\u2194" #↔
   return(ests)
 }
