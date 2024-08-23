@@ -22,7 +22,7 @@ There are three main ways to use the `lavaangui` package.
 
 ## Web application
 
-For the web application, no installation is necessary. Simply go to <http://lavaangui.org/>. The web application should work with any modern browser. It is continuously being tested with: Chrome, Edge, Safari, Firefox, and Opera.
+For the web application, no installation is necessary. Simply go to <https://lavaangui.org/>. The web application should work with any modern browser. It is continuously being tested with: Chrome, Edge, Safari, Firefox, and Opera.
 
 ## R Package
 
