@@ -8,11 +8,11 @@
 ![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
 
 
-The `lavaangui` package provides a free, open-source graphical user interface for the [lavaan](https://lavaan.org/) package. The core feature is that models can be specified by drawing path diagrams and fitted models visualized via interactive path diagrams.
+The `lavaangui` package provides a free, open-source graphical user interface for the [lavaan](https://lavaan.ugent.be) package. The core feature is that models can be specified by drawing path diagrams and fitted models visualized via interactive path diagrams.
 
 There are three main ways to use the `lavaangui` package.
 
-1.  **Web application:** The easiest is to visit <https://lavaangui.org/> and use it as a web application. This requires no additional software besides a web browser. The main downside of this is that the webserver is likely slower than your computer. So, fitting complicated models might take a long time. The app is likely also more responsive on your computer.
+1.  **Web application:** The easiest is to visit [https://lavaangui.org/](https://solo-fsw.shinyapps.io/lavaangui/) and use it as a web application. This requires no additional software besides a web browser. The main downside of this is that the webserver is likely slower than your computer. So, fitting complicated models might take a long time. The app is likely also more responsive on your computer.
 
 2. **Local web application:** After installing the  `lavaangui` package (see below), you can start a local version of the web application via the `lavaangui()` command.
 
@@ -22,7 +22,7 @@ There are three main ways to use the `lavaangui` package.
 
 ## Web application
 
-For the web application, no installation is necessary. Simply go to <https://lavaangui.org/>. The web application should work with any modern browser. It is continuously being tested with: Chrome, Edge, Safari, Firefox, and Opera.
+For the web application, no installation is necessary. Simply go to [https://lavaangui.org/](https://solo-fsw.shinyapps.io/lavaangui/). The web application should work with any modern browser. It is continuously being tested with: Chrome, Edge, Safari, Firefox, and Opera.
 
 ## R Package
 
