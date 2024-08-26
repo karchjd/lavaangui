@@ -30,7 +30,3 @@ help_text <- paste(
   "4. Fit Model (\"Estimates\")",
   sep = "\n"
 )
-class(help_text) <- "help_text"
-print.help_text <- function(helpt_text) {
-  cat(help_text)
-}
