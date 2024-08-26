@@ -16,3 +16,4 @@
 ^version_info\.txt$
 ^.vscode
 ^cran-comments\.md$
+^CRAN-SUBMISSION$
