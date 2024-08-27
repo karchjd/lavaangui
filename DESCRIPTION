@@ -1,5 +1,5 @@
 Package: lavaangui
-Title: Graphical User Interface with Integrated Diagrammer for Lavaan
+Title: Graphical User Interface with Integrated 'Diagrammer' for 'Lavaan'
 Version: 0.1.1
 Authors@R: 
     person(c("Julian",  "D."), "Karch",
@@ -7,12 +7,12 @@ Authors@R:
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0000-0002-1625-2822"))
 Description: Provides a graphical user interface with an 
-    integrated diagrammer for latent variables from the 'lavaan' package. 
+    integrated 'diagrammer' for latent variables from the 'lavaan' package. 
     It offers two core functions:  first, 'lavaangui()' launches a web application
     that allows users to specify models by drawing path diagrams, fitting them, 
     assessing model fit, and more; second, 'plot_interactive()' creates 
     interactive path diagrams from models specified in 'lavaan'.
-URL: https://lavaangui.org/, https://github.com/karchjd/lavaangui
+URL: https://solo-fsw.shinyapps.io/lavaangui/, https://github.com/karchjd/lavaangui
 BugReports: https://github.com/karchjd/lavaangui/issues
 License: GPL (>= 3)
 Imports: 
@@ -39,3 +39,6 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Date: 2024-05-28
+Suggests: 
+    spelling
+Language: en-US
