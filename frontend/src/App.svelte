@@ -30,6 +30,7 @@
   import ExtendCyto from "./Graph/ExtendCyto.svelte";
   import BendEdges from "./Graph/BendEdges.svelte";
   import GridOptions from "./MenuTop/GridOptions.svelte";
+  import PopperHandles from "./Graph/PopperHandles.svelte";
 </script>
 
 <AppReady />
@@ -63,6 +64,7 @@
       <OnEvents />
       <ViewUpdater />
       <BendEdges />
+      <PopperHandles />
       {#if $appState.full}
         <Results />
       {/if}
