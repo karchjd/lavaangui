@@ -488,8 +488,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   {
     if (length(Groups)>1) ask <- TRUE else ask <- FALSE
   }
-  askOrig <- graphics::par("ask")
-  
+
   if (missing(include)) include <- 1:length(Groups)
   
   if (panelGroups)
@@ -502,8 +501,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   AllMan <- manNames
   AllLat <- latNames
   
-  graphics::par(ask=ask)
-  
+
   ### If no sub, set sub to 0 (root sub)
   
   if (is.null(object@Pars$sub)) 
@@ -1247,7 +1245,6 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
     {
       
       ### Rescale subScale to height in width relative to diameter of device in inches ###
-      din <- graphics::par("din")
       diamet <- sqrt(sum(din^2))
       subDim <- diamet * c(subScale, subScale2)
       
@@ -1812,7 +1809,6 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
       title(gr, col.main=title.color, adj = title.adj, outer = TRUE, cex.main = title.cex, line = title.line)
     }
   }
-  graphics::par(ask=askOrig)
   if (length(qgraphRes)==1) qgraphRes <- qgraphRes[[1]]
   invisible(qgraphRes)
 }

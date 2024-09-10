@@ -1,5 +1,8 @@
-## R CMD check results
+## Resubmission
 
-0 errors | 0 warnings | 0 note
+This is a resubmission. In this version I have:
 
-* This is a new release.
+* changed the package to not modify .GlobalEnv
+* Removed single quotes around function names in the DESCRIPTION
+* Removed all calls to graphics::par
+* 
