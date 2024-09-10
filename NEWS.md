@@ -1,3 +1,3 @@
-# lavaangui 0.1.1
+# lavaangui 0.1.2
 
 * Initial CRAN submission.
