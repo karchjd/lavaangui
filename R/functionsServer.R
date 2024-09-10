@@ -5,20 +5,17 @@ getGroupTable <- function(parTable) {
 }
 
 
-importModel <- function(session) {
+importModel <- function(session, full, importedModel) {
   imported <- FALSE
-  if (exists(".importedModel128498129481249124891284129", where = .GlobalEnv)) {
-    importedModel <- .GlobalEnv$.importedModel128498129481249124891284129
-  }
-  full <- .GlobalEnv$.full12849812948124912489128412948
   session$sendCustomMessage("full", message = full)
 
   makeNewVars <- function(vars, groups) {
     allCombs <- expand.grid(vars, groups)
     paste0(allCombs$Var1, ".", allCombs$Var2)
   }
+  
   # import model if present
-  if ((!imported) && (exists("importedModel"))) {
+  if ((!imported) && !(is.null(importedModel))) {
     parTable <- importedModel$parTable
     observed <- importedModel$obs
     latent <- importedModel$latent
