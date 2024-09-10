@@ -158,6 +158,9 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       promises::catch(
         fut,
         function(e) {
+          if(grepl("No process exists with this PID", e$message)){
+            e$message <- "Fitting cancelled by user"
+          }
           session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = e$message, type = "danger"))
           to_render(e)
         }
