@@ -13,6 +13,8 @@
 
   onMount(() => {
     // Initialize the Cytoscape instance
+    const bendName = "Bend";
+    const kinkName = "Kink";
     cy.edgeEditing({
       undoable: true,
       bendRemovalSensitivity: 16,
@@ -21,6 +23,12 @@
       useTrailingDividersAfterContextMenuOptions: false,
       enableCreateAnchorOnDrag: true,
       anchorShapeSizeFactor: 4,
+      addBendMenuItemTitle: `Add ${kinkName} Point`,
+      removeBendMenuItemTitle: `Remove ${kinkName} Point`,
+      removeAllBendMenuItemTitle: `Remove All${kinkName} Points`,
+      addControlMenuItemTitle: `Add ${bendName} Point`,
+      removeControlMenuItemTitle: `Remove ${bendName} Point`,
+      removeAllControlMenuItemTitle: `Remove All ${bendName} Points`,
     });
 
     cy.style().update();
