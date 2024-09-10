@@ -8,7 +8,7 @@
       action: showCommands,
     },
     {
-      name: "Open Manual",
+      name: "Open Tutorial",
       action: openManual,
     },
     {
@@ -23,7 +23,7 @@
   }
 
   function openManual() {
-    window.open("https://karchjd.github.io/docs.lavaangui/", "_blank");
+    window.open("https://doi.org/10.31234/osf.io/f4ary", "_blank");
   }
 
   function openAbout() {

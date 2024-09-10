@@ -11,7 +11,8 @@ Description: Provides a graphical user interface with an
     It offers two core functions:  first, lavaangui() launches a web application
     that allows users to specify models by drawing path diagrams, fitting them, 
     assessing model fit, and more; second, plot_interactive() creates 
-    interactive path diagrams from models specified in 'lavaan'.
+    interactive path diagrams from models specified in 'lavaan'. A tutorial can be found
+    here: Karch (2024) <doi: 10.31234/osf.io/f4ary>
 URL: https://solo-fsw.shinyapps.io/lavaangui/, https://github.com/karchjd/lavaangui
 BugReports: https://github.com/karchjd/lavaangui/issues
 License: GPL (>= 3)

@@ -6,3 +6,4 @@ This is a resubmission. In this version I have:
 * Removed single quotes around function names in the DESCRIPTION
 * Removed all calls to graphics::par
 * Removed print of version number
+* Added reference to tutorial
