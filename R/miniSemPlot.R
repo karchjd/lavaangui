@@ -1245,6 +1245,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
     {
       
       ### Rescale subScale to height in width relative to diameter of device in inches ###
+      din <- graphics::par("din")
       diamet <- sqrt(sum(din^2))
       subDim <- diamet * c(subScale, subScale2)
       
