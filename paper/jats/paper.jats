@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.2 20190208//EN"
+                  "JATS-publishing1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.2" article-type="other">
+<front>
+<journal-meta>
+<journal-id></journal-id>
+<journal-title-group>
+<journal-title>Journal of Open Source Software</journal-title>
+<abbrev-journal-title>JOSS</abbrev-journal-title>
+</journal-title-group>
+<issn publication-format="electronic">2475-9066</issn>
+<publisher>
+<publisher-name>Open Journals</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="publisher-id">0</article-id>
+<article-id pub-id-type="doi">N/A</article-id>
+<title-group>
+<article-title>lavaangui: A graphical user interface for lavaan with
+integrated diagrammer</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-1625-2822</contrib-id>
+<name>
+<surname>Karch</surname>
+<given-names>Julian D.</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+</contrib>
+<aff id="aff-1">
+<institution-wrap>
+<institution>Methodology and Statistics Department, Institute of
+Psychology, Leiden University, Leiden, the Netherlands</institution>
+<institution-id institution-id-type="ROR">00hx57361</institution-id>
+</institution-wrap>
+</aff>
+</contrib-group>
+<pub-date date-type="pub" publication-format="electronic" iso-8601-date="2024-09-12">
+<day>12</day>
+<month>9</month>
+<year>2024</year>
+</pub-date>
+<volume>¿VOL?</volume>
+<issue>¿ISSUE?</issue>
+<fpage>¿PAGE?</fpage>
+<permissions>
+<copyright-statement>Authors of papers retain copyright and release the
+work under a Creative Commons Attribution 4.0 International License (CC
+BY 4.0)</copyright-statement>
+<copyright-year>2022</copyright-year>
+<copyright-holder>The article authors</copyright-holder>
+<license license-type="open-access" xlink:href="https://creativecommons.org/licenses/by/4.0/">
+<license-p>Authors of papers retain copyright and release the work under
+a Creative Commons Attribution 4.0 International License (CC BY
+4.0)</license-p>
+</license>
+</permissions>
+<kwd-group kwd-group-type="author">
+<kwd>R</kwd>
+<kwd>psychology</kwd>
+<kwd>visualization</kwd>
+<kwd>path diagram</kwd>
+<kwd>statistics</kwd>
+<kwd>strucutral equation modeling</kwd>
+</kwd-group>
+</article-meta>
+</front>
+<body>
+<sec id="summary">
+  <title>Summary</title>
+  <p>Structural equation modeling (SEM) is a popular statistical
+  technique within the social and behavioral sciences. Path diagrams
+  facilitate the specification of Structural Equation Models because
+  drawing them is often faster and less error-prone than specifying a
+  model using equations or matrix algebra. lavaangui is a graphical user
+  interface that allows specifying SEMs by drawing path diagrams. It is
+  available as web application at https://lavaangui.org. Additionally,
+  it can be installed as an R package and then supports creating
+  interactive path diagrams from SEMs. A tutorial is available at
+  https://doi.org/10.31234/osf.io/f4ary.</p>
+</sec>
+<sec id="statement-of-need">
+  <title>Statement of need</title>
+  <p>Traditionally, SEMs had to be specified using a specific modeling
+  syntax. To simplify this process, most current versions of
+  closed-source commercial software packages, such as AMOS
+  (<xref alt="Arbuckle, 2019" rid="ref-IBMAMOS26" ref-type="bibr">Arbuckle,
+  2019</xref>), Stata
+  (<xref alt="StataCorp LLC, 2023" rid="ref-Stata18" ref-type="bibr">StataCorp
+  LLC, 2023</xref>), Mplus
+  (<xref alt="Muthén &amp; Muthén, 1998-2017" rid="ref-MuthenMuthen2017" ref-type="bibr">Muthén
+  &amp; Muthén, 1998-2017</xref>), EQS
+  (<xref alt="Bentler, 2006" rid="ref-Bentler2006EQS" ref-type="bibr">Bentler,
+  2006</xref>), and LISREL
+  (<xref alt="Jöreskog &amp; Sörbom, 22 C.E." rid="ref-LISREL" ref-type="bibr">Jöreskog
+  &amp; Sörbom, 22 C.E.</xref>), support model specification through the
+  drawing of path diagrams, in addition to syntax-based methods. These
+  graphical user interfaces are typically referred to as diagrammers.
+  While there are several open-source packages available for SEM
+  (<xref alt="Ernst &amp; Peikert, 2024" rid="ref-ernst2024structuralequationmodels" ref-type="bibr">Ernst
+  &amp; Peikert, 2024</xref>;
+  <xref alt="Fox et al., 2022" rid="ref-sem" ref-type="bibr">Fox et al.,
+  2022</xref>;
+  <xref alt="Igolkina &amp; Meshcheryakov, 2020" rid="ref-igolkina2020semopy" ref-type="bibr">Igolkina
+  &amp; Meshcheryakov, 2020</xref>;
+  <xref alt="JASP Team, 2024" rid="ref-JASP2024" ref-type="bibr">JASP
+  Team, 2024</xref>;
+  <xref alt="Neale et al., 2016" rid="ref-neale2016openmx" ref-type="bibr">Neale
+  et al., 2016</xref>;
+  <xref alt="Oertzen et al., 2015" rid="ref-von2015structural" ref-type="bibr">Oertzen
+  et al., 2015</xref>;
+  <xref alt="Rosseel, 2012" rid="ref-lavaan" ref-type="bibr">Rosseel,
+  2012</xref>;
+  <xref alt="The jamovi project, 2024" rid="ref-jamovi2024" ref-type="bibr">The
+  jamovi project, 2024</xref>;
+  <xref alt="van Lissa, 2024" rid="ref-tidySEM" ref-type="bibr">van
+  Lissa, 2024</xref>), only <inline-formula><alternatives>
+  <tex-math><![CDATA[\Omega]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
+  (<xref alt="Oertzen et al., 2015" rid="ref-von2015structural" ref-type="bibr">Oertzen
+  et al., 2015</xref>) includes a diagrammer. However,
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[\Omega]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
+  is standalone software and does not integrate well with other
+  open-source statistical software, particularly R. A practical issue is
+  that installing <inline-formula><alternatives>
+  <tex-math><![CDATA[\Omega]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
+  requires administrator privileges, which many researchers lack.
+  Additionally, <inline-formula><alternatives>
+  <tex-math><![CDATA[\Omega]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
+  uses its own routine to fit SEMs instead of one of the more popular
+  open-source packages. <monospace>lavaangui</monospace> addresses these
+  limitations: it can be installed as an R package, accessed without
+  installation via https://lavaangui.org on any computer with a browser,
+  and uses <monospace>lavaan</monospace> as a backend for modeling
+  fitting, which is arguably the most widely used open-source SEM
+  software.</p>
+</sec>
+<sec id="credits">
+  <title>Credits</title>
+  <p><monospace>lavaangui</monospace> consists of a frontend and a
+  backend. Most of the frontend is written in JavaScript, utilizing the
+  Svelte framework. For drawing path diagrams, the Cytoscape.js
+  (<xref alt="Franz et al., 2016" rid="ref-franz2016cytoscape" ref-type="bibr">Franz
+  et al., 2016</xref>) library is used, along with extensions described
+  in Dogrusoz et al.
+  (<xref alt="2018" rid="ref-Dogrusoz2018" ref-type="bibr">2018</xref>).
+  The CSS framework is Bootstrap, and Bootbox.js is employed for
+  displaying prompts. Parts of the frontend are written in R, using the
+  <monospace>Shiny</monospace>
+  (<xref alt="Chang et al., 2024" rid="ref-Shiny" ref-type="bibr">Chang
+  et al., 2024</xref>) and <monospace>DT</monospace>
+  (<xref alt="Xie et al., 2024" rid="ref-DT" ref-type="bibr">Xie et al.,
+  2024</xref>) packages.</p>
+  <p>The backend is written in R, as a <monospace>Shiny</monospace>
+  Server. The <monospace>lavaan</monospace>
+  (<xref alt="Rosseel, 2012" rid="ref-lavaan" ref-type="bibr">Rosseel,
+  2012</xref>) package is used for fitting structural equation models.
+  Some automatic layout algorithms are sourced from the semPlot
+  (<xref alt="Epskamp, 2015" rid="ref-epskamp2015semplot" ref-type="bibr">Epskamp,
+  2015</xref>) package, while the promises
+  (<xref alt="Cheng, 2024" rid="ref-promises" ref-type="bibr">Cheng,
+  2024</xref>) package enables asynchronous execution.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+  <title></title>
+  <ref id="ref-MuthenMuthen2017">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <name><surname>Muthén</surname><given-names>Linda K.</given-names></name>
+        <name><surname>Muthén</surname><given-names>Bengt O.</given-names></name>
+      </person-group>
+      <source>Mplus User’s Guide</source>
+      <publisher-name>Muthén &amp; Muthén</publisher-name>
+      <publisher-loc>Los Angeles, CA</publisher-loc>
+      <edition>8th</edition>
+    </element-citation>
+  </ref>
+  <ref id="ref-LISREL">
+    <element-citation>
+      <person-group person-group-type="author">
+        <name><surname>Jöreskog</surname><given-names>K. G.</given-names></name>
+        <name><surname>Sörbom</surname><given-names>D.</given-names></name>
+      </person-group>
+      <article-title>LISREL</article-title>
+      <publisher-name>https://www.ssicentral.com; Scientific Software International, Inc.</publisher-name>
+      <year iso-8601-date="0022">0022</year>
+    </element-citation>
+  </ref>
+  <ref id="ref-IBMAMOS26">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <name><surname>Arbuckle</surname><given-names>James L.</given-names></name>
+      </person-group>
+      <source>IBM SPSS Amos 26 User’s Guide</source>
+      <publisher-name>IBM Corporation</publisher-name>
+      <publisher-loc>Armonk, New York</publisher-loc>
+      <year iso-8601-date="2019">2019</year>
+    </element-citation>
+  </ref>
+  <ref id="ref-Bentler2006EQS">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <name><surname>Bentler</surname><given-names>Peter M.</given-names></name>
+      </person-group>
+      <source>EQS 6 Structural Equations Program Manual </source>
+      <publisher-name>Multivariate Software, Inc.</publisher-name>
+      <publisher-loc>Encino, CA</publisher-loc>
+      <year iso-8601-date="2006">2006</year>
+    </element-citation>
+  </ref>
+  <ref id="ref-Stata18">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <string-name>StataCorp LLC</string-name>
+      </person-group>
+      <source>Stata statistical software: Release 18</source>
+      <publisher-name>StataCorp LLC</publisher-name>
+      <publisher-loc>College Station, TX</publisher-loc>
+      <year iso-8601-date="2023">2023</year>
+    </element-citation>
+  </ref>
+  <ref id="ref-sem">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <name><surname>Fox</surname><given-names>John</given-names></name>
+        <name><surname>Nie</surname><given-names>Zhenghua</given-names></name>
+        <name><surname>Byrnes</surname><given-names>Jarrett</given-names></name>
+      </person-group>
+      <source>Sem: Structural equation models</source>
+      <year iso-8601-date="2022">2022</year>
+      <uri>https://CRAN.R-project.org/package=sem</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-neale2016openmx">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Neale</surname><given-names>Michael C.</given-names></name>
+        <name><surname>Hunter</surname><given-names>Michael D.</given-names></name>
+        <name><surname>Pritikin</surname><given-names>Joshua N.</given-names></name>
+        <name><surname>Zahery</surname><given-names>Mahsa</given-names></name>
+        <name><surname>Brick</surname><given-names>Timothy R.</given-names></name>
+        <name><surname>Kirkpatrick</surname><given-names>Robert M.</given-names></name>
+        <name><surname>Estabrook</surname><given-names>Ryne</given-names></name>
+        <name><surname>Bates</surname><given-names>Timothy C.</given-names></name>
+        <name><surname>Maes</surname><given-names>Hermine H.</given-names></name>
+        <name><surname>Boker</surname><given-names>Steven M.</given-names></name>
+      </person-group>
+      <article-title>OpenMx 2.0: Extended structural equation and statistical modeling</article-title>
+      <source>Psychometrika</source>
+      <publisher-name>Springer</publisher-name>
+      <year iso-8601-date="2016">2016</year>
+      <volume>81</volume>
+      <issue>2</issue>
+      <pub-id pub-id-type="doi">10.1007/s11336-014-9435-8</pub-id>
+      <fpage>535</fpage>
+      <lpage>549</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-lavaan">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Rosseel</surname><given-names>Yves</given-names></name>
+      </person-group>
+      <article-title>lavaan: An R package for structural equation modeling</article-title>
+      <source>Journal of Statistical Software</source>
+      <year iso-8601-date="2012">2012</year>
+      <volume>48</volume>
+      <issue>2</issue>
+      <pub-id pub-id-type="doi">10.18637/jss.v048.i02</pub-id>
+      <fpage>1</fpage>
+      <lpage>36</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-franz2016cytoscape">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Franz</surname><given-names>Max</given-names></name>
+        <name><surname>Lopes</surname><given-names>Christian T</given-names></name>
+        <name><surname>Huck</surname><given-names>Gerardo</given-names></name>
+        <name><surname>Dong</surname><given-names>Yue</given-names></name>
+        <name><surname>Sumer</surname><given-names>Onur</given-names></name>
+        <name><surname>Bader</surname><given-names>Gary D</given-names></name>
+      </person-group>
+      <article-title>Cytoscape.js: A graph theory library for visualisation and analysis</article-title>
+      <source>Bioinformatics</source>
+      <publisher-name>Oxford University Press</publisher-name>
+      <year iso-8601-date="2016">2016</year>
+      <volume>32</volume>
+      <issue>2</issue>
+      <fpage>309</fpage>
+      <lpage>311</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-igolkina2020semopy">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Igolkina</surname><given-names>Anna A</given-names></name>
+        <name><surname>Meshcheryakov</surname><given-names>Georgy</given-names></name>
+      </person-group>
+      <article-title>Semopy: A python package for structural equation modeling</article-title>
+      <source>Structural Equation Modeling: A Multidisciplinary Journal</source>
+      <publisher-name>Taylor &amp; Francis</publisher-name>
+      <year iso-8601-date="2020">2020</year>
+      <volume>27</volume>
+      <issue>6</issue>
+      <fpage>952</fpage>
+      <lpage>963</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-ernst2024structuralequationmodels">
+    <element-citation>
+      <person-group person-group-type="author">
+        <name><surname>Ernst</surname><given-names>M. S.</given-names></name>
+        <name><surname>Peikert</surname><given-names>A.</given-names></name>
+      </person-group>
+      <article-title>StructuralEquationModels.jl (v0.2.2)</article-title>
+      <publisher-name>https://doi.org/10.5281/zenodo.10475661; Zenodo</publisher-name>
+      <year iso-8601-date="2024">2024</year>
+      <pub-id pub-id-type="doi">10.5281/zenodo.10475661</pub-id>
+    </element-citation>
+  </ref>
+  <ref id="ref-von2015structural">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Oertzen</surname><given-names>Timo von</given-names></name>
+        <name><surname>Brandmaier</surname><given-names>Andreas M</given-names></name>
+        <name><surname>Tsang</surname><given-names>Siny</given-names></name>
+      </person-group>
+      <article-title>Structural equation modeling with \Omeganyx</article-title>
+      <source>Structural Equation Modeling: A Multidisciplinary Journal</source>
+      <publisher-name>Taylor &amp; Francis</publisher-name>
+      <year iso-8601-date="2015">2015</year>
+      <volume>22</volume>
+      <issue>1</issue>
+      <fpage>148</fpage>
+      <lpage>161</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-JASP2024">
+    <element-citation>
+      <person-group person-group-type="author">
+        <string-name>JASP Team</string-name>
+      </person-group>
+      <article-title>JASP (Version 0.18.3)[Computer software]</article-title>
+      <year iso-8601-date="2024">2024</year>
+      <uri>https://jasp-stats.org/</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-jamovi2024">
+    <element-citation>
+      <person-group person-group-type="author">
+        <string-name>The jamovi project</string-name>
+      </person-group>
+      <article-title>Jamovi (version 2.5) [computer software]</article-title>
+      <publisher-name>https://www.jamovi.org</publisher-name>
+      <year iso-8601-date="2024">2024</year>
+    </element-citation>
+  </ref>
+  <ref id="ref-epskamp2015semplot">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Epskamp</surname><given-names>Sacha</given-names></name>
+      </person-group>
+      <article-title>semPlot: Unified visualizations of structural equation models</article-title>
+      <source>Structural Equation Modeling: a multidisciplinary journal</source>
+      <publisher-name>Taylor &amp; Francis</publisher-name>
+      <year iso-8601-date="2015">2015</year>
+      <volume>22</volume>
+      <issue>3</issue>
+      <fpage>474</fpage>
+      <lpage>483</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-Dogrusoz2018">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Dogrusoz</surname><given-names>U.</given-names></name>
+        <name><surname>Karacelik</surname><given-names>A.</given-names></name>
+        <name><surname>Safarli</surname><given-names>I.</given-names></name>
+        <name><surname>Balci</surname><given-names>H.</given-names></name>
+        <name><surname>Dervishi</surname><given-names>L.</given-names></name>
+        <name><surname>Siper</surname><given-names>M. C.</given-names></name>
+      </person-group>
+      <article-title>Efficient methods and readily customizable libraries for managing complexity of large networks</article-title>
+      <source>PLoS ONE</source>
+      <year iso-8601-date="2018">2018</year>
+      <volume>13</volume>
+      <issue>5</issue>
+      <pub-id pub-id-type="doi">10.1371/journal.pone.0197238</pub-id>
+      <fpage>e0197238</fpage>
+      <lpage></lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-Shiny">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <name><surname>Chang</surname><given-names>Winston</given-names></name>
+        <name><surname>Cheng</surname><given-names>Joe</given-names></name>
+        <name><surname>Allaire</surname><given-names>JJ</given-names></name>
+        <name><surname>Sievert</surname><given-names>Carson</given-names></name>
+        <name><surname>Schloerke</surname><given-names>Barret</given-names></name>
+        <name><surname>Xie</surname><given-names>Yihui</given-names></name>
+        <name><surname>Allen</surname><given-names>Jeff</given-names></name>
+        <name><surname>McPherson</surname><given-names>Jonathan</given-names></name>
+        <name><surname>Dipert</surname><given-names>Alan</given-names></name>
+        <name><surname>Borges</surname><given-names>Barbara</given-names></name>
+      </person-group>
+      <source>Shiny: Web application framework for r</source>
+      <year iso-8601-date="2024">2024</year>
+      <uri>https://CRAN.R-project.org/package=shiny</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-DT">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <name><surname>Xie</surname><given-names>Yihui</given-names></name>
+        <name><surname>Cheng</surname><given-names>Joe</given-names></name>
+        <name><surname>Tan</surname><given-names>Xianying</given-names></name>
+      </person-group>
+      <source>DT: A wrapper of the JavaScript library ’DataTables’</source>
+      <year iso-8601-date="2024">2024</year>
+      <uri>https://CRAN.R-project.org/package=DT</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-promises">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <name><surname>Cheng</surname><given-names>Joe</given-names></name>
+      </person-group>
+      <source>Promises: Abstractions for promise-based asynchronous programming</source>
+      <year iso-8601-date="2024">2024</year>
+      <uri>https://CRAN.R-project.org/package=promises</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-tidySEM">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <name><surname>van Lissa</surname><given-names>Caspar J.</given-names></name>
+      </person-group>
+      <source>tidySEM: Tidy structural equation modeling</source>
+      <year iso-8601-date="2024">2024</year>
+      <uri>https://CRAN.R-project.org/package=tidySEM</uri>
+    </element-citation>
+  </ref>
+</ref-list>
+</back>
+</article>
