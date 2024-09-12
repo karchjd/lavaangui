@@ -72,21 +72,25 @@ a Creative Commons Attribution 4.0 International License (CC BY
 <sec id="summary">
   <title>Summary</title>
   <p>Structural equation modeling (SEM) is a popular statistical
-  technique within the social and behavioral sciences. Path diagrams
-  facilitate the specification of Structural Equation Models because
-  drawing them is often faster and less error-prone than specifying a
-  model using equations or matrix algebra. lavaangui is a graphical user
-  interface that allows specifying SEMs by drawing path diagrams. It is
-  available as web application at https://lavaangui.org. Additionally,
-  it can be installed as an R package and then supports creating
-  interactive path diagrams from SEMs. A tutorial is available at
+  technique within the social and behavioral sciences. SEMs can be
+  represented as graphs, so called path diagrams. Path diagrams
+  facilitate the specification of SEMs because drawing them is often
+  faster and less error-prone than specifying a model using equations or
+  matrix algebra. lavaangui is a graphical user interface that allows
+  specifying and fitting SEMs by drawing path diagrams. It is available
+  as web application at https://lavaangui.org. Additionally, it can be
+  installed as an R package and then supports creating interactive path
+  diagrams from SEMs specified in the popular SEM package
+  <monospace>lavaan</monospace>. A detailed tutorial of the graphical
+  user interface is available at
   https://doi.org/10.31234/osf.io/f4ary.</p>
 </sec>
 <sec id="statement-of-need">
   <title>Statement of need</title>
   <p>Traditionally, SEMs had to be specified using a specific modeling
-  syntax. To simplify this process, most current versions of
-  closed-source commercial software packages, such as AMOS
+  syntax, which created an unnecessary entry barrier for applied
+  researchers. To remidy this, most current versions of closed-source
+  commercial software packages, such as AMOS
   (<xref alt="Arbuckle, 2019" rid="ref-IBMAMOS26" ref-type="bibr">Arbuckle,
   2019</xref>), Stata
   (<xref alt="StataCorp LLC, 2023" rid="ref-Stata18" ref-type="bibr">StataCorp
@@ -97,9 +101,9 @@ a Creative Commons Attribution 4.0 International License (CC BY
   2006</xref>), and LISREL
   (<xref alt="Jöreskog &amp; Sörbom, 22 C.E." rid="ref-LISREL" ref-type="bibr">Jöreskog
   &amp; Sörbom, 22 C.E.</xref>), support model specification through the
-  drawing of path diagrams, in addition to syntax-based methods. These
-  graphical user interfaces are typically referred to as diagrammers.
-  While there are several open-source packages available for SEM
+  drawing of path diagrams. These graphical user interfaces are
+  typically referred to as diagrammers. While there are many open-source
+  packages available for SEM
   (<xref alt="Ernst &amp; Peikert, 2024" rid="ref-ernst2024structuralequationmodels" ref-type="bibr">Ernst
   &amp; Peikert, 2024</xref>;
   <xref alt="Fox et al., 2022" rid="ref-sem" ref-type="bibr">Fox et al.,
@@ -130,17 +134,16 @@ a Creative Commons Attribution 4.0 International License (CC BY
   that installing <inline-formula><alternatives>
   <tex-math><![CDATA[\Omega]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
-  requires administrator privileges, which many researchers lack.
-  Additionally, <inline-formula><alternatives>
+  requires administrator privileges, which many researchers lack on
+  their work computers. Additionally, <inline-formula><alternatives>
   <tex-math><![CDATA[\Omega]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
   uses its own routine to fit SEMs instead of one of the more popular
   open-source packages. <monospace>lavaangui</monospace> addresses these
   limitations: it can be installed as an R package, accessed without
   installation via https://lavaangui.org on any computer with a browser,
-  and uses <monospace>lavaan</monospace> as a backend for modeling
-  fitting, which is arguably the most widely used open-source SEM
-  software.</p>
+  and builds on <monospace>lavaan</monospace>, which is arguably the
+  most widely used open-source SEM software.</p>
 </sec>
 <sec id="credits">
   <title>Credits</title>
@@ -148,8 +151,8 @@ a Creative Commons Attribution 4.0 International License (CC BY
   backend. Most of the frontend is written in JavaScript, utilizing the
   Svelte framework. For drawing path diagrams, the Cytoscape.js
   (<xref alt="Franz et al., 2016" rid="ref-franz2016cytoscape" ref-type="bibr">Franz
-  et al., 2016</xref>) library is used, along with extensions described
-  in Dogrusoz et al.
+  et al., 2016</xref>) library is used, along with the extensions
+  described in Dogrusoz et al.
   (<xref alt="2018" rid="ref-Dogrusoz2018" ref-type="bibr">2018</xref>).
   The CSS framework is Bootstrap, and Bootbox.js is employed for
   displaying prompts. Parts of the frontend are written in R, using the
@@ -161,8 +164,8 @@ a Creative Commons Attribution 4.0 International License (CC BY
   <p>The backend is written in R, as a <monospace>Shiny</monospace>
   Server. The <monospace>lavaan</monospace>
   (<xref alt="Rosseel, 2012" rid="ref-lavaan" ref-type="bibr">Rosseel,
-  2012</xref>) package is used for fitting structural equation models.
-  Some automatic layout algorithms are sourced from the semPlot
+  2012</xref>) package is used for model fitting. Some automatic layout
+  algorithms are sourced from the semPlot
   (<xref alt="Epskamp, 2015" rid="ref-epskamp2015semplot" ref-type="bibr">Epskamp,
   2015</xref>) package, while the promises
   (<xref alt="Cheng, 2024" rid="ref-promises" ref-type="bibr">Cheng,
