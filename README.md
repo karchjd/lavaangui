@@ -6,7 +6,6 @@
 )
 [![](https://tokei.rs/b1/github/XAMPPRocky/tokei)](https://github.com/karchjd/lavaangui)
 ![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
-
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 
 
