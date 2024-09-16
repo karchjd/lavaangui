@@ -416,191 +416,6 @@ qgraph <- function( input, ... )
     qgraphObject$Arguments <- getArgs(c(qgraphObject$Arguments,def))
   }
   
-  # If qgraph object is used as input, recreate edgelist input:
-  if (is(input,"qgraph")) 
-  {
-    # if (is.null(qgraphObject$Arguments$directed)) qgraphObject$Arguments$directed <- input$Edgelist$directed
-    # if (is.null(qgraphObject$Arguments$bidirectional)) qgraphObject$Arguments$bidirectional <- input$Edgelist$bidirectional
-    # if (is.null(qgraphObject$Arguments$nNodes)) qgraphObject$Arguments$nNodes <- input$graphAttributes$Graph$nNodes
-    # 
-    if (!is.null(qgraphObject$Arguments$input)){
-      input <- qgraphObject$Arguments$input
-    } else {
-      if(input[['graphAttributes']][['Graph']][['weighted']])
-      {
-        input <- cbind(input$Edgelist$from,input$Edgelist$to,input$Edgelist$weight)
-      } else
-      {
-        input <- cbind(input$Edgelist$from,input$Edgelist$to)
-      }      
-    }
-    
-    # qgraphObject$Arguments$edgelist <- TRUE
-  }
-  
-  ### PCALG AND GRAPHNEL ###
-  if (is(input,"pcAlgo") | is(input,"graphNEL"))
-  {
-    if (is(input,"pcAlgo")) graphNEL <- input@graph else graphNEL <- input
-    qgraphObject$Arguments$directed <- graphNEL@graphData$edgemode == "directed"
-    qgraphObject$Arguments$bidirectional <- TRUE
-    TempLabs  <- graphNEL@nodes
-    if (is.null(qgraphObject$Arguments$labels)) qgraphObject$Arguments$labels  <- graphNEL@nodes
-    weights <- sapply(graphNEL@edgeData@data,'[[','weight')
-    
-    EL <- laply(strsplit(names(weights),split="\\|"),'[',c(1,2))
-    #       EL <- apply(EL,2,as.numeric)
-    EL[,1] <- match(EL[,1],TempLabs)
-    EL[,2] <- match(EL[,2],TempLabs)
-    mode(EL) <- "numeric"
-    # Create mixed graph if pcAlgo:
-    if (is(input,"pcAlgo"))
-    {
-      srtInput <- aaply(EL,1,sort)
-      qgraphObject$Arguments$directed <- !(duplicated(srtInput)|duplicated(srtInput,fromLast=TRUE))
-      rm(srtInput)
-    }
-    input <- EL
-    rm(EL)
-    if (any(weights!=1)) input <- cbind(input,weights)
-    qgraphObject$Arguments$edgelist <- TRUE
-  }
-  ### bnlearn ###
-  if (is(input,"bn"))
-  {
-    # browser()
-    bnobject <- input
-    input <- as.matrix(bnobject$arcs)
-    TempLabs  <- names(bnobject$nodes)
-    if (is.null(qgraphObject$Arguments$labels)) qgraphObject$Arguments$labels  <- TempLabs
-    
-    input[] <- as.numeric(match(c(input), TempLabs))
-    mode(input) <- "numeric"
-    
-    srtInput <- aaply(input,1,sort)
-    input <- input[!duplicated(srtInput),]
-    qgraphObject$Arguments$directed <- !(duplicated(srtInput)|duplicated(srtInput,fromLast=TRUE))
-    qgraphObject$Arguments$directed <- qgraphObject$Arguments$directed[!duplicated(srtInput)]
-    qgraphObject$Arguments$edgelist <- TRUE
-  }
-  if (is(input,"bn.strength"))
-  {
-    bnobject <- input
-    input <- as.matrix(bnobject[c("from","to","strength")])
-    TempLabs  <- unique(c(bnobject$from,bnobject$to))
-    if (is.null(qgraphObject$Arguments$labels)) qgraphObject$Arguments$labels  <- TempLabs
-    
-    input[,1:2] <- as.numeric(match(c(input[,1:2]), TempLabs))
-    
-    input <- as.matrix(input)
-    mode(input) <- "numeric"
-    
-    if (is.null(qgraphObject$Arguments$directed))
-    {
-      if (is.null(bnobject$direction) || all(bnobject$direction %in% c(0,0.5)))
-      { 
-        qgraphObject$Arguments$directed <- FALSE
-      } else qgraphObject$Arguments$directed <- TRUE
-    }
-    
-    if (!is.null(bnobject$direction))
-    {
-      input[,3] <- input[,3] * ( 1 - qgraphObject$Arguments$directed * (1- bnobject$direction ))
-    }
-    
-    # remove undirect duplicates:
-    srt <- cbind( pmin(input[,1],input[,2]), pmax(input[,1],input[,2]))
-    input <- input[!(duplicated(srt)&!qgraphObject$Arguments$directed),  ]
-    rm(srt)
-    
-    #     srtInput <- aaply(input,1,sort)
-    #     input <- input[!duplicated(srtInput),]
-    #     qgraphObject$Arguments$directed <- !(duplicated(srtInput)|duplicated(srtInput,fromLast=TRUE))
-    #     qgraphObject$Arguments$directed <- qgraphObject$Arguments$directed[!duplicated(srtInput)]
-    
-    qgraphObject$Arguments$directed <- TRUE
-    
-    qgraphObject$Arguments$probabilityEdges <- TRUE
-    
-    if (is.null( qgraphObject$Arguments$parallelEdge))  qgraphObject$Arguments$parallelEdge <- TRUE
-    
-  }
-  
-  ### BDgraph ####
-  if (is(input,"bdgraph"))
-  {
-    
-    # browser()
-    # stop("BDgraph support has temporarily been removed")
-    
-    if(is.null(qgraphObject$Arguments[['BDgraph']])){
-      BDgraph=c("phat","Khat")
-    } else {
-      BDgraph=qgraphObject$Arguments[['BDgraph']]
-    } 
-    if (all(c("Khat","phat")%in%BDgraph)) layout(t(1:2))
-    
-    if(is.null(qgraphObject$Arguments[['BDtitles']])) BDtitles <- TRUE else BDtitles <- qgraphObject$Arguments[['BDtitles']]
-    
-    
-    Res <- list()
-    
-    if (isTRUE(which(BDgraph == "phat") < which(BDgraph == "Khat")))
-    {
-      if(!requireNamespace("BDgraph")) stop("'BDgraph' package needs to be installed.")
-      # phat:
-      W <- as.matrix(BDgraph::plinks(input))
-      W <- W + t(W)
-      Res[["phat"]] <- do.call(qgraph,c(list(input=W,probabilityEdges = TRUE),qgraphObject$Arguments))
-      L <- Res[["phat"]]$layout
-      
-      if (BDtitles) text(mean(par('usr')[1:2]),par("usr")[4] - (par("usr")[4] - par("usr")[3])/40,"Posterior probabilities", adj = c(0.5,1))
-      
-      # Khat:
-      W <- as.matrix(input$K_hat)
-      # diag(W) <- -1*diag(W)
-      # W <-  - W / sqrt(diag(W)%o%diag(W))
-      W <- wi2net(W)
-      Res[["Khat"]] <- do.call(qgraph,c(list(input = W,layout = L), qgraphObject$Arguments))
-      L <- Res[["Khat"]]$layout
-      if (BDtitles) text(mean(par('usr')[1:2]),par("usr")[4] - (par("usr")[4] - par("usr")[3])/40,"Mean partial correlations", adj = c(0.5,1))
-      
-    } else
-    {
-      if ("Khat" %in% BDgraph)
-      {
-        W <- as.matrix(input$K_hat)
-        # diag(W) <- -1*diag(W)
-        # W <-  - W / sqrt(diag(W)%o%diag(W))
-        W <- wi2net(input$K_hat)
-        Res[["Khat"]] <- do.call(qgraph,c(list(input=W),qgraphObject$Arguments))
-        L <- Res[["Khat"]]$layout
-        if (BDtitles) text(mean(par('usr')[1:2]),par("usr")[4],"Mean partial correlations", adj = c(0.5,1))
-      } else L <- qgraphObject$Arguments$layout
-      
-      if ("phat" %in% BDgraph)
-      {
-        W <- as.matrix(BDgraph::plinks(input))
-        W <- W + t(W)
-        Res[["phat"]] <- do.call(qgraph,c(list(input = W,layout = L,probabilityEdges= TRUE), qgraphObject$Arguments))
-        if (BDtitles) text(mean(par('usr')[1:2]),par("usr")[4],"Posterior probabilities", adj = c(0.5,1))
-      }
-    }
-    
-    if (length(Res)==1) Res <- Res[[1]]
-    return(Res)
-    
-  }
-  
-  
-  ### GLASSO ###
-  # glasso has no class but is a list with elements w, wi, loglik, errflag, approx, del and niter:
-  if (is(input, "list") && all(c('w', 'wi', 'loglik','errflag', 'approx', 'del',  'niter' ) %in% names(input)))
-  {
-    input <- wi2net(input$wi)
-  }
-  
-  
   ### Check arguments list:
   allArgs <- c("input", "layout", "groups", "minimum", "maximum", "cut", "details", 
                "threshold", "palette", "theme", "graph", "threshold", "sampleSize", 
@@ -678,20 +493,7 @@ qgraph <- function( input, ... )
   } else FDRcutoff <- qgraphObject$Arguments[['FDRcutoff']]  
   
   
-  ### HUGE (select via EBIC):
-  if (is(input,"huge"))
-  {
-    if (input$method != "glasso") stop("Only 'glasso' method is supported")
-    if(!requireNamespace("huge")) stop("'huge' package needs to be installed.")
-    input <- huge::huge.select(input, "ebic", ebic.gamma = tuning)
-  }
   
-  ### HUGE select ###
-  if (is(input,"select"))
-  {
-    if (input$method != "glasso") stop("Only 'glasso' method is supported")
-    input <- wi2net(forceSymmetric(input$opt.icov))
-  }
   
   # Coerce input to matrix:
   input <- as.matrix(input)
@@ -815,11 +617,6 @@ qgraph <- function( input, ... )
   
   if(is.null(qgraphObject$Arguments[['pieBorder']])){
     pieBorder <- .15
-    if (any(pieBorder < 0 | pieBorder > 1)){
-      stop("Values in the 'pieBorder' argument must be within [0,1]")
-    }
-  } else {
-    pieBorder <- qgraphObject$Arguments[['pieBorder']]
   }
   
   if(is.null(qgraphObject$Arguments[['pieStart']])){
@@ -897,33 +694,6 @@ qgraph <- function( input, ... )
   if(is.null(qgraphObject$Arguments[['pie']])){
     drawPies <- FALSE
     pie <- NULL
-  } else {
-    # Obtain pie values:
-    pie <- qgraphObject$Arguments[['pie']]
-    
-    # Check values:
-    if (length(pie) != nNodes){
-      stop("Length of 'pie' argument must be equal to number of nodes.")
-    }
-    #     if (any(pie < 0 | pie > 1)){
-    #       stop("Values in the 'pie' argument must be within [0,1]")
-    #     }
-    
-    
-    # Dummy subplots (to be filed later)
-    # subplots <- vector("list", nNodes)
-    
-    # Overwrite subplotbg to NA:
-    # subplotbg <- NA
-    
-    # Overwrite borders to FALSE:
-    # borders <- FALSE
-    
-    # Overwrite shape to circle:
-    # shape <- "circle"
-    
-    # Logical:
-    drawPies <- TRUE
   }
   
   # Pie CI:
@@ -948,69 +718,6 @@ qgraph <- function( input, ... )
     }
   } 
   
-  # Set up the pieCIs:
-  if (isTRUE(pieCIs)){
-    drawPies <- TRUE
-    
-    if (!is.null(qgraphObject$Arguments[['pieCImid']])){
-      pieCImid <- qgraphObject$Arguments[['pieCImid']]
-    } else stop("'pieCImid' may not be missing when pieCIs are used")
-    
-    
-    # Vectorize:
-    pieCIlower <- rep(pieCIlower,length=nNodes) 
-    pieCIupper <- rep(pieCIupper,length=nNodes) 
-    pieCImid <- rep(pieCImid, length=nNodes)
-    
-    # Check mid:
-    if (any(pieCIlower > pieCImid | pieCIupper < pieCImid)){
-      stop("'pieCImid' is not between 'pieCIlower' and 'pieCIupper'")
-    }
-    
-    # Check bounds:
-    if (any(pieCIlower < 0) | any(pieCImid > 1)){
-      stop("pieCI range should be between 0 and 1")
-    }
-    
-    # If pie argument is used, give an error:
-    if(!is.null(qgraphObject$Arguments[['pie']])){
-      stop("'pie' argument cannot be used in combination with pieCIs")
-    }
-    
-    # get the size of the point:
-    # "pieCIlower", "pieCIupper", "pieCIpointcex", "pieCIpointcol"
-    
-    if(!is.null(qgraphObject$Arguments[['pieCIpointcex']])){
-      pieCIpointcex <- qgraphObject$Arguments[['pieCIpointcex']]
-    } else {
-      pieCIpointcex <- 0.01
-    }
-    pieCIpointcex <-  rep(pieCIpointcex, length=nNodes)
-    
-    if(!is.null(qgraphObject$Arguments[['pieCIpointcol']])){
-      pieCIpointcol <- qgraphObject$Arguments[['pieCIpointcol']]
-    } else {
-      pieCIpointcol <- "black"
-    }
-    pieCIpointcol <- rep(pieCIpointcol, length = nNodes)
-    
-    # Now form the pie argument:
-    pieTab <- cbind(
-      0,
-      pieCIlower,
-      pmax(pieCIlower, pieCImid - (pieCIpointcex/2)),
-      pmin(pieCIupper, pieCImid + (pieCIpointcex/2)),
-      pieCIupper,
-      1)
-    pie <- list()
-    pieColor2 <- list()
-    
-    for (i in seq_len(nrow(pieTab))){
-      pie[[i]] <- diff(pieTab[i,])
-      pieColor2[[i]] <- c("white",pieColor[i],pieCIpointcol[i],pieColor[i],"white")
-    }
-    pieColor <- pieColor2
-  }
   
   
   
@@ -1076,7 +783,6 @@ qgraph <- function( input, ... )
   
   
   #####
-  
   
   
   
