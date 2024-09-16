@@ -24,7 +24,7 @@ When submitting a pull request (PR), please adhere to the following guidelines:
 #### Before Starting
 
 1. Ensure there is an open issue that addresses the problem/feature you are working on. Thus, if there is not already an issue, please open an issue.
-2. Fork the repository and create your branch from the `dev` branch.
+2. Fork the repository and create your branch from the `main` branch.
 
 ### Building
 
