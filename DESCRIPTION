@@ -29,7 +29,6 @@ Imports:
     methods (>= 4.3.3),
     colorspace (>= 2.1.0),
     igraph (>= 2.0.3),
-    qgraph (>= 1.9.8),
     tools (>= 4.3.3),
     utils (>= 4.3.3),
     DT (>= 0.33),

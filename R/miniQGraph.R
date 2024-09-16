@@ -1,0 +1,3480 @@
+addTrans <- function(color,trans)
+{
+  # This function adds transparancy to a color.
+  # Define transparancy with an integer between 0 and 255
+  # 0 being fully transparant and 255 being fully visable
+  # Works with either color and trans a vector of equal length,
+  # or one of the two of length 1.
+  
+  if (length(color)!=length(trans)&!any(c(length(color),length(trans))==1)) stop("Vector lengths not correct")
+  if (length(color)==1 & length(trans)>1) color <- rep(color,length(trans))
+  if (length(trans)==1 & length(color)>1) trans <- rep(trans,length(color))
+  
+  num2hex <- function(x)
+  {
+    hex <- unlist(strsplit("0123456789ABCDEF",split=""))
+    return(paste(hex[(x-x%%16)/16+1],hex[x%%16+1],sep=""))
+  }
+  rgb <- rbind(col2rgb(color),trans)
+  res <- paste("#",apply(apply(rgb,2,num2hex),2,paste,collapse=""),sep="")
+  return(res)
+}
+
+ELLIPSEPOLY <- list(
+  x = sin(seq(0, 2*pi, length = 200)),
+  y = cos(seq(0, 2*pi, length = 200))
+)
+
+HEARTPOLY <- structure(list(x = c(0.000524613718038136, 0.00152037576817299, 
+                                  0.00837191368505907, 0.0263525265968505, 0.0596231845491932, 
+                                  0.110803218240353, 0.180680475594751, 0.268087394223726, 0.369954594919716, 
+                                  0.481537715428025, 0.596797695163824, 0.70890097596103, 0.810795329588381, 
+                                  0.895810220726289, 0.95822837243697, 0.993777720620083, 1, 0.976463167095426, 
+                                  0.924798756665914, 0.848560847051974, 0.752919185599284, 0.644213780440664, 
+                                  0.529410581862747, 0.415506655649061, 0.308937708512294, 0.21504056435074, 
+                                  0.137618233447556, 0.0786460081162648, 0.0381443807024719, 0.0142296425596522, 
+                                  0.0033371202850081, 0.000596558943702696, 0.000325551274901859, 
+                                  -0.00340364703380058, -0.0161751396581412, -0.0426714553619016, 
+                                  -0.0861970864784513, -0.148326642404516, -0.22870961369511, -0.325049731954249, 
+                                  -0.433261288308903, -0.547788934599377, -0.662062851652114, -0.769049036210921, 
+                                  -0.861845916483694, -0.934274319260742, -0.981408353675419, -1, 
+                                  -0.988759630359335, -0.948467499354436, -0.881906282519685, -0.79362066640824, 
+                                  -0.689525383893214, -0.576396567854278, -0.461291662282501, -0.350949456597994, 
+                                  -0.251223532033918, -0.166599374905229, -0.0998378919663984, 
+                                  -0.0517767300327744, -0.0213066683594325, -0.00552468083396929, 
+                                  -4.94560549954004e-05), y = c(0.520897709618179, 0.534947678325485, 
+                                                                0.575452559134198, 0.637673315472304, 0.714338676813725, 0.796497437137179, 
+                                                                0.87454802681761, 0.939310336192077, 0.98300223008988, 1, 0.987295403433758, 
+                                                                0.944606765832239, 0.874151080567606, 0.78013077798753, 0.66802603706674, 
+                                                                0.543805951388826, 0.413176650345883, 0.28097147888861, 0.15076013428112, 
+                                                                0.024715092692505, -0.0962689496523439, -0.212246769666327, -0.323760566618399, 
+                                                                -0.43133676232965, -0.535035885584381, -0.634135831892105, -0.727002022607152, 
+                                                                -0.811163164401614, -0.883574411157736, -0.941016958598965, -0.980559871117998, 
+                                                                -1, -0.998200691457891, -0.975268605096653, -0.932537068881262, 
+                                                                -0.872358940152541, -0.797745974695624, -0.711919363179301, -0.617852572062957, 
+                                                                -0.517889982248489, -0.413512473049402, -0.305295947111203, -0.193074914032843, 
+                                                                -0.0762862599001901, 0.045565535450107, 0.172405369550093, 0.303141763887568, 
+                                                                0.435369118261749, 0.565288730801492, 0.687886497384175, 0.79736440992733, 
+                                                                0.887780569712151, 0.953815194758073, 0.99155416691318, 0.999171547693052, 
+                                                                0.977400335131055, 0.929705927528264, 0.86211598567256, 0.782708083545859, 
+                                                                0.700805731636508, 0.625976704926773, 0.566958524171822, 0.530649611127533
+                                  )), .Names = c("x", "y"))
+
+STARPOLY = structure(list(x = c(0, 0.0123744263640521, 0.0247488527281041, 
+                                0.0371232790921562, 0.0494977054562083, 0.0618721318202603, 0.0742465581843124, 
+                                0.0866209845483645, 0.0989954109124165, 0.111369837276469, 0.123744263640521, 
+                                0.136118690004573, 0.148493116368625, 0.160867542732677, 0.173241969096729, 
+                                0.185616395460781, 0.197990821824833, 0.210365248188885, 0.222739674552937, 
+                                0.235114100916989, 0.235114100916989, 0.272795280673735, 0.31047646043048, 
+                                0.348157640187226, 0.385838819943971, 0.423519999700717, 0.461201179457462, 
+                                0.498882359214208, 0.536563538970953, 0.574244718727699, 0.611925898484444, 
+                                0.64960707824119, 0.687288257997935, 0.724969437754681, 0.762650617511426, 
+                                0.800331797268172, 0.838012977024917, 0.875694156781663, 0.913375336538408, 
+                                0.951056516295154, 0.951056516295154, 0.921023152622675, 0.890989788950196, 
+                                0.860956425277718, 0.830923061605239, 0.800889697932761, 0.770856334260282, 
+                                0.740822970587804, 0.710789606915325, 0.680756243242847, 0.650722879570368, 
+                                0.62068951589789, 0.590656152225411, 0.560622788552933, 0.530589424880454, 
+                                0.500556061207976, 0.470522697535497, 0.440489333863019, 0.41045597019054, 
+                                0.380422606518061, 0.380422606518061, 0.391336429979873, 0.402250253441684, 
+                                0.413164076903495, 0.424077900365306, 0.434991723827117, 0.445905547288928, 
+                                0.45681937075074, 0.467733194212551, 0.478647017674362, 0.489560841136173, 
+                                0.500474664597984, 0.511388488059795, 0.522302311521606, 0.533216134983417, 
+                                0.544129958445229, 0.55504378190704, 0.565957605368851, 0.576871428830662, 
+                                0.587785252292473, 0.587785252292473, 0.556849186382343, 0.525913120472213, 
+                                0.494977054562083, 0.464040988651953, 0.433104922741822, 0.402168856831692, 
+                                0.371232790921562, 0.340296725011432, 0.309360659101302, 0.278424593191172, 
+                                0.247488527281041, 0.216552461370911, 0.185616395460781, 0.154680329550651, 
+                                0.123744263640521, 0.0928081977303905, 0.0618721318202603, 0.0309360659101302, 
+                                4.89858719658941e-17, 4.89858719658941e-17, -0.0309360659101301, 
+                                -0.0618721318202603, -0.0928081977303904, -0.123744263640521, 
+                                -0.154680329550651, -0.185616395460781, -0.216552461370911, -0.247488527281041, 
+                                -0.278424593191171, -0.309360659101302, -0.340296725011432, -0.371232790921562, 
+                                -0.402168856831692, -0.433104922741822, -0.464040988651952, -0.494977054562083, 
+                                -0.525913120472213, -0.556849186382343, -0.587785252292473, -0.587785252292473, 
+                                -0.576871428830662, -0.565957605368851, -0.55504378190704, -0.544129958445228, 
+                                -0.533216134983417, -0.522302311521606, -0.511388488059795, -0.500474664597984, 
+                                -0.489560841136173, -0.478647017674362, -0.46773319421255, -0.456819370750739, 
+                                -0.445905547288928, -0.434991723827117, -0.424077900365306, -0.413164076903495, 
+                                -0.402250253441684, -0.391336429979873, -0.380422606518061, -0.380422606518061, 
+                                -0.41045597019054, -0.440489333863019, -0.470522697535497, -0.500556061207976, 
+                                -0.530589424880454, -0.560622788552933, -0.590656152225411, -0.62068951589789, 
+                                -0.650722879570368, -0.680756243242847, -0.710789606915325, -0.740822970587804, 
+                                -0.770856334260283, -0.800889697932761, -0.83092306160524, -0.860956425277718, 
+                                -0.890989788950197, -0.921023152622675, -0.951056516295154, -0.951056516295154, 
+                                -0.913375336538408, -0.875694156781663, -0.838012977024917, -0.800331797268172, 
+                                -0.762650617511426, -0.724969437754681, -0.687288257997935, -0.64960707824119, 
+                                -0.611925898484444, -0.574244718727699, -0.536563538970953, -0.498882359214208, 
+                                -0.461201179457462, -0.423519999700717, -0.385838819943971, -0.348157640187226, 
+                                -0.31047646043048, -0.272795280673735, -0.235114100916989, -0.235114100916989, 
+                                -0.222739674552937, -0.210365248188885, -0.197990821824833, -0.185616395460781, 
+                                -0.173241969096729, -0.160867542732677, -0.148493116368625, -0.136118690004573, 
+                                -0.123744263640521, -0.111369837276469, -0.0989954109124166, 
+                                -0.0866209845483645, -0.0742465581843124, -0.0618721318202604, 
+                                -0.0494977054562083, -0.0371232790921562, -0.0247488527281041, 
+                                -0.0123744263640521, 0), y = c(1, 0.964400357776315, 0.928800715552629, 
+                                                               0.893201073328944, 0.857601431105259, 0.822001788881573, 0.786402146657888, 
+                                                               0.750802504434203, 0.715202862210518, 0.679603219986832, 0.644003577763147, 
+                                                               0.608403935539461, 0.572804293315776, 0.537204651092091, 0.501605008868406, 
+                                                               0.46600536664472, 0.430405724421035, 0.39480608219735, 0.359206439973664, 
+                                                               0.323606797749979, 0.323606797749979, 0.322838913361819, 0.32207102897366, 
+                                                               0.3213031445855, 0.320535260197341, 0.319767375809181, 0.318999491421022, 
+                                                               0.318231607032862, 0.317463722644703, 0.316695838256543, 0.315927953868383, 
+                                                               0.315160069480224, 0.314392185092064, 0.313624300703905, 0.312856416315745, 
+                                                               0.312088531927586, 0.311320647539426, 0.310552763151267, 0.309784878763107, 
+                                                               0.309016994374947, 0.309016994374947, 0.286247321105215, 0.263477647835481, 
+                                                               0.240707974565749, 0.217938301296016, 0.195168628026283, 0.17239895475655, 
+                                                               0.149629281486817, 0.126859608217084, 0.104089934947351, 0.0813202616776177, 
+                                                               0.0585505884078848, 0.0357809151381518, 0.0130112418684188, -0.0097584314013141, 
+                                                               -0.0325281046710471, -0.0552977779407801, -0.078067451210513, 
+                                                               -0.100837124480246, -0.123606797749979, -0.123606797749979, -0.159681018624977, 
+                                                               -0.195755239499976, -0.231829460374974, -0.267903681249972, -0.303977902124971, 
+                                                               -0.340052122999969, -0.376126343874967, -0.412200564749966, -0.448274785624964, 
+                                                               -0.484349006499962, -0.520423227374961, -0.556497448249959, -0.592571669124957, 
+                                                               -0.628645889999956, -0.664720110874954, -0.700794331749952, -0.736868552624951, 
+                                                               -0.772942773499949, -0.809016994374947, -0.809016994374947, -0.787489784144687, 
+                                                               -0.765962573914427, -0.744435363684166, -0.722908153453906, -0.701380943223645, 
+                                                               -0.679853732993385, -0.658326522763125, -0.636799312532864, -0.615272102302604, 
+                                                               -0.593744892072343, -0.572217681842083, -0.550690471611823, -0.529163261381562, 
+                                                               -0.507636051151302, -0.486108840921042, -0.464581630690781, -0.443054420460521, 
+                                                               -0.42152721023026, -0.4, -0.4, -0.42152721023026, -0.443054420460521, 
+                                                               -0.464581630690781, -0.486108840921042, -0.507636051151302, -0.529163261381562, 
+                                                               -0.550690471611823, -0.572217681842083, -0.593744892072344, -0.615272102302604, 
+                                                               -0.636799312532864, -0.658326522763125, -0.679853732993385, -0.701380943223646, 
+                                                               -0.722908153453906, -0.744435363684166, -0.765962573914427, -0.787489784144687, 
+                                                               -0.809016994374948, -0.809016994374948, -0.772942773499949, -0.736868552624951, 
+                                                               -0.700794331749953, -0.664720110874954, -0.628645889999956, -0.592571669124958, 
+                                                               -0.556497448249959, -0.520423227374961, -0.484349006499962, -0.448274785624964, 
+                                                               -0.412200564749966, -0.376126343874967, -0.340052122999969, -0.303977902124971, 
+                                                               -0.267903681249972, -0.231829460374974, -0.195755239499976, -0.159681018624977, 
+                                                               -0.123606797749979, -0.123606797749979, -0.100837124480246, -0.0780674512105131, 
+                                                               -0.0552977779407802, -0.0325281046710472, -0.00975843140131423, 
+                                                               0.0130112418684187, 0.0357809151381517, 0.0585505884078846, 0.0813202616776176, 
+                                                               0.104089934947351, 0.126859608217084, 0.149629281486816, 0.172398954756549, 
+                                                               0.195168628026282, 0.217938301296015, 0.240707974565748, 0.263477647835481, 
+                                                               0.286247321105214, 0.309016994374947, 0.309016994374947, 0.309784878763107, 
+                                                               0.310552763151266, 0.311320647539426, 0.312088531927586, 0.312856416315745, 
+                                                               0.313624300703905, 0.314392185092064, 0.315160069480224, 0.315927953868383, 
+                                                               0.316695838256543, 0.317463722644702, 0.318231607032862, 0.318999491421022, 
+                                                               0.319767375809181, 0.320535260197341, 0.3213031445855, 0.32207102897366, 
+                                                               0.322838913361819, 0.323606797749979, 0.323606797749979, 0.359206439973664, 
+                                                               0.39480608219735, 0.430405724421035, 0.46600536664472, 0.501605008868406, 
+                                                               0.537204651092091, 0.572804293315776, 0.608403935539461, 0.644003577763147, 
+                                                               0.679603219986832, 0.715202862210517, 0.750802504434203, 0.786402146657888, 
+                                                               0.822001788881573, 0.857601431105259, 0.893201073328944, 0.928800715552629, 
+                                                               0.964400357776315, 1)), .Names = c("x", "y"))
+
+CROWNPOLY <- structure(list(x = c(0, 0.0526315789473684, 0.105263157894737, 
+                                  0.157894736842105, 0.210526315789474, 0.263157894736842, 0.315789473684211, 
+                                  0.368421052631579, 0.421052631578947, 0.473684210526316, 0.526315789473684, 
+                                  0.578947368421053, 0.631578947368421, 0.684210526315789, 0.736842105263158, 
+                                  0.789473684210526, 0.842105263157895, 0.894736842105263, 0.947368421052632, 
+                                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+                                  1, 0.973684210526316, 0.947368421052632, 0.921052631578947, 0.894736842105263, 
+                                  0.868421052631579, 0.842105263157895, 0.815789473684211, 0.789473684210526, 
+                                  0.763157894736842, 0.736842105263158, 0.710526315789474, 0.684210526315789, 
+                                  0.657894736842105, 0.631578947368421, 0.605263157894737, 0.578947368421053, 
+                                  0.552631578947368, 0.526315789473684, 0.5, 0.5, 0.473684210526316, 
+                                  0.447368421052632, 0.421052631578947, 0.394736842105263, 0.368421052631579, 
+                                  0.342105263157895, 0.315789473684211, 0.289473684210526, 0.263157894736842, 
+                                  0.236842105263158, 0.210526315789474, 0.184210526315789, 0.157894736842105, 
+                                  0.131578947368421, 0.105263157894737, 0.0789473684210527, 0.0526315789473685, 
+                                  0.0263157894736842, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                  0, 0, 0, 0, 0, 0, 0, 0, -0.0263157894736842, -0.0526315789473684, 
+                                  -0.0789473684210526, -0.105263157894737, -0.131578947368421, 
+                                  -0.157894736842105, -0.184210526315789, -0.210526315789474, -0.236842105263158, 
+                                  -0.263157894736842, -0.289473684210526, -0.315789473684211, -0.342105263157895, 
+                                  -0.368421052631579, -0.394736842105263, -0.421052631578947, -0.447368421052632, 
+                                  -0.473684210526316, -0.5, -0.5, -0.526315789473684, -0.552631578947368, 
+                                  -0.578947368421053, -0.605263157894737, -0.631578947368421, -0.657894736842105, 
+                                  -0.684210526315789, -0.710526315789474, -0.736842105263158, -0.763157894736842, 
+                                  -0.789473684210526, -0.815789473684211, -0.842105263157895, -0.868421052631579, 
+                                  -0.894736842105263, -0.921052631578947, -0.947368421052632, -0.973684210526316, 
+                                  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                                  -1, -1, -1, -1, -1, -1, -0.947368421052632, -0.894736842105263, 
+                                  -0.842105263157895, -0.789473684210526, -0.736842105263158, -0.684210526315789, 
+                                  -0.631578947368421, -0.578947368421053, -0.526315789473684, -0.473684210526316, 
+                                  -0.421052631578947, -0.368421052631579, -0.315789473684211, -0.263157894736842, 
+                                  -0.210526315789474, -0.157894736842105, -0.105263157894737, -0.0526315789473685, 
+                                  0), y = c(-0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 
+                                            -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 
+                                            -0.5, -0.447368421052632, -0.394736842105263, -0.342105263157895, 
+                                            -0.289473684210526, -0.236842105263158, -0.184210526315789, -0.131578947368421, 
+                                            -0.0789473684210527, -0.0263157894736842, 0.0263157894736842, 
+                                            0.0789473684210527, 0.131578947368421, 0.184210526315789, 0.236842105263158, 
+                                            0.289473684210526, 0.342105263157895, 0.394736842105263, 0.447368421052632, 
+                                            0.5, 0.5, 0.473684210526316, 0.447368421052632, 0.421052631578947, 
+                                            0.394736842105263, 0.368421052631579, 0.342105263157895, 0.315789473684211, 
+                                            0.289473684210526, 0.263157894736842, 0.236842105263158, 0.210526315789474, 
+                                            0.184210526315789, 0.157894736842105, 0.131578947368421, 0.105263157894737, 
+                                            0.0789473684210527, 0.0526315789473685, 0.0263157894736842, 0, 
+                                            0, 0.0263157894736842, 0.0526315789473684, 0.0789473684210526, 
+                                            0.105263157894737, 0.131578947368421, 0.157894736842105, 0.184210526315789, 
+                                            0.210526315789474, 0.236842105263158, 0.263157894736842, 0.289473684210526, 
+                                            0.315789473684211, 0.342105263157895, 0.368421052631579, 0.394736842105263, 
+                                            0.421052631578947, 0.447368421052632, 0.473684210526316, 0.5, 
+                                            0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 
+                                            0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.473684210526316, 0.447368421052632, 
+                                            0.421052631578947, 0.394736842105263, 0.368421052631579, 0.342105263157895, 
+                                            0.315789473684211, 0.289473684210526, 0.263157894736842, 0.236842105263158, 
+                                            0.210526315789474, 0.184210526315789, 0.157894736842105, 0.131578947368421, 
+                                            0.105263157894737, 0.0789473684210527, 0.0526315789473685, 0.0263157894736842, 
+                                            0, 0, 0.0263157894736842, 0.0526315789473684, 0.0789473684210526, 
+                                            0.105263157894737, 0.131578947368421, 0.157894736842105, 0.184210526315789, 
+                                            0.210526315789474, 0.236842105263158, 0.263157894736842, 0.289473684210526, 
+                                            0.315789473684211, 0.342105263157895, 0.368421052631579, 0.394736842105263, 
+                                            0.421052631578947, 0.447368421052632, 0.473684210526316, 0.5, 
+                                            0.5, 0.447368421052632, 0.394736842105263, 0.342105263157895, 
+                                            0.289473684210526, 0.236842105263158, 0.184210526315789, 0.131578947368421, 
+                                            0.0789473684210527, 0.0263157894736842, -0.0263157894736842, 
+                                            -0.0789473684210527, -0.131578947368421, -0.184210526315789, 
+                                            -0.236842105263158, -0.289473684210526, -0.342105263157895, -0.394736842105263, 
+                                            -0.447368421052632, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 
+                                            -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 
+                                            -0.5, -0.5, -0.5)), .Names = c("x", "y"), row.names = c(NA, -180L
+                                            ), class = "data.frame")
+
+getArgs <- function(args)
+{
+  if (length(args)>0)
+  {
+    isqgraph <- sapply(args,function(x)"qgraph"%in%class(x))
+    argLists <- c(lapply(args[isqgraph],'[[','Arguments'),lapply(args[isqgraph],'[','layout'))
+    args <- args[!isqgraph]
+    newArgs <- lapply(argLists,getArgs)
+    for (l in newArgs) args <- c(args,l[!names(l)%in%names(args)])
+  }
+  return(args)
+}
+
+qgraph.layout.fruchtermanreingold=function(edgelist,weights=NULL,vcount=NULL,niter=NULL,max.delta=NULL,area=NULL,cool.exp=NULL,repulse.rad=NULL,init=NULL,groups=NULL,rotation=NULL,layout.control=0.5,constraints=NULL,round = TRUE, digits = NULL){
+  version <- NULL
+  Ef<-as.integer(edgelist[,1]-1)
+  Et<-as.integer(edgelist[,2]-1)
+  #Provide default settings
+  ecount=nrow(edgelist)
+  if (is.null(digits)) digits <- 5
+  if(is.null(version)) version <- 2
+  if (!is.null(vcount)) n=vcount else n=max(length(unique(c(edgelist))),max(edgelist))
+  if (is.null(weights)) weights=rep(1,ecount)
+  if(is.null(niter)) niter<-500
+  if(is.null(max.delta)) max.delta<-n
+  if (length(max.delta)==1) max.delta=rep(max.delta,n)
+  if(is.null(area)) area<-n^2
+  if(is.null(cool.exp)) cool.exp<-1.5
+  if(is.null(repulse.rad)) repulse.rad<-area*n
+  if(is.null(init)){
+    #tempa<-sample((0:(n-1))/n) #Set initial positions randomly on the circle
+    #x<-n/(2*pi)*sin(2*pi*tempa)
+    #y<-n/(2*pi)*cos(2*pi*tempa)
+    
+    init=matrix(0,nrow=n,ncol=2)
+    tl=n+1
+    init[,1]=sin(seq(0,2*pi, length=tl))[-tl]
+    init[,2]=cos(seq(0,2*pi, length=tl))[-tl] 
+  }
+  if (any(duplicated(init)))
+  {
+    init[duplicated(init),] <- init[duplicated(init),] + rnorm(prod(dim(init[duplicated(init),,drop=FALSE])),0,1e-10)
+    warning("Duplciated initial placement found. Initial slightly pertubated.")
+  }
+  
+  x<-init[,1]
+  y<-init[,2]
+  
+  # constraints:
+  if (is.null(constraints))
+  {
+    Cx=Cy=rep(FALSE,vcount)
+  } else 
+  {
+    Cx=!is.na(constraints[,1])
+    Cy=!is.na(constraints[,2])
+  }
+  
+  x[Cx]=constraints[Cx,1]
+  y[Cy]=constraints[Cy,2]
+  
+  # Round:
+  if (round){
+    weights <- round(weights, digits)
+    x <- round(x, digits)
+    y <- round(y, digits)
+  }
+  
+  #Symmetrize the graph, just in case
+  #d<-symmetrize(d,rule="weak",return.as.edgelist=TRUE) 
+  #Perform the layout calculation
+  if (version == 1){
+    stop("Layout version 1 currently not supported.")
+    # layout<-.C("qgraph_layout_fruchtermanreingold_R_old", as.integer(niter), as.integer(n), as.integer(ecount), as.double(max.delta),
+    #            as.double(area), as.double(cool.exp), as.double(repulse.rad), as.integer(Ef),
+    #            as.integer(Et), as.double(abs(weights)), as.double(x), as.double(y), as.integer(Cx), as.integer(Cy))
+    # #Return the result
+    
+    return(cbind(layout[[11]],layout[[12]]))
+  } else if (version == 2){
+    
+    
+    layout <- qgraph_layout_Cpp(
+      pniter = as.integer(niter),
+      pvcount = as.integer(n), 
+      pecount = as.integer(ecount),
+      maxdelta = max.delta,
+      parea = as.double(area), 
+      pcoolexp = as.double(cool.exp), 
+      prepulserad = as.double(repulse.rad), 
+      Ef = Ef,
+      Et = Et, 
+      W = abs(weights), 
+      xInit = as.double(x), 
+      yInit = as.double(y), 
+      Cx = as.logical(Cx), 
+      Cy = as.logical(Cy),
+      as.integer(digits))
+    
+    #Return the result
+  } else stop("Version must be 1 or 2.")
+}
+
+# Create qgraph model:
+
+qgraph <- function( input, ... )
+{
+  
+  # OTHER INPUT MODES: 
+  # if (any(class(input)=="factanal") )
+  # {
+  #   return(qgraph.efa(input,...))
+  # } else if (any(class(input)=="principal") )
+  # {
+  #   return(qgraph.pca(input,...))
+  # } else if (any(class(input)=="lavaan"))
+  # {
+  #   return(qgraph.lavaan(input,edge.labels=TRUE,include=8,filetype="",...))
+  # } else if (any(class(input)=="sem"))
+  # {
+  #   return(qgraph.sem(input,edge.labels=TRUE,include=6,filetype="",...))
+  # } else 
+  if (is(input,"loadings"))
+  {
+    return(qgraph.loadings(input,...))
+    # }  
+    # else if (any(class(input)=="semmod"))
+    # {
+    #   return(qgraph.semModel(input,...))
+  } else if (is.list(input) && identical(names(input),c("Bhat", "omega", "lambda1", "lambda2")))
+  {
+    layout(t(1:2))
+    
+    Q1 <- qgraph((input$omega + t(input$omega) ) / 2,...)
+    Q2 <- qgraph(input$Bhat,...)
+    
+    return(list(Bhat = Q1, omega = Q2))
+  }
+  
+  
+  ### EMPTY QGRAPH OBJECT ####
+  qgraphObject <- list(
+    Edgelist = list(),
+    Arguments = list(),
+    plotOptions = list(),
+    graphAttributes = list(
+      Nodes = list(),
+      Edges = list(),
+      Graph = list()
+    ),
+    layout = matrix(),
+    layout.orig = matrix()
+  )
+  
+  class(qgraphObject) <- "qgraph"
+  
+  
+  ### Extract nested arguments ###
+  # if ("qgraph"%in%class(input)) qgraphObject$Arguments <- list(...,input) else qgraphObject$Arguments <- list(...)
+  qgraphObject$Arguments <- list(...,input=input) 
+  
+  if (isTRUE(qgraphObject$Arguments[['gui']]) | isTRUE(qgraphObject$Arguments[['GUI']])) 
+  {
+    qgraphObject$Arguments$gui <- qgraphObject$Arguments$GUI <- FALSE
+    return(invisible(do.call(qgraph.gui,c(list(input=input),qgraphObject$Arguments))))
+  }
+  
+  if(!is.null(qgraphObject$Arguments$adj))
+  {
+    stop("'adj' argument is no longer supported. Please use 'input'")
+  }
+  
+  # Import qgraphObject$Arguments:
+  if (length(qgraphObject$Arguments) > 0) qgraphObject$Arguments <- getArgs(qgraphObject$Arguments)
+  
+  # Import default arguments:
+  def <-  getOption("qgraph")
+  if (!is.null(def$qgraph)) class(def$qgraph) <- "qgraph"
+  if (any(sapply(def,function(x)!is.null(x))))
+  {
+    qgraphObject$Arguments <- getArgs(c(qgraphObject$Arguments,def))
+  }
+  
+  # If qgraph object is used as input, recreate edgelist input:
+  if (is(input,"qgraph")) 
+  {
+    # if (is.null(qgraphObject$Arguments$directed)) qgraphObject$Arguments$directed <- input$Edgelist$directed
+    # if (is.null(qgraphObject$Arguments$bidirectional)) qgraphObject$Arguments$bidirectional <- input$Edgelist$bidirectional
+    # if (is.null(qgraphObject$Arguments$nNodes)) qgraphObject$Arguments$nNodes <- input$graphAttributes$Graph$nNodes
+    # 
+    if (!is.null(qgraphObject$Arguments$input)){
+      input <- qgraphObject$Arguments$input
+    } else {
+      if(input[['graphAttributes']][['Graph']][['weighted']])
+      {
+        input <- cbind(input$Edgelist$from,input$Edgelist$to,input$Edgelist$weight)
+      } else
+      {
+        input <- cbind(input$Edgelist$from,input$Edgelist$to)
+      }      
+    }
+    
+    # qgraphObject$Arguments$edgelist <- TRUE
+  }
+  
+  ### PCALG AND GRAPHNEL ###
+  if (is(input,"pcAlgo") | is(input,"graphNEL"))
+  {
+    if (is(input,"pcAlgo")) graphNEL <- input@graph else graphNEL <- input
+    qgraphObject$Arguments$directed <- graphNEL@graphData$edgemode == "directed"
+    qgraphObject$Arguments$bidirectional <- TRUE
+    TempLabs  <- graphNEL@nodes
+    if (is.null(qgraphObject$Arguments$labels)) qgraphObject$Arguments$labels  <- graphNEL@nodes
+    weights <- sapply(graphNEL@edgeData@data,'[[','weight')
+    
+    EL <- laply(strsplit(names(weights),split="\\|"),'[',c(1,2))
+    #       EL <- apply(EL,2,as.numeric)
+    EL[,1] <- match(EL[,1],TempLabs)
+    EL[,2] <- match(EL[,2],TempLabs)
+    mode(EL) <- "numeric"
+    # Create mixed graph if pcAlgo:
+    if (is(input,"pcAlgo"))
+    {
+      srtInput <- aaply(EL,1,sort)
+      qgraphObject$Arguments$directed <- !(duplicated(srtInput)|duplicated(srtInput,fromLast=TRUE))
+      rm(srtInput)
+    }
+    input <- EL
+    rm(EL)
+    if (any(weights!=1)) input <- cbind(input,weights)
+    qgraphObject$Arguments$edgelist <- TRUE
+  }
+  ### bnlearn ###
+  if (is(input,"bn"))
+  {
+    # browser()
+    bnobject <- input
+    input <- as.matrix(bnobject$arcs)
+    TempLabs  <- names(bnobject$nodes)
+    if (is.null(qgraphObject$Arguments$labels)) qgraphObject$Arguments$labels  <- TempLabs
+    
+    input[] <- as.numeric(match(c(input), TempLabs))
+    mode(input) <- "numeric"
+    
+    srtInput <- aaply(input,1,sort)
+    input <- input[!duplicated(srtInput),]
+    qgraphObject$Arguments$directed <- !(duplicated(srtInput)|duplicated(srtInput,fromLast=TRUE))
+    qgraphObject$Arguments$directed <- qgraphObject$Arguments$directed[!duplicated(srtInput)]
+    qgraphObject$Arguments$edgelist <- TRUE
+  }
+  if (is(input,"bn.strength"))
+  {
+    bnobject <- input
+    input <- as.matrix(bnobject[c("from","to","strength")])
+    TempLabs  <- unique(c(bnobject$from,bnobject$to))
+    if (is.null(qgraphObject$Arguments$labels)) qgraphObject$Arguments$labels  <- TempLabs
+    
+    input[,1:2] <- as.numeric(match(c(input[,1:2]), TempLabs))
+    
+    input <- as.matrix(input)
+    mode(input) <- "numeric"
+    
+    if (is.null(qgraphObject$Arguments$directed))
+    {
+      if (is.null(bnobject$direction) || all(bnobject$direction %in% c(0,0.5)))
+      { 
+        qgraphObject$Arguments$directed <- FALSE
+      } else qgraphObject$Arguments$directed <- TRUE
+    }
+    
+    if (!is.null(bnobject$direction))
+    {
+      input[,3] <- input[,3] * ( 1 - qgraphObject$Arguments$directed * (1- bnobject$direction ))
+    }
+    
+    # remove undirect duplicates:
+    srt <- cbind( pmin(input[,1],input[,2]), pmax(input[,1],input[,2]))
+    input <- input[!(duplicated(srt)&!qgraphObject$Arguments$directed),  ]
+    rm(srt)
+    
+    #     srtInput <- aaply(input,1,sort)
+    #     input <- input[!duplicated(srtInput),]
+    #     qgraphObject$Arguments$directed <- !(duplicated(srtInput)|duplicated(srtInput,fromLast=TRUE))
+    #     qgraphObject$Arguments$directed <- qgraphObject$Arguments$directed[!duplicated(srtInput)]
+    
+    qgraphObject$Arguments$directed <- TRUE
+    
+    qgraphObject$Arguments$probabilityEdges <- TRUE
+    
+    if (is.null( qgraphObject$Arguments$parallelEdge))  qgraphObject$Arguments$parallelEdge <- TRUE
+    
+  }
+  
+  ### BDgraph ####
+  if (is(input,"bdgraph"))
+  {
+    
+    # browser()
+    # stop("BDgraph support has temporarily been removed")
+    
+    if(is.null(qgraphObject$Arguments[['BDgraph']])){
+      BDgraph=c("phat","Khat")
+    } else {
+      BDgraph=qgraphObject$Arguments[['BDgraph']]
+    } 
+    if (all(c("Khat","phat")%in%BDgraph)) layout(t(1:2))
+    
+    if(is.null(qgraphObject$Arguments[['BDtitles']])) BDtitles <- TRUE else BDtitles <- qgraphObject$Arguments[['BDtitles']]
+    
+    
+    Res <- list()
+    
+    if (isTRUE(which(BDgraph == "phat") < which(BDgraph == "Khat")))
+    {
+      if(!requireNamespace("BDgraph")) stop("'BDgraph' package needs to be installed.")
+      # phat:
+      W <- as.matrix(BDgraph::plinks(input))
+      W <- W + t(W)
+      Res[["phat"]] <- do.call(qgraph,c(list(input=W,probabilityEdges = TRUE),qgraphObject$Arguments))
+      L <- Res[["phat"]]$layout
+      
+      if (BDtitles) text(mean(par('usr')[1:2]),par("usr")[4] - (par("usr")[4] - par("usr")[3])/40,"Posterior probabilities", adj = c(0.5,1))
+      
+      # Khat:
+      W <- as.matrix(input$K_hat)
+      # diag(W) <- -1*diag(W)
+      # W <-  - W / sqrt(diag(W)%o%diag(W))
+      W <- wi2net(W)
+      Res[["Khat"]] <- do.call(qgraph,c(list(input = W,layout = L), qgraphObject$Arguments))
+      L <- Res[["Khat"]]$layout
+      if (BDtitles) text(mean(par('usr')[1:2]),par("usr")[4] - (par("usr")[4] - par("usr")[3])/40,"Mean partial correlations", adj = c(0.5,1))
+      
+    } else
+    {
+      if ("Khat" %in% BDgraph)
+      {
+        W <- as.matrix(input$K_hat)
+        # diag(W) <- -1*diag(W)
+        # W <-  - W / sqrt(diag(W)%o%diag(W))
+        W <- wi2net(input$K_hat)
+        Res[["Khat"]] <- do.call(qgraph,c(list(input=W),qgraphObject$Arguments))
+        L <- Res[["Khat"]]$layout
+        if (BDtitles) text(mean(par('usr')[1:2]),par("usr")[4],"Mean partial correlations", adj = c(0.5,1))
+      } else L <- qgraphObject$Arguments$layout
+      
+      if ("phat" %in% BDgraph)
+      {
+        W <- as.matrix(BDgraph::plinks(input))
+        W <- W + t(W)
+        Res[["phat"]] <- do.call(qgraph,c(list(input = W,layout = L,probabilityEdges= TRUE), qgraphObject$Arguments))
+        if (BDtitles) text(mean(par('usr')[1:2]),par("usr")[4],"Posterior probabilities", adj = c(0.5,1))
+      }
+    }
+    
+    if (length(Res)==1) Res <- Res[[1]]
+    return(Res)
+    
+  }
+  
+  
+  ### GLASSO ###
+  # glasso has no class but is a list with elements w, wi, loglik, errflag, approx, del and niter:
+  if (is(input, "list") && all(c('w', 'wi', 'loglik','errflag', 'approx', 'del',  'niter' ) %in% names(input)))
+  {
+    input <- wi2net(input$wi)
+  }
+  
+  
+  ### Check arguments list:
+  allArgs <- c("input", "layout", "groups", "minimum", "maximum", "cut", "details", 
+               "threshold", "palette", "theme", "graph", "threshold", "sampleSize", 
+               "tuning", "refit", "countDiagonal", "alpha", "bonf", "FDRcutoff", 
+               "mar", "filetype", "filename", "width", "height", "normalize", "res",
+               "DoNotPlot", "plot", "rescale", "standAlone", "color", "vsize", 
+               "vsize2", "node.width", "node.height", "borders", "border.color", 
+               "border.width", "shape", "polygonList", "vTrans", "subplots", 
+               "subpars", "subplotbg", "images", "noPar", "pastel", "rainbowStart", 
+               "usePCH", "node.resolution", "title", "preExpression", "postExpression", 
+               "diag", "labels", "label.cex", "label.color", "label.prop", "label.norm", 
+               "label.scale", "label.scale.equal", "label.font", "label.fill.vertical", 
+               "label.fill.horizontal", "esize", "edge.width", "edge.color", 
+               "posCol", "negCol", "unCol", "probCol", "negDashed", "probabilityEdges", 
+               "colFactor", "trans", "fade", "loop", "lty", "edgeConnectPoints", 
+               "curve", "curveAll", "curveDefault", "curveShape", "curveScale", 
+               "curveScaleNodeCorrection", "curvePivot", "curvePivotShape", 
+               "parallelEdge", "parallelAngle", "parallelAngleDefault", "edge.labels", 
+               "edge.label.cex", "edge.label.bg", "edge.label.position", "edge.label.font", "edge.label.color",
+               "repulsion", "layout.par", "layout.control", "aspect", "rotation", 
+               "legend", "legend.cex", "legend.mode", "GLratio", "layoutScale", 
+               "layoutOffset", "nodeNames", "bg", "bgcontrol", "bgres", "pty", 
+               "gray",  "font", "directed", 
+               "arrows", "arrowAngle", "asize", "open", "bidirectional", "mode", 
+               "alpha", "sigScale", "bonf", "scores", "scores.range", "mode", 
+               "edge.color", "knots", "knot.size", "knot.color", "knot.borders", 
+               "knot.border.color", "knot.border.width", "means", "SDs", "meanRange", 
+               "bars", "barSide", "barColor", "barLength", "barsAtSide", "pie", 
+               "pieBorder", "pieColor", "pieColor2", "pieStart", "pieDarken", 
+               "piePastel", "BDgraph", "BDtitles", "edgelist", "weighted", "nNodes", 
+               "XKCD", "Edgelist", "Arguments", "plotOptions", "graphAttributes", 
+               "layout", "layout.orig","resid","factorCors","residSize","filetype","model",
+               "crossloadings","gamma","lambda.min.ratio","loopRotation","edgeConnectPoints","residuals","residScale","residEdge","CircleEdgeEnd","title.cex",  
+               "node.label.offset", "node.label.position", "pieCImid", "pieCIlower", "pieCIupper", "pieCIpointcex", "pieCIpointcol",
+               "edge.label.margin")
+  
+  if (any(!names(qgraphObject$Arguments) %in% allArgs)){
+    wrongArgs <- names(qgraphObject$Arguments)[!names(qgraphObject$Arguments) %in% allArgs]
+    warning(paste0("The following arguments are not documented and likely not arguments of qgraph and thus ignored: ",paste(wrongArgs,collapse = "; ")))
+  }
+  
+  ## Extract arguments
+  if(is.null(qgraphObject$Arguments[['verbose']]))
+  {
+    verbose <- FALSE
+  } else verbose <- qgraphObject$Arguments[['verbose']] 
+  
+  if(is.null(qgraphObject$Arguments[['tuning']]))
+  {
+    tuning <- 0.5
+  } else tuning <- qgraphObject$Arguments[['tuning']]  
+  
+  if(!is.null(qgraphObject$Arguments[['gamma']]))
+  {
+    tuning <- qgraphObject$Arguments[['gamma']]
+  }
+  
+  if(is.null(qgraphObject$Arguments[['lambda.min.ratio']]))
+  {
+    lambda.min.ratio <- 0.01
+  } else lambda.min.ratio <- qgraphObject$Arguments[['lambda.min.ratio']]  
+  
+  
+  # Refit:
+  if(is.null(qgraphObject$Arguments[['refit']]))
+  {
+    refit <- FALSE
+  } else refit <- qgraphObject$Arguments[['refit']]  
+  
+  
+  
+  if(is.null(qgraphObject$Arguments[['FDRcutoff']]))
+  {
+    FDRcutoff <- 0.9
+  } else FDRcutoff <- qgraphObject$Arguments[['FDRcutoff']]  
+  
+  
+  ### HUGE (select via EBIC):
+  if (is(input,"huge"))
+  {
+    if (input$method != "glasso") stop("Only 'glasso' method is supported")
+    if(!requireNamespace("huge")) stop("'huge' package needs to be installed.")
+    input <- huge::huge.select(input, "ebic", ebic.gamma = tuning)
+  }
+  
+  ### HUGE select ###
+  if (is(input,"select"))
+  {
+    if (input$method != "glasso") stop("Only 'glasso' method is supported")
+    input <- wi2net(forceSymmetric(input$opt.icov))
+  }
+  
+  # Coerce input to matrix:
+  input <- as.matrix(input)
+  
+  # Set mode:
+  sigSign <- FALSE
+  if(is.null(qgraphObject$Arguments[['graph']])) graph <- "default" else graph=qgraphObject$Arguments[['graph']]
+  if (graph == "fdr")
+  {
+    graph <- "fdr.cor"
+  }
+  if (graph == "EBICglasso"){
+    graph <- "glasso"
+  }
+  if (graph == "ggmModSelect"){
+    graph <- "ggmModSelect"
+  }
+  
+  if (!graph %in% c("default","cor","pcor","glasso","ggmModSelect","factorial")){
+    stop("'graph' argument must be one of 'default', 'cor', 'pcor', 'glasso', 'ggmModSelect', or 'factorial'")
+  }
+  
+  # Reset graph for replotting:
+  qgraphObject$Arguments[['graph']] <- NULL
+  
+  if (graph %in% c("sig2","significance2"))
+  {
+    graph <- "sig"
+    sigSign <- TRUE
+  }
+  if (graph %in% c("sig","significance"))
+  {
+    #     if (!require("fdrtool")) stop("`fdrtool' package not found, is it installed?") 
+    qgraphObject$Arguments[['mode']] <- "sig"
+  }
+  
+  ### SIGNIFICANCE GRAPH ARGUMENTS ###
+  if(is.null(qgraphObject$Arguments[['mode']])) mode <- "strength" else mode <- qgraphObject$Arguments[['mode']]
+  if(is.null(qgraphObject$Arguments$sigScale)) sigScale <- function(x)0.7*(1-x)^(log(0.4/0.7,1-0.05)) else sigScale <- qgraphObject$Arguments$sigScale
+  if (!mode%in%c("strength","sig","direct")) stop("Mode must be 'direct', 'sig' or 'strength'")	
+  if(is.null(qgraphObject$Arguments$bonf)) bonf=FALSE else bonf=qgraphObject$Arguments$bonf
+  if(is.null(qgraphObject$Arguments$OmitInsig)) OmitInsig=FALSE else OmitInsig <- qgraphObject$Arguments$OmitInsig
+  if(is.null(qgraphObject$Arguments[['alpha']]))
+  {
+    if (mode != "sig")
+    {
+      alpha <- 0.05
+    } else alpha <- c(0.0001,0.001,0.01,0.05) 
+  } else alpha <- qgraphObject$Arguments[['alpha']]
+  if (length(alpha) > 4) stop("`alpha' can not have length > 4")
+  
+  
+  #####
+  # Settings for the edgelist
+  if(is.null(qgraphObject$Arguments$edgelist)) 
+  {
+    if (nrow(input)!=ncol(input)) {
+      # Check if it is an edgelist or break:
+      if (ncol(input) %in% c(2,3) && ((is.character(input[,1]) || is.factor(input[,1])) || all(input[,1] %% 1 == 0)) &&
+          ((is.character(input[,2]) || is.factor(input[,2])) || all(input[,2] %% 1 == 0))){
+        edgelist <- TRUE
+      } else {
+        stop("Input is not a weights matrix or an edgelist.")
+      }
+    } else edgelist <- FALSE
+  } else edgelist=qgraphObject$Arguments$edgelist
+  
+  if(is.null(qgraphObject$Arguments[['edgeConnectPoints']])) edgeConnectPoints <- NULL else edgeConnectPoints <- qgraphObject$Arguments[['edgeConnectPoints']]
+  
+  
+  if(is.null(qgraphObject$Arguments[['label.color.split']])) label.color.split <- 0.25 else label.color.split <- qgraphObject$Arguments[['label.color.split']]
+  
+  if(is.null(qgraphObject$Arguments$labels))
+  {
+    labels <- TRUE
+    if (!edgelist && !is.null(colnames(input)))
+    {
+      #       if (nrow(input) <= 20 & all(colnames(input)==rownames(input)))
+      #       {
+      labels <- abbreviate(colnames(input),3)
+      if (any(is.na(labels))){
+        warning("Some labels where not abbreviatable.")
+        labels <- ifelse(is.na(labels), colnames(input), labels)
+      }
+      #       }
+    }
+  } else labels <- qgraphObject$Arguments$labels
+  
+  
+  if (edgelist)
+  {
+    if (is.character(input))
+    {
+      if(!is.logical(labels)) allNodes <- labels else allNodes <- unique(c(input[,1:2]))
+      input[,1:2] <- match(input[,1:2],allNodes)
+      input <- as.matrix(input)
+      mode(input) <- "numeric"
+      if (is.logical(labels) && labels) labels <- allNodes
+    }
+  }
+  
+  if(is.null(qgraphObject$Arguments$nNodes)) 
+  {
+    if (edgelist)
+    {
+      if (!is.logical(labels)) nNodes <- length(labels) else nNodes <- max(c(input[,1:2])) 
+    } else nNodes=nrow(input)
+  } else nNodes=qgraphObject$Arguments$nNodes
+  
+  
+  #####
+  
+  
+  #### Arguments for pies with Jonas
+  # Arguments for pies:
+  if(is.null(qgraphObject$Arguments[['pieRadius']])){
+    pieRadius <- 1
+  } else {
+    pieRadius <- qgraphObject$Arguments[['pieRadius']]
+  }
+  
+  if(is.null(qgraphObject$Arguments[['pieBorder']])){
+    pieBorder <- .15
+    if (any(pieBorder < 0 | pieBorder > 1)){
+      stop("Values in the 'pieBorder' argument must be within [0,1]")
+    }
+  } else {
+    pieBorder <- qgraphObject$Arguments[['pieBorder']]
+  }
+  
+  if(is.null(qgraphObject$Arguments[['pieStart']])){
+    pieStart <- 0
+    if (any(pieStart < 0 | pieStart > 1)){
+      stop("Values in the 'pieStart' argument must be within [0,1]")
+    }
+  } else {
+    pieStart <- qgraphObject$Arguments[['pieStart']]
+  }
+  
+  if(is.null(qgraphObject$Arguments[['pieDarken']])){
+    pieDarken <- 0.25
+    if (any(pieDarken < 0 | pieDarken > 1)){
+      stop("Values in the 'pieDarken' argument must be within [0,1]")
+    }
+  } else {
+    pieDarken <- qgraphObject$Arguments[['pieDarken']]
+  }
+  
+  if(is.null(qgraphObject$Arguments[['pieColor']])){
+    # pieColor <- 'grey'
+    pieColor <- NA
+  } else {
+    pieColor <- qgraphObject$Arguments[['pieColor']]
+  }
+  
+  
+  if(is.null(qgraphObject$Arguments[['pieColor2']])){
+    pieColor2 <- 'white'
+  } else {
+    pieColor2 <- qgraphObject$Arguments[['pieColor2']]
+  }
+  
+  # Make arguments vectorized:
+  if (length(pieColor) == 1){
+    pieColor <- rep(pieColor,length=nNodes)
+  }
+  if (length(pieColor) != nNodes){
+    stop("Length of 'pieColor' argument must be 1 or number of nodes")
+  }
+  
+  if (length(pieColor2) == 1){
+    pieColor2 <- rep(pieColor2,length=nNodes)
+  }
+  if (length(pieColor2) != nNodes){
+    stop("Length of 'pieColor2' argument must be 1 or number of nodes")
+  }
+  
+  if (length(pieBorder) == 1){
+    pieBorder <- rep(pieBorder,length=nNodes)
+  }
+  if (length(pieBorder) != nNodes){
+    stop("Length of 'pieBorder' argument must be 1 or number of nodes")
+  }
+  
+  if (length(pieStart) == 1){
+    pieStart <- rep(pieStart,length=nNodes)
+  }
+  if (length(pieStart) != nNodes){
+    stop("Length of 'pieStart' argument must be 1 or number of nodes")
+  }
+  
+  if (length(pieDarken) == 1){
+    pieDarken <- rep(pieDarken,length=nNodes)
+  }
+  if (length(pieDarken) != nNodes){
+    stop("Length of 'pieDarken' argument must be 1 or number of nodes")
+  }
+  
+  
+  
+  
+  
+  if(is.null(qgraphObject$Arguments[['pie']])){
+    drawPies <- FALSE
+    pie <- NULL
+  } else {
+    # Obtain pie values:
+    pie <- qgraphObject$Arguments[['pie']]
+    
+    # Check values:
+    if (length(pie) != nNodes){
+      stop("Length of 'pie' argument must be equal to number of nodes.")
+    }
+    #     if (any(pie < 0 | pie > 1)){
+    #       stop("Values in the 'pie' argument must be within [0,1]")
+    #     }
+    
+    
+    # Dummy subplots (to be filed later)
+    # subplots <- vector("list", nNodes)
+    
+    # Overwrite subplotbg to NA:
+    # subplotbg <- NA
+    
+    # Overwrite borders to FALSE:
+    # borders <- FALSE
+    
+    # Overwrite shape to circle:
+    # shape <- "circle"
+    
+    # Logical:
+    drawPies <- TRUE
+  }
+  
+  # Pie CI:
+  # Pie CI args:
+  # "pieCIlower", "pieCIupper", "pieCIpointcex", "pieCIpointcol"
+  
+  pieCIs <- FALSE
+  
+  # Check if pieCIs are drawn:
+  if(!is.null(qgraphObject$Arguments[['pieCIlower']])){
+    pieCIs <- TRUE
+    pieCIlower <- qgraphObject$Arguments[['pieCIlower']]
+    if(is.null(qgraphObject$Arguments[['pieCIupper']])){
+      pieCIupper <- 1
+    }
+  } 
+  if(!is.null(qgraphObject$Arguments[['pieCIupper']])){
+    pieCIs <- TRUE
+    pieCIupper <- qgraphObject$Arguments[['pieCIupper']]
+    if(is.null(qgraphObject$Arguments[['pieCIlower']])){
+      pieCIlower <- 0
+    }
+  } 
+  
+  # Set up the pieCIs:
+  if (isTRUE(pieCIs)){
+    drawPies <- TRUE
+    
+    if (!is.null(qgraphObject$Arguments[['pieCImid']])){
+      pieCImid <- qgraphObject$Arguments[['pieCImid']]
+    } else stop("'pieCImid' may not be missing when pieCIs are used")
+    
+    
+    # Vectorize:
+    pieCIlower <- rep(pieCIlower,length=nNodes) 
+    pieCIupper <- rep(pieCIupper,length=nNodes) 
+    pieCImid <- rep(pieCImid, length=nNodes)
+    
+    # Check mid:
+    if (any(pieCIlower > pieCImid | pieCIupper < pieCImid)){
+      stop("'pieCImid' is not between 'pieCIlower' and 'pieCIupper'")
+    }
+    
+    # Check bounds:
+    if (any(pieCIlower < 0) | any(pieCImid > 1)){
+      stop("pieCI range should be between 0 and 1")
+    }
+    
+    # If pie argument is used, give an error:
+    if(!is.null(qgraphObject$Arguments[['pie']])){
+      stop("'pie' argument cannot be used in combination with pieCIs")
+    }
+    
+    # get the size of the point:
+    # "pieCIlower", "pieCIupper", "pieCIpointcex", "pieCIpointcol"
+    
+    if(!is.null(qgraphObject$Arguments[['pieCIpointcex']])){
+      pieCIpointcex <- qgraphObject$Arguments[['pieCIpointcex']]
+    } else {
+      pieCIpointcex <- 0.01
+    }
+    pieCIpointcex <-  rep(pieCIpointcex, length=nNodes)
+    
+    if(!is.null(qgraphObject$Arguments[['pieCIpointcol']])){
+      pieCIpointcol <- qgraphObject$Arguments[['pieCIpointcol']]
+    } else {
+      pieCIpointcol <- "black"
+    }
+    pieCIpointcol <- rep(pieCIpointcol, length = nNodes)
+    
+    # Now form the pie argument:
+    pieTab <- cbind(
+      0,
+      pieCIlower,
+      pmax(pieCIlower, pieCImid - (pieCIpointcex/2)),
+      pmin(pieCIupper, pieCImid + (pieCIpointcex/2)),
+      pieCIupper,
+      1)
+    pie <- list()
+    pieColor2 <- list()
+    
+    for (i in seq_len(nrow(pieTab))){
+      pie[[i]] <- diff(pieTab[i,])
+      pieColor2[[i]] <- c("white",pieColor[i],pieCIpointcol[i],pieColor[i],"white")
+    }
+    pieColor <- pieColor2
+  }
+  
+  
+  
+  #####
+  
+  
+  if (is.expression(labels)) labels <- as.list(labels)
+  
+  if(is.null(qgraphObject$Arguments[['background']])) background <- NULL else background <- qgraphObject$Arguments[['background']]
+  if(is.null(qgraphObject$Arguments[['label.prop']])){
+    
+    label.prop <- 0.9*(1-ifelse(pieBorder < 0.5,pieBorder,0))
+    
+  } else {
+    label.prop <- qgraphObject$Arguments[['label.prop']]
+  }
+  
+  if(is.null(qgraphObject$Arguments[['label.norm']])) label.norm <- "OOO" else label.norm <- qgraphObject$Arguments[['label.norm']]
+  #   if(is.null(qgraphObject$Arguments[['label.cex']])) label.cex <- NULL else label.cex <- qgraphObject$Arguments[['label.cex']]
+  #   
+  
+  if(is.null(qgraphObject$Arguments[['nodeNames']])) nodeNames <- NULL else nodeNames <- qgraphObject$Arguments[['nodeNames']]
+  
+  if(is.null(qgraphObject$Arguments[['subplots']])) {
+    # if (!drawPies){
+    subplots <- NULL       
+    # }
+  } else {
+    #       if (drawPies){
+    #         warning("'subplots' argument ignored if 'pie' argument is used.")     
+    #       } else {
+    subplots <- qgraphObject$Arguments[['subplots']]        
+    # }
+  }
+  if(is.null(qgraphObject$Arguments[['subpars']])) subpars <- list(mar=c(0,0,0,0)) else subpars <- qgraphObject$Arguments[['subpars']]
+  
+  
+  if(is.null(qgraphObject$Arguments[['subplotbg']])) {
+    # if (!drawPies){
+    subplotbg <- NULL       
+    # }
+  } else {
+    #       if (drawPies){
+    #         warning("'subplotbg' argument ignored if 'pie' argument is used.")
+    #       } else {
+    subplotbg <- qgraphObject$Arguments[['subplotbg']]        
+    # }
+  }
+  
+  if(is.null(qgraphObject$Arguments[['images']])) images <- NULL else images <- qgraphObject$Arguments[['images']]
+  
+  if(is.null(qgraphObject$Arguments[['noPar']])) noPar <- FALSE else noPar <- qgraphObject$Arguments[['noPar']]
+  
+  
+  
+  # Knots:
+  if(is.null(qgraphObject$Arguments[['knots']])) knots <- list() else knots <- qgraphObject$Arguments[['knots']]
+  if(is.null(qgraphObject$Arguments[['knot.size']])) knot.size <- 1 else knot.size <- qgraphObject$Arguments[['knot.size']]
+  if(is.null(qgraphObject$Arguments[['knot.color']])) knot.color <- NA else knot.color <- qgraphObject$Arguments[['knot.color']]
+  if(is.null(qgraphObject$Arguments[['knot.borders']])) knot.borders <- FALSE else knot.borders <- qgraphObject$Arguments[['knot.borders']]
+  if(is.null(qgraphObject$Arguments[['knot.border.color']])) knot.border.color <- "black" else knot.border.color <- qgraphObject$Arguments[['knot.border.color']]
+  if(is.null(qgraphObject$Arguments[['knot.border.width']])) knot.border.width <- 1 else knot.border.width <- qgraphObject$Arguments[['knot.border.width']]
+  
+  
+  #####
+  
+  
+  
+  
+  if(is.null(qgraphObject$Arguments$shape))  {
+    # if (!drawPies){
+    shape <- rep("circle",nNodes) 
+    if (!is.null(subplots))
+    {
+      # Get which nodes become a subplot:
+      whichsub <- which(sapply(subplots,function(x)is.expression(x)|is.function(x)))
+      
+      shape[whichsub][!shape[whichsub]%in%c("square","rectangle")] <- "square"
+    }      
+    # }
+  } else {
+    #     if (drawPies){
+    #       warning("'shape' argument ignored if 'pie' argument is used.")
+    #     } else {
+    shape <- qgraphObject$Arguments[['shape']]        
+    # }
+  }
+  
+  
+  if(is.null(qgraphObject$Arguments[['usePCH']])) 
+  {
+    if (nNodes > 50 && !drawPies) usePCH <- TRUE else usePCH <- NULL 
+  } else usePCH <- qgraphObject$Arguments[['usePCH']]
+  
+  if(is.null(qgraphObject$Arguments[['node.resolution']])) node.resolution <- 100 else node.resolution <- qgraphObject$Arguments[['node.resolution']]
+  
+  
+  # Default for fact cut and groups
+  if (graph=="factorial") fact=TRUE else fact=FALSE
+  if (fact & edgelist) stop('Factorial graph needs a correlation matrix')
+  #     if (graph=="concentration") partial=TRUE else partial=FALSE
+  
+  #   if(is.null(qgraphObject$Arguments$cutQuantile)) cutQuantile <- 0.9 else cutQuantile <- qgraphObject$Arguments$cutQuantile
+  defineCut <- FALSE
+  if(is.null(qgraphObject$Arguments[['cut']])) 
+  {
+    cut=0
+    #       if (nNodes<50) 
+    if (nNodes>=20 | fact) 
+    {
+      cut=0.3
+      defineCut <- TRUE
+    }
+    if (mode=="sig") cut <- ifelse(length(alpha)>1,sigScale(alpha[length(alpha)-1]),sigScale(alpha[length(alpha)]))
+  } else if (mode != "sig") cut <- ifelse(is.na(qgraphObject$Arguments[['cut']]),0,qgraphObject$Arguments[['cut']]) else cut <- ifelse(length(alpha)>1,sigScale(alpha[length(alpha)-1]),sigScale(alpha[length(alpha)]))
+  
+  if(is.null(qgraphObject$Arguments$groups)) groups=NULL else groups=qgraphObject$Arguments$groups
+  
+  if (is.factor(groups) | is.character(groups)) groups <- tapply(1:length(groups),groups,function(x)x)
+  
+  
+  
+  
+  
+  # Factorial graph:
+  if(is.null(qgraphObject$Arguments$nfact))
+  {
+    nfact=NULL
+  } else nfact=qgraphObject$Arguments$nfact
+  
+  if (fact)
+  {
+    if (is.null(nfact)) 
+    {
+      if (is.null(groups)) nfact=sum(eigen(input)$values>1) else nfact=length(groups)
+    }
+    
+    loadings=loadings(factanal(factors=nfact,covmat=input,rotation="promax"))
+    
+    loadings=loadings[1:nrow(loadings),1:ncol(loadings)]
+    
+    loadings[loadings<cut]=0
+    loadings[loadings>=cut]=1
+    
+    input=(loadings%*%t(loadings)>0)*1
+    
+    diag(input)=0
+  }
+  
+  # Glasso arguments:
+  if(is.null(qgraphObject$Arguments[['sampleSize']]))
+  {
+    sampleSize <- NULL
+  } else sampleSize <- qgraphObject$Arguments[['sampleSize']]
+  
+  if(is.null(qgraphObject$Arguments[['countDiagonal']]))
+  {
+    countDiagonal <- FALSE
+  } else countDiagonal <- qgraphObject$Arguments[['countDiagonal']]
+  
+  
+  
+  # SET DEFAULT qgraphObject$Arguments:
+  # General qgraphObject$Arguments:
+  if(is.null(qgraphObject$Arguments$DoNotPlot)) DoNotPlot=FALSE else DoNotPlot=qgraphObject$Arguments$DoNotPlot
+  if(is.null(qgraphObject$Arguments[['layout']])) layout=NULL else layout=qgraphObject$Arguments[['layout']]
+  if(is.null(qgraphObject$Arguments$maximum)) maximum=0 else maximum=qgraphObject$Arguments$maximum
+  if(is.null(qgraphObject$Arguments$minimum))
+  {
+    #     if (nNodes<50)  minimum=0
+    #     if (nNodes>=50)  minimum=0.1
+    minimum <- 0
+    if (mode=="sig") minimum <- ifelse(length(alpha)>1,sigScale(alpha[length(alpha)]),0)
+  } else 
+  {
+    if (mode!="sig") minimum=qgraphObject$Arguments$minimum else minimum <- ifelse(length(alpha)>1,sigScale(alpha[length(alpha)]),0)
+    if (is.character(minimum))
+    {
+      if (grepl("sig",minimum,ignore.case = TRUE))
+      {
+        if (is.null(sampleSize))
+        {
+          stop("'sampleSize' argument must be assigned to use significance as minimum")
+        }
+        if (graph == "default")
+        {
+          warning("'graph' argument did not specify type of graph. Assuming correlation graph (graph = 'cor')")
+          graph <- "cor"
+        }
+        if (graph %in% c("cor","pcor")) {
+          # Find threshold for significance!
+          # difference between cor and pcor is in df:
+          if (graph == "cor")
+          {
+            df <- sampleSize - 2
+          } else {
+            df <- sampleSize - 2 - (nNodes - 2)
+          }
+          siglevel <- max(alpha)/2
+          if (bonf)
+          {
+            siglevel <- siglevel / (nNodes*(nNodes-1)/2)
+          }
+          t <- abs(qt(siglevel, df, lower.tail=TRUE))
+          minimum <- t/sqrt(t^2+df) 
+        } else stop("minimum = 'sig' is not supported with this 'graph' argument")
+        
+      } else stop("Minimum is specified a string which is not 'sig'.")
+    }
+  }
+  if (minimum < 0)
+  {
+    warning("'minimum' set to absolute value")
+    minimum <- abs(minimum)
+  }
+  
+  # Threshold argument removes edges from network:
+  if(is.null(qgraphObject$Arguments[['threshold']]))
+  {
+    threshold <- 0
+  } else {
+    threshold <- qgraphObject$Arguments[['threshold']]
+  }
+  
+  if(is.null(qgraphObject$Arguments$weighted)) weighted=NULL else weighted=qgraphObject$Arguments$weighted
+  if(is.null(qgraphObject$Arguments$rescale)) rescale=TRUE else rescale=qgraphObject$Arguments$rescale
+  if(is.null(qgraphObject$Arguments[['edge.labels']])) edge.labels=FALSE else edge.labels=qgraphObject$Arguments[['edge.labels']]
+  if(is.null(qgraphObject$Arguments[['edge.label.bg']])) edge.label.bg=TRUE else edge.label.bg=qgraphObject$Arguments[['edge.label.bg']]
+  
+  if (identical(FALSE,edge.label.bg)) plotELBG <- FALSE else plotELBG <- TRUE
+  
+  if(is.null(qgraphObject$Arguments[['edge.label.margin']])) edge.label.margin=0 else edge.label.margin=qgraphObject$Arguments[['edge.label.margin']]
+  
+  
+  
+  ### Themes ###
+  # Default theme:
+  posCol <- c("#009900","darkgreen")
+  negCol <- c("#BF0000","red")
+  bcolor <- NULL
+  bg <- FALSE
+  negDashed <- FALSE
+  parallelEdge <- FALSE
+  fade <- NA 
+  border.width <- 1 
+  font <- 1 
+  unCol <- "#808080" 
+  # if (length(groups) < 8){
+  #   palette <- "colorblind"
+  # } else {
+  palette <- "rainbow"
+  # }
+  
+  if(!is.null(qgraphObject$Arguments[['theme']])){
+    theme <- qgraphObject$Arguments[['theme']]
+    if (length(theme) > 1) stop("'theme' must be of lenght 1")
+    if (!theme %in% c("classic","Hollywood","Leuven","Reddit","TeamFortress","Fried",
+                      "Borkulo","colorblind","gray","gimme","GIMME","neon","pride")){
+      stop(paste0("Theme '",theme,"' is not supported."))
+    }
+    
+    # Themes:
+    if (theme == "classic"){
+      posCol <- c("#009900","darkgreen")
+      negCol <- c("#BF0000","red")
+    } else if (theme == "Leuven"){
+      dots <- list(...)
+      dots$DoNotPlot <- TRUE
+      dots$theme <- "classic"
+      dots$input <- input
+      return(getWmat(do.call(qgraph,dots )))
+    } else if (theme == "Hollywood"){
+      negCol <- "#FFA500"
+      posCol <- "#005AFF"
+    } else if (theme == "Reddit"){
+      posCol <- "#CCCCFF"
+      negCol <- "#FF4500"
+    } else if (theme == "TeamFortress"){
+      negCol <- "#B8383B"
+      posCol <- "#5885A2"
+    } else if (theme == "Fried"){
+      posCol <- "black"
+      negCol <- "black"
+      bg <- "gray"
+      palette <- "gray"
+    } else if (theme == "Borkulo"){
+      posCol <- "darkblue"
+      negCol <- "red"
+      bcolor <- "darkblue"
+    } else if (theme == "colorblind"){
+      posCol <- c("#0000D5","darkblue")
+      negCol <- c("#BF0000","red")
+      palette <- "colorblind"
+    } else if (theme == "gray" | theme == "grey"){
+      posCol <- negCol <- c("gray10","black")
+      palette <- "gray"
+      negDashed <- TRUE
+    } else if (theme == "gimme" | theme == "GIMME"){
+      posCol <- "red"
+      negCol <- "blue"
+      parallelEdge <- TRUE
+      fade <- FALSE
+    } else if(theme == "neon"){
+      bg <- "black"
+      label.color <- "#8ffcff"
+      bcolor <- "#8ffcff"
+      border.width <- 4
+      font <- 2
+      posCol <- "#f3ea5f"
+      negCol <- "#c04df9"
+      unCol <- "#8ffcff"
+      palette <- "neon"
+    }else if(theme == "pride"){
+      posCol <- "#1AB3FF"
+      negCol <- "#FF1C8D"
+      unCol <- "#613915"
+      palette <- "pride"
+    }
+  }
+  
+  # Overwrite:
+  if(!is.null(qgraphObject$Arguments[['parallelEdge']]))  parallelEdge <- qgraphObject$Arguments[['parallelEdge']]
+  
+  if(!is.null(qgraphObject$Arguments[['fade']])) fade <- qgraphObject$Arguments[['fade']]
+  
+  if(!is.null(qgraphObject$Arguments[['negDashed']])) negDashed <- qgraphObject$Arguments[['negDashed']]
+  if(!is.null(qgraphObject$Arguments[['posCol']])) posCol <- qgraphObject$Arguments[['posCol']]
+  if(!is.null(qgraphObject$Arguments[['negCol']])) negCol <- qgraphObject$Arguments[['negCol']]
+  if(!is.null(qgraphObject$Arguments[['border.width']])) border.width <- qgraphObject$Arguments[['border.width']]
+  
+  if(!is.null(qgraphObject$Arguments[['font']])) font <- qgraphObject$Arguments[['font']]
+  if(is.null(qgraphObject$Arguments[['edge.label.font']])) edge.label.font=font else edge.label.font=qgraphObject$Arguments[['edge.label.font']]
+  if(is.null(qgraphObject$Arguments[['label.font']])) label.font <- font else label.font <- qgraphObject$Arguments[['label.font']]
+  if(!is.null(qgraphObject$Arguments[['unCol']])) unCol <- qgraphObject$Arguments[['unCol']] 
+  
+  
+  if(is.null(qgraphObject$Arguments[['probCol']])) probCol <- "black" else probCol <- qgraphObject$Arguments[['probCol']]
+  if(!is.null(qgraphObject$Arguments[['probabilityEdges']])) 
+  {
+    if (isTRUE(qgraphObject$Arguments[['probabilityEdges']]))
+    {
+      posCol <- probCol
+    }
+  }
+  
+  if (length(posCol)==1) posCol <- rep(posCol,2)
+  if (length(posCol)!=2) stop("'posCol' must be of length 1 or 2.")
+  if (length(negCol)==1) negCol <- rep(negCol,2)
+  if (length(negCol)!=2) stop("'negCol' must be of length 1 or 2.")
+  
+  # border color:
+  if(!is.null(qgraphObject$Arguments[['border.color']])) {
+    bcolor <- qgraphObject$Arguments[['border.color']]
+  }
+  # Alias?
+  if(!is.null(qgraphObject$Arguments[['border.colors']])) {
+    bcolor <- qgraphObject$Arguments[['border.colors']]
+  }
+  
+  # BG:
+  if(!is.null(qgraphObject$Arguments$bg)) bg <- qgraphObject$Arguments$bg
+  
+  # Palette:
+  
+  # PALETTE either one of the defaults or a function
+  if(!is.null(qgraphObject$Arguments[['palette']])){
+    palette <- qgraphObject$Arguments[['palette']]
+  }
+  
+  # Check palette:
+  if (!is.function(palette)){
+    if (length(palette) != 1 && !is.character(palette)){
+      stop("'palette' must be a single string.")
+    }
+    if (!palette %in% c("rainbow","colorblind","R","ggplot2","gray","grey","pastel","neon","pride")){
+      stop(paste0("Palette '",palette,"' is not supported."))
+    }
+  }
+  
+  
+  ###
+  
+  
+  if(is.null(qgraphObject$Arguments[['colFactor']])) colFactor <- 1 else colFactor <- qgraphObject$Arguments[['colFactor']]
+  
+  if(is.null(qgraphObject$Arguments[['edge.color']])) edge.color <- NULL else edge.color=qgraphObject$Arguments[['edge.color']]
+  if(is.null(qgraphObject$Arguments[['edge.label.cex']])) edge.label.cex=1 else edge.label.cex=qgraphObject$Arguments[['edge.label.cex']]
+  if(is.null(qgraphObject$Arguments[['edge.label.position']])) edge.label.position <- 0.5 else edge.label.position=qgraphObject$Arguments[['edge.label.position']]
+  
+  
+  if(is.null(qgraphObject$Arguments$directed))
+  {
+    if (edgelist) directed=TRUE else directed=NULL 
+  } else directed=qgraphObject$Arguments$directed
+  if(is.null(qgraphObject$Arguments[['legend']]))
+  {
+    if ((!is.null(groups) & !is.null(names(groups))) | !is.null(nodeNames)) legend <- TRUE else legend <- FALSE
+  } else legend <- qgraphObject$Arguments[['legend']]
+  
+  stopifnot(is.logical(legend))
+  
+  #     if (is.null(groups)) legend <- FALSE
+  if(is.null(qgraphObject$Arguments$plot)) plot=TRUE else plot=qgraphObject$Arguments$plot
+  if(is.null(qgraphObject$Arguments$rotation)) rotation=NULL else rotation=qgraphObject$Arguments$rotation
+  if(is.null(qgraphObject$Arguments[['layout.control']])) layout.control=0.5 else layout.control=qgraphObject$Arguments[['layout.control']]
+  
+  # repulsion controls the repulse.rad argument
+  if(is.null(qgraphObject$Arguments[['repulsion']])) repulsion=1 else repulsion=qgraphObject$Arguments[['repulsion']]
+  if(is.null(qgraphObject$Arguments[['layout.par']])) {
+    if (is.null(layout) || identical(layout,"spring")) layout.par <- list(repulse.rad = nNodes^(repulsion * 3))  else layout.par <- list()
+  } else layout.par=qgraphObject$Arguments[['layout.par']]
+  
+  if(is.null(qgraphObject$Arguments[['layoutRound']])){
+    layoutRound <- TRUE
+  } else { 
+    layoutRound <- qgraphObject$Arguments[['layoutRound']]
+  }
+  layout.par$round <- layoutRound
+  
+  if(is.null(qgraphObject$Arguments$details)) details=FALSE else details=qgraphObject$Arguments$details
+  if(is.null(qgraphObject$Arguments$title)) title <- NULL else title <- qgraphObject$Arguments$title
+  
+  if(is.null(qgraphObject$Arguments[['title.cex']])) title.cex <- NULL else title.cex <- qgraphObject$Arguments[['title.cex']]
+  
+  if(is.null(qgraphObject$Arguments$preExpression)) preExpression <- NULL else preExpression <- qgraphObject$Arguments$preExpression
+  if(is.null(qgraphObject$Arguments$postExpression)) postExpression <- NULL else postExpression <- qgraphObject$Arguments$postExpression
+  
+  
+  # Output qgraphObject$Arguments:
+  
+  if(is.null(qgraphObject$Arguments[['edge.label.color']])) ELcolor <- NULL else ELcolor <- qgraphObject$Arguments[['edge.label.color']]
+  
+  
+  
+  # if(is.null(qgraphObject$Arguments[['border.width']])) border.width <- 1 else border.width <- qgraphObject$Arguments[['border.width']]
+  #if (!DoNotPlot & !is.null(dev.list()[dev.cur()]))
+  #{
+  #	par(mar=c(0,0,0,0), bg=background)
+  #	if (plot)
+  #	{
+  #		plot(1, ann = FALSE, axes = FALSE, xlim = c(-1.2, 1.2), ylim = c(-1.2 ,1.2),type = "n", xaxs = "i", yaxs = "i")
+  #		plot <- FALSE
+  #	}
+  #}
+  
+  PlotOpen <- !is.null(dev.list()[dev.cur()])
+  
+  if(is.null(qgraphObject$Arguments$filetype)) filetype="default" else filetype=qgraphObject$Arguments$filetype
+  if(is.null(qgraphObject$Arguments$filename)) filename="qgraph" else filename=qgraphObject$Arguments$filename
+  if(is.null(qgraphObject$Arguments$width)) width <- 7 else width <- qgraphObject$Arguments[['width']]
+  if(is.null(qgraphObject$Arguments$height)) height <- 7 else height <- qgraphObject$Arguments[['height']]
+  if(is.null(qgraphObject$Arguments$pty)) pty='m' else pty=qgraphObject$Arguments$pty
+  if(is.null(qgraphObject$Arguments$res)) res=320 else res=qgraphObject$Arguments$res
+  if(is.null(qgraphObject$Arguments[['normalize']])) normalize <- TRUE else normalize <- qgraphObject$Arguments[['normalize']]
+  
+  # Graphical qgraphObject$Arguments
+  #     defNodeSize <- max((-1/72)*(nNodes)+5.35,1) ### Default node size, used as standard unit.
+  if(is.null(qgraphObject$Arguments[['mar']])) mar <- c(3,3,3,3)/10 else mar <- qgraphObject$Arguments[["mar"]]/10
+  if(is.null(qgraphObject$Arguments[['vsize']])) 
+  {
+    vsize <- 8*exp(-nNodes/80)+1
+    #     vsize <- max((-1/72)*(nNodes)+5.35,1)
+    if(is.null(qgraphObject$Arguments[['vsize2']])) vsize2 <- vsize else vsize2 <- vsize * qgraphObject$Arguments[['vsize2']]
+  } else {
+    vsize <- qgraphObject$Arguments[['vsize']]
+    if(is.null(qgraphObject$Arguments[['vsize2']])) vsize2 <- vsize else vsize2 <- qgraphObject$Arguments[['vsize2']]
+  }
+  
+  if(!is.null(qgraphObject$Arguments[['node.width']])) 
+  {
+    vsize <- vsize * qgraphObject$Arguments[['node.width']]
+  }
+  
+  if(!is.null(qgraphObject$Arguments[['node.height']])) 
+  {
+    vsize2 <- vsize2 * qgraphObject$Arguments[['node.height']]
+  }
+  
+  if(is.null(qgraphObject$Arguments$color)) color=NULL else color=qgraphObject$Arguments$color
+  
+  if(is.null(qgraphObject$Arguments[['gray']])) gray <- FALSE else gray <- qgraphObject$Arguments[['gray']]
+  
+  if (gray) {
+    posCol <- negCol <- c("gray10","black")
+    warning("The 'gray' argument is deprecated, please use theme = 'gray' instead.")
+  }
+  
+  if(is.null(qgraphObject$Arguments[['pastel']])){
+    pastel <- FALSE 
+  } else {
+    warning("The 'pastel' argument is deprecated, please use palette = 'pastel' instead.")
+    palette <- "pastel"
+    pastel <- qgraphObject$Arguments[['pastel']]
+  }
+  
+  
+  
+  if(is.null(qgraphObject$Arguments[['piePastel']])) piePastel <- FALSE else piePastel <- qgraphObject$Arguments[['piePastel']]
+  if(is.null(qgraphObject$Arguments[['rainbowStart']])) rainbowStart <- 0 else rainbowStart <- qgraphObject$Arguments[['rainbowStart']]
+  
+  if(is.null(qgraphObject$Arguments$bgcontrol)) bgcontrol=6 else bgcontrol=qgraphObject$Arguments$bgcontrol
+  if(is.null(qgraphObject$Arguments$bgres)) bgres=100 else bgres=qgraphObject$Arguments$bgres
+  if(is.null(qgraphObject$Arguments[['trans',exact=FALSE]])) transparency <- NULL else transparency <- qgraphObject$Arguments[['trans',exact=FALSE]]
+  if (is.null(transparency))
+  {
+    if (isTRUE(bg)) transparency <- TRUE else transparency <- FALSE
+  }
+  
+  
+  # Automatic fading?
+  # autoFade <- isTRUE(fade)
+  # if (isTRUE(fade)){
+  #   fade <- NA
+  # }
+  # 
+  if (is.logical(fade)){
+    fade <- ifelse(fade,NA,1)
+  }
+  
+  if (identical(fade,FALSE)){
+    fade <- 1
+  }
+  
+  if(is.null(qgraphObject$Arguments[['loop']])) loop=1 else loop=qgraphObject$Arguments[['loop']]
+  if(is.null(qgraphObject$Arguments[['loopRotation']]))
+  {
+    loopRotation <- NA
+  } else {
+    loopRotation=qgraphObject$Arguments[['loopRotation']]
+  }
+  
+  if(is.null(qgraphObject$Arguments[['residuals']])) residuals=FALSE else residuals=qgraphObject$Arguments[['residuals']]
+  if(is.null(qgraphObject$Arguments[['residScale']])) residScale=1 else residScale=qgraphObject$Arguments[['residScale']]
+  if(is.null(qgraphObject$Arguments[['residEdge']])) residEdge=FALSE else residEdge=qgraphObject$Arguments[['residEdge']]
+  
+  if(is.null(qgraphObject$Arguments[['bars']])) bars <- list() else bars <- qgraphObject$Arguments[['bars']]
+  if(is.null(qgraphObject$Arguments[['barSide']])) barSide <- 1 else barSide <- qgraphObject$Arguments[['barSide']]
+  if(is.null(qgraphObject$Arguments[['barLength']])) barLength <- 0.5 else barLength <- qgraphObject$Arguments[['barLength']]
+  if(is.null(qgraphObject$Arguments[['barColor']])) barColor <- 'border' else barColor <- qgraphObject$Arguments[['barColor']]
+  if(is.null(qgraphObject$Arguments[['barsAtSide']])) barsAtSide <- FALSE else barsAtSide <- qgraphObject$Arguments[['barsAtSide']]
+  
+  # Means and SDs:
+  if(is.null(qgraphObject$Arguments[['means']])) means <- NA else means <- qgraphObject$Arguments[['means']]
+  if(is.null(qgraphObject$Arguments[['SDs']])) SDs <- NA else SDs <- qgraphObject$Arguments[['SDs']]
+  if(is.null(qgraphObject$Arguments[['meanRange']])) {
+    if (all(is.na(means))) meanRange <- c(NA,NA) else meanRange <- range(means,na.rm=TRUE) 
+  }else meanRange <- qgraphObject$Arguments[['meanRange']]
+  
+  
+  if (!is.list(bars)) bars <- as.list(bars)
+  
+  if(is.null(qgraphObject$Arguments[['CircleEdgeEnd']])) CircleEdgeEnd=FALSE else CircleEdgeEnd=qgraphObject$Arguments[['CircleEdgeEnd']]
+  if(is.null(qgraphObject$Arguments[['loopAngle']])) loopangle=pi/2 else loopAngle=qgraphObject$Arguments[['loopAngle']]
+  if(is.null(qgraphObject$Arguments[['legend.cex']])) legend.cex=0.6 else legend.cex=qgraphObject$Arguments[['legend.cex']]
+  if(is.null(qgraphObject$Arguments[['legend.mode']]))
+  {
+    if (!is.null(nodeNames) && !is.null(groups)){
+      legend.mode <- "style1" # or style2
+    } else if (!is.null(nodeNames)) legend.mode <- "names" else legend.mode <- "groups"
+  }  else legend.mode=qgraphObject$Arguments[['legend.mode']]
+  
+  if(is.null(qgraphObject$Arguments$borders)){
+    # if (!drawPies){
+    borders <- TRUE       
+    # }
+  } else {
+    #     if (drawPies){
+    #       warning("'borders' argument ignored if 'pie' argument is used.")     
+    #     } else {
+    borders <- qgraphObject$Arguments[['borders']]        
+    # }
+  }
+  
+  
+  ### Polygon lookup list:
+  polygonList = list(
+    ellipse = ELLIPSEPOLY,
+    heart  = HEARTPOLY,
+    star = STARPOLY,
+    crown = CROWNPOLY
+  )
+  
+  if(!is.null(qgraphObject$Arguments[['polygonList']])) polygonList  <- c( polygonList, qgraphObject$Arguments[['polygonList']])
+  
+  # Rescale to -1 - 1 and compute radians per point:
+  for (i in seq_along(polygonList))
+  {
+    polygonList[[i]]$x <- (polygonList[[i]]$x - min(polygonList[[i]]$x)) / (max(polygonList[[i]]$x) - min(polygonList[[i]]$x)) * 2 - 1
+    polygonList[[i]]$y <- (polygonList[[i]]$y - min(polygonList[[i]]$y)) / (max(polygonList[[i]]$y) - min(polygonList[[i]]$y)) * 2 - 1
+  }
+  
+  if(is.null(qgraphObject$Arguments[['label.scale']])) label.scale=TRUE else label.scale=qgraphObject$Arguments[['label.scale']]
+  
+  if(is.null(qgraphObject$Arguments[['label.cex']])){ 
+    if (label.scale){
+      label.cex <- 1  
+    } else {
+      label.cex <- 1
+    }
+  } else label.cex <- qgraphObject$Arguments[['label.cex']]
+  
+  if(is.null(qgraphObject$Arguments$label.scale.equal)) label.scale.equal=FALSE else label.scale.equal=qgraphObject$Arguments$label.scale.equal
+  
+  if(is.null(qgraphObject$Arguments$label.fill.horizontal)) label.fill.horizontal<-1 else label.fill.horizontal <- qgraphObject$Arguments$label.fill.horizontal
+  if(is.null(qgraphObject$Arguments$label.fill.vertical)) label.fill.vertical<-1 else label.fill.vertical <- qgraphObject$Arguments$label.fill.vertical
+  if(is.null(qgraphObject$Arguments$node.label.offset)) node.label.offset<-c(0.5, 0.5) else node.label.offset <- qgraphObject$Arguments$node.label.offset
+  if(is.null(qgraphObject$Arguments$node.label.position)) node.label.position<-NULL else node.label.position <- qgraphObject$Arguments$node.label.position
+  
+  
+  
+  if(is.null(qgraphObject$Arguments$scores)) scores=NULL else scores=qgraphObject$Arguments$scores
+  if(is.null(qgraphObject$Arguments$scores.range)) scores.range=NULL else scores.range=qgraphObject$Arguments$scores.range
+  if(is.null(qgraphObject$Arguments$lty)) lty=1 else lty=qgraphObject$Arguments$lty
+  if(is.null(qgraphObject$Arguments$vTrans)) vTrans=255 else vTrans=qgraphObject$Arguments$vTrans
+  # if(is.null(qgraphObject$Arguments[['overlay']])) overlay <- FALSE else overlay <- qgraphObject$Arguments[['overlay']]
+  # if(is.null(qgraphObject$Arguments[['overlaySize']])) overlaySize <- 0.5 else overlaySize <- qgraphObject$Arguments[['overlaySize']]
+  if(is.null(qgraphObject$Arguments[['GLratio']])) GLratio <- 2.5 else GLratio <- qgraphObject$Arguments[['GLratio']]
+  if(is.null(qgraphObject$Arguments$layoutScale)) layoutScale <- 1 else layoutScale <- qgraphObject$Arguments$layoutScale
+  if(is.null(qgraphObject$Arguments[['layoutOffset']])) layoutOffset <- 0 else layoutOffset <- qgraphObject$Arguments[['layoutOffset']]
+  
+  # Aspect ratio:
+  if(is.null(qgraphObject$Arguments[['aspect']])) aspect=FALSE else aspect=qgraphObject$Arguments[['aspect']]
+  
+  # qgraphObject$Arguments for directed graphs:
+  if(is.null(qgraphObject$Arguments[['curvePivot']])) curvePivot <- FALSE else curvePivot <- qgraphObject$Arguments[['curvePivot']]
+  if (isTRUE(curvePivot)) curvePivot <- 0.1
+  if(is.null(qgraphObject$Arguments[['curveShape']])) curveShape <- -1 else curveShape <- qgraphObject$Arguments[['curveShape']]
+  if(is.null(qgraphObject$Arguments[['curvePivotShape']])) curvePivotShape <- 0.25 else curvePivotShape <- qgraphObject$Arguments[['curvePivotShape']]
+  if(is.null(qgraphObject$Arguments[['curveScale']])) curveScale <- TRUE else curveScale <- qgraphObject$Arguments[['curveScale']]
+  
+  if(is.null(qgraphObject$Arguments[['curveScaleNodeCorrection']])) curveScaleNodeCorrection <- TRUE else curveScaleNodeCorrection <- qgraphObject$Arguments[['curveScaleNodeCorrection']]
+  
+  
+  
+  
+  
+  
+  
+  if(is.null(qgraphObject$Arguments[['parallelAngle']])) parallelAngle <- NA else parallelAngle <- qgraphObject$Arguments[['parallelAngle']]
+  
+  if(is.null(qgraphObject$Arguments[['parallelAngleDefault']])) parallelAngleDefault <- pi/6 else parallelAngleDefault <- qgraphObject$Arguments[['parallelAngleDefault']]
+  
+  if(is.null(qgraphObject$Arguments[['curveDefault']])) curveDefault <- 1 else curveDefault <- qgraphObject$Arguments[['curveDefault']]
+  
+  if(is.null(qgraphObject$Arguments[['curve']]))
+  {
+    if (any(parallelEdge))
+    { 
+      curve <- ifelse(parallelEdge,0,NA)
+    } else curve <- NA 
+  } else {      
+    curve <- qgraphObject$Arguments[['curve']]
+    if (length(curve)==1) 
+    {
+      curveDefault <- curve
+      curve <- NA
+    }
+  }
+  if(is.null(qgraphObject$Arguments[['curveAll']])) curveAll <- FALSE else curveAll <- qgraphObject$Arguments[['curveAll']]
+  if (curveAll)
+  {
+    curve[is.na(curve)] <- curveDefault
+  }
+  if(is.null(qgraphObject$Arguments$arrows)) arrows=TRUE else arrows=qgraphObject$Arguments$arrows
+  #     asize=asize*2.4/height
+  if(is.null(qgraphObject$Arguments$open)) open=FALSE else open=qgraphObject$Arguments$open
+  if(is.null(qgraphObject$Arguments$bidirectional)) bidirectional=FALSE else bidirectional=qgraphObject$Arguments$bidirectional
+  
+  # qgraphObject$Arguments for SVG pictures:
+  # if(is.null(qgraphObject$Arguments$tooltips)) tooltips=NULL else tooltips=qgraphObject$Arguments$tooltips
+  # if(is.null(qgraphObject$Arguments$SVGtooltips)) SVGtooltips=NULL else SVGtooltips=qgraphObject$Arguments$SVGtooltips
+  if(is.null(qgraphObject$Arguments$hyperlinks)) hyperlinks=NULL else hyperlinks=qgraphObject$Arguments$hyperlinks
+  
+  # qgraphObject$Arguments for TEX:
+  if(is.null(qgraphObject$Arguments$standAlone)) standAlone=TRUE else standAlone=qgraphObject$Arguments$standAlone
+  
+  ### EASTER EGGS ###
+  if(is.null(qgraphObject$Arguments[['XKCD']])) XKCD <- FALSE else XKCD <- TRUE
+  
+  #     # Legend setting 1
+  #     if (is.null(legend))
+  #     {
+  #       if (is.null(groups)) legend=FALSE else legend=TRUE
+  #     }
+  #if ((legend & filetype!='pdf' & filetype!='eps') | filetype=="svg")
+  if ((legend&is.null(scores))|(identical(filetype,"svg")))
+  {
+    width=width*(1+(1/GLratio))
+  }
+  
+  #     if (!DoNotPlot)
+  #     {
+  #       
+  #       # Start output:
+  #       if (filetype=='default') if (is.null(dev.list()[dev.cur()])) dev.new(rescale="fixed",width=width,height=height)
+  #       if (filetype=='R') dev.new(rescale="fixed",width=width,height=height)
+  #       if (filetype=='X11' | filetype=='x11') x11(width=width,height=height)
+  #       if (filetype=='eps') postscript(paste(filename,".eps",sep=""),height=height,width=width, horizontal=FALSE)
+  #       if (filetype=='pdf') pdf(paste(filename,".pdf",sep=""),height=height,width=width)
+  #       if (filetype=='tiff') tiff(paste(filename,".tiff",sep=""),units='in',res=res,height=height,width=width)
+  #       if (filetype=='png') png(paste(filename,".png",sep=""),units='in',res=res,height=height,width=width)
+  #       if (filetype=='jpg' | filetype=='jpeg') jpeg(paste(filename,".jpg",sep=""),units='in',res=res,height=height,width=width)
+  #       if (filetype=="svg")
+  #       {
+  #         if (R.Version()$arch=="x64") stop("RSVGTipsDevice is not available for 64bit versions of R.")
+  #         require("RSVGTipsDevice")
+  #         devSVGTips(paste(filename,".svg",sep=""),width=width,height=height,title=filename)
+  #       }
+  #       if (filetype=="tex")
+  #       {
+  #         # 	# Special thanks to Charlie Sharpsteen for supplying these tikz codes on stackoverflow.com !!!
+  #         # 	
+  #         # 	if (!suppressPackageStartupMessages(require(tikzDevice,quietly=TRUE))) stop("tikzDevice must be installed to use filetype='tex'")
+  #         # 	opt= c( 
+  #         # 	getOption('tikzLatexPackages'),  
+  #         #     "\\def\\tooltiptarget{\\phantom{\\rule{1mm}{1mm}}}",
+  #         #     "\\newbox\\tempboxa\\setbox\\tempboxa=\\hbox{}\\immediate\\pdfxform\\tempboxa \\edef\\emptyicon{\\the\\pdflastxform}",
+  #         #     "\\newcommand\\tooltip[1]{\\pdfstartlink user{/Subtype /Text/Contents  (#1)/AP <</N \\emptyicon\\space 0 R >>}\\tooltiptarget\\pdfendlink}"
+  #         # 	)
+  #         # 	
+  #         # 	place_PDF_tooltip <- function(x, y, text)
+  #         # 	{
+  #         # 
+  #         # 		# Calculate coordinates
+  #         # 		tikzX <- round(grconvertX(x, to = "device"), 2)
+  #         # 		tikzY <- round(grconvertY(y, to = "device"), 2)
+  #         # 		# Insert node
+  #         # 		tikzAnnotate(paste(
+  #         # 		"\\node at (", tikzX, ",", tikzY, ") ",
+  #         # 		"{\\tooltip{", text, "}};",
+  #         # 		sep = ''
+  #         # 		))
+  #         # 	  invisible()
+  #         # 	}
+  #         # 	
+  #         # 	print("NOTE: Using 'tex' as filetype will take longer to run than other filetypes")
+  #         # 	
+  #         # 	tikzDevice:::tikz(paste(filename,".tex",sep=""), standAlone = standAlone, width=width, height=height, packages=opt)
+  #         
+  #         stop("Tikz device no longer supported due to removal from CRAN. Please see www.sachaepskamp.com/qgraph for a fix")
+  #       }
+  #     }	
+  #if (!filetype%in%c('pdf','png','jpg','jpeg','svg','R','eps','tiff')) warning(paste("File type",filetype,"is not supported")) 
+  
+  # Specify background:
+  if (is.null(background) && !DoNotPlot){
+    background <- par("bg")
+    if (background == "transparent") background <- "white"    
+  } else {
+    background <- "white"
+  }
+  if (isColor(bg)) background <- bg
+  # Remove alpha:
+  background <- col2rgb(background, alpha = TRUE)
+  background <- rgb(background[1],background[2],background[3],background[4],maxColorValue=255)
+  
+  if (is.null(subplotbg)) subplotbg <- background
+  
+  if (isTRUE(edge.label.bg)) edge.label.bg <- background
+  if(is.null(qgraphObject$Arguments[['label.color']])) {
+    # if(is.null(qgraphObject$Arguments$lcolor)) lcolor <- ifelse(mean(col2rgb(background)/255) > 0.5,"black","white") else lcolor <- qgraphObject$Arguments$lcolor
+    if(is.null(qgraphObject$Arguments$lcolor)) lcolor <- NA else lcolor <- qgraphObject$Arguments$lcolor
+  } else lcolor <- qgraphObject$Arguments[['label.color']]
+  
+  # Legend setting 2
+  if (legend & !is.null(scores))
+  {
+    layout(t(1:2),widths=c(GLratio,1))
+  }
+  
+  # Weighted settings:
+  if (is.null(weighted))
+  {
+    if (edgelist)
+    {
+      if (ncol(input)==2) weighted=FALSE else weighted=TRUE
+    }
+    if (!edgelist)
+    {
+      if (all(unique(c(input)) %in% c(0,1)) & !grepl("sig",mode)) weighted <- FALSE else weighted <- TRUE
+    }
+  }		
+  if (!weighted) cut=0
+  
+  # par settings:
+  #parOrig <- par(no.readonly=TRUE)
+  if (!DoNotPlot)
+  {
+    par(pty=pty)
+  }
+  
+  if (!edgelist)
+  {
+    if (!is.logical(directed)) if (is.null(directed))
+    {
+      if (!isSymmetric(unname(input))) directed=TRUE else directed=FALSE
+    }
+  }
+  
+  
+  # Set default edge width:
+  if(is.null(qgraphObject$Arguments[["esize"]])) 
+  {
+    if (weighted)
+    {
+      #       esize <- max((-1/72)*(nNodes)+5.35,2) 
+      esize <- 15*exp(-nNodes/90)+1
+    } else {
+      esize <- 2
+    }
+    if (any(directed)) esize <- max(esize/2,1)
+  } else esize <- qgraphObject$Arguments$esize
+  
+  # asize default:
+  if(is.null(qgraphObject$Arguments[["asize"]]))
+  {
+    #       asize <- max((-1/10)*(nNodes)+4,1)
+    #     asize <- ifelse(nNodes>10,2,3)
+    asize <- 2*exp(-nNodes/20)+2
+  } else asize <- qgraphObject$Arguments[["asize"]]
+  
+  if(!is.null(qgraphObject$Arguments[["edge.width"]]))
+  {
+    esize <- esize * qgraphObject$Arguments[["edge.width"]]
+    asize <- asize * sqrt(qgraphObject$Arguments[["edge.width"]])
+  }
+  
+  ## arrowAngle default:
+  if(is.null(qgraphObject$Arguments[["arrowAngle"]])) 
+  {
+    if (weighted) arrowAngle <- pi/6 else arrowAngle <- pi/8
+  } else {
+    arrowAngle <- qgraphObject$Arguments[["arrowAngle"]]
+  }
+  
+  
+  ########### GRAPHICAL MODEL SELECTION #######
+  
+  if (graph == "cor") {
+    if(!all(eigen(input)$values > 0))  {
+      warning("Correlation/covariance matrix is not positive definite. Finding nearest positive definite matrix")
+      
+      input <- as.matrix(Matrix::nearPD(input, keepDiag = TRUE, ensureSymmetry = TRUE)$mat)
+    }
+  }
+  
+  
+  # Partial graph:
+  if (graph != "default")
+  {
+    if (edgelist) stop("Graph requires correlation or covariance matrix")
+    
+    # Check for symmetric matrix:
+    if (!isSymmetric(input))
+    {
+      stop("Input matrix is not symmetric, thus can not be a correlation or covariance matrix.")
+    }
+    
+    # Check for positive definiteness (glasso does its own check):
+    if (graph != "glasso")
+    {
+      if(!all(eigen(input)$values > 0))  {
+        warning("Correlation/covariance matrix is not positive definite. Finding nearest positive definite matrix")
+        
+        input <- as.matrix(Matrix::nearPD(input, keepDiag = TRUE, ensureSymmetry = TRUE)$mat)
+      }
+    }
+    
+    # Association graph:
+    if (graph == "cor")
+    {
+      if (!all(diag(input) == 1)){
+        input <- cov2cor(input)
+      }
+    }
+    
+    # Concentration graph:
+    if (graph=="pcor") 
+    {
+      coln <- colnames(input)
+      rown <- rownames(input)
+      input <- cor2pcor(input)
+      rownames(input) <- rown
+      colnames(input) <- coln
+    } 
+    
+    #     # FDR:
+    #     if (tolower(graph)=="fdr.cor") 
+    #     {
+    #       if (!all(diag(input) == 1)){
+    #         input <- cov2cor(input)
+    #       }
+    #       input <- FDRnetwork(input, FDRcutoff)
+    #     } 
+    #     
+    #     if (tolower(graph)=="fdr.pcor") 
+    #     {
+    #       input <- cor2pcor(input)
+    #       input <- FDRnetwork(input, FDRcutoff)
+    #     } 
+    #     
+    #     if (tolower(graph) == "fdr")
+    #     {
+    #       input <- cor2pcor(input)
+    #       testResult <- GeneNet::ggm.test.edges(input, fdr = TRUE, plot = FALSE)
+    #       net <- GeneNet::extract.network(testResult)
+    #       input <- matrix(0, nrow(input), ncol(input))
+    #       for (i in seq_len(nrow(net)))
+    #       {
+    #         input[net$node1[i],net$node2[i]] <- input[net$node2[i],net$node1[i]] <- net$pcor[i]
+    #       }
+    #     }
+    
+    # Glasso graph:
+    if (graph == "glasso")
+    {
+      if (edgelist) stop("Concentration graph requires correlation matrix")
+      if (is.null(sampleSize)) stop("'sampleSize' argument is needed for glasso estimation")
+      input <- EBICglasso(input, sampleSize, gamma = tuning,
+                          refit=refit, lambda.min.ratio = lambda.min.ratio,
+                          threshold = isTRUE(threshold))
+    }
+    
+    if (graph == "ggmModSelect")
+    {
+      if (edgelist) stop("Concentration graph requires correlation matrix")
+      if (is.null(sampleSize)) stop("'sampleSize' argument is needed for ggmModSelect estimation")
+      input <- ggmModSelect(input, sampleSize, gamma = tuning, lambda.min.ratio = lambda.min.ratio)$graph
+    }
+    
+    diag(input) <- 1
+    input <- as.matrix(forceSymmetric(input))
+  }
+  
+  
+  ## Thresholding ####
+  # If threshold is TRUE and graph = "glasso" or "ggmModSelect", set to FALSE:
+  if (isTRUE(threshold) && (graph == "glasso" || graph == "ggmModSelect")){
+    threshold <- qgraphObject$Arguments[['threshold']] <- 0
+  }
+  
+  
+  if (is.character(threshold))
+  {    
+    if (graph == "default")
+    {
+      if (verbose) message("'threshold' is assigned a string but 'graph' is not assigned. Detecting if input could be a correlation matrix.")
+      # Detect if graph could be correlations or covariance matrix:
+      
+      # Check if input was a matrix:
+      if (!is.matrix(input) | edgelist) stop(paste0("'",threshold,"' threshold requires a (partial) correlation/covariance matrix as input"))
+      
+      # Check if input is square matrix:
+      if (!isSymmetric(input)) stop(paste0("'",threshold,"' threshold requires a (partial) correlation/covariance matrix as input: input was not a square matrix."))
+      
+      # Check if input is positive semi definite:
+      if (any(eigen(input)$values < 0)) stop(paste0("'",threshold,"' threshold requires a (partial) correlation/covariance matrix as input: input was not a positive semi-definite matrix"))
+      
+      # If these checks are passed assume matrix is correlation or covariance: 
+    } else {
+      if (!graph %in% c("cor","pcor"))
+      {
+        stop("Thresholding by significance level only supported for graph = 'cor' or graph = 'pcor'")
+      }
+    }
+    
+    # Stop for incorrect threshold:
+    if (!threshold %in% c('sig','holm', 'hochberg', 'hommel', 'bonferroni', 'BH', 'BY', 'fdr', 'none', 'locfdr'))
+    {
+      stop("'threshold' argument must be number or 'sig','holm', 'hochberg', 'hommel', 'bonferroni', 'BH', 'BY', 'fdr', 'none' or 'locfdr'")
+    }
+    
+    # Significance:
+    if (threshold != "locfdr")
+    {
+      if (grepl("sig",threshold,ignore.case=TRUE))
+      {
+        threshold <- "none"
+      }
+      
+      if (is.null(sampleSize))
+      {
+        stop("'sampleSize' argument is needed for all thresholding with significance except 'locfdr'")
+      }
+      nadj <- sampleSize
+      if (graph == "pcor")
+      {
+        nadj <- nadj - (nNodes - 2)
+      }
+      
+      # Fix for col/row names bugs:
+      if (is.null(colnames(input))){
+        colnames(input) <- paste0("V",seq_len(ncol(input)))
+      }
+      if (is.null(rownames(input))){
+        rownames(input) <- paste0("V",seq_len(ncol(input)))
+      }
+      
+      # Compute p-values:
+      if (all(diag(input)==1)) 
+      {
+        pvals <- psych::corr.p(input,n = nadj, adjust = threshold, alpha = max(alpha))$p
+      } else {
+        pvals <- psych::corr.p(cov2cor(input), n = nadj, adjust = threshold, alpha = max(alpha))$p
+      }
+      
+      # Symmetrize:
+      pvals[lower.tri(pvals)] <- t(pvals)[lower.tri(pvals)]
+      
+      # Remove insignificant edges:
+      input <- input * (pvals < max(alpha))
+    } else {
+      input <- FDRnetwork(input, FDRcutoff)
+    }
+    
+    threshold <- 0
+  }
+  
+  
+  #######################3
+  
+  ## diag default:
+  if(is.null(qgraphObject$Arguments[['diag']])) 
+  {
+    if (edgelist) diag <- FALSE  else diag <- length(unique(diag(input))) > 1
+  } else { 
+    diag <- qgraphObject$Arguments$diag
+  }
+  
+  # Diag:
+  diagCols=FALSE
+  diagWeights=0
+  if (is.character(diag)) 
+  {
+    if (diag=="col" & !edgelist)
+    {
+      diagWeights=diag(input)
+      diagCols=TRUE
+      diag=FALSE
+    }
+  }
+  if (is.numeric(diag))
+  {
+    if (length(diag)==1) diag=rep(diag,nNodes)
+    if (length(diag)!=nNodes) stop("Numerical assignment of the 'diag' argument must be if length equal to the number of nodes")
+    diagWeights=diag
+    diagCols=TRUE
+    diag=FALSE
+  }
+  if (is.logical(diag)) if (!diag & !edgelist) diag(input)=0
+  
+  # CREATE EDGELIST:
+  
+  E <- list()
+  
+  # Remove nonfinite weights:
+  if (any(!is.finite(input)))
+  {
+    input[!is.finite(input)] <- 0
+    warning("Non-finite weights are omitted")
+  }
+  
+  if (edgelist)
+  {
+    E$from=input[,1]
+    E$to=input[,2]
+    if (ncol(input)>2) E$weight=input[,3] else E$weight=rep(1,length(E$from))
+    if (length(directed)==1) directed=rep(directed,length(E$from))
+    if (graph %in% c("sig","significance"))
+    {
+      if (sigSign)
+      {
+        E$weight <- sign0(E$weight) * fdrtool(E$weight,"correlation",plot=FALSE, color.figure=FALSE, verbose=FALSE)$pval
+      } else E$weight <- fdrtool(E$weight,"correlation",plot=FALSE, color.figure=FALSE, verbose=FALSE)$pval
+    }
+    if (bonf)
+    {
+      if (mode=="sig") 
+      {
+        E$weight <- E$weight * length(E$weight)
+        E$weight[E$weight > 1] <- 1
+        E$weight[E$weight < -1] <- -1
+      } # else warning("Bonferonni correction is only applied if mode='sig'")
+    }
+    if (mode=="sig" & any(E$weight < -1 | E$weight > 1))
+    {
+      warning("Weights under -1 set to -1 and weights over 1 set to 1")
+      E$weight[E$weight< -1] <- -1
+      E$weight[E$weight>1] <- 1
+    }
+    
+    if (mode=="sig") 
+    {
+      Pvals <- E$weight
+      E$weight <- sign0(E$weight) * sigScale(abs(E$weight))
+    }
+    if (OmitInsig)
+    {
+      #       if (!require("fdrtool")) stop("`fdrtool' package not found, is it installed?")
+      if (mode != "sig") Pvals <- fdrtool(E$weight,"correlation",plot=FALSE, color.figure=FALSE, verbose=FALSE)$pval
+      E$weight[abs(Pvals) > alpha[length(alpha)]] <- 0
+    }
+    
+  } else
+  {
+    if (is.matrix(directed))
+    {
+      incl <- directed|upper.tri(input,diag=TRUE)
+    } else
+    {
+      if (length(directed)>1) 
+      {
+        stop("'directed' must be TRUE or FALSE or a matrix containing TRUE or FALSE for each element of the input matrix") 
+      } else
+      { 
+        if (directed)
+        {
+          incl <- matrix(TRUE,nNodes,nNodes)
+        } else
+        {
+          if (isSymmetric(unname(input)))
+          {
+            
+            incl <- upper.tri(input,diag=TRUE)
+          } else 
+          {
+            incl <- matrix(TRUE,nNodes,nNodes)
+          }
+        }  
+        directed <- matrix(directed,nNodes,nNodes)
+      }
+    }
+    directed <- directed[incl]
+    
+    E$from=numeric(0)
+    E$to=numeric(0)
+    E$weight=numeric(0)
+    
+    E$from=rep(1:nrow(input),times=nrow(input))
+    E$to=rep(1:nrow(input),each=nrow(input))
+    E$weight=c(input)
+    
+    
+    E$from <- E$from[c(incl)]
+    E$to <- E$to[c(incl)]
+    E$weight <- E$weight[c(incl)]
+    if (graph %in% c("sig","significance"))
+    {
+      if (sigSign)
+      {
+        E$weight <- sign0(E$weight) * fdrtool(E$weight,"correlation",plot=FALSE, color.figure=FALSE, verbose=FALSE)$pval
+      } else E$weight <- fdrtool(E$weight,"correlation",plot=FALSE, color.figure=FALSE, verbose=FALSE)$pval
+    }
+    if (bonf)
+    {
+      if (mode=="sig") 
+      {
+        E$weight <- E$weight * length(E$weight)
+        E$weight[E$weight > 1] <- 1
+        E$weight[E$weight < -1] <- -1
+      } # else warning("Bonferonni correction is only applied if mode='sig'")
+    }
+    if (mode=="sig" & any(E$weight < -1 | E$weight > 1))
+    {
+      warning("Weights under -1 inputusted to -1 and weights over 1 input adjusted to 1")
+      E$weight[E$weight < -1] <- -1
+      E$weight[E$weight > 1] <- 1
+    }
+    
+    if (mode=="sig") 
+    {
+      Pvals <- E$weight
+      E$weight <- sign0(E$weight) * sigScale(abs(E$weight))
+    }
+    
+    if (OmitInsig)
+    {
+      #       if (!require("fdrtool")) stop("`fdrtool' package not found, is it installed?")
+      if (mode != "sig") Pvals <- fdrtool(E$weight,"correlation",plot=FALSE, color.figure=FALSE, verbose=FALSE)$pval
+      E$weight[abs(Pvals) > alpha[length(alpha)]] <- 0
+    }	
+    if (is.list(knots))
+    {
+      knotList <- knots
+      knots <- matrix(0,nNodes,nNodes)
+      for (k in seq_along(knotList))
+      {
+        knots[knotList[[k]]] <- k
+      }
+      # If undirected, symmetrize:
+      if (all(incl[upper.tri(incl,diag=TRUE)]) & !any(incl[lower.tri(incl)]))
+      {
+        knots <- pmax(knots,t(knots))
+      }
+    }
+    if (is.matrix(knots))
+    {
+      knots <- knots[c(incl)]
+      #       knots <- knots[E$weight!=0]
+    }
+    if (is.matrix(curve))
+    {
+      curve <- curve[c(incl)]
+      #       curve <- curve[E$weight!=0]
+    }
+    if (is.matrix(parallelEdge))
+    {
+      parallelEdge <- parallelEdge[c(incl)]
+      #       parallelEdge <- parallelEdge[E$weight!=0]
+    }
+    if (is.matrix(parallelAngle))
+    {
+      parallelAngle <- parallelAngle[c(incl)]
+      #       parallelAngle <- parallelAngle[E$weight!=0]
+    }
+    if (is.matrix(bidirectional))
+    {
+      bidirectional <- bidirectional[c(incl)]
+      #       bidirectional <- bidirectional[E$weight!=0]
+    }
+    if (is.matrix(residEdge))
+    {
+      residEdge <- residEdge[c(incl)]
+      #       residEdge <- residEdge[E$weight!=0]
+    }
+    if (is.matrix(CircleEdgeEnd))
+    {
+      CircleEdgeEnd <- CircleEdgeEnd[c(incl)]
+      #       CircleEdgeEnd <- CircleEdgeEnd[E$weight!=0]
+    }      
+    if (is.matrix(edge.labels))
+    {
+      edge.labels <- edge.labels[c(incl)]
+      #       edge.labels <- edge.labels[E$weight!=0]
+    }
+    if (is.matrix(edge.color))
+    {
+      edge.color <- edge.color[c(incl)]
+      #       edge.color <- edge.color[E$weight!=0]
+    }
+    if (is.matrix(edge.label.bg))
+    {
+      edge.label.bg <- edge.label.bg[c(incl)]
+      #       edge.label.bg <- edge.label.bg[E$weight!=0]
+    }
+    if (is.matrix(edge.label.margin))
+    {
+      edge.label.margin <- edge.label.margin[c(incl)]
+      #       edge.label.bg <- edge.label.bg[E$weight!=0]
+    }
+    if (is.matrix(edge.label.font))
+    {
+      edge.label.font <- edge.label.font[c(incl)]
+      #       edge.label.font <- edge.label.font[E$weight!=0]
+    }
+    if (is.matrix(fade))
+    {
+      fade <- fade[c(incl)]
+      #       edge.color <- edge.color[E$weight!=0]
+    }
+    if (!is.null(ELcolor))
+    {
+      if (is.matrix(ELcolor))
+      {
+        ELcolor <- ELcolor[c(incl)]
+        #         ELcolor <- ELcolor[E$weight!=0]
+      }      
+    }
+    
+    # if (!is.null(edge.color)) if (length(edge.color) == length(E$weight)) edge.color <- edge.color[E$weight!=0]
+    
+    if (is.matrix(lty))
+    {
+      lty <- lty[c(incl)]
+      #       lty <- lty[E$weight!=0]
+    }
+    
+    if (!is.null(edgeConnectPoints))
+    {
+      if (is.array(edgeConnectPoints) && isTRUE(dim(edgeConnectPoints)[3]==2))
+      {
+        edgeConnectPoints <- matrix(edgeConnectPoints[c(incl,incl)],,2)
+        #         edgeConnectPoints <- edgeConnectPoints[E$weight!=0,,drop=FALSE]
+      }
+    }
+    
+    if (is.matrix(edge.label.position))
+    {
+      edge.label.position <- edge.label.position[c(incl)]
+      #       edge.label.position <- edge.label.position[E$weight!=0]
+    }
+  }	
+  
+  keep <- abs(E$weight)>threshold
+  
+  ######
+  if (length(loopRotation)==1) loopRotation <- rep(loopRotation,nNodes)
+  
+  if (length(directed)==1) 
+  {
+    directed <- rep(directed,length(E$from))
+  }
+  directed <- directed[keep]
+  
+  if (!is.null(edge.color) && length(edge.color) != sum(keep)) 
+  {
+    edge.color <- rep(edge.color,length=length(E$from))
+    if (length(edge.color) != length(keep)) stop("'edge.color' is wrong length")
+    edge.color <- edge.color[keep]
+  }
+  
+  if (!is.logical(edge.labels))
+  {
+    if (length(edge.labels) == 1) edge.labels <- rep(edge.labels,length(E$from))
+    if (length(edge.labels) != length(keep) & length(edge.labels) != sum(keep)) stop("'edge.label.bg' is wrong length")
+    if (length(edge.labels)==length(keep)) edge.labels <- edge.labels[keep]
+    
+    # edge.labels <- rep(edge.labels,length=length(E$from))
+  }
+  
+  #     if (is.logical(edge.label.bg))
+  #     {
+  #       edge.label.bg <- "white"
+  #     }
+  if (length(edge.label.bg) == 1) edge.label.bg <- rep(edge.label.bg,length(E$from))
+  if (length(edge.label.bg) != length(keep) & length(edge.label.bg) != sum(keep)) stop("'edge.label.bg' is wrong length")
+  if (length(edge.label.bg)==length(keep)) edge.label.bg <- edge.label.bg[keep]
+  
+  #     }
+  if (length(edge.label.margin) == 1) edge.label.margin <- rep(edge.label.margin,length(E$from))
+  if (length(edge.label.margin) != length(keep) & length(edge.label.margin) != sum(keep)) stop("'edge.label.margin' is wrong length")
+  if (length(edge.label.margin)==length(keep)) edge.label.margin <- edge.label.margin[keep]
+  
+  
+  
+  if (length(edge.label.font) == 1) edge.label.font <- rep(edge.label.font,length(E$from))
+  if (length(edge.label.font) != length(keep) & length(edge.label.font) != sum(keep)) stop("'edge.label.font' is wrong length")
+  if (length(edge.label.font)==length(keep)) edge.label.font <- edge.label.font[keep]
+  
+  
+  if (length(lty) == 1) lty <- rep(lty,length(E$from))
+  if (length(lty) != length(keep) & length(lty) != sum(keep)) stop("'lty' is wrong length")
+  if (length(lty)==length(keep)) lty <- lty[keep]
+  
+  if (length(fade) == 1) fade <- rep(fade,length(E$from))
+  if (length(fade) != length(keep) & length(fade) != sum(keep)) stop("'fade' is wrong length")
+  if (length(fade)==length(keep)) fade <- fade[keep]
+  
+  
+  if (!is.null(edgeConnectPoints))
+  {
+    if (length(edgeConnectPoints) == 1) edgeConnectPoints <- matrix(rep(edgeConnectPoints,2*length(E$from)),,2)
+    if (nrow(edgeConnectPoints) != length(keep) & nrow(edgeConnectPoints) != sum(keep)) stop("Number of rows in 'edgeConnectPoints' do not match number of edges")
+    if (nrow(edgeConnectPoints)==length(keep)) edgeConnectPoints <- edgeConnectPoints[keep,,drop=FALSE]
+  }
+  
+  if (length(edge.label.position) == 1) edge.label.position <- rep(edge.label.position,length(E$from))
+  if (length(edge.label.position) != length(keep) & length(edge.label.position) != sum(keep)) stop("'edge.label.position' is wrong length")
+  if (length(edge.label.position)==length(keep)) edge.label.position <- edge.label.position[keep]  
+  
+  
+  if (!is.null(ELcolor))
+  {
+    ELcolor <- rep(ELcolor,length = length(E$from))
+    ELcolor <- ELcolor[keep]    
+  }
+  
+  
+  if (is.list(knots))
+  {
+    knotList <- knots
+    knots <- rep(0,length(E$from))
+    for (k in seq_along(knotList))
+    {
+      knots[knotList[[k]]] <- k
+    }
+  }
+  if (length(knots)==length(keep)) knots <- knots[keep]
+  
+  if (length(bidirectional)==1) 
+  {
+    bidirectional <- rep(bidirectional,length(E$from))
+  }
+  if (length(bidirectional)==length(keep)) bidirectional <- bidirectional[keep]
+  if (length(residEdge)==1) 
+  {
+    residEdge <- rep(residEdge,length(E$from))
+  }
+  if (length(residEdge)==length(keep)) residEdge <- residEdge[keep]    
+  
+  if (length(CircleEdgeEnd)==1) 
+  {
+    CircleEdgeEnd <- rep(CircleEdgeEnd,length(E$from))
+  }
+  if (length(CircleEdgeEnd)==length(keep)) CircleEdgeEnd <- CircleEdgeEnd[keep]    
+  
+  if (!is.logical(edge.labels))
+  {
+    if (length(edge.labels)==length(keep))
+    {
+      edge.labels <- edge.labels[keep]
+    }
+  }
+  
+  if (length(curve)==1) 
+  {
+    curve <- rep(curve,length(E$from))
+  }
+  if (length(curve)==length(keep)) curve <- curve[keep]   
+  
+  
+  if (length(parallelEdge)==1) 
+  {
+    parallelEdge <- rep(parallelEdge,length(E$from))
+  }
+  if (length(parallelEdge)==length(keep)) parallelEdge <- parallelEdge[keep]    
+  
+  
+  if (length(parallelAngle)==1) 
+  {
+    parallelAngle <- rep(parallelAngle,length(E$from))
+  }
+  if (length(parallelAngle)==length(keep)) parallelAngle <- parallelAngle[keep]    
+  
+  E$from=E$from[keep]
+  E$to=E$to[keep]
+  if (mode=="sig") Pvals <- Pvals[keep]
+  E$weight=E$weight[keep]
+  
+  
+  ## Define cut:
+  if (defineCut)
+  {
+    
+    if (length(E$weight) > 3*nNodes)
+    {
+      #       cut <- median(sort(E$weight,decreasing=TRUE)[seq_len(nNodes)])
+      cut <- max(sort(abs(E$weight),decreasing=TRUE)[2*nNodes], quantile(abs(E$weight),0.75))
+    } else if (length(E$weight) > 1) cut <- quantile(abs(E$weight),0.75) else cut <- 0
+    #     cut <- quantile(abs(E$weight), cutQuantile)
+  }
+  
+  
+  if (length(E$from) > 0)
+  {
+    maximum=max(abs(c(maximum,max(abs(E$weight)),cut,abs(diagWeights))))
+  } else maximum = 1
+  if (cut==0)
+  {
+    avgW=(abs(E$weight)-minimum)/(maximum-minimum)
+  } else if (maximum>cut) avgW=(abs(E$weight)-cut)/(maximum-cut) else avgW=rep(0,length(E$from))
+  avgW[avgW<0]=0
+  
+  
+  edgesort=sort(abs(E$weight),index.return=TRUE)$ix
+  edge.width=rep(1,length(E$weight))
+  
+  
+  # lty and curve settings:
+  
+  if (length(lty)==1) lty=rep(lty,length(E$from))
+  
+  if (length(edge.label.position)==1) edge.label.position=rep(edge.label.position,length(E$from))
+  
+  
+  # Make bidirectional vector:
+  if (length(bidirectional)==1) bidirectional=rep(bidirectional,length(E$from))
+  if (length(bidirectional)!=length(E$from)) stop("Bidirectional vector must be of length 1 or equal to the number of edges")
+  
+  srt <- cbind(pmin(E$from,E$to), pmax(E$from,E$to) , knots, abs(E$weight) > minimum)
+  
+  if (!curveAll | any(parallelEdge))
+  {
+    dub <- duplicated(srt)|duplicated(srt,fromLast=TRUE)
+    
+    if (!curveAll)
+    {
+      if (length(curve)==1) curve <- rep(curve,length(E$from))
+      curve <- ifelse(is.na(curve),ifelse(knots==0&dub&!bidirectional&is.na(curve),ifelse(E$from==srt[,1],1,-1) * ave(1:nrow(srt),srt[,1],srt[,2],bidirectional,FUN=function(x)seq(curveDefault,-curveDefault,length=length(x))),0),curve)
+    }
+    
+    if (any(parallelEdge))
+    {
+      # Set parallelAngle value:   
+      parallelAngle <- ifelse(is.na(parallelAngle),ifelse(knots==0&dub&!bidirectional&is.na(parallelAngle),ifelse(E$from==srt[,1],1,-1) * ave(1:nrow(srt),srt[,1],srt[,2],bidirectional,FUN=function(x)seq(parallelAngleDefault,-parallelAngleDefault,length=length(x))),0),parallelAngle) 
+    }
+    
+    rm(dub)
+  }
+  
+  parallelAngle[is.na(parallelAngle)] <- 0
+  
+  
+  # Layout settings:
+  if (nNodes == 1 & isTRUE(rescale))
+  {
+    layout <- matrix(0,1,2)
+  } else {
+    if (is.null(layout)) layout="default"
+    
+    if (!is.matrix(layout))
+    {
+      # If function, assume igraph function (todo: check this)
+      if (is.function(layout))
+      {
+        Graph <- graph.edgelist(as.matrix(cbind(E$from,E$to)), any(directed))
+        E(Graph)$weight <- E$weight
+        
+        # set roots:
+        if (deparse(match.call()[['layout']]) == "layout.reingold.tilford" && is.null(layout.par[['root']]))
+        {
+          sp <- shortest.paths(Graph, mode = "out")
+          diag(sp) <- Inf
+          
+          # Find root nodes:
+          roots <- which(colSums(sp==Inf) == nrow(sp))
+          # Find roots with longest outgoing paths:
+          maxs <- sapply(roots,function(x)max(sp[x,sp[x,]!=Inf]))
+          
+          layout.par[['root']] <- roots[maxs==max(maxs)]
+        }
+        
+        layout <- do.call(layout,c(list(graph = Graph),layout.par))
+      } else {
+        
+        if (length(layout) > 1) stop("Incorrect specification of layout.")
+        if (layout=="default" & (any(directed) | !weighted)) layout="spring"
+        if (layout=="default" | layout=="circular" | layout=="circle" | layout=="groups") 
+        {
+          if (is.null(groups) | layout == "circle")
+          {
+            layout=matrix(0,nrow=nNodes,ncol=2)
+            tl=nNodes+1
+            layout[,1]=sin(seq(0,2*pi, length=tl))[-tl]
+            layout[,2]=cos(seq(0,2*pi, length=tl))[-tl] 
+          } else
+          {
+            if (is.null(rotation)) rotation=rep(0,length=length(groups))
+            
+            l1=matrix(0,nrow=length(groups),ncol=2)
+            tl=nrow(l1)+1
+            l1[,1]=sin(seq(0,2*pi, length=tl))[-tl]
+            l1[,2]=cos(seq(0,2*pi, length=tl))[-tl]
+            l1=l1*length(groups)*layout.control
+            
+            layout=matrix(0,nrow=nNodes,ncol=2)
+            for (i in 1:length(groups)) 
+            {
+              tl=length(groups[[i]])+1
+              layout[groups[[i]],1]=repulsion*sin(seq(rotation[i],rotation[i]+2*pi, length=tl))[-tl]+l1[i,1]
+              layout[groups[[i]],2]=repulsion*cos(seq(rotation[i],rotation[i]+2*pi, length=tl))[-tl]+l1[i,2] 
+            }
+          }
+        } else if (layout=="spring")
+        {
+          
+          if (length(E$weight) > 0)
+          {
+            if (mode != "sig")
+            {
+              layout=qgraph.layout.fruchtermanreingold(cbind(E$from,E$to),abs(E$weight/max(abs(E$weight)))^2,nNodes,rotation=rotation,layout.control=layout.control,
+                                                       niter=layout.par$niter,max.delta=layout.par$max.delta,area=layout.par$area,cool.exp=layout.par$cool.exp,repulse.rad=layout.par$repulse.rad,init=layout.par$init,
+                                                       constraints=layout.par$constraints)
+            } else
+            {
+              layout=qgraph.layout.fruchtermanreingold(cbind(E$from,E$to),abs(E$weight),nNodes,rotation=rotation,layout.control=layout.control,
+                                                       niter=layout.par$niter,max.delta=layout.par$max.delta,area=layout.par$area,cool.exp=layout.par$cool.exp,repulse.rad=layout.par$repulse.rad,init=layout.par$init,
+                                                       constraints=layout.par$constraints)
+            }
+          } else
+          {
+            if (mode != "sig")
+            {
+              layout=qgraph.layout.fruchtermanreingold(cbind(E$from,E$to),numeric(0),nNodes,rotation=rotation,layout.control=layout.control,
+                                                       niter=layout.par$niter,max.delta=layout.par$max.delta,area=layout.par$area,cool.exp=layout.par$cool.exp,repulse.rad=layout.par$repulse.rad,init=layout.par$init,
+                                                       constraints=layout.par$constraints)
+            } else
+            {
+              layout=qgraph.layout.fruchtermanreingold(cbind(E$from,E$to),numeric(0),nNodes,rotation=rotation,layout.control=layout.control,
+                                                       niter=layout.par$niter,max.delta=layout.par$max.delta,area=layout.par$area,cool.exp=layout.par$cool.exp,repulse.rad=layout.par$repulse.rad,init=layout.par$init,
+                                                       constraints=layout.par$constraints)
+            }
+          }
+        } 
+      }
+    }
+    # Layout matrix:
+    if (is.matrix(layout)) if (ncol(layout)>2)
+    {
+      layout[is.na(layout)] <- 0
+      # If character and labels exist, replace:
+      if (is.character(layout) && is.character(labels))
+      {
+        layout[] <- match(layout,labels)
+        layout[is.na(layout)] <- 0
+        mode(layout) <- 'numeric'
+      }
+      
+      # Check:
+      if (!all(seq_len(nNodes) %in% layout)) stop("Grid matrix does not contain a placement for every node.")
+      if (any(sapply(seq_len(nNodes),function(x)sum(layout==x))>1)) stop("Grid matrix contains a double entry.")
+      
+      Lmat=layout
+      LmatX=seq(-1,1,length=ncol(Lmat))
+      LmatY=seq(1,-1,length=nrow(Lmat))
+      layout=matrix(0,nrow=nNodes,ncol=2)
+      
+      loc <- t(sapply(1:nNodes,function(x)which(Lmat==x,arr.ind=T)))
+      layout <- cbind(LmatX[loc[,2]],LmatY[loc[,1]])
+      
+    }
+  }
+  
+  # Rescale layout:
+  l=original.layout=layout
+  if (rescale) {
+    if (aspect)
+    {
+      # center:
+      l[,1] <- l[,1] - mean(l[,1])
+      l[,2] <- l[,2] - mean(l[,2])
+      lTemp <- l
+      
+      if (length(unique(lTemp[,1]))>1)
+      {
+        l[,1]=(lTemp[,1]-min(lTemp))/(max(lTemp)-min(lTemp))*2-1
+      } else l[,1] <- 0
+      if (length(unique(lTemp[,2]))>1)
+      {
+        l[,2]=(lTemp[,2]-min(lTemp))/(max(lTemp)-min(lTemp))*2-1 
+      } else l[,2] <- 0
+      
+      rm(lTemp)
+      
+      
+      #     # Equalize white space:
+      #     if (diff(range(l[,1])) < 2)
+      #     {
+      #       l[,1] <- diff(range(l[,1]))/2 + l[,1]
+      #     }
+      #     if (diff(range(l[,2])) < 2)
+      #     {
+      #       l[,2] <- (2-diff(range(l[,2])))/2 + l[,2]
+      #     }
+      
+      layout=l    
+    } else
+    {
+      if (length(unique(l[,1]))>1)
+      {
+        l[,1]=(l[,1]-min(l[,1]))/(max(l[,1])-min(l[,1]))*2-1
+      } else l[,1] <- 0
+      if (length(unique(l[,2]))>1)
+      {
+        l[,2]=(l[,2]-min(l[,2]))/(max(l[,2])-min(l[,2]))*2-1 
+      } else l[,2] <- 0
+      layout=l
+    }
+  }
+  
+  ## Offset and scale:
+  if (length(layoutScale) == 1) layoutScale <- rep(layoutScale,2)
+  if (length(layoutOffset) == 1) layoutOffset <- rep(layoutOffset,2)
+  layout[,1] <- layout[,1] * layoutScale[1] + layoutOffset[1]
+  layout[,2] <- layout[,2] * layoutScale[2] + layoutOffset[2]
+  l <- layout
+  
+  
+  # Set Edge widths:
+  if (mode=="direct")
+  {
+    edge.width <- abs(E$weight)
+  } else
+  {
+    if (weighted)
+    {
+      edge.width <- avgW*(esize-1)+1
+      edge.width[edge.width<1]=1
+    } else {
+      edge.width <- rep(esize,length(E$weight))
+    }
+  }
+  
+  #     # Set edge colors:
+  #     if (is.null(edge.color) || (any(is.na(edge.color)) || fade))
+  #     {
+  #       if (!is.null(edge.color))
+  #       {
+  #         repECs <- TRUE
+  #         ectemp <- edge.color
+  #       } else  repECs <- FALSE
+  #       
+  #       col <- rep(1,length(E$from))
+  #       
+  #       if (weighted) 
+  #       {
+  #         #Edge color:
+  #         edge.color=rep("#00000000",length(E$from))
+  #         
+  #         
+  #         if (mode=="strength"|mode=="direct")
+  #         {
+  #           if (cut==0) 
+  #           {
+  #             col=(abs(E$weight)-minimum)/(maximum-minimum)
+  #           } else 
+  #           {
+  #             col=(abs(E$weight)-minimum)/(cut-minimum)
+  #           }
+  #           col[col>1]=1
+  #           col[col<0]=0
+  #           if (!gray)
+  #           {
+  #             if (transparency) 
+  #             {
+  #               col=col^(2)
+  #               neg=col2rgb(rgb(0.75,0,0))/255
+  #               pos=col2rgb(rgb(0,0.6,0))/255
+  #               
+  #               # Set colors for edges over cutoff:
+  #               edge.color[E$weight< -1* minimum] <- rgb(neg[1],neg[2],neg[3],col[E$weight< -1*minimum])
+  #               edge.color[E$weight> minimum] <- rgb(pos[1],pos[2],pos[3],col[E$weight> minimum])
+  #             } else 
+  #             {
+  #               edge.color[E$weight>minimum]=rgb(1-col[E$weight > minimum],1-(col[E$weight > minimum]*0.25),1-col[E$weight > minimum])
+  #               edge.color[E$weight< -1*minimum]=rgb(1-(col[E$weight < (-1)*minimum]*0.25),1-col[E$weight < (-1)*minimum],1-col[E$weight < (-1)*minimum])
+  #             }	
+  #           } else
+  #           {
+  #             if (transparency) 
+  #             {
+  #               col=col^(2)
+  #               neg="gray10"
+  #               pos="gray10"
+  #               
+  #               # Set colors for edges over cutoff:
+  #               edge.color[E$weight< -1* minimum] <- rgb(neg[1],neg[2],neg[3],col[E$weight< -1*minimum])
+  #               edge.color[E$weight> minimum] <- rgb(pos[1],pos[2],pos[3],col[E$weight> minimum])
+  #             } else 
+  #             {
+  #               edge.color[E$weight>minimum]=rgb(1-col[E$weight > minimum],1-(col[E$weight > minimum]),1-col[E$weight > minimum])
+  #               edge.color[E$weight< -1*minimum]=rgb(1-(col[E$weight < (-1)*minimum]),1-col[E$weight < (-1)*minimum],1-col[E$weight < (-1)*minimum])
+  #             }
+  #           }
+  #         }
+  #         if (mode == "sig")
+  #         {	
+  #           
+  #           if (!gray)
+  #           {
+  #             
+  #             # Set colors for edges over sig > 0.01 :
+  #             if (length(alpha) > 3) edge.color[Pvals > 0 & Pvals < alpha[4]  & E$weight > minimum] <- "cadetblue1"	
+  #             # Set colors for edges over sig > 0.01 :
+  #             if (length(alpha) > 2) edge.color[Pvals > 0 & Pvals < alpha[3]  & E$weight > minimum] <- "#6495ED"
+  #             # Set colors for edges over sig > 0.01 :
+  #             if (length(alpha) > 1) edge.color[Pvals > 0 & Pvals < alpha[2]  & E$weight > minimum] <- "blue"				
+  #             # Set colors for edges over sig < 0.01 :
+  #             edge.color[Pvals > 0 & Pvals < alpha[1]  & E$weight > minimum] <- "darkblue"
+  #             
+  #             # Set colors for edges over sig > 0.01 :
+  #             if (length(alpha) > 3) edge.color[Pvals < 0 & Pvals > (-1 * alpha[4])  & E$weight < -1 * minimum] <- rgb(1,0.8,0.4) 	
+  #             # Set colors for edges over sig > 0.01 :
+  #             if (length(alpha) > 2) edge.color[Pvals < 0 & Pvals > (-1 * alpha[3])  & E$weight < -1 * minimum] <- "orange"
+  #             # Set colors for edges over sig > 0.01 :
+  #             if (length(alpha) > 1) edge.color[Pvals < 0 & Pvals > (-1 * alpha[2])  & E$weight < -1 * minimum] <- "darkorange"				
+  #             # Set colors for edges over sig < 0.01 :
+  #             edge.color[Pvals < 0 & Pvals > (-1 * alpha[1])  & E$weight < -1 * minimum] <- "darkorange2"
+  #             
+  #             
+  #             
+  #             
+  #           } else
+  #           {
+  #             Pvals <- abs(Pvals)
+  #             # Set colors for edges over sig < 0.01 :
+  #             if (length(alpha) > 3) edge.color[Pvals > 0 & Pvals < alpha[4]  & E$weight > minimum] <- rgb(0.7,0.7,0.7)
+  #             if (length(alpha) > 2) edge.color[Pvals > 0 & Pvals < alpha[3]  & E$weight > minimum] <- rgb(0.5,0.5,0.5)
+  #             if (length(alpha) > 1) edge.color[Pvals > 0 & Pvals < alpha[2]  & E$weight > minimum] <- rgb(0.3,0.3,0.3)
+  #             edge.color[Pvals > 0 & Pvals < alpha[1]  & E$weight > minimum] <- "black"
+  #             
+  #           }
+  #         }
+  #         if (cut!=0)
+  #         {
+  #           if (!gray & (mode=="strength"|mode=="direct"))
+  #           {
+  #             # Set colors for edges over cutoff:
+  #             edge.color[E$weight<= -1*cut] <- "red"
+  #             edge.color[E$weight>= cut] <- "darkgreen"
+  #           } else if (gray)
+  #           {
+  #             # Set colors for edges over cutoff:
+  #             edge.color[E$weight<= -1*cut] <- "black"
+  #             edge.color[E$weight>= cut] <- "black"
+  #             
+  #           }
+  #         }
+  #         
+  #       } else
+  #       {
+  #         if (!is.logical(transparency)) Trans=transparency else Trans=1
+  #         edge.color=rep(rgb(0.5,0.5,0.5,Trans),length(edgesort))
+  #       }
+  #       if (repECs)
+  #       {
+  #         ## Add trans:
+  #         if (fade & any(!is.na(ectemp)))
+  #         {
+  #           if (!is.logical(transparency)) col <- rep(transparency,length(col))
+  #           edge.color[!is.na(ectemp)] <- addTrans(ectemp[!is.na(ectemp)],round(255*col[!is.na(ectemp)]))
+  #         } else {
+  #           edge.color[!is.na(ectemp)] <- ectemp[!is.na(ectemp)]
+  #         }
+  #         rm(ectemp)
+  #       }
+  #     } else {
+  #       if (length(edge.color) == 1) edge.color <- rep(edge.color,length(E$from))
+  #       if (length(edge.color) != length(E$from)) stop("Number of edge colors not equal to number of edges")
+  #     }
+  
+  
+  # Set edge colors:
+  if (is.null(edge.color) || (any(is.na(edge.color)) || any(is.na(fade)) || any(fade != 1)))
+  {
+    if (!is.null(edge.color))
+    {
+      repECs <- TRUE
+      ectemp <- edge.color
+    } else  repECs <- FALSE
+    
+    # col vector will contain relative strength:
+    col <- rep(1,length(E$from))
+    
+    if (weighted) 
+    {
+      # Dummmy vector containing invisible edges:
+      edge.color <- rep("#00000000",length(E$from))
+      
+      # Normal color scheme (0 is invisible, stronger is more visible)
+      if (mode=="strength"|mode=="direct")
+      {
+        # Set relative strength:
+        if (cut==0) 
+        {
+          col <- (abs(E$weight)-minimum)/(maximum-minimum)
+        } else 
+        {
+          if (cut > minimum){
+            col <- (abs(E$weight)-minimum)/(cut-minimum)  
+          } else {
+            col <- ifelse(abs(E$weight) > minimum, 1, 0)
+          }
+          
+        }
+        col[col>1] <- 1
+        col[col<0] <- 0
+        col <- col^colFactor      
+        
+        # Set edges between minimum and cut:
+        
+        # if (autoFade)
+        # {
+        if (isTRUE(transparency))
+        {
+          edge.color[E$weight > minimum] <- addTrans(posCol[1],round(ifelse(is.na(fade),col,fade)[E$weight > minimum]*255))
+          edge.color[E$weight < -1*minimum] <- addTrans(negCol[1],round(ifelse(is.na(fade),col,fade)[E$weight < -1*minimum]*255))
+        } else {
+          edge.color[E$weight > minimum] <- Fade(posCol[1],ifelse(is.na(fade),col,fade)[E$weight > minimum], background)
+          edge.color[E$weight < -1*minimum] <- Fade(negCol[1],ifelse(is.na(fade),col,fade)[E$weight < -1*minimum], background)
+        }
+        # }
+        # else {
+        #     if (isTRUE(transparency))
+        #     {
+        #       edge.color[E$weight > minimum] <- addTrans(posCol[1],round(fade[E$weight > minimum]*255))
+        #       edge.color[E$weight < -1*minimum] <- addTrans(negCol[1],round(fade[E$weight < -1*minimum]*255))
+        #     } else {
+        #       edge.color[E$weight > minimum] <- Fade(posCol[1],fade[E$weight > minimum], background)
+        #       edge.color[E$weight < -1*minimum] <- Fade(negCol[1],fade[E$weight < -1*minimum], background)
+        #     }
+        
+        # edge.color[E$weight > minimum] <- posCol[1]
+        # edge.color[E$weight < -1*minimum] <- negCol[1]
+        # }
+        
+        # Set colors over cutoff if cut != 0:
+        if (cut!=0)
+        {
+          # Old code:
+          # if (posCol[1]!=posCol[2]) edge.color[E$weight >= cut] <- posCol[2]
+          # if (negCol[1]!=negCol[2]) edge.color[E$weight <= -1*cut] <- negCol[2]
+          
+          # New code (1.9.7)
+          edge.color[E$weight >= cut & abs(E$weight) >= minimum] <- posCol[2]
+          edge.color[E$weight <= -1*cut & abs(E$weight) >= minimum] <- negCol[2]
+        }
+      } 
+      
+      if (mode == "sig")
+      {	
+        if (!gray)
+        {
+          
+          # Set colors for edges over sig > 0.01 :
+          if (length(alpha) > 3) edge.color[Pvals >= 0 & Pvals < alpha[4]  & E$weight > minimum] <- "cadetblue1"	
+          # Set colors for edges over sig > 0.01 :
+          if (length(alpha) > 2) edge.color[Pvals >= 0 & Pvals < alpha[3]  & E$weight > minimum] <- "#6495ED"
+          # Set colors for edges over sig > 0.01 :
+          if (length(alpha) > 1) edge.color[Pvals >= 0 & Pvals < alpha[2]  & E$weight > minimum] <- "blue"				
+          # Set colors for edges over sig < 0.01 :
+          edge.color[Pvals >= 0 & Pvals < alpha[1]  & E$weight > minimum] <- "darkblue"
+          
+          # Set colors for edges over sig > 0.01 :
+          if (length(alpha) > 3) edge.color[Pvals < 0 & Pvals > (-1 * alpha[4])  & E$weight < -1 * minimum] <- rgb(1,0.8,0.4) 	
+          # Set colors for edges over sig > 0.01 :
+          if (length(alpha) > 2) edge.color[Pvals < 0 & Pvals > (-1 * alpha[3])  & E$weight < -1 * minimum] <- "orange"
+          # Set colors for edges over sig > 0.01 :
+          if (length(alpha) > 1) edge.color[Pvals < 0 & Pvals > (-1 * alpha[2])  & E$weight < -1 * minimum] <- "darkorange"				
+          # Set colors for edges over sig < 0.01 :
+          edge.color[Pvals < 0 & Pvals > (-1 * alpha[1])  & E$weight < -1 * minimum] <- "darkorange2"
+          
+          
+          
+          
+        } else
+        {
+          Pvals <- abs(Pvals)
+          # Set colors for edges over sig < 0.01 :
+          if (length(alpha) > 3) edge.color[Pvals > 0 & Pvals < alpha[4]  & E$weight > minimum] <- rgb(0.7,0.7,0.7)
+          if (length(alpha) > 2) edge.color[Pvals > 0 & Pvals < alpha[3]  & E$weight > minimum] <- rgb(0.5,0.5,0.5)
+          if (length(alpha) > 1) edge.color[Pvals > 0 & Pvals < alpha[2]  & E$weight > minimum] <- rgb(0.3,0.3,0.3)
+          edge.color[Pvals > 0 & Pvals < alpha[1]  & E$weight > minimum] <- "black"
+          
+        }
+      }
+    } else
+    {
+      if (!is.logical(transparency)) Trans <- transparency else Trans <- 1
+      edge.color <- rep(addTrans(unCol,round(255*Trans)),length(edgesort))
+    }
+    if (repECs)
+    {
+      # Colors to fade:
+      indx <- !is.na(ectemp) & is.na(fade)
+      
+      ## Add trans:
+      if (any(is.na(fade)) & any(!is.na(ectemp)))
+      {
+        # Replace all edge colors:
+        edge.color[!is.na(ectemp)] <- ectemp[!is.na(ectemp)]
+        
+        
+        
+        if (!is.logical(transparency)) col <- rep(transparency,length(col))
+        if (isTRUE(transparency))
+        {
+          edge.color[indx] <- addTrans(ectemp[indx],round(255*col[indx]))
+        } else {
+          edge.color[indx] <- Fade(ectemp[indx],col[indx], background)
+        }
+      } else {
+        edge.color[indx] <- ectemp[indx]
+      }
+      rm(ectemp)
+      rm(indx)
+    }
+  } else {
+    if (length(edge.color) == 1) edge.color <- rep(edge.color,length(E$from))
+    if (length(edge.color) != length(E$from)) stop("Number of edge colors not equal to number of edges")
+  }
+  
+  # Vertex color:
+  # if (is.null(color) & !is.null(groups))
+  # {
+  #   if (!gray) 
+  #   {
+  #     if (pastel)
+  #     {
+  #       color <- rainbow_hcl(length(groups), start = rainbowStart * 360, end = (360 * rainbowStart + 360*(length(groups)-1)/length(groups)))
+  #     } else {
+  #       color <- rainbow(length(groups), start = rainbowStart, end = (rainbowStart + (max(1.1,length(groups)-1))/length(groups)) %% 1)   
+  #     }
+  #   }
+  #   if (gray) color <- sapply(seq(0.2,0.8,length=length(groups)),function(x)rgb(x,x,x))
+  # }
+  if (is.null(color) & !is.null(groups))
+  {
+    if (is.function(palette)){
+      color <- palette(length(groups))
+    } else if (palette == "rainbow"){
+      color <- rainbow(length(groups), start = rainbowStart, end = (rainbowStart + (max(1.1,length(groups)-1))/length(groups)) %% 1)   
+    } else if (palette == "gray" | palette == "grey"){
+      color <- shadesOfGrey(length(groups))
+    } else  if (palette == "colorblind"){
+      color <- colorblind(length(groups))
+    } else if (palette == "R"){
+      color <- seq_len(length(groups))
+    } else if (palette == "ggplot2"){
+      color <- ggplot_palette(length(groups))
+    } else if (palette == "pastel"){
+      color <- rainbow_hcl(length(groups), start = rainbowStart * 360, end = (360 * rainbowStart + 360*(length(groups)-1)/length(groups)))
+    } else if (palette == "neon"){
+      color <- neon(length(groups))
+    } else if (palette == "pride"){
+      if (length(groups) > 7){
+        color <- rainbow(length(groups), start = rainbowStart, end = (rainbowStart + (max(1.1,length(groups)-1))/length(groups)) %% 1)   
+      } else {
+        pridecols <- c("#E50000","#FF8D00","#FFEE00","#028121","#004CFF","#760088")
+        # Reorder:
+        startcol <- round(1 + rainbowStart * 6)
+        sequence <- startcol:(startcol+length(groups))%%6
+        sequence[sequence==0] <- 6
+        color <- pridecols[sequence]        
+      }
+      
+    }  else stop(paste0("Palette '",palette,"' is not supported."))
+  }
+  
+  # Default color:
+  if (is.null(color))	color <- "background"  
+  
+  
+  
+  vertex.colors <- rep(color, length=nNodes)
+  if (!is.null(groups)) 
+  {
+    vertex.colors <- rep("background", length=nNodes)
+    for (i in 1:length(groups)) vertex.colors[groups[[i]]]=color[i] 
+  } else vertex.colors <- rep(color, length=nNodes)
+  if (length(color)==nNodes) vertex.colors <- color
+  if (all(col2rgb(background,TRUE) == col2rgb("transparent",TRUE)))
+  {
+    vertex.colors[vertex.colors=="background"] <- "white"
+  } else  vertex.colors[vertex.colors=="background"] <- background
+  
+  # Label color:
+  if (length(lcolor) != nNodes){
+    lcolor <- rep(lcolor,nNodes)
+  }
+  if (any(is.na(lcolor))){
+    # if (!is.null(theme) && is.character(theme) && theme == "gray"){
+    #   browser()
+    #   lcolor[is.na(lcolor)] <- ifelse(vertex.colors == "background",
+    #                                   ifelse(mean(col2rgb(background)/255) > 0.5,"black","white"),
+    #                                   ifelse(colMeans(col2rgb(vertex.colors[is.na(lcolor)])) > 0.5,"black","white")
+    #   )
+    # } else {
+    lcolor[is.na(lcolor)] <- ifelse(vertex.colors == "background",
+                                    ifelse(mean(col2rgb(background)/255) > 0.5,"black","white"),
+                                    ifelse(colMeans(col2rgb(vertex.colors[is.na(lcolor)])/255) > label.color.split,"black","white")
+    )
+    # }
+  }
+  
+  # Dummy groups list:
+  if (is.null(groups)) 
+  {
+    groups <- list(1:nNodes)
+  }
+  
+  # Scores:
+  if (!is.null(scores)) 
+  {
+    if (length(scores)!=nNodes)
+    {
+      warning ("Length of scores is not equal to nuber of items")
+    } else
+    {
+      bcolor <- vertex.colors
+      if (is.null(scores.range)) scores.range=c(min(scores),max(scores))
+      scores[is.na(scores)]=scores.range[1]
+      rgbmatrix=1-t(col2rgb(vertex.colors)/255)
+      for (i in 1:nNodes) rgbmatrix[i,]=rgbmatrix[i,] * (scores[i]-scores.range[1] ) / (scores.range[2]-scores.range[1] )
+      vertex.colors=rgb(1-rgbmatrix)
+    }
+  }
+  
+  if (diagCols)
+  {
+    if (diagCols & !is.null(scores)) stop("Multiple modes specified for vertex colors (diag and scores)")
+    if (diagCols & weighted)
+    {
+      if (is.null(bcolor) & !all(vertex.colors=="white")) bcolor=vertex.colors
+      if (cut==0) 
+      {
+        colV=(abs(diagWeights)-minimum)/(maximum-minimum)
+      } else 
+      {
+        colV=(abs(diagWeights)-minimum)/(cut-minimum)
+      }
+      colV[colV>1]=1
+      colV[colV<0]=0
+      
+      if (transparency) 
+      {
+        vertex.colors=rep("#00000000",nNodes)
+        colV=colV^(2)
+        neg=col2rgb(rgb(0.75,0,0))/255
+        pos=col2rgb(rgb(0,0.6,0))/255
+        
+        # Set colors for edges over cutoff:
+        vertex.colors[diagWeights< -1* minimum] <- rgb(neg[1],neg[2],neg[3],colV[diagWeights< -1*minimum])
+        vertex.colors[diagWeights> minimum] <- rgb(pos[1],pos[2],pos[3],colV[diagWeights> minimum])
+      } else 
+      {
+        vertex.colors=rep("white",nNodes)
+        vertex.colors[diagWeights>minimum]=rgb(1-colV[diagWeights > minimum],1-(colV[diagWeights> minimum]*0.25),1-colV[diagWeights > minimum])
+        vertex.colors[diagWeights< -1*minimum]=rgb(1-(colV[diagWeights< (-1)*minimum]*0.25),1-colV[diagWeights < (-1)*minimum],1-colV[diagWeights < (-1)*minimum])
+      }
+      if (cut!=0)
+      {
+        # Set colors for edges over cutoff:
+        vertex.colors[diagWeights<= -1*cut] <- "red"
+        vertex.colors[diagWeights>= cut] <- "darkgreen"
+      }
+    }
+  }
+  if (is.null(bcolor))
+  {
+    bcolor <- rep(ifelse(mean(col2rgb(background)/255)>0.5,"black","white"),nNodes)
+  } else {
+    bcolor <- rep(bcolor,length=nNodes)
+  }
+  
+  if (any(vTrans<255) || length(vTrans) > 1)
+  {
+    if ( length(vTrans) > 1 && length(vTrans) != nNodes)
+    {vTrans <- 255}
+    
+    # Transparance in vertex colors:
+    num2hex <- function(x)
+    {
+      hex=unlist(strsplit("0123456789ABCDEF",split=""))
+      return(paste(hex[(x-x%%16)/16+1],hex[x%%16+1],sep=""))
+    }
+    
+    colHEX <- rgb(t(col2rgb(vertex.colors)/255))
+    
+    vertex.colors <- paste(sapply(strsplit(colHEX,split=""),function(x)paste(x[1:7],collapse="")),num2hex(vTrans),sep="")
+  }
+  
+  
+  # Vertex size:
+  if (length(vsize)==1) vsize=rep(vsize,nNodes)
+  if (length(vsize2)==1) vsize2=rep(vsize2,nNodes)
+  if (!edgelist) Vsums=rowSums(abs(input))+colSums(abs(input))
+  if (edgelist)
+  {
+    Vsums=numeric(0)
+    for (i in 1:nNodes) Vsums[i]=sum(c(input[,1:2])==i)
+  }
+  if (length(vsize)==2 & nNodes>2 & length(unique(Vsums))>1) vsize=vsize[1] + (vsize[2]-vsize[1]) * (Vsums-min(Vsums))/(max(Vsums)-min(Vsums))
+  if (length(vsize)==2 & nNodes>2 & length(unique(Vsums))==1) vsize=rep(mean(vsize),nNodes)
+  
+  if (length(vsize2)==2 & nNodes>2 & length(unique(Vsums))>1) vsize2=vsize2[1] + (vsize2[2]-vsize2[1]) * (Vsums-min(Vsums))/(max(Vsums)-min(Vsums))
+  if (length(vsize2)==2 & nNodes>2 & length(unique(Vsums))==1) vsize2=rep(mean(vsize2),nNodes)
+  
+  # Vertex shapes:
+  if (length(shape)==1) shape=rep(shape,nNodes)
+  
+  # means:
+  if (length(means)==1) means <- rep(means,nNodes)
+  if (length(SDs)==1) SDs <- rep(SDs, nNodes)
+  
+  
+  
+  #     
+  #     pch1=numeric(0)
+  #     pch2=numeric(0)
+  #     
+  #     for (i in 1:length(shape))
+  #     {
+  #       if (shape[i]=="circle")
+  #       {
+  #         pch1[i]=16
+  #         pch2[i]=1
+  #       }
+  #       if (shape[i]=="square")
+  #       {
+  #         pch1[i]=15
+  #         pch2[i]=0
+  #       }
+  #       if (shape[i]=="triangle")
+  #       {
+  #         pch1[i]=17
+  #         pch2[i]=2
+  #       }
+  #       if (shape[i]=="diamond")
+  #       {
+  #         pch1[i]=18
+  #         pch2[i]=5
+  #       }
+  #       if (!shape[i]%in%c("circle","square","triangle","diamond","rectangle")) stop(paste("Shape",shape[i],"is not supported"))
+  #     }
+  #     
+  
+  
+  # Arrow sizes:
+  if (length(asize)==1) asize=rep(asize,length(E$from))
+  
+  if (length(asize)!=length(E$from)) warning("Length of 'asize' is not equal to the number of edges")
+  
+  
+  
+  # Edge labels:
+  # Make labels:
+  
+  if (!is.logical(edge.labels))
+  {
+    #       edge.labels=as.character(edge.labels)
+    if (length(edge.labels)!=length(E$from))
+    {
+      warning("Number of edge labels did not correspond to number of edges, edge labes have been ommited")
+      edge.labels <- FALSE
+    }
+    
+    if (length(edge.labels) > 0 & is.character(edge.labels))
+    {
+      edge.labels[edge.labels=="NA"]=""
+    }  
+  } else
+  {
+    if (edge.labels)
+    {
+      edge.labels= as.character(round(E$weight,2))
+    } else edge.labels <- rep('',length(E$from))
+  }
+  
+  if (is.numeric(edge.labels)) edge.labels <- as.character(edge.labels)
+  
+  # Bars:
+  length(bars) <- nNodes
+  barSide <- rep(barSide,nNodes)
+  barColor <- rep(barColor, nNodes)
+  barLength <- rep(barLength, nNodes)
+  barColor[barColor == 'border'] <- bcolor[barColor == 'border']
+  
+  
+  # Compute loopRotation:
+  if (DoNotPlot)
+  {
+    loopRotation[is.na(loopRotation)] <- 0
+  } 
+  else 
+  {
+    for (i in seq_len(nNodes))
+    {
+      if (is.na(loopRotation[i]))
+      {
+        centX <- mean(layout[,1])
+        centY <- mean(layout[,2])
+        for (g in 1:length(groups))
+        {
+          if (i%in%groups[[g]] & length(groups[[g]]) > 1)
+          {
+            centX <- mean(layout[groups[[g]],1])
+            centY <- mean(layout[groups[[g]],2])
+          }
+        }
+        loopRotation[i] <- atan2usr2in(layout[i,1]-centX,layout[i,2]-centY)
+        if (shape[i]=="square")
+        {
+          loopRotation[i] <- c(0,0.5*pi,pi,1.5*pi)[which.min(abs(c(0,0.5*pi,pi,1.5*pi)-loopRotation[i]%%(2*pi)))]
+        }
+      } 
+    } 
+  } 
+  
+  
+  # Node names:
+  if (is.null(nodeNames)) nodeNames <- labels
+  
+  
+  # Make labels:
+  if (is.logical(labels))
+  {
+    if (labels)
+    {
+      labels=1:nNodes
+    } else 
+    {
+      labels <- rep('',nNodes)
+    }
+  }
+  
+  border.width <- rep(border.width, nNodes)
+  
+  # Node argument setup:
+  borders <- rep(borders,length=nNodes)
+  label.font <- rep(label.font,length=nNodes)
+  
+  # Make negative dashed:
+  if (negDashed){
+    lty[] <- ifelse(E$weight < 0, 2, 1)
+  }
+  
+  ########### SPLIT HERE ###########
+  
+  ### Fill qgraph object with stuff:
+  ## Edgelist:
+  qgraphObject$Edgelist$from <- E$from
+  qgraphObject$Edgelist$to <- E$to
+  qgraphObject$Edgelist$weight <- E$weight
+  qgraphObject$Edgelist$directed <- directed
+  qgraphObject$Edgelist$bidirectional <- bidirectional
+  
+  # Nodes:
+  qgraphObject$graphAttributes$Nodes$border.color <- bcolor
+  qgraphObject$graphAttributes$Nodes$borders <- borders
+  qgraphObject$graphAttributes$Nodes$border.width <- border.width
+  qgraphObject$graphAttributes$Nodes$label.cex <- label.cex
+  qgraphObject$graphAttributes$Nodes$label.font <- label.font
+  qgraphObject$graphAttributes$Nodes$label.color <- lcolor
+  qgraphObject$graphAttributes$Nodes$labels <- labels
+  qgraphObject$graphAttributes$Nodes$names <- nodeNames
+  qgraphObject$graphAttributes$Nodes$loopRotation <- loopRotation
+  qgraphObject$graphAttributes$Nodes$shape <- shape
+  qgraphObject$graphAttributes$Nodes$color <- vertex.colors
+  qgraphObject$graphAttributes$Nodes$width <- vsize
+  qgraphObject$graphAttributes$Nodes$height <- vsize2
+  qgraphObject$graphAttributes$Nodes$subplots <- subplots
+  qgraphObject$graphAttributes$Nodes$images <- images
+  # qgraphObject$graphAttributes$Nodes$tooltips <- tooltips
+  # qgraphObject$graphAttributes$Nodes$SVGtooltips <- SVGtooltips
+  qgraphObject$graphAttributes$Nodes$bars <- bars
+  qgraphObject$graphAttributes$Nodes$barSide <- barSide
+  qgraphObject$graphAttributes$Nodes$barColor <- barColor
+  qgraphObject$graphAttributes$Nodes$barLength <- barLength
+  qgraphObject$graphAttributes$Nodes$means <- means
+  qgraphObject$graphAttributes$Nodes$SDs <- SDs
+  qgraphObject$graphAttributes$Nodes$node.label.offset <- node.label.offset
+  qgraphObject$graphAttributes$Nodes$node.label.position <- node.label.position
+  
+  
+  # Pies:
+  qgraphObject$graphAttributes$Nodes$pieColor <- pieColor
+  qgraphObject$graphAttributes$Nodes$pieColor2 <- pieColor2
+  qgraphObject$graphAttributes$Nodes$pieBorder <- pieBorder
+  qgraphObject$graphAttributes$Nodes$pie <- pie
+  qgraphObject$graphAttributes$Nodes$pieStart <- pieStart
+  qgraphObject$graphAttributes$Nodes$pieDarken <- pieDarken
+  
+  
+  
+  # Edges:
+  qgraphObject$graphAttributes$Edges$curve <- curve
+  qgraphObject$graphAttributes$Edges$color <- edge.color
+  qgraphObject$graphAttributes$Edges$labels <- edge.labels
+  qgraphObject$graphAttributes$Edges$label.cex <- edge.label.cex
+  qgraphObject$graphAttributes$Edges$label.bg <- edge.label.bg
+  qgraphObject$graphAttributes$Edges$label.margin <- edge.label.margin
+  qgraphObject$graphAttributes$Edges$label.font <- edge.label.font
+  qgraphObject$graphAttributes$Edges$label.color <- ELcolor
+  qgraphObject$graphAttributes$Edges$width <- edge.width
+  qgraphObject$graphAttributes$Edges$lty <- lty
+  qgraphObject$graphAttributes$Edges$fade <- fade
+  qgraphObject$graphAttributes$Edges$edge.label.position <- edge.label.position
+  qgraphObject$graphAttributes$Edges$residEdge <- residEdge
+  qgraphObject$graphAttributes$Edges$CircleEdgeEnd <- CircleEdgeEnd
+  qgraphObject$graphAttributes$Edges$asize <- asize
+  if (mode == "sig") qgraphObject$graphAttributes$Edges$Pvals <- Pvals else Pvals <- NULL
+  qgraphObject$graphAttributes$Edges$parallelEdge <- parallelEdge
+  qgraphObject$graphAttributes$Edges$parallelAngle <- parallelAngle
+  qgraphObject$graphAttributes$Edges$edgeConnectPoints <- edgeConnectPoints
+  
+  # Knots:
+  qgraphObject$graphAttributes$Knots$knots <- knots
+  qgraphObject$graphAttributes$Knots$knot.size <- knot.size
+  qgraphObject$graphAttributes$Knots$knot.color <- knot.color
+  qgraphObject$graphAttributes$Knots$knot.borders <- knot.borders
+  qgraphObject$graphAttributes$Knots$knot.border.color <- knot.border.color
+  qgraphObject$graphAttributes$Knots$knot.border.width <- knot.border.width
+  
+  # Graph:
+  qgraphObject$graphAttributes$Graph$nNodes <- nNodes
+  qgraphObject$graphAttributes$Graph$weighted <- weighted
+  qgraphObject$graphAttributes$Graph$edgesort <- edgesort
+  qgraphObject$graphAttributes$Graph$scores <- scores
+  qgraphObject$graphAttributes$Graph$scores.range <- scores.range
+  qgraphObject$graphAttributes$Graph$groups <- groups
+  qgraphObject$graphAttributes$Graph$minimum <- minimum
+  qgraphObject$graphAttributes$Graph$maximum <- maximum
+  qgraphObject$graphAttributes$Graph$cut <- cut
+  qgraphObject$graphAttributes$Graph$polygonList <- polygonList
+  qgraphObject$graphAttributes$Graph$mode <- mode
+  qgraphObject$graphAttributes$Graph$color <- color
+  
+  # Layout:
+  qgraphObject$layout <- layout
+  qgraphObject$layout.orig <- original.layout
+  
+  # Plot options:
+  qgraphObject$plotOptions$filetype <- filetype
+  qgraphObject$plotOptions$filename <- filename
+  qgraphObject$plotOptions$background <- background
+  qgraphObject$plotOptions$bg <- bg
+  qgraphObject$plotOptions$normalize <- normalize
+  qgraphObject$plotOptions$plot <- plot
+  qgraphObject$plotOptions$mar <- mar
+  qgraphObject$plotOptions$GLratio <- GLratio
+  qgraphObject$plotOptions$legend <- legend
+  qgraphObject$plotOptions$legend.cex <- legend.cex
+  qgraphObject$plotOptions$pty <- pty
+  qgraphObject$plotOptions$XKCD <- XKCD
+  qgraphObject$plotOptions$residuals <- residuals
+  qgraphObject$plotOptions$residScale <- residScale
+  qgraphObject$plotOptions$arrows <- arrows
+  qgraphObject$plotOptions$arrowAngle <- arrowAngle
+  qgraphObject$plotOptions$open <- open
+  qgraphObject$plotOptions$curvePivot <- curvePivot
+  qgraphObject$plotOptions$curveShape <- curveShape
+  qgraphObject$plotOptions$curveScale <- curveScale
+  qgraphObject$plotOptions$curveScaleNodeCorrection <- curveScaleNodeCorrection
+  qgraphObject$plotOptions$curvePivotShape <- curvePivotShape
+  qgraphObject$plotOptions$label.scale <- label.scale
+  qgraphObject$plotOptions$label.scale.equal <- label.scale.equal
+  qgraphObject$plotOptions$label.fill.vertical <- label.fill.vertical
+  qgraphObject$plotOptions$label.fill.horizontal <- label.fill.horizontal
+  qgraphObject$plotOptions$label.prop <- label.prop
+  qgraphObject$plotOptions$label.norm <- label.norm
+  # qgraphObject$plotOptions$overlay <- overlay
+  qgraphObject$plotOptions$details <- details
+  qgraphObject$plotOptions$title <- title
+  qgraphObject$plotOptions$title.cex <- title.cex
+  qgraphObject$plotOptions$preExpression <- preExpression
+  qgraphObject$plotOptions$postExpression <- postExpression
+  qgraphObject$plotOptions$legend.mode <- legend.mode
+  qgraphObject$plotOptions$srt <- srt
+  qgraphObject$plotOptions$gray <- gray
+  # qgraphObject$plotOptions$overlaySize <- overlaySize
+  qgraphObject$plotOptions$plotELBG <- plotELBG
+  qgraphObject$plotOptions$alpha <- alpha
+  qgraphObject$plotOptions$width <- width
+  qgraphObject$plotOptions$height <- height
+  qgraphObject$plotOptions$aspect <- aspect
+  qgraphObject$plotOptions$rescale <- rescale
+  qgraphObject$plotOptions$barsAtSide <- barsAtSide
+  qgraphObject$plotOptions$bgres <- bgres
+  qgraphObject$plotOptions$bgcontrol <- bgcontrol
+  qgraphObject$plotOptions$resolution <- res
+  qgraphObject$plotOptions$subpars <- subpars
+  qgraphObject$plotOptions$subplotbg <- subplotbg
+  qgraphObject$plotOptions$usePCH <- usePCH
+  qgraphObject$plotOptions$node.resolution <- node.resolution
+  qgraphObject$plotOptions$noPar <- noPar
+  qgraphObject$plotOptions$meanRange <- meanRange
+  qgraphObject$plotOptions$drawPies <- drawPies
+  qgraphObject$plotOptions$pieRadius <- pieRadius
+  qgraphObject$plotOptions$pastel <- pastel
+  qgraphObject$plotOptions$piePastel <- piePastel
+  
+  qgraphObject$plotOptions$rainbowStart <- rainbowStart
+  qgraphObject$plotOptions$pieCIs <- pieCIs 
+  
+  
+  
+  if (!DoNotPlot)
+  {
+    plot(qgraphObject)
+    invisible(qgraphObject)
+  } else
+  {
+    return(qgraphObject)
+  }
+  
+}
