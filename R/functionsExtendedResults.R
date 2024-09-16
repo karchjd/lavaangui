@@ -10,9 +10,9 @@ round_df <- function(df, digits) {
 custom_dt <- function(data, digits, callback = NULL) {
   data <- round_df(data, digits)
   if (is.null(callback)) {
-    callbackCall <- htmlwidgets::JS("return table;")
+    callbackCall <- DT::JS("return table;")
   } else {
-    callbackCall <- htmlwidgets::JS(callback)
+    callbackCall <- DT::JS(callback)
   }
   DT::datatable(data,
     options = list(

@@ -54,7 +54,7 @@ serverDataViewer <- function(id, getData) {
               c(15, 50, 100, -1),
               c("15", "50", "100", "All")
             )
-          ), callback = htmlwidgets::JS(callback)
+          ), callback = DT::JS(callback)
         )
       },
       server = FALSE

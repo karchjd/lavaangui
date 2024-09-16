@@ -33,7 +33,6 @@ Imports:
     utils (>= 4.3.3),
     DT (>= 0.33),
     plyr (>= 1.8.9),
-    htmlwidgets (>= 1.6.4),
     digest (>= 0.6.35)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
