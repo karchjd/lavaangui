@@ -2,8 +2,8 @@ serverLayout <- function(id, fit, full, imported) {
   moduleServer(id, function(input, output, session) {
     first_run_layout <- reactiveVal(TRUE)
     observeEvent(input$layout, {
-      tryCatch(
-        {
+      # tryCatch(
+      #   {
           req(input$layout)
           fromJavascript <- jsonlite::fromJSON(input$layout)
           fitObject <- FALSE
@@ -40,15 +40,15 @@ serverLayout <- function(id, fit, full, imported) {
               session$sendCustomMessage("semPlotLayout", coordinates)
             }
           }
-        },
-        error = function(e) {
-          session$sendCustomMessage(
-            "lav_warning_error",
-            list(origin = "layout", message = e$message, type = "danger")
-          )
-          print(e$message)
-        }
-      )
+        # },
+      #   error = function(e) {
+      #     session$sendCustomMessage(
+      #       "lav_warning_error",
+      #       list(origin = "layout", message = e$message, type = "danger")
+      #     )
+      #     print(e$message)
+      #   }
+      # )
     })
   })
 }
