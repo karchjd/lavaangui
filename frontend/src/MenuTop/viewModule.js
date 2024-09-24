@@ -37,8 +37,19 @@ export function updateLabels(viewOption, std, number_digits) {
 }
 
 export function updateVisibility(showVar, showLav, showMean, menuItems) {
+  function which(logicalVector) {
+    return logicalVector.reduce((indices, value, index) => {
+      if (value) {
+        indices.push(index);
+      }
+      return indices;
+    }, []);
+  }
+
   const cy = get(cyStore);
-  const showElement = [showLav, showVar, showMean];
+  const logicalVector = [showLav, showVar, showMean];
+  const trueIndices = which(logicalVector);
+  const falseIndices = which(logicalVector.map((x) => !x));
 
   function applyFunction(i, elements) {
     const functionsArray = [
@@ -49,26 +60,40 @@ export function updateVisibility(showVar, showLav, showMean, menuItems) {
     ];
     return functionsArray[i](elements);
   }
-  for (let i of [0, 1, 2]) {
+  for (let i of trueIndices) {
     const elements = cy.elements(function (ele) { return applyFunction(i, ele) });
-    if (showElement[i]) {
-      elements.removeClass('hidden');
-    } else {
-      elements.addClass('hidden');
-    }
+    elements.removeClass('hidden');
     if (i == 2) {
+      console.log("showMean");
       const conNodes = elements.connectedEdges().connectedNodes();
       const connectedEdges = elements.connectedEdges();
-      if (showElement[i]) {
-        connectedEdges.forEach(edge => {
-          edge.removeClass('hidden');
-        });
-      } else {
-        connectedEdges.forEach(edge => {
-          edge.addClass('hidden');
-        });
-      }
+      connectedEdges.forEach(edge => {
+        edge.removeClass('hidden');
+      });
       conNodes.forEach(node => {
+        checkNodeLoop(node.id());
+      });
+    } else {
+      elements.forEach(ele => {
+        checkNodeLoop(ele.source().id());
+        checkNodeLoop(ele.target().id());
+      });
+    }
+  }
+  for (let i of falseIndices) {
+    const elements = cy.elements(function (ele) { return applyFunction(i, ele) });
+    elements.addClass('hidden');
+    if (i == 2) {
+      console.log("hideMean");
+      const connectedEdges = elements.connectedEdges();
+      connectedEdges.forEach(edge => {
+        edge.addClass('hidden');
+      });
+      const conNodes = elements.connectedEdges().connectedNodes();
+      console.log(conNodes);
+      conNodes.forEach(node => {
+        console.log(node.getLabel());
+        console.log(node.id())
         checkNodeLoop(node.id());
       });
     } else {
