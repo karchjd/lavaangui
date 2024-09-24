@@ -52,7 +52,7 @@ function getEdgePositions(nodeID) {
     return;
   }
   let edgePostions = [];
-  node.connectedEdges().forEach((edge) => {
+  node.connectedEdges(edge => edge.style('display') !== 'none').forEach((edge) => {
     const source = edge.source();
     const target = edge.target();
     let toAdd;

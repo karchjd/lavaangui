@@ -1,5 +1,6 @@
 import { get } from "svelte/store";
 import { cyStore } from "../stores";
+import { checkNodeLoop } from "../Graph/checkNodeLoop";
 
 export const edgeItems = [
   {
@@ -60,10 +61,47 @@ export function updateVisibility(showVar, showLav, showMean, menuItems) {
     return functionsArray[i](elements);
   }
   for (let i of trueIndices) {
-    cy.elements(function (ele) { return applyFunction(i, ele) }).show();
+    const elements = cy.elements(function (ele) { return applyFunction(i, ele) });
+    elements.removeClass('hidden');
+    if (i == 2) {
+      console.log("showMean");
+      const conNodes = elements.connectedEdges().connectedNodes();
+      const connectedEdges = elements.connectedEdges();
+      connectedEdges.forEach(edge => {
+        edge.removeClass('hidden');
+      });
+      conNodes.forEach(node => {
+        checkNodeLoop(node.id());
+      });
+    } else {
+      elements.forEach(ele => {
+        checkNodeLoop(ele.source().id());
+        checkNodeLoop(ele.target().id());
+      });
+    }
   }
   for (let i of falseIndices) {
-    cy.elements(function (ele) { return applyFunction(i, ele) }).hide();
+    const elements = cy.elements(function (ele) { return applyFunction(i, ele) });
+    elements.addClass('hidden');
+    if (i == 2) {
+      console.log("hideMean");
+      const connectedEdges = elements.connectedEdges();
+      connectedEdges.forEach(edge => {
+        edge.addClass('hidden');
+      });
+      const conNodes = elements.connectedEdges().connectedNodes();
+      console.log(conNodes);
+      conNodes.forEach(node => {
+        console.log(node.getLabel());
+        console.log(node.id())
+        checkNodeLoop(node.id());
+      });
+    } else {
+      elements.forEach(ele => {
+        checkNodeLoop(ele.source().id());
+        checkNodeLoop(ele.target().id());
+      });
+    }
   }
 }
 

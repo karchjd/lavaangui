@@ -173,6 +173,12 @@ export const graphStyles = [
     },
   },
   {
+    selector: "edge.hidden, node.hidden",
+    style: {
+      "display": "none",
+    }
+  },
+  {
     selector: "edge:selected",
     style: {
       'underlay-opacity': 0.5,
