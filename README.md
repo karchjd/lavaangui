@@ -2,9 +2,8 @@
 
 ![R CMD CHECK](https://github.com/karchjd/lavaangui/actions/workflows/R-CMD-check.yaml/badge.svg
 )
-![Tests](https://github.com/karchjd/lavaangui/actions/workflows/playwright-test.yaml/badge.svg
-)
-[![](https://tokei.rs/b1/github/XAMPPRocky/tokei)](https://github.com/karchjd/lavaangui)
+![Tests](https://github.com/karchjd/lavaangui/actions/workflows/playwright-test.yaml/badge.svg)
+
 ![contributions](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 
