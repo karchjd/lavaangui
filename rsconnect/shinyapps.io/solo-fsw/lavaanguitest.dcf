@@ -1,0 +1,10 @@
+name: lavaanguitest
+title: lavaangui
+username: solo-fsw
+account: solo-fsw
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12809330
+bundleId: 9139684
+url: https://solo-fsw.shinyapps.io/lavaanguitest/
+version: 1

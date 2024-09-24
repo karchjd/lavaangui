@@ -11,6 +11,12 @@
 #### CURRENT FILE: DEPLOY SCRIPT #####
 ######################################
 
+production <- FALSE
+if (production){
+  appName = desc::desc_get_field("Package")
+}else{
+  appName = 'lavaanguitest'
+}
 
 # Test your app
 
@@ -23,7 +29,7 @@ if (ret_val != 0) {
 # Deploy to Posit Connect or ShinyApps.io
 # In command line.
 rsconnect::deployApp(
-  appName = desc::desc_get_field("Package"),
+  appName = appName,
   appTitle = desc::desc_get_field("Package"),
   appFiles = c(
     # Add any additional files unique to your app here.
