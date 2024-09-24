@@ -36,9 +36,22 @@ export function updateLabels(viewOption, std, number_digits) {
   cy.style().selector("edge.hasEstFixed").style({ label: fixedEstStyle }).update();
 }
 
-export function updateVisibility(showVar, showLav, showMean, menuItems) {
+export function updateVisibility(showVar, showLav, showMean) {
+  function which(logicalVector) {
+    return logicalVector.reduce((indices, value, index) => {
+      if (value) {
+        indices.push(index);
+      }
+      return indices;
+    }, []);
+  }
+
   const cy = get(cyStore);
   const showElement = [showLav, showVar, showMean];
+  const trueIndices = which(showElement);
+  const falseIndices = which(showElement.map((x) => !x));
+  const allIndices = trueIndices.concat(falseIndices);
+
 
   function applyFunction(i, elements) {
     const functionsArray = [
@@ -49,7 +62,7 @@ export function updateVisibility(showVar, showLav, showMean, menuItems) {
     ];
     return functionsArray[i](elements);
   }
-  for (let i of [0, 1, 2]) {
+  for (let i of allIndices) {
     const elements = cy.elements(function (ele) { return applyFunction(i, ele) });
     if (showElement[i]) {
       elements.removeClass('hidden');
