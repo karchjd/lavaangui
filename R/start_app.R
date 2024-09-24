@@ -20,7 +20,7 @@ start_app <- function(fit = NULL, full, where) {
       )
     } else {
       if (full) {
-        stop("Multipe group models are currently not supported. But you can plot your model using plot_interactive")
+        stop("Multipe group models are currently not supported. But you can plot your model using plot_lavaan")
       }
       df <- NULL
     }

@@ -18,7 +18,7 @@ There are three main ways to use the `lavaangui` package.
 
 2. **Local web application:** After installing the  `lavaangui` package (see below), you can start a local version of the web application via the `lavaangui()` command.
 
-3. **Interactive plots:** `lavaangui` can also be used for plotting `lavaan` models that were created in R. For this, use `plot_interactive(fit)`. This will create a path diagram of your model. The core difference compared to other packages for plotting `lavaan` models is that the resulting plot is interactive. That is, you can change its appearance easily, for example, by dragging around nodes with your mouse.
+3. **Interactive plots:** `lavaangui` can also be used for plotting `lavaan` models that were created in R. For this, use `plot_lavaan(fit)`. This will create a path diagram of your model. The core difference compared to other packages for plotting `lavaan` models is that the resulting plot is interactive. That is, you can change its appearance easily, for example, by dragging around nodes with your mouse.
 
 An extenstive tutorial on using `lavaangui` is available at https://osf.io/preprints/psyarxiv/f4ary.
 
@@ -62,9 +62,9 @@ fit <- cfa(HS.model, data = HolzingerSwineford1939)
 lavangui(fit)
 ```
 
-### `plot_interactive()`
+### `plot_lavaan()`
 
-To obtain an interactive plot of your fitted model without leaving R Studio, use the `plot_interactive(fit)` function:
+To obtain an interactive plot of your fitted model without leaving R Studio, use the `plot_lavaan(fit)` function:
 
 ```{r, eval = FALSE}
 library(lavaan)
@@ -74,7 +74,7 @@ HS.model <- ' visual  =~ x1 + x2 + x3
               speed   =~ x7 + x8 + x9 '
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
-plot_interactive(fit)
+plot_lavaan(fit)
 ```
 
 

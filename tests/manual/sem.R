@@ -1,4 +1,4 @@
-model <- ' 
+model <- "
   # latent variable definitions
      ind60 =~ x1 + x2 + x3
      dem60 =~ y1 + a*y2 + b*y3 + c*y4
@@ -14,8 +14,8 @@ model <- '
     y3 ~~ y7
     y4 ~~ y8
     y6 ~~ y8
-'
+"
 
 fit <- sem(model, data = PoliticalDemocracy)
 lavaangui(fit)
-plot_interactive(fit)
+plot_lavaan(fit)

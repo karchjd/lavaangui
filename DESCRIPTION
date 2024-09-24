@@ -10,7 +10,7 @@ Description: Provides a graphical user interface with an
     integrated diagrammer for latent variables from the 'lavaan' package. 
     It offers two core functions:  first, lavaangui() launches a web application
     that allows users to specify models by drawing path diagrams, fitting them, 
-    assessing model fit, and more; second, plot_interactive() creates 
+    assessing model fit, and more; second, plot_lavaan() creates 
     interactive path diagrams from models specified in 'lavaan'. 
     Karch (2024) <doi: 10.31234/osf.io/f4ary> contains a tutorial.
 URL: https://solo-fsw.shinyapps.io/lavaangui/, https://github.com/karchjd/lavaangui

@@ -1,6 +1,6 @@
 #' Create Interactive Path Diagrams for Lavaan Models
 #'
-#' The `plot_interactive` function creates path diagrams for lavaan model.
+#' The `plot_lavaan` function creates path diagrams for lavaan model.
 #' The created paths diagrams  are interactive. 
 #' That is, their appearance can be customized easily, for example, by dragging 
 #' around nodes representing variable with the mouse.
@@ -20,11 +20,11 @@
 #'   speed   =~ x7 + x8 + x9
 #' '
 #' fit <- cfa(model, data = HolzingerSwineford1939)
-#' plot_interactive(fit)
+#' plot_lavaan(fit)
 #' 
 #'
 #'
 #' @export
-plot_interactive <- function(fit, where = "gadget") {
+plot_lavaan <- function(fit, where = "gadget") {
   start_app(fit = fit, full = FALSE, where = where)
 }

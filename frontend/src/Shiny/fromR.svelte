@@ -458,7 +458,7 @@
       $modelOptions.fix_first = false;
       setAlert(
         "warning",
-        "lavaangui only imports user edges. Your full model is very likely different than what you fitted in lavaan because of different options used. To display the model, as you fitted it in lavaan, use plot_interactive",
+        "lavaangui only imports user edges. Your full model is very likely different than what you fitted in lavaan because of different options used. To display the model, as you fitted it in lavaan, use plot_lavaan",
       );
     });
 
