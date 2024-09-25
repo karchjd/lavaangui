@@ -6,14 +6,21 @@ checkVarsInData <- function(model_parsed, data) {
   return(var_not_in_data)
 }
 
+getHashData <- function(df){
+  attributes(df) <- NULL
+  return(digest::digest(df))
+}
+
 sendResultsFront <- function(session, result, fromJavascript, df) {
   result$fit@Data@X <- list() 
   res <- list(
     fitted_model = base64enc::base64encode(serialize(result, NULL)),
-    model = digest::digest(fromJavascript$model), data = digest::digest(df)
+    model = digest::digest(fromJavascript$model[c("options","syntax")]), data = getHashData(df)
   )
   session$sendCustomMessage("lav_results", res)
 }
+
+
 
 serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
@@ -83,10 +90,9 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       stopifnot(fromJavascript$mode == "estimate")
       # cache is valid, return cached results
       cacheValid <- !is.null(fromJavascript$cache$lastFitModel) &&
-        fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
-        (is.null(getData()) || fromJavascript$cache$lastFitData == digest::digest(getData()))
+        fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model[c("options","syntax")]) &&
+        (is.null(getData()) || fromJavascript$cache$lastFitData == getHashData(getData()))
       if (cacheValid) {
-        print('cache')
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
         fit(cacheResult$fit)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
@@ -111,7 +117,6 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       }
 
       ## fit model
-      print("fitting")
       session$sendCustomMessage("fitting", "")
       abort_file <- tempfile()
       abort_file_global(abort_file)
