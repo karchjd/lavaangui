@@ -39,7 +39,8 @@
       overflow-y: auto;
     }
 
-    .input-group {
+    .input-group,
+    .control-label {
       display: none;
     }
 
@@ -133,6 +134,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
+          <h4 class="modal-title">Data Upload Status</h4>
         </div>
         <div class="modal-body">
           {{ shiny::fileInput("dataUpload-fileInput", "Uploading Status", accept=c(".csv,.sav, .xlsx, .rds", ".txt"))}}
