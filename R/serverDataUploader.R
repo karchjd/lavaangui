@@ -84,6 +84,7 @@ serverDataUploader <- function(id) {
     observeEvent(input$fileInput, {
       tryCatch(
         {
+          print('hallo')
           if (!is.null(input$fileInput$datapath)) {
             loadedData(list(df = read_auto(input$fileInput$datapath), name = input$fileInput$name))
             showData <- TRUE

@@ -38,10 +38,19 @@
       max-height: calc(100vh - 75px);
       overflow-y: auto;
     }
+
+    .input-group {
+      display: none;
+    }
+
+    .upload-width {
+      width: 200px;
+      /* Adjust the percentage as needed */
+    }
   </style>
 
   </script>
-  <script type="module" crossorigin src="./assets/index-ee7059a4.js"></script>
+  <script type="module" crossorigin src="./assets/index-aae52d3f.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/svelte-fdfc2579.js">
   <link rel="modulepreload" crossorigin href="./assets/core-js-bbf708ea.js">
   <link rel="modulepreload" crossorigin href="./assets/lodash-6eb5ace2.js">
@@ -82,7 +91,7 @@
   <link rel="modulepreload" crossorigin href="./assets/cytoscape-node-editing-170df28d.js">
   <link rel="modulepreload" crossorigin href="./assets/cytoscape-edge-editing-b8b574b0.js">
   <link rel="stylesheet" href="./assets/cytoscape-context-menus-1313501e.css">
-  <link rel="stylesheet" href="./assets/index-236fa2ae.css">
+  <link rel="stylesheet" href="./assets/index-7e3ae6b2.css">
 </head>
 
 <body>
@@ -116,6 +125,23 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" id="upload-modal">
+    <div class="modal-dialog upload-width" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{ shiny::fileInput("dataUpload-fileInput", "Uploading Status") }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 
   <div id="picker"></div>
 

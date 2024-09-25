@@ -34,6 +34,7 @@ start_app <- function(fit = NULL, full, where) {
   ## define server, here because we need to pass model, and full
   lavaan_gui_server <- function(input, output, session) {
     # reactive vals
+    options(shiny.maxRequestSize=20*1024^2)
     fit <- reactiveVal(NULL)
     forceEstimateUpdate <- reactiveVal()
     to_render <- reactiveVal(help_text)

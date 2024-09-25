@@ -12,11 +12,6 @@
   import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
-  import {
-    graphSettings,
-    graphStyles,
-    edgeBendingSettings,
-  } from "../Graph/cytoscape_settings.js";
   import { resetCounters } from "../Graph/graphmanipulation.js";
   import cytoscape from "cytoscape";
   import svg from "cytoscape-svg";
@@ -154,13 +149,14 @@
   function loadData() {
     //  / Trigger the file input click action
     document.getElementById("dataUpload-fileInput").click();
+    window.$("#upload-modal").modal();
   }
 
   function loadModelData() {
     if (!$appState.modelEmpty) {
       // @ts-expect-error
       bootbox.confirm(
-        "Are you sure you want to load a model? This will delete the current model.",
+        "Are you sure you want to load model and data? This will delete the current model and data.",
         function (result) {
           if (result) {
             uploadModelData();
@@ -197,6 +193,7 @@
               Shiny.setInputValue("dataUpload-fileInput", {
                 content: dataCsvContent,
               });
+              window.$("#upload-modal").modal();
 
               const checkDataAvailability = setInterval(() => {
                 if ($appState.dataAvail) {

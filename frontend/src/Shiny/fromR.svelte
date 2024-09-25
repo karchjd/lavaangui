@@ -361,6 +361,7 @@
       $appState.loadedFileName = data_info.name;
       $appState.dataAvail = true;
       tolavaan($modelOptions.mode);
+      window.$("#upload-modal").modal("hide");
       if (data_info.showData) {
         window.$("#data-modal-2").modal();
       }

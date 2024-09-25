@@ -7,7 +7,6 @@
   import Results from "./Shiny/Results.svelte";
   import Debug from "./Debug.svelte";
   import ContextMenus from "./Graph/ContextMenus.svelte";
-  import DataInput from "./Shiny/DataInput.svelte";
   import ToolbarBelow from "./Toolbars/ToolbarBelow.svelte";
   import FromR from "./Shiny/fromR.svelte";
   import Zoom from "./Graph/Zoom.svelte";
@@ -79,7 +78,6 @@
 {/if}
 <!-- Warning: never ever put this inside ready, this will break them
 Shiny needs to see them to attach listeners -->
-<DataInput />
 <Errors />
 
 <style>
