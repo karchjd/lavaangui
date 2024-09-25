@@ -135,7 +135,7 @@
           </button>
         </div>
         <div class="modal-body">
-          {{ shiny::fileInput("dataUpload-fileInput", "Uploading Status") }}
+          {{ shiny::fileInput("dataUpload-fileInput", "Uploading Status", accept=c(".csv,.sav, .xlsx, .rds", ".txt"))}}
         </div>
       </div>
     </div>

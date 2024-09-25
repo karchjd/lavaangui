@@ -48,18 +48,24 @@ determine_seperator_header <- function(filepath) {
 read_auto <- function(filepath) {
   # Determine file extension
   file_ext <- tools::file_ext(filepath)
-
-
+  read_csv <- function(filepath){
+    sep_head <- determine_seperator_header(filepath)
+    data <- readr::read_delim(filepath,
+                              delim = sep_head$separator,
+                              col_names = sep_head$has_header,
+                              trim_ws = TRUE
+    )
+    return(data)
+  }
+  
 
   # Load appropriate package and read data based on file extension
   switch(file_ext,
     csv = {
-      sep_head <- determine_seperator_header(filepath)
-      data <- readr::read_delim(filepath,
-        delim = sep_head$separator,
-        col_names = sep_head$has_header,
-        trim_ws = TRUE
-      )
+      data <- read_csv(filepath)
+    },
+    txt = {
+      data <- read_csv(filepath)
     },
     xlsx = {
       data <- readxl::read_excel(filepath)
