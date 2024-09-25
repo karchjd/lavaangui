@@ -5,6 +5,6 @@
   )
   packageStartupMessage(
     "This is ", paste(pkgname, version), "\n",
-    pkgname, " is FREE software! Please report any bugs."
+    pkgname, " is BETA software! Please report any bugs at https://github.com/karchjd/lavaangui/issues"
   )
 }
