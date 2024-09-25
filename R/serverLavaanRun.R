@@ -7,6 +7,7 @@ checkVarsInData <- function(model_parsed, data) {
 }
 
 sendResultsFront <- function(session, result, fromJavascript, df) {
+  result$fit@Data@X <- list() 
   res <- list(
     fitted_model = base64enc::base64encode(serialize(result, NULL)),
     model = digest::digest(fromJavascript$model), data = digest::digest(df)
@@ -85,6 +86,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
         (is.null(getData()) || fromJavascript$cache$lastFitData == digest::digest(getData()))
       if (cacheValid) {
+        print('cache')
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
         fit(cacheResult$fit)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
@@ -109,6 +111,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       }
 
       ## fit model
+      print("fitting")
       session$sendCustomMessage("fitting", "")
       abort_file <- tempfile()
       abort_file_global(abort_file)

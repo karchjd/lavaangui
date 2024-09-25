@@ -42,22 +42,19 @@ serverDataViewer <- function(id, getData) {
       "}"
     )
 
-    output$tbl_data <- DT::renderDT(
-      {
-        df <- getData()
-        df[] <- lapply(df, function(x) if (haven::is.labelled(x)) haven::as_factor(x) else x)
+    output$tbl_data <- DT::renderDT({
+      df <- getData()
+      df[] <- lapply(df, function(x) if (haven::is.labelled(x)) haven::as_factor(x) else x)
 
-        DT::datatable(df,
-          options = list(
-            ordering = FALSE, pageLength = 100,
-            lengthMenu = list(
-              c(15, 50, 100, -1),
-              c("15", "50", "100", "All")
-            )
-          ), callback = DT::JS(callback)
-        )
-      },
-      server = FALSE
-    )
+      DT::datatable(df,
+        options = list(
+          ordering = FALSE, pageLength = 100,
+          lengthMenu = list(
+            c(15, 50, 100, -1),
+            c("15", "50", "100", "All")
+          )
+        ), callback = DT::JS(callback)
+      )
+    })
   })
 }
