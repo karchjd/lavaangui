@@ -7,7 +7,12 @@ getGroupTable <- function(parTable) {
 
 importModel <- function(session, full, importedModel) {
   imported <- FALSE
-  session$sendCustomMessage("full", message = full)
+  if (Sys.getenv('SHINY_PORT') == "") {
+    server <- FALSE
+  } else {
+    server <- TRUE
+  }
+  session$sendCustomMessage("fullServer", message = list(full=full,server=server))
 
   makeNewVars <- function(vars, groups) {
     allCombs <- expand.grid(vars, groups)

@@ -33,8 +33,9 @@ start_app <- function(fit = NULL, full, where) {
 
   ## define server, here because we need to pass model, and full
   lavaan_gui_server <- function(input, output, session) {
+    options(shiny.maxRequestSize = 20 * 1024^2)
+    
     # reactive vals
-    options(shiny.maxRequestSize=20*1024^2)
     fit <- reactiveVal(NULL)
     forceEstimateUpdate <- reactiveVal()
     to_render <- reactiveVal(help_text)
@@ -82,7 +83,7 @@ start_app <- function(fit = NULL, full, where) {
     ## layout
     serverLayout("layout", fit, full, imported)
 
-    ## main server for running ladan
+    ## main server for running lavaan
     serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit)
 
     serverEstimateUpdater("ests", forceEstimateUpdate, fit, to_render)

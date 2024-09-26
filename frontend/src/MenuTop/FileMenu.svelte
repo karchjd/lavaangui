@@ -1,29 +1,18 @@
 <script>
   export let full = true;
-  import {
-    cyStore,
-    appState,
-    modelOptions,
-    dataInfo,
-    fitCache,
-    gridViewOptions,
-  } from "../stores.js";
+  import { cyStore, appState, dataInfo } from "../stores.js";
   import { get } from "svelte/store";
-  import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
-  import { resetCounters } from "../Graph/graphmanipulation.js";
   import cytoscape from "cytoscape";
   import svg from "cytoscape-svg";
   // @ts-ignore
   import { saveAs } from "file-saver";
-  import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { jsPDF } from "jspdf";
   import { svg2pdf } from "svg2pdf.js";
-  import * as Constants from "../Graph/classNames.js";
+  import { requestData, jsonModel, reset, parseModel } from "./IO.js";
 
   cytoscape.use(svg);
-
   function newModel() {
     if (!$appState.modelEmpty) {
       // @ts-expect-error
@@ -40,70 +29,8 @@
     }
   }
 
-  function reset() {
-    let cy = get(cyStore);
-    cy.elements().remove();
-    resetCounters();
-    $appState.parsedModel = false;
-    $modelOptions.fix_first = true;
-    $modelOptions.mode = "user model";
-    // @ts-expect-error
-    Shiny.setInputValue("show_help", Math.random());
-    for (let key in $fitCache) {
-      $fitCache[key] = null;
-    }
-  }
-
-  function mergeExistingProperties(target, source) {
-    for (let key in source) {
-      if (source.hasOwnProperty(key) && source[key] !== undefined) {
-        target[key] = source[key];
-      }
-    }
-  }
-
   function startDownload(object, fileEnding) {
     saveAs(object, "model." + fileEnding);
-  }
-
-  function parseModel(content) {
-    reset();
-    let combinedData = JSON.parse(content);
-    let cy = get(cyStore);
-    let json;
-    json = JSON.parse(combinedData.model);
-    const modelOpt = JSON.parse(combinedData.modelOpt);
-    const gridViewOpt = JSON.parse(combinedData.gridViewOpt);
-    mergeExistingProperties($modelOptions, modelOpt);
-    mergeExistingProperties($gridViewOptions, gridViewOpt);
-    if (combinedData.fitCache != undefined) {
-      const localCache = JSON.parse(combinedData.fitCache);
-      $fitCache = localCache;
-    }
-
-    // Set loading mode, update diagram and perform checks
-    $appState.loadingMode = true;
-    cy.json({ elements: json });
-
-    cy.nodes().forEach((node) => {
-      node.style({ width: node.data("width") });
-      node.style({ height: node.data("height") });
-    });
-
-    if ($appState.dataAvail) {
-      applyLinkedClass($appState.columnNames);
-    }
-
-    if ($modelOptions.mode !== "user model") {
-      $gridViewOptions.showLav = true;
-    } else {
-      $gridViewOptions.showLav = false;
-    }
-
-    cy.nodes().forEach((node) => {
-      checkNodeLoop(node.id());
-    });
-    $appState.loadingMode = false;
   }
 
   async function uploadModel() {
@@ -215,37 +142,6 @@
     input.click();
   }
 
-  function jsonModel() {
-    const cy = get(cyStore);
-
-    //save node size because edge editing extention does not do it
-    cy.nodes().forEach((node) => {
-      node.data("width", node.width());
-      node.data("height", node.height());
-    });
-    let json = cy.json().elements;
-
-    // Remove link with data set
-    json.nodes.forEach((node) => {
-      node.classes = node.classes
-        .split(" ")
-        .filter((c) => c !== Constants.LINKED)
-        .join(" ");
-    });
-
-    const model = JSON.stringify(json);
-    const modelOpt = JSON.stringify($modelOptions);
-    const gridViewOpt = JSON.stringify($modelOptions);
-    const fitCacheLocal = JSON.stringify($fitCache);
-    const combinedData = JSON.stringify({
-      model,
-      modelOpt,
-      gridViewOpt,
-      fitCache: fitCacheLocal,
-    });
-    return combinedData;
-  }
-
   function getDate() {
     const now = new Date();
     const formattedDate = `${now.getFullYear()}-${String(
@@ -264,11 +160,6 @@
       type: "application/json;charset=utf-8",
     });
     saveAs(blob, "model_" + getDate() + ".lvm");
-  }
-
-  async function downloadModelData() {
-    // @ts-expect-error
-    Shiny.setInputValue("down-requestData", Math.random());
   }
 
   // @ts-ignore
@@ -321,6 +212,10 @@
       type: "image/svg+xml;charset=utf-8",
     });
     startDownload(blob, "svg");
+  }
+
+  function downloadModelData() {
+    requestData("download");
   }
 
   async function exportPDF() {

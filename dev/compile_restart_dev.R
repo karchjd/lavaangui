@@ -1,5 +1,5 @@
 recompile_front <- T # nolint
-release <- T
+release <- F
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -29,4 +29,4 @@ HS.model <- " visual  =~ x1 + x2 + myLabel * x3
               speed   =~ x7 + x8 + x9"
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
-lavaangui(fit)
+lavaangui()

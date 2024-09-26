@@ -29,6 +29,7 @@
   import ExtendCyto from "./Graph/ExtendCyto.svelte";
   import BendEdges from "./Graph/BendEdges.svelte";
   import GridOptions from "./MenuTop/GridOptions.svelte";
+  import AutoSave from "./AutoSave.svelte";
 </script>
 
 <AppReady />
@@ -75,7 +76,11 @@
   <Debug />
   <FromR />
   <DuckTapeFixes />
+  {#if $appState.server}
+    <AutoSave />
+  {/if}
 {/if}
+
 <!-- Warning: never ever put this inside ready, this will break them
 Shiny needs to see them to attach listeners -->
 <Errors />
