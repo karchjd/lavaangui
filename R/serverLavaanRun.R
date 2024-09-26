@@ -40,19 +40,37 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       modelJavascript <- fromJavascript$model
       model <- eval(parse(text = modelJavascript$syntax)) # nolint: object_usage_linter.
       if (length(modelJavascript$ordered_labels) > 0) {
-        model <- paste0(model, "\n")
+        modelParse <- paste0(model, "\n")
         for (i in 1:length(modelJavascript$ordered_labels)) {
-          model <- paste0(model, modelJavascript$ordered_labels[i], "|t1\n")
+          modelParse <- paste0(modelParse, modelJavascript$ordered_labels[i], "|t1\n")
         }
+        modify_arguments_for_ordered <- function(input_string) {
+          # Remove the "ordered", "missing", and "estimator" arguments
+          modified_string <- gsub("ordered = c\\([^\\)]*\\),", "", input_string)
+          modified_string <- gsub("missing = \"[^\"]*\",", "", modified_string)
+          modified_string <- gsub("estimator = \"[^\"]*\",", "", modified_string)
+          modified_string <- gsub("se = \"[^\"]*\",", "", modified_string)
+          
+          # Replace meanstructure argument (whether it is TRUE, FALSE, or "default") with TRUE
+          modified_string <- gsub("meanstructure = (TRUE|FALSE|\"default\")", "meanstructure = TRUE", modified_string)
+          
+          return(modified_string)
+        }
+        lavaan_parse_string <- (paste0("lavaanify(modelParse, ", modify_arguments_for_ordered(modelJavascript$options)))
+      }else{
+        lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
       }
-      lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
+      
 
       ## gotta love R error handling...
       wasError <- tryCatch(
         withCallingHandlers(
-          {
-            lavaan_model <- eval(parse(text = lavaan_parse_string))
-            model_parsed <- parTable(lavaan_model)
+          { if (length(modelJavascript$ordered_labels) > 0) {
+            model_parsed <- eval(parse(text = lavaan_parse_string))
+            }else{
+              lavaan_model <- eval(parse(text = lavaan_parse_string))
+              model_parsed <- parTable(lavaan_model)
+            }
           },
           error = function(e) {
             session$sendCustomMessage(
