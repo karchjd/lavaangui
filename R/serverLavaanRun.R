@@ -6,16 +6,16 @@ checkVarsInData <- function(model_parsed, data) {
   return(var_not_in_data)
 }
 
-getHashData <- function(df){
+getHashData <- function(df) {
   attributes(df) <- NULL
   return(digest::digest(df))
 }
 
 sendResultsFront <- function(session, result, fromJavascript, df) {
-  result$fit@Data@X <- list() 
+  result$fit@Data@X <- list()
   res <- list(
     fitted_model = base64enc::base64encode(serialize(result, NULL)),
-    model = digest::digest(fromJavascript$model[c("options","syntax")]), data = getHashData(df)
+    model = digest::digest(fromJavascript$model[c("options", "syntax")]), data = getHashData(df)
   )
   session$sendCustomMessage("lav_results", res)
 }
@@ -39,7 +39,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       ## Mode = "Full Model" or "Estimate", send model
       modelJavascript <- fromJavascript$model
       model <- eval(parse(text = modelJavascript$syntax)) # nolint: object_usage_linter.
-      if (length(modelJavascript$ordered_labels) > 0) {
+      if (length(modelJavascript$ordered_labels) > 0) { ## ordinal data present
         modelParse <- paste0(model, "\n")
         for (i in 1:length(modelJavascript$ordered_labels)) {
           modelParse <- paste0(modelParse, modelJavascript$ordered_labels[i], "|t1\n")
@@ -50,24 +50,25 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
           modified_string <- gsub("missing = \"[^\"]*\",", "", modified_string)
           modified_string <- gsub("estimator = \"[^\"]*\",", "", modified_string)
           modified_string <- gsub("se = \"[^\"]*\",", "", modified_string)
-          
+
           # Replace meanstructure argument (whether it is TRUE, FALSE, or "default") with TRUE
           modified_string <- gsub("meanstructure = (TRUE|FALSE|\"default\")", "meanstructure = TRUE", modified_string)
-          
+
           return(modified_string)
         }
         lavaan_parse_string <- (paste0("lavaanify(modelParse, ", modify_arguments_for_ordered(modelJavascript$options)))
-      }else{
+      } else {
         lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
       }
-      
+
 
       ## gotta love R error handling...
       wasError <- tryCatch(
         withCallingHandlers(
-          { if (length(modelJavascript$ordered_labels) > 0) {
-            model_parsed <- eval(parse(text = lavaan_parse_string))
-            }else{
+          {
+            if (length(modelJavascript$ordered_labels) > 0) {
+              model_parsed <- eval(parse(text = lavaan_parse_string))
+            } else {
               lavaan_model <- eval(parse(text = lavaan_parse_string))
               model_parsed <- parTable(lavaan_model)
             }
@@ -108,7 +109,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       stopifnot(fromJavascript$mode == "estimate")
       # cache is valid, return cached results
       cacheValid <- !is.null(fromJavascript$cache$lastFitModel) &&
-        fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model[c("options","syntax")]) &&
+        fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model[c("options", "syntax")]) &&
         (is.null(getData()) || fromJavascript$cache$lastFitData == getHashData(getData()))
       if (cacheValid) {
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
@@ -184,7 +185,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       promises::catch(
         fut,
         function(e) {
-          if(grepl("No process exists with this PID", e$message) || grepl("failed to receive message results from cluster RichSOCKnode #1")){
+          if (grepl("No process exists with this PID", e$message) || grepl("failed to receive message results from cluster RichSOCKnode #1")) {
             e$message <- "Fitting cancelled by user"
           }
           session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = e$message, type = "danger"))

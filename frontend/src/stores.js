@@ -94,4 +94,4 @@ export function setAlert(type, message) {
   });
 }
 
-setAlert("info", "Greetings. Lavaangui is BETA software. Please report any bugs at https://github.com/karchjd/lavaangui/issues.");
+setAlert("info", "Greetings. lavaangui is BETA software. Please report any bugs at https://github.com/karchjd/lavaangui/issues.");

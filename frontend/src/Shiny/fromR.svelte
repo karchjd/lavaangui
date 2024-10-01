@@ -383,6 +383,9 @@
 
     Shiny.addCustomMessageHandler("lav_warning_error", function (info) {
       const what = info.type == "warning" ? "warning" : "error";
+      if (info.origin == "loading data") {
+        window.$("#upload-modal").modal("hide");
+      }
       setAlert(
         info.type,
         `During ${info.origin} the following ${what} occurred: ${info.message}`,
