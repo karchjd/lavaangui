@@ -1,5 +1,5 @@
 <script>
-    import { modelOptions, cyStore } from "../stores";
+    import { modelOptions } from "../stores";
     import { tolavaan } from "../Shiny/toR.js";
 
     $: {

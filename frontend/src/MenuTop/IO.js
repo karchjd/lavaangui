@@ -4,6 +4,7 @@ import * as Constants from "../Graph/classNames.js";
 import { resetCounters } from "../Graph/graphmanipulation.js";
 import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
 import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
+import { tolavaan } from "../Shiny/toR";
 
 export async function requestData(goal) {
     // @ts-expect-error
@@ -67,6 +68,7 @@ export function parseModel(content) {
         checkNodeLoop(node.id());
     });
     appStateLocal.loadingMode = false;
+    tolavaan(modelOptionsLocal.mode);
 }
 
 export function jsonModel() {

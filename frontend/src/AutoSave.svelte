@@ -80,7 +80,6 @@
                 Shiny.setInputValue("dataUpload-fileInput", {
                     content: btoa(cachedData.data),
                 });
-                window.$("#upload-modal").modal();
             }
         }
     });

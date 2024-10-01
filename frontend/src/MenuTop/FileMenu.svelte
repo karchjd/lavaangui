@@ -76,8 +76,15 @@
   function loadData() {
     //  / Trigger the file input click action
     document.getElementById("dataUpload-fileInput").click();
-    window.$("#upload-modal").modal();
   }
+
+  document
+    .getElementById("dataUpload-fileInput")
+    .addEventListener("change", function () {
+      if (this.files && this.files.length > 0) {
+        window.$("#upload-modal").modal();
+      }
+    });
 
   function loadModelData() {
     if (!$appState.modelEmpty) {
@@ -120,7 +127,6 @@
               Shiny.setInputValue("dataUpload-fileInput", {
                 content: dataCsvContent,
               });
-              window.$("#upload-modal").modal();
 
               const checkDataAvailability = setInterval(() => {
                 if ($appState.dataAvail) {
