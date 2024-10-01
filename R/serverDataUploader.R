@@ -11,15 +11,19 @@ check_equal <- function(numbers) {
 }
 
 determine_seperator_header <- function(filepath) {
-  # Potential separators
   separator_candidates <- c("\t", ",", ";", " ", "\\|")
-
-  # Read the first 10 lines of the file
+  
   lines <- readLines(filepath, n = 10)
   if (length(lines) < 10) {
     warning("File has fewer than 10 lines; accuracy may decrease.")
   }
-
+  
+  # Collapse Whitespace
+  collapse_whitespace <- function(line) {
+    gsub("\\s{2,}", " ", line)
+  }
+  lines <- sapply(lines, collapse_whitespace)
+  
   # Count occurrences of each separator in each line
   counts <- sapply(separator_candidates, function(sep, lines) {
     sapply(lines, function(line) length(strsplit(line, sep)[[1]]) - 1)
@@ -29,8 +33,7 @@ determine_seperator_header <- function(filepath) {
     # Check if the second entry of the column is bigger than 0
     return(column[2] > 0 && check_equal(column))
   })
-
-
+  
   if (!any(consistent)) {
     stop("Could not determine a consistent separator")
   }
