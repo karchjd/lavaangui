@@ -76,7 +76,7 @@
   <Debug />
   <FromR />
   <DuckTapeFixes />
-  {#if $appState.server}
+  {#if $appState.shinyapps}
     <AutoSave />
   {/if}
 {/if}

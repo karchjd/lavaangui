@@ -5,9 +5,6 @@ import { resetCounters } from "../Graph/graphmanipulation.js";
 import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
 import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
 
-
-
-
 export async function requestData(goal) {
     // @ts-expect-error
     Shiny.setInputValue("down-requestData", { goal: goal, random: Math.random() });

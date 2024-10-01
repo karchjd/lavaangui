@@ -5,7 +5,8 @@
     import { onMount } from "svelte";
     import { parseModel } from "./MenuTop/IO";
 
-    const timeoutSeconds = 5;
+    const timeoutSeconds = 840;
+
     function idleTimer() {
         var t = setTimeout(logout, timeoutSeconds * 1000);
 
@@ -39,9 +40,12 @@
             model = jsonModel();
         }
         if (model != null || data != null) {
+            bootbox.alert(
+                "Due to inactivity, you will be disconnected from the server shortly. Your work was saved for you. In case you have already been disconnected now, you can continue where you left off by refreshing the page.",
+            );
             let sessionId = sessionStorage.getItem("sessionId");
             if (!sessionId) {
-                sessionId = Date.now().toString(); // Generate a unique session ID
+                sessionId = Date.now().toString();
                 sessionStorage.setItem("sessionId", sessionId);
                 console.log("Session ID save: ", sessionId);
             }
@@ -49,7 +53,7 @@
             db.version(1).stores({
                 cache: "sessionId, model, data",
             });
-            await db.cache.clear(); // Corrected from delete() to clear()
+            await db.cache.clear();
             await db.cache.put({
                 sessionId: sessionId,
                 model: model,

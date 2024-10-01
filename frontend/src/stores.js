@@ -66,7 +66,8 @@ export let appState = writable({
   drawing: "none",
   undoEmpty: true,
   redoEmpty: true,
-  server: false
+  server: false,
+  shinyapps: false
 });
 
 export let dataInfo = writable(0);
