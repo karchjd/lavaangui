@@ -265,6 +265,13 @@
       selector: `edge.${Constants.FROM_LAV}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        if (edge.myIsLoop() && edge.source().isOrdered()) {
+          setAlert(
+            "danger",
+            "User-defined variance arrow is not allowed for ordered variables.",
+          );
+          return;
+        }
         edge.markAddedUser();
         tolavaan($modelOptions.mode);
       },
@@ -438,6 +445,15 @@
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.makeOrdered();
+        node.connectedEdges().forEach((edge) => {
+          if (edge.myIsLoop() && edge.isUserAdded()) {
+            edge.remove();
+            setAlert(
+              "warning",
+              "Removed variance user-defined arrow as it is not allowed for ordered variables.",
+            );
+          }
+        });
         tolavaan($modelOptions.mode);
       },
       show: "full",

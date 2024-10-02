@@ -143,6 +143,15 @@
       }
     }
 
+    //no variance edges for ordinal nodes
+    if (edge.myIsLoop() && sourceNode.isOrdered()) {
+      setAlert(
+        "error",
+        "User-defined variance arrow is not allowed for ordered variables.",
+      );
+      return;
+    }
+
     if (edge.isDirected() && sourceNode.isConstant()) {
       edge.makeMeanEdge();
     } else {
