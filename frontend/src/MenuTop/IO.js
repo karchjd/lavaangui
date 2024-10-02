@@ -4,30 +4,33 @@ import * as Constants from "../Graph/classNames.js";
 import { resetCounters } from "../Graph/graphmanipulation.js";
 import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
 import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
-import { tolavaan } from "../Shiny/toR";
 
 export async function requestData(goal) {
     // @ts-expect-error
     Shiny.setInputValue("down-requestData", { goal: goal, random: Math.random() });
 }
 
-let appStateLocal = get(appState);
-let modelOptionsLocal = get(modelOptions);
-let fitCacheLocal = get(fitCache);
-let gridViewOptionsLocal = get(gridViewOptions);
-
 export function reset() {
     let cy = get(cyStore);
     cy.elements().remove();
     resetCounters();
-    appStateLocal.parsedModel = false;
-    modelOptionsLocal.fix_first = true;
-    modelOptionsLocal.mode = "user model";
+    appState.update((state) => {
+        state.parsedModel = false;
+        return state;
+    });
+    modelOptions.update((state) => {
+        state.fix_first = true;
+        state.mode = "user model";
+        return state;
+    });
     // @ts-expect-error
     Shiny.setInputValue("show_help", Math.random());
-    for (let key in fitCacheLocal) {
-        fitCacheLocal[key] = null;
-    }
+    fitCache.update((cache) => {
+        for (let key in cache) {
+            cache[key] = null;
+        }
+        return cache;
+    });
 }
 
 export function parseModel(content) {
@@ -36,17 +39,20 @@ export function parseModel(content) {
     let cy = get(cyStore);
     let json;
     json = JSON.parse(combinedData.model);
-    const modelOpt = JSON.parse(combinedData.modelOpt);
-    const gridViewOpt = JSON.parse(combinedData.gridViewOpt);
-    mergeExistingProperties(modelOptionsLocal, modelOpt);
-    mergeExistingProperties(modelOptionsLocal, gridViewOpt);
-    if (combinedData.fitCache != undefined) {
+    const modelOptData = JSON.parse(combinedData.modelOpt);
+    const gridViewOptData = JSON.parse(combinedData.gridViewOpt);
+    mergeExistingProperties(modelOptions, modelOptData);
+    mergeExistingProperties(modelOptions, gridViewOptData);
+    if (combinedData.fitCache !== undefined) {
         const localCache = JSON.parse(combinedData.fitCache);
-        fitCacheLocal = localCache;
+        fitCache.set(localCache);  // Use the set method to update the store with the new value
     }
 
     // Set loading mode, update diagram and perform checks
-    appStateLocal.loadingMode = true;
+    appState.update(state => {
+        state.loadingMode = true;
+        return state;
+    });
     cy.json({ elements: json });
 
     cy.nodes().forEach((node) => {
@@ -54,21 +60,29 @@ export function parseModel(content) {
         node.style({ height: node.data("height") });
     });
 
-    if (appStateLocal.dataAvail) {
-        applyLinkedClass(appStateLocal.columnNames);
+    if (get(appState).dataAvail) {
+        applyLinkedClass(get(appState).columnNames);
     }
 
-    if (modelOptionsLocal.mode !== "user model") {
-        gridViewOptionsLocal.showLav = true;
+    if (get(modelOptions).mode !== "user model") {
+        gridViewOptions.update(state => {
+            state.showLav = true;
+            return state;
+        });
     } else {
-        gridViewOptionsLocal.showLav = false;
+        gridViewOptions.update(state => {
+            state.showLav = false;
+            return state;
+        });
     }
 
     cy.nodes().forEach((node) => {
         checkNodeLoop(node.id());
     });
-    appStateLocal.loadingMode = false;
-    tolavaan(modelOptionsLocal.mode);
+    appState.update(state => {
+        state.loadingMode = false;
+        return state;
+    });
 }
 
 export function jsonModel() {
@@ -104,9 +118,12 @@ export function jsonModel() {
 
 
 function mergeExistingProperties(target, source) {
-    for (let key in source) {
-        if (source.hasOwnProperty(key) && source[key] !== undefined) {
-            target[key] = source[key];
+    target.update((state) => {
+        for (let key in source) {
+            if (source.hasOwnProperty(key) && source[key] !== undefined) {
+                state[key] = source[key];
+            }
         }
-    }
+        return state;  // Return the updated state
+    });
 }
