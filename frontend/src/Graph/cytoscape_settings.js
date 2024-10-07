@@ -27,7 +27,10 @@ export const graphStyles = [
       label: "data(label)", // Use the 'label' property from the data for the node's label
       "text-valign": "center",
       "text-halign": "center",
-
+      "text-wrap": "ellipsis",
+      "text-max-width": function (ele) {
+        return ele.width();
+      },
     },
   },
   {
