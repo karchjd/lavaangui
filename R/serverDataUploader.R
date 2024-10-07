@@ -53,11 +53,20 @@ read_auto <- function(filepath) {
   file_ext <- tools::file_ext(filepath)
   read_csv <- function(filepath) {
     sep_head <- determine_seperator_header(filepath)
-    data <- readr::read_delim(filepath,
-      delim = sep_head$separator,
-      col_names = sep_head$has_header,
-      trim_ws = TRUE
-    )
+    if(sep_head$separator == " "){
+      print("read_table")
+      data <- readr::read_table(filepath,
+                                col_names = sep_head$has_header)
+    }else if (sep_head$separator == ","){
+      data <- readr::read_csv(filepath,
+               col_names = sep_head$has_header)
+    }else{
+      data <- readr::read_delim(filepath,
+                                delim = sep_head$separator,
+                                col_names = sep_head$has_header,
+                                trim_ws = TRUE
+      )  
+    }
     return(data)
   }
 
