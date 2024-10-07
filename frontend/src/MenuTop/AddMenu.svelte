@@ -29,6 +29,14 @@
       name: "Treat Exogenous Observed Variables as Fixed Variables",
       modelProperty: "fixed_x",
     },
+    {
+      name: "Include Freely Estimated Thresholds for Ordered Variables in the Model",
+      modelProperty: "auto.th",
+    },
+    {
+      name: "Include Freely Estimated Response Scaling Parameters for Ordered Variables in the Model",
+      modelProperty: "auto.delta",
+    },
   ];
 
   const name = "Automatically..";
@@ -42,12 +50,6 @@
 </script>
 
 <Dropdown {name}>
-  {#each menuItems as item}
-    <CheckItem
-      bind:name={item.name}
-      bind:checked={$modelOptions[item.modelProperty]}
-    />
-  {/each}
   <li class="dropdown-submenu">
     <a tabindex="-1" href={"#"}>Add Means?</a>
     <ul class="dropdown-menu">
@@ -70,6 +72,12 @@
     bind:checked={$modelOptions.intLvFree}
     bind:disable={disabledInts}
   />
+  {#each menuItems as item}
+    <CheckItem
+      bind:name={item.name}
+      bind:checked={$modelOptions[item.modelProperty]}
+    />
+  {/each}
 </Dropdown>
 
 <style>

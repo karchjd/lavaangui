@@ -19,6 +19,8 @@ export let modelOptions = writable({
   auto_cov_y: true,
   fixed_x: true,
   mode: "user model",
+  "auto.th": true,
+  "auto.delta": true,
 });
 
 export let gridViewOptions = writable({

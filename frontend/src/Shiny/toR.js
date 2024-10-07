@@ -358,7 +358,8 @@ function produceLavaanOptions(ordered_labels) {
 \t\t auto.cov.lv.x = ${boolToString(
     modelOpt.auto_cov_lv_x
   )}, auto.cov.y = ${boolToString(modelOpt.auto_cov_y)},
-  \t\t fixed.x = ${boolToString(modelOpt.fixed_x)}`;
+  \t\t fixed.x = ${boolToString(modelOpt.fixed_x)}, auto.th = ${boolToString(modelOpt["auto.th"])}, 
+  \t\t auto.delta = ${boolToString(modelOpt["auto.delta"])}`;
   if (modelOpt.se == "boot") {
     const additional = `, bootstrap = ${modelOpt.n_boot})`;
     options = options + additional;
@@ -368,7 +369,8 @@ function produceLavaanOptions(ordered_labels) {
 
   if (ordered_labels.length > 0) {
     const ordered_arg = 'c("' + ordered_labels.join('", "') + '")'
-    options = `ordered = ${ordered_arg}, ${options}`
+    options = `ordered = ${ordered_arg}, 
+    \t\t ${options}`
   }
   return options;
 }
