@@ -50,7 +50,8 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
           modified_string <- gsub("missing = \"[^\"]*\",", "", modified_string)
           modified_string <- gsub("estimator = \"[^\"]*\",", "", modified_string)
           modified_string <- gsub("se = \"[^\"]*\",", "", modified_string)
-
+          modified_string <- gsub("bootstrap = [0-9]+", "", modified_string)
+          
           # Replace meanstructure argument (whether it is TRUE, FALSE, or "default") with TRUE
           modified_string <- gsub("meanstructure = (TRUE|FALSE|\"default\")", "meanstructure = TRUE", modified_string)
 
