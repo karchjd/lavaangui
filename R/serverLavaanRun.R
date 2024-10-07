@@ -155,16 +155,24 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
 
           environment(new_function) <- asNamespace("lavaan")
           utils::assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
-          lastWarning <- c()
+          lastWarning <- NULL
+          lastError <- NULL
+
           withCallingHandlers(
             {
-              local_fit <- eval(parse(text = lavaan_string))
+              local_fit <- tryCatch(
+                eval(parse(text = lavaan_string)),
+                error = function(e) {
+                  lastError <<- e
+                  return(NULL) 
+                }
+              )
             },
             warning = function(w) {
               lastWarning <<- c(lastWarning, w)
             }
           )
-          list(fit = local_fit, warning = lastWarning)
+          list(fit = local_fit, warning = lastWarning, error = lastError)
         },
         packages = "lavaan",
         globals = c("data", "abort_file", "model", "lavaan_string"),
@@ -174,14 +182,21 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       promises::then(
         fut,
         function(value) {
-          fit(value$fit)
-          sendResultsFront(session, value, fromJavascript, getData())
-          to_render(value)
-          session$sendCustomMessage("lav_sucess", "lav_error")
+          if(is.null(value$error)){
+            fit(value$fit)
+            sendResultsFront(session, value, fromJavascript, getData())
+            to_render(value)
+            session$sendCustomMessage("lav_sucess", "lav_error")  
+          }else{
+            print(value$error)
+            session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = value$error$message, type = "danger"))
+            to_render(value$error)
+          }
         }
       )
 
-      ## fail fit
+      ## fail fit, might not be reachable anymore because of new try in promises, which was needed
+      ## because this catch did not catch all errors
       promises::catch(
         fut,
         function(e) {
