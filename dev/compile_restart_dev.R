@@ -28,5 +28,5 @@ HS.model <- " visual  =~ x1 + x2 + myLabel * x3
               textual =~ x4 + x5 + x6
               speed   =~ x7 + x8 + x9"
 
-fit <- cfa('x8 ~~ x9', data = HolzingerSwineford1939, ordered = TRUE)
+fit <- cfa(HS.model, data = HolzingerSwineford1939)
 lavaangui(fit)

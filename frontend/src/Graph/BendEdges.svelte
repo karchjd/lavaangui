@@ -26,9 +26,10 @@
       addBendMenuItemTitle: `Add ${kinkName} Point`,
       removeBendMenuItemTitle: `Remove ${kinkName} Point`,
       removeAllBendMenuItemTitle: `Remove All${kinkName} Points`,
-      addControlMenuItemTitle: `Add ${bendName} Point`,
+      addControlMenuItemTitle: `Add ${bendName} 123 Point`,
       removeControlMenuItemTitle: `Remove ${bendName} Point`,
       removeAllControlMenuItemTitle: `Remove All ${bendName} Points`,
+      handleReconnectEdge: false,
     });
 
     cy.style().update();
