@@ -26,7 +26,7 @@
       addBendMenuItemTitle: `Add ${kinkName} Point`,
       removeBendMenuItemTitle: `Remove ${kinkName} Point`,
       removeAllBendMenuItemTitle: `Remove All${kinkName} Points`,
-      addControlMenuItemTitle: `Add ${bendName} 123 Point`,
+      addControlMenuItemTitle: `Add ${bendName} Point`,
       removeControlMenuItemTitle: `Remove ${bendName} Point`,
       removeAllControlMenuItemTitle: `Remove All ${bendName} Points`,
       handleReconnectEdge: false,

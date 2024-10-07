@@ -30,11 +30,11 @@
       modelProperty: "fixed_x",
     },
     {
-      name: "Include Freely Estimated Thresholds for Ordered Variables in the Model",
+      name: "Include Freely Estimated Thresholds for Ordered Variables",
       modelProperty: "auto.th",
     },
     {
-      name: "Include Freely Estimated Response Scaling Parameters for Ordered Variables in the Model",
+      name: "Include Freely Estimated Response Scaling Parameters for Ordered Variables",
       modelProperty: "auto.delta",
     },
   ];
