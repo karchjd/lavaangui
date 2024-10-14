@@ -5,13 +5,8 @@ getGroupTable <- function(parTable) {
 }
 
 
-importModel <- function(session, full, importedModel) {
+importModel <- function(session, full, importedModel, shinyapps) {
   imported <- FALSE
-  if (Sys.getenv("SHINY_PORT") == "") {
-    shinyapps <- FALSE
-  } else {
-    shinyapps <- TRUE
-  }
   session$sendCustomMessage("fullServer", message = list(full = full, shinyapps = shinyapps))
 
   makeNewVars <- function(vars, groups) {

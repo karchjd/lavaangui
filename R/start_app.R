@@ -39,9 +39,17 @@ start_app <- function(fit = NULL, full, where) {
     fit <- reactiveVal(NULL)
     forceEstimateUpdate <- reactiveVal()
     to_render <- reactiveVal(help_text)
-
-    ## import model if present
-    importRes <- importModel(session, full, importedModel)
+    
+    #check whether running on shinyapps or not
+    if (Sys.getenv("SHINY_PORT") == "") {
+      shinyapps <- FALSE
+    } else {
+      shinyapps <- TRUE
+    }
+    
+    ## import model if present, also sends whether we are on shinyapps or not to
+    ## frontend
+    importRes <- importModel(session, full, importedModel, shinyapps)
     imported <- importRes$imported
     if (imported) {
       if (!full) {
@@ -84,7 +92,7 @@ start_app <- function(fit = NULL, full, where) {
     serverLayout("layout", fit, full, imported)
 
     ## main server for running lavaan
-    serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit)
+    serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit, shinyapps)
 
     serverEstimateUpdater("ests", forceEstimateUpdate, fit, to_render)
 
