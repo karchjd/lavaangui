@@ -50,18 +50,18 @@ export default defineConfig({
     {
       name: "chromium remote",
       use: {
-        ...devices["Desktop Chrome"], baseURL: 'https://lavaangui.org/'
+        ...devices["Desktop Chrome"], baseURL: 'https://solo-fsw.shinyapps.io/lavaanguitest'
       },
     },
 
     {
       name: "firefox remote",
-      use: { ...devices["Desktop Firefox"], baseURL: 'https://lavaangui.org/' },
+      use: { ...devices["Desktop Firefox"], baseURL: 'https://solo-fsw.shinyapps.io/lavaanguitest' },
     },
     {
       name: 'webkit remote',
       use: {
-        ...devices['Desktop Safari'], baseURL: 'https://lavaangui.org/'
+        ...devices['Desktop Safari'], baseURL: 'https://solo-fsw.shinyapps.io/lavaanguitest'
       },
     },
 
