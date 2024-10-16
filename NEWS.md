@@ -12,7 +12,7 @@
 - Bugfix in hashing functions for caching.
 - Improved file upload, now with a status bar.
 - The hide/show status of elements is now saved to the file.
-- `plot_interactive`: Bugfix for multiple groups.
+- `plot_lavaan`: Bugfix for multiple groups.
 - Renamed `plot_interactive` to `plot_lavaan`.
 - Removed dependencies on qgraph and htmlwidgets.
 
