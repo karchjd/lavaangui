@@ -22,12 +22,9 @@ sendResultsFront <- function(session, result, fromJavascript, df) {
 
 
 
-serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, shinyapps) { # nolint: cyclocomp_linter.
+serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
-    if (!shinyapps) {
-      abort_file_global <- reactiveVal()
-    }
-
+    abort_file_global <- reactiveVal()
     future::plan(future::multisession)
     ## main loop
     observeEvent(input$fromJavascript, {
@@ -141,28 +138,24 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, sh
 
       ## fit model
       session$sendCustomMessage("fitting", "")
-      if (!shinyapps) {
-        abort_file <- tempfile()
-        abort_file_global(abort_file)
-      }
+      abort_file <- tempfile()
+      abort_file_global(abort_file)
       lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
       fut <- promises::future_promise(
         {
-          if (!shinyapps) {
-            `%get%` <- function(pkg, fun) {
-              get(fun,
-                envir = asNamespace(pkg),
-                inherits = FALSE
-              )
-            }
-            original_function <- "lavaan" %get% "lav_model_objective"
-            original_function_string <- deparse(original_function)
-            new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
-            new_function <- eval(parse(text = new_function))
-
-            environment(new_function) <- asNamespace("lavaan")
-            utils::assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
+          `%get%` <- function(pkg, fun) {
+            get(fun,
+              envir = asNamespace(pkg),
+              inherits = FALSE
+            )
           }
+          original_function <- "lavaan" %get% "lav_model_objective"
+          original_function_string <- deparse(original_function)
+          new_function <- append(original_function_string, "if (file.exists(abort_file)) {quit()}", after = 3)
+          new_function <- eval(parse(text = new_function))
+
+          environment(new_function) <- asNamespace("lavaan")
+          utils::assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
           lastWarning <- NULL
           lastError <- NULL
 
@@ -183,19 +176,19 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, sh
           list(fit = local_fit, warning = lastWarning, error = lastError)
         },
         packages = "lavaan",
-        globals = c("data", "abort_file", "model", "lavaan_string", "shinyapps"),
+        globals = c("data", "abort_file", "model", "lavaan_string"),
         seed = TRUE
       )
       ## sucesses fit
       promises::then(
         fut,
         function(value) {
-          if (is.null(value$error)) {
+          if(is.null(value$error)){
             fit(value$fit)
             sendResultsFront(session, value, fromJavascript, getData())
             to_render(value)
-            session$sendCustomMessage("lav_sucess", "lav_error")
-          } else {
+            session$sendCustomMessage("lav_sucess", "lav_error")  
+          }else{
             print(value$error)
             session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = value$error$message, type = "danger"))
             to_render(value$error)
@@ -218,21 +211,17 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, sh
 
       ## cleanup
       promises::finally(fut, function() {
-        if(!shinyapps){
-          if (file.exists(abort_file)) {
-            file.remove(abort_file)
-          }  
+        if (file.exists(abort_file)) {
+          file.remove(abort_file)
         }
       })
       return(NULL) ## Never ever remove this. This stops the UI from blocking!!!
     })
 
-    if (!shinyapps) {
-      observeEvent(input$abort, {
-        abort_file_global()
-        file.create(abort_file_global())
-      })
-    }
+    observeEvent(input$abort, {
+      abort_file_global()
+      file.create(abort_file_global())
+    })
 
     list(
       to_render = to_render,

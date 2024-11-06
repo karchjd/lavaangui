@@ -15,22 +15,9 @@
     >
       <span class="glyphicon glyphicon-refresh spinning" /> Fitting...
     </button>
-    {#if $appState.shinyapps}
-      <div>
-        <button
-          class="btn btn-lg btn-default fixed-width"
-          disabled
-          title="The cancel button is temporarily disabled on the shinyapps.io version of the app due to technical reasons"
-          style="pointer-events: auto;"
-        >
-          Cancel
-        </button>
-      </div>
-    {:else}
-      <button class="btn btn-lg btn-default fixed-width" on:click={abort}>
-        Cancel
-      </button>
-    {/if}
+    <button class="btn btn-lg btn-default fixed-width" on:click={abort}
+      >Cancel</button
+    >
   </div>
 {/if}
 

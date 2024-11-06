@@ -92,7 +92,7 @@ start_app <- function(fit = NULL, full, where) {
     serverLayout("layout", fit, full, imported)
 
     ## main server for running lavaan
-    serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit, shinyapps)
+    serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit)
 
     serverEstimateUpdater("ests", forceEstimateUpdate, fit, to_render)
 
