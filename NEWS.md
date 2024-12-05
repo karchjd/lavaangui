@@ -1,3 +1,14 @@
+# lavaangui 0.2.1
+Multiple bug fixes:
+
+- Undirected arrows no longer change orientation when added to the user model.  
+- Renamed "Automatically.." to "Automatically...".  
+- Fixed a bug in the code for changing the orientation of loops.
+
+
+# lavaangui 0.2.0-online
+- Enabled the cancel button shinyapps.io again
+
 # lavaangui 0.2.0
 
 - Temporarily disabled the cancel button on shinyapps.io due to technical reasons.
