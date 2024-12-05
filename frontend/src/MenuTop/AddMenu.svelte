@@ -39,7 +39,7 @@
     },
   ];
 
-  const name = "Automatically..";
+  const name = "Automatically...";
 
   let structureRadios = [
     { name: "Default", value: "default" },
