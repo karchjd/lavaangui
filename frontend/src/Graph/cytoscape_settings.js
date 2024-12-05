@@ -134,12 +134,6 @@ export const graphStyles = [
     },
   },
   {
-    selector: `edge.${Constants.UNDIRECTED}.${Constants.FROM_LAV}`,
-    style: {
-      "control-point-distances": [100],
-    },
-  },
-  {
     selector: `edge.${Constants.LABEL}, edge.${Constants.LABEL}`,
     style: {
       label: function (edge) {

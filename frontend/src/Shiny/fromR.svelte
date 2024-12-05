@@ -35,15 +35,19 @@
       target = lhs;
       directed = DIRECTED;
     } else {
-      target = lhs;
-      source = rhs;
       if (op === "~~") {
+        // this order is needed for bezier curves to look correct
+        target = rhs;
+        source = lhs;
+
         if (lhs === rhs) {
           directed = LOOP;
         } else {
           directed = UNDIRECTED;
         }
       } else if (op === "~" || "<~") {
+        target = lhs;
+        source = rhs;
         directed = DIRECTED;
       }
     }
