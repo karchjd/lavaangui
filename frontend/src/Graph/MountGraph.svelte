@@ -378,6 +378,7 @@
         style: { "loop-direction": `${angle}deg` },
       });
       currentEdge = null;
+      angle = undefined;
     }
   });
 </script>
