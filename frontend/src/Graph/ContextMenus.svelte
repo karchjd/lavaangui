@@ -168,6 +168,7 @@
         bootbox.prompt({
           title: "Enter a Value",
           inputType: "number",
+          step: "any",
           callback: function (value) {
             if (value == "") {
               // @ts-expect-error
