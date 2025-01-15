@@ -250,24 +250,25 @@
   let menuItems;
   $: {
     let allMenuItems = [
-      { name: "New Model", action: newModel },
+      { name: "New Model", action: newModel, divider: true },
       { name: "Load Model", action: loadModel },
       { name: "Load Data", action: loadData },
-      { name: "Load Model and Data", action: loadModelData },
+      { name: "Load Model and Data", action: loadModelData, divider: true },
       {
-        name: "Download Model",
+        name: "Save Model",
         action: downloadModel,
         disable: $appState.modelEmpty,
+      },
+      {
+        name: "Save Model and Data",
+        disable: $appState.modelEmpty || !$appState.dataAvail,
+        action: downloadModelData,
+        divider: true,
       },
       {
         name: "Remove Data",
         action: removeData,
         disable: !$appState.dataAvail,
-      },
-      {
-        name: "Download Model and Data",
-        disable: $appState.modelEmpty || !$appState.dataAvail,
-        action: downloadModelData,
         divider: true,
       },
       {
