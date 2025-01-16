@@ -45,11 +45,11 @@ test("Load Data", async ({ page }) => {
   await expect(heading).toBeVisible();
 });
 
-test("Download Model", async ({ page }) => {
+test("Save Model", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("link", { name: "Download Model", exact: true }).click();
+  await page.getByRole("link", { name: "Save Model", exact: true }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/^model.*\.lvm$/);
 });
@@ -62,12 +62,12 @@ test("Remove Data", async ({ page }) => {
   expect(await button.isDisabled()).toBe(true);
 });
 
-test("Download Model Data", async ({ page }) => {
+test("Save Model Data", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
   const downloadPromise = page.waitForEvent("download");
   await page
-    .getByRole("link", { name: "Download Model and Data", exact: true })
+    .getByRole("link", { name: "Save Model and Data", exact: true })
     .click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/^model.*\.lvd$/);

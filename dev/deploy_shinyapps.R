@@ -11,7 +11,7 @@
 #### CURRENT FILE: DEPLOY SCRIPT #####
 ######################################
 
-production <- TRUE
+production <- FALSE
 if (production){
   appName = desc::desc_get_field("Package")
 }else{
