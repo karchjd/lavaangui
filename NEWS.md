@@ -1,3 +1,8 @@
+# lavaangui 0.2.2
+
+- Renamed Download to Save
+- Fixed bug that enforced fixed values to be integers
+
 # lavaangui 0.2.1
 Multiple bug fixes:
 
