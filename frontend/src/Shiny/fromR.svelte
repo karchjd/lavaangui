@@ -172,7 +172,11 @@
     let const_added = false;
     let added_const_id;
     for (let i = 0; i < lav_model.lhs.length; i++) {
-      if (lav_model.op[i] == "~*~" || lav_model.op[i] == "|") {
+      if (
+        lav_model.op[i] == "~*~" ||
+        lav_model.op[i] == "|" ||
+        lav_model.op[i] == "=="
+      ) {
         continue;
       }
       // validate and remove existing edges
