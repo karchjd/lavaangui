@@ -1,5 +1,5 @@
-recompile_front <- F # nolint
-release <- T
+recompile_front <- T # nolint
+release <- F
 
 if (recompile_front) {
   # Compile Svelte front end
@@ -22,11 +22,25 @@ golem::detach_all_attached()
 # roxygen2::roxygenise()
 pkgload::load_all()
 
-# Run the application
-library(lavaan)
-HS.model <- " visual  =~ x1 + x2 + myLabel * x3
-              textual =~ x4 + x5 + x6
-              speed   =~ x7 + x8 + x9"
 
-fit <- cfa(HS.model, data = HolzingerSwineford1939)
-lavaangui()
+library(lavaan)
+model <- ' 
+  # latent variable definitions
+     ind60 =~ x1 + x2 + x3
+     dem60 =~ y1 + a*y2 + b*y3 + c*y4
+     dem65 =~ y5 + a*y6 + b*y7 + c*y8
+
+  # regressions
+    dem60 ~ ind60
+    dem65 ~ ind60 + dem60
+
+  # residual correlations
+    y1 ~~ y5
+    y2 ~~ y4 + y6
+    y3 ~~ y7
+    y4 ~~ y8
+    y6 ~~ y8
+'
+
+fit <- sem(model, data = PoliticalDemocracy)
+lavaangui(fit)

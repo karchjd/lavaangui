@@ -256,9 +256,11 @@
           } else {
             edge.markAddedLavaan();
           }
-
-          checkNodeLoop(sourceId);
-          checkNodeLoop(targetId);
+          if (!imported && desiredEdge.directed == DIRECTED) {
+            checkNodeLoop(sourceId);
+            checkNodeLoop(targetId);
+          }
+          // }
         } else if (!imported && existingEdge.length == 1) {
           edge = existingEdge;
         }
@@ -299,6 +301,39 @@
       });
     } else {
       applySemLayout("tree", false);
+      const angleCounts = new Map();
+
+      cy.getUndirectedEdges().forEach((edge) => {
+        const sourceAngle = checkNodeLoop(edge.source().id(), true);
+        const targetAngle = checkNodeLoop(edge.target().id(), true);
+
+        const countAngle = (angle) => {
+          angleCounts.set(angle, (angleCounts.get(angle) || 0) + 1);
+        };
+
+        countAngle(sourceAngle);
+        countAngle(targetAngle);
+      });
+
+      let mostCommonAngle = null;
+      let maxCount = 0;
+
+      angleCounts.forEach((count, angle) => {
+        if (count > maxCount) {
+          maxCount = count;
+          mostCommonAngle = angle;
+        }
+      });
+
+      console.log(
+        `The most common angle is: ${mostCommonAngle} with ${maxCount} occurrences.`,
+      );
+      if (mostCommonAngle === 180) {
+        cy.edges().forEach((edge) => {
+          edge.style("control-point-distances", [100]);
+        });
+      }
+
       cy.fit();
     }
 
