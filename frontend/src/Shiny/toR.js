@@ -116,7 +116,7 @@ function getNodeNames(connectedEdges, positionWhich = "target") {
   const sortedIndices = connectedEdges
     .map((edge, index) => ({
       index,
-      value: edge.source().position()[sortBy],
+      value: edge.target().position()[sortBy],
     }))
     .sort((a, b) => a.value - b.value)
     .map((item) => item.index);
