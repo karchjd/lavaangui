@@ -13,7 +13,7 @@ Description: Provides a graphical user interface with an
     assessing model fit, and more; second, plot_lavaan() creates 
     interactive path diagrams from models specified in 'lavaan'. 
     Karch (2024) <doi: 10.31234/osf.io/f4ary> contains a tutorial.
-URL: https://lavaangui.org, https://github.com/karchjd/lavaangui
+URL: https://lavaangui.org/, https://github.com/karchjd/lavaangui
 BugReports: https://github.com/karchjd/lavaangui/issues
 License: GPL (>= 3)
 Imports: 
@@ -37,5 +37,5 @@ Imports:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Date: 2024-12-5
+Date: 2025-01-19
 Language: en-US
