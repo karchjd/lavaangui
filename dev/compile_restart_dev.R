@@ -1,5 +1,5 @@
 recompile_front <- T # nolint
-release <- F
+release <- T
 
 if (recompile_front) {
   # Compile Svelte front end

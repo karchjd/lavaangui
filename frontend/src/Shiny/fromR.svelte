@@ -325,15 +325,11 @@
         }
       });
 
-      console.log(
-        `The most common angle is: ${mostCommonAngle} with ${maxCount} occurrences.`,
-      );
       if (mostCommonAngle === 180) {
         cy.edges().forEach((edge) => {
-          edge.style("control-point-distances", [100]);
+          if (edge.isUserAdded()) edge.style("control-point-distances", [100]);
         });
       }
-
       cy.fit();
     }
 
