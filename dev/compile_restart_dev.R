@@ -36,11 +36,14 @@ model <- '
 
   # residual correlations
     y1 ~~ y5
-    y2 ~~ y4 + y6
-    y3 ~~ y7
-    y4 ~~ y8
-    y6 ~~ y8
 '
 
 fit <- sem(model, data = PoliticalDemocracy)
+
+
+HS.model <- ' visual  =~ x1 + x2 + x3
+              textual =~ x4 + x5 + x6
+              speed   =~ x7 + x8 + x9 '
+
+fit <- cfa(HS.model, data = HolzingerSwineford1939)
 lavaangui(fit)

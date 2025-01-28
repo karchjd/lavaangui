@@ -331,7 +331,7 @@
 
       if (mostCommonAngle === 180) {
         cy.edges().forEach((edge) => {
-          if (edge.isUserAdded()) edge.style("control-point-distances", [100]);
+          if (edge.isUserAdded()) edge.data("control-point-distances", [100]);
         });
       }
       cy.fit();
