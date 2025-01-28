@@ -114,6 +114,13 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         (is.null(getData()) || fromJavascript$cache$lastFitData == getHashData(getData()))
       if (cacheValid) {
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
+        if (isTruthy(getData())){
+          data <- getData()
+          lavaan_string <- paste0("lavaan(model, data, do.fit = FALSE, ", modelJavascript$options)
+          tmp <- eval(parse(text = lavaan_string))
+          cacheResult$fit@Data@X <- tmp@Data@X
+        }
+        
         fit(cacheResult$fit)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
         to_render(cacheResult)
