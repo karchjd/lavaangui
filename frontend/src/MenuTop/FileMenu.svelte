@@ -297,7 +297,7 @@
     } else {
       menuItems = allMenuItems.filter(
         (item) =>
-          ["Download Model", "Load Model"].includes(item.name) ||
+          ["Save Model", "Load Model"].includes(item.name) ||
           allMenuItems.indexOf(item) >= allMenuItems.length - 4,
       );
     }
