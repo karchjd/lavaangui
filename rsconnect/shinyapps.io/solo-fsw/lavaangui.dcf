@@ -5,5 +5,5 @@ account: solo-fsw
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 10373658
-bundleId: 9663128
+bundleId: 9723410
 url: https://solo-fsw.shinyapps.io/lavaangui/
