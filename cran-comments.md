@@ -1,1 +1,0 @@
-Regarding the invalid URL note. I have a stable url that will always point to the app (lavaangui.org). I plan to forward this to whatever server I use for hosting. So, I would really prefer to have this in the description not the actual server url.

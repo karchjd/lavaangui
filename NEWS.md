@@ -1,3 +1,8 @@
+# lavaangui 0.2.3
+
+- First version automatic undirected edge bend
+- Multiple bug fixes
+
 # lavaangui 0.2.2
 
 - Renamed Download to Save
