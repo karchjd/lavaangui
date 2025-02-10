@@ -46,6 +46,18 @@ To build a new version of lavaangui, you can use the [compile_restart_dev.R](dev
 
 If you find typos or areas where documentation is lacking, feel free to submit PRs for those. Documentation contributions are just as important as code contributions!
 
+## Getting Started
+
+### Install Prerequesites
+
+- R https://cran.r-project.org/
+- Node.js https://nodejs.org/en/download
+- Front-end dependencies: Run `npm run install` from a shell in the src/ folder.
+- Back-end dependencies: Execute `devtools::install_local(dependencies = TRUE)` in R, with the working directory set to the root folder of the package.
+
+### Compile 
+The file https://github.com/karchjd/lavaangui/blob/main/dev/compile_restart_dev.R compiles the front-end and starts the app locally in your browser.
+
 ## Code of Conduct
 
 Please note that this project adheres to the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/). By participating, you are expected to uphold this code.
