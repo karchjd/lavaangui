@@ -106,7 +106,9 @@
 
     connectedEdges.forEach((connectedEdge) => {
       const displacement = connectedEdge.data("displacement");
-      updateEdgeStyle(connectedEdge, displacement);
+      if (displacement) {
+        updateEdgeStyle(connectedEdge, displacement);
+      }
     });
   });
 
@@ -120,7 +122,10 @@
     let minDistance = Infinity;
     const clickThreshold = 30; // Adjust based on your needs
     cy.edges().forEach(function (edge) {
-      if (edge.isDirected()) {
+      if (
+        edge.isDirected() &&
+        !edge.hasClass("edgecontrolediting-hascontrolpoints")
+      ) {
         const labelOffsetX = convertPxToNumber(edge.style("text-margin-x"));
         const labelOffsetY = convertPxToNumber(edge.style("text-margin-y"));
 
@@ -143,12 +148,30 @@
     });
 
     // If a nearest edge label was found within threshold, set it as selected for dragging
-    if (nearestEdge !== null) {
+    if (
+      nearestEdge !== null &&
+      !nearestEdge.hasClass(".edgecontrolediting-hascontrolpoints")
+    ) {
       selectedEdge = nearestEdge;
       isDraggingLabel = true;
       // Prevent the event from being handled further
       evt.preventDefault();
       nearestEdge.unpanify();
+    }
+  });
+
+  cy.on("class", "edge", function (evt) {
+    const edge = evt.target;
+    if (edge.hasClass("edgecontrolediting-hascontrolpoints")) {
+      edge.style({
+        "text-margin-x": 0,
+        "text-margin-y": 0,
+      });
+      edge.data("displacement", null);
+      if (selectedEdge && edge.id() === selectedEdge.id()) {
+        selectedEdge = null;
+        isDraggingLabel = false;
+      }
     }
   });
 
