@@ -1,9 +1,9 @@
 recompile_front <- T # nolint
-release <- T
+debug <- F
 
 if (recompile_front) {
   # Compile Svelte front end
-  if(!release){
+  if(debug){
     ret_val <- system("cd frontend && npm run build:dev")  
   }else{
     ret_val <- system("cd frontend && npm run build:deploy")  
