@@ -1,5 +1,5 @@
 ---
-title: 'lavaangui: A Graphical User Interface for `lavaan` With a Diagrammer'
+title: '`lavaangui`: A Graphical User Interface for `lavaan` With a Diagrammer'
 tags:
   - R
   - psychology
@@ -21,15 +21,20 @@ bibliography: paper.bib
 
 # Summary
 
-Structural equation modeling (SEM) is a popular statistical technique within the social and behavioral sciences. 
-SEMs can be represented as graphs, so called path diagrams. Path diagrams facilitate the specification of SEMs because drawing them is often faster and less error-prone than specifying a model using equations or matrix algebra. lavaangui is a graphical user interface that allows specifying and fitting SEMs by drawing path diagrams. It is available as web application at https://lavaangui.org. Additionally, it can be installed as an R package and then supports creating interactive path diagrams from SEMs specified in the popular SEM package `lavaan`. A detailed tutorial of the graphical user interface is available at https://doi.org/10.31234/osf.io/f4ary.
+SEMs can be represented as graphs, so-called path diagrams. Path diagrams facilitate the specification of SEMs because drawing them is often faster and less error-prone than specifying a model using equations or matrix algebra. `lavaangui` is a graphical user interface that allows specifying and fitting SEMs by drawing path diagrams. It is available as a web application at <https://lavaangui.org>. Additionally, it can be installed as an R package and supports creating interactive path diagrams from SEMs specified in the popular SEM package `lavaan`. For a tutorial, see @tutorial.
+
 
 # Statement of need
 
-Traditionally, SEMs had to be specified using a specific modeling syntax, which created an unnecessary entry barrier for applied researchers. To remidy this, most current versions of closed-source commercial software packages, such as AMOS [@IBMAMOS26], Stata [@Stata18], Mplus [@MuthenMuthen2017], EQS [@Bentler2006EQS], and LISREL [@LISREL], support model specification through the drawing of path diagrams. These graphical user interfaces are typically referred to as diagrammers. While there are many open-source packages available for SEM [@sem; @lavaan; @neale2016openmx; @tidySEM; @igolkina2020semopy; @ernst2024structuralequationmodels; @von2015structural; @JASP2024; @jamovi2024], only $\Omega$nyx [@von2015structural] includes a diagrammer. However, $\Omega$nyx is standalone software and does not integrate well with other open-source statistical software, particularly R. A practical issue is that installing $\Omega$nyx requires administrator privileges, which many researchers lack on their work computers. Additionally, $\Omega$nyx uses its own routine to fit SEMs instead of one of the more popular open-source packages. `lavaangui` addresses these limitations: it can be installed as an R package, accessed without installation via https://lavaangui.org on any computer with a browser, and builds on `lavaan`, which is arguably the most widely used open-source SEM software.
+Traditionally, SEMs had to be specified using a specific modeling syntax, which created an unnecessary entry barrier for applied researchers. To remedy this, most current versions of closed-source commercial software packages, such as AMOS [@IBMAMOS26], Stata [@Stata18], Mplus [@MuthenMuthen2017], EQS [@Bentler2006EQS], and LISREL [@LISREL], support model specification through the drawing of path diagrams. These graphical user interfaces are typically referred to as diagrammers. 
+
+While many open-source packages are available for SEM [@sem; @lavaan; @neale2016openmx; @tidySEM; @igolkina2020semopy; @ernst2024structuralequationmodels; @von2015structural; @JASP2024; @jamovi2024], only $\Omega$nyx [@von2015structural] includes a diagrammer. However, for the most popular open-source SEM software, the R package `lavaan`, no graphical user interface with diagramming capabilities exists. `lavaangui` fills this gap by providing an intuitive graphical interface for `lavaan` with a diagrammer.
+
 
 # Credits
 
 `lavaangui` consists of a frontend and a backend. Most of the frontend is written in JavaScript, utilizing the Svelte framework. For drawing path diagrams, the Cytoscape.js [@franz2016cytoscape] library is used, along with the extensions described in @Dogrusoz2018. The CSS framework is Bootstrap, and Bootbox.js is employed for displaying prompts. Parts of the frontend are written in R, using the `Shiny` [@Shiny] and `DT` [@DT] packages.
 
-The backend is written in R, as a `Shiny` Server. The `lavaan` [@lavaan] package is used for model fitting. Some automatic layout algorithms are sourced from the semPlot [@epskamp2015semplot] package, while the promises [@promises] package enables asynchronous execution.
+The backend is written in R as a `Shiny` Server. The `lavaan` [@lavaan] package is used for model fitting. Some automatic layout algorithms are sourced from the `semPlot` [@epskamp2015semplot] package, while the `promises` [@promises] package enables asynchronous execution.
+
+# References

@@ -18,8 +18,9 @@
 <article-id pub-id-type="publisher-id">0</article-id>
 <article-id pub-id-type="doi">N/A</article-id>
 <title-group>
-<article-title>lavaangui: A graphical user interface for lavaan with
-integrated diagrammer</article-title>
+<article-title><monospace>lavaangui</monospace>: A Graphical User
+Interface for <monospace>lavaan</monospace> With a
+Diagrammer</article-title>
 </title-group>
 <contrib-group>
 <contrib contrib-type="author">
@@ -34,7 +35,7 @@ integrated diagrammer</article-title>
 <institution-wrap>
 <institution>Methodology and Statistics Department, Institute of
 Psychology, Leiden University, Leiden, the Netherlands</institution>
-<institution-id institution-id-type="ROR">00hx57361</institution-id>
+<institution-id institution-id-type="ROR">027bh9e22</institution-id>
 </institution-wrap>
 </aff>
 </contrib-group>
@@ -71,25 +72,23 @@ a Creative Commons Attribution 4.0 International License (CC BY
 <body>
 <sec id="summary">
   <title>Summary</title>
-  <p>Structural equation modeling (SEM) is a popular statistical
-  technique within the social and behavioral sciences. SEMs can be
-  represented as graphs, so called path diagrams. Path diagrams
-  facilitate the specification of SEMs because drawing them is often
-  faster and less error-prone than specifying a model using equations or
-  matrix algebra. lavaangui is a graphical user interface that allows
-  specifying and fitting SEMs by drawing path diagrams. It is available
-  as web application at https://lavaangui.org. Additionally, it can be
-  installed as an R package and then supports creating interactive path
-  diagrams from SEMs specified in the popular SEM package
-  <monospace>lavaan</monospace>. A detailed tutorial of the graphical
-  user interface is available at
-  https://doi.org/10.31234/osf.io/f4ary.</p>
+  <p>SEMs can be represented as graphs, so-called path diagrams. Path
+  diagrams facilitate the specification of SEMs because drawing them is
+  often faster and less error-prone than specifying a model using
+  equations or matrix algebra. <monospace>lavaangui</monospace> is a
+  graphical user interface that allows specifying and fitting SEMs by
+  drawing path diagrams. It is available as a web application at
+  <ext-link ext-link-type="uri" xlink:href="https://lavaangui.org">https://lavaangui.org</ext-link>.
+  Additionally, it can be installed as an R package and supports
+  creating interactive path diagrams from SEMs specified in the popular
+  SEM package <monospace>lavaan</monospace>. For a tutorial, see Karch
+  (<xref alt="2025" rid="ref-tutorial" ref-type="bibr">2025</xref>).</p>
 </sec>
 <sec id="statement-of-need">
   <title>Statement of need</title>
   <p>Traditionally, SEMs had to be specified using a specific modeling
   syntax, which created an unnecessary entry barrier for applied
-  researchers. To remidy this, most current versions of closed-source
+  researchers. To remedy this, most current versions of closed-source
   commercial software packages, such as AMOS
   (<xref alt="Arbuckle, 2019" rid="ref-IBMAMOS26" ref-type="bibr">Arbuckle,
   2019</xref>), Stata
@@ -102,8 +101,8 @@ a Creative Commons Attribution 4.0 International License (CC BY
   (<xref alt="Jöreskog &amp; Sörbom, 22 C.E." rid="ref-LISREL" ref-type="bibr">Jöreskog
   &amp; Sörbom, 22 C.E.</xref>), support model specification through the
   drawing of path diagrams. These graphical user interfaces are
-  typically referred to as diagrammers. While there are many open-source
-  packages available for SEM
+  typically referred to as diagrammers.</p>
+  <p>While many open-source packages are available for SEM
   (<xref alt="Ernst &amp; Peikert, 2024" rid="ref-ernst2024structuralequationmodels" ref-type="bibr">Ernst
   &amp; Peikert, 2024</xref>;
   <xref alt="Fox et al., 2022" rid="ref-sem" ref-type="bibr">Fox et al.,
@@ -125,25 +124,12 @@ a Creative Commons Attribution 4.0 International License (CC BY
   <tex-math><![CDATA[\Omega]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
   (<xref alt="Oertzen et al., 2015" rid="ref-von2015structural" ref-type="bibr">Oertzen
-  et al., 2015</xref>) includes a diagrammer. However,
-  <inline-formula><alternatives>
-  <tex-math><![CDATA[\Omega]]></tex-math>
-  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
-  is standalone software and does not integrate well with other
-  open-source statistical software, particularly R. A practical issue is
-  that installing <inline-formula><alternatives>
-  <tex-math><![CDATA[\Omega]]></tex-math>
-  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
-  requires administrator privileges, which many researchers lack on
-  their work computers. Additionally, <inline-formula><alternatives>
-  <tex-math><![CDATA[\Omega]]></tex-math>
-  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>Ω</mml:mi></mml:math></alternatives></inline-formula>nyx
-  uses its own routine to fit SEMs instead of one of the more popular
-  open-source packages. <monospace>lavaangui</monospace> addresses these
-  limitations: it can be installed as an R package, accessed without
-  installation via https://lavaangui.org on any computer with a browser,
-  and builds on <monospace>lavaan</monospace>, which is arguably the
-  most widely used open-source SEM software.</p>
+  et al., 2015</xref>) includes a diagrammer. However, for the most
+  popular open-source SEM software, the R package
+  <monospace>lavaan</monospace>, no graphical user interface with
+  diagramming capabilities exists. <monospace>lavaangui</monospace>
+  fills this gap by providing an intuitive graphical interface for
+  <monospace>lavaan</monospace> with a diagrammer.</p>
 </sec>
 <sec id="credits">
   <title>Credits</title>
@@ -161,13 +147,13 @@ a Creative Commons Attribution 4.0 International License (CC BY
   et al., 2024</xref>) and <monospace>DT</monospace>
   (<xref alt="Xie et al., 2024" rid="ref-DT" ref-type="bibr">Xie et al.,
   2024</xref>) packages.</p>
-  <p>The backend is written in R, as a <monospace>Shiny</monospace>
+  <p>The backend is written in R as a <monospace>Shiny</monospace>
   Server. The <monospace>lavaan</monospace>
   (<xref alt="Rosseel, 2012" rid="ref-lavaan" ref-type="bibr">Rosseel,
   2012</xref>) package is used for model fitting. Some automatic layout
-  algorithms are sourced from the semPlot
+  algorithms are sourced from the <monospace>semPlot</monospace>
   (<xref alt="Epskamp, 2015" rid="ref-epskamp2015semplot" ref-type="bibr">Epskamp,
-  2015</xref>) package, while the promises
+  2015</xref>) package, while the <monospace>promises</monospace>
   (<xref alt="Cheng, 2024" rid="ref-promises" ref-type="bibr">Cheng,
   2024</xref>) package enables asynchronous execution.</p>
 </sec>
@@ -452,6 +438,20 @@ a Creative Commons Attribution 4.0 International License (CC BY
       <source>tidySEM: Tidy structural equation modeling</source>
       <year iso-8601-date="2024">2024</year>
       <uri>https://CRAN.R-project.org/package=tidySEM</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-tutorial">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Karch</surname><given-names>J. D.</given-names></name>
+      </person-group>
+      <article-title>lavaangui: A web-based graphical interface for specifying lavaan models by drawing path diagrams</article-title>
+      <source>Structural Equation Modeling: A Multidisciplinary Journal</source>
+      <publisher-name>Routledge</publisher-name>
+      <year iso-8601-date="2025">2025</year>
+      <pub-id pub-id-type="doi">10.1080/10705511.2024.2420678</pub-id>
+      <fpage>1</fpage>
+      <lpage>12</lpage>
     </element-citation>
   </ref>
 </ref-list>
