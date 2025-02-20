@@ -15,16 +15,37 @@ export function resetCounters() {
 
 resetCounters();
 
+function isValidName(str) {
+  const rVarNameRegex = /^[a-zA-Z\._][a-zA-Z0-9\._]*(?<!\.)$/;
+  return rVarNameRegex.test(str);
+}
+
+function validLabel(str) {
+  if (!isValidName(str)) {
+    // @ts-expect-error
+    bootbox.alert(`The variable <b>${str}</b> was not added to the model because <b>${str}</b> is not a valid lavaan variable name. Please use only letters, numbers, underscores, and dots. The name must start with a letter or underscore and cannot end with a dot. You can use the <b>Show Data</b> menu to rename <b>${str}</b>`);
+    return false;
+  }
+  return true;
+}
+
+
 // Adding new nodes via mouse, toolbar, or hotkey
-export function addNode(nodeType, position, fromUser = true, customLabel = null) {
+export function addNode(nodeType, position, fromUser = true, customLabel = null, checkLabel = false) {
   let cy = get(cyStore);
   let nodeId = uuidv4();
   let label;
   if (customLabel !== null) {
+    if (!validLabel(customLabel)) {
+
+
+      return;
+    }
     if (cy.nodes().find(node => node.data().label === customLabel)) {
       setAlert('danger', "Node with the same label already exists.");
       return;
     }
+
     label = customLabel;
   } else {
     if (nodeType == OBSERVED) {
