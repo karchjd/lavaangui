@@ -80,7 +80,7 @@ plot_lavaan(fit)
 
 If you use `lavaangui` in your research, please cite the following paper:
 
-Karch, J. D. (2025). lavaangui: A Web-Based Graphical Interface for Specifying Lavaan Models by Drawing Path Diagrams. *Structural Equation Modeling: A Multidisciplinary Journal*, 32(1), 1-15. https://doi.org/10.1080/10705511.2024.2420678
+Karch, J. D. (2025). lavaangui: A Web-Based Graphical Interface for Specifying Lavaan Models by Drawing Path Diagrams. *Structural Equation Modeling: A Multidisciplinary Journal*, 1-12. https://doi.org/10.1080/10705511.2024.2420678
 
 
 
