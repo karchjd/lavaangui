@@ -71,6 +71,7 @@
       name: "Recommended: Tree3",
       action: () => applySemLayout("tree3"),
       disable: $appState.modelEmpty,
+      divider: true,
     },
     {
       name: "Experimental: Tree",

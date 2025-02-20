@@ -1,6 +1,6 @@
 Package: lavaangui
 Title: Graphical User Interface with Integrated 'Diagrammer' for 'Lavaan'
-Version: 0.1.2
+Version: 0.2.4
 Authors@R: 
     person(c("Julian",  "D."), "Karch",
     email = "j.d.karch@fsw.leidenuniv.nl", 
@@ -10,10 +10,10 @@ Description: Provides a graphical user interface with an
     integrated diagrammer for latent variables from the 'lavaan' package. 
     It offers two core functions:  first, lavaangui() launches a web application
     that allows users to specify models by drawing path diagrams, fitting them, 
-    assessing model fit, and more; second, plot_interactive() creates 
+    assessing model fit, and more; second, plot_lavaan() creates 
     interactive path diagrams from models specified in 'lavaan'. 
     Karch (2024) <doi: 10.31234/osf.io/f4ary> contains a tutorial.
-URL: https://solo-fsw.shinyapps.io/lavaangui/, https://github.com/karchjd/lavaangui
+URL: https://lavaangui.org/, https://github.com/karchjd/lavaangui
 BugReports: https://github.com/karchjd/lavaangui/issues
 License: GPL (>= 3)
 Imports: 
@@ -29,17 +29,13 @@ Imports:
     methods (>= 4.3.3),
     colorspace (>= 2.1.0),
     igraph (>= 2.0.3),
-    qgraph (>= 1.9.8),
     tools (>= 4.3.3),
     utils (>= 4.3.3),
     DT (>= 0.33),
     plyr (>= 1.8.9),
-    htmlwidgets (>= 1.6.4),
     digest (>= 0.6.35)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Date: 2024-09-04
-Suggests: 
-    spelling
+Date: 2025-01-19
 Language: en-US

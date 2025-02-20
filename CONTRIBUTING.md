@@ -24,7 +24,7 @@ When submitting a pull request (PR), please adhere to the following guidelines:
 #### Before Starting
 
 1. Ensure there is an open issue that addresses the problem/feature you are working on. Thus, if there is not already an issue, please open an issue.
-2. Fork the repository and create your branch from the `dev` branch.
+2. Fork the repository and create your branch from the `main` branch.
 
 ### Building
 
@@ -45,6 +45,18 @@ To build a new version of lavaangui, you can use the [compile_restart_dev.R](dev
 ### 4. Documentation Improvements
 
 If you find typos or areas where documentation is lacking, feel free to submit PRs for those. Documentation contributions are just as important as code contributions!
+
+## Getting Started
+
+### Install Prerequesites
+
+- R https://cran.r-project.org/
+- Node.js https://nodejs.org/en/download
+- Front-end dependencies: Run `npm run install` from a shell in the src/ folder.
+- Back-end dependencies: Execute `devtools::install_local(dependencies = TRUE)` in R, with the working directory set to the root folder of the package.
+
+### Compile 
+The file https://github.com/karchjd/lavaangui/blob/main/dev/compile_restart_dev.R compiles the front-end and starts the app locally in your browser.
 
 ## Code of Conduct
 

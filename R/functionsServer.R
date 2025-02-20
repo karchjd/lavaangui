@@ -5,15 +5,15 @@ getGroupTable <- function(parTable) {
 }
 
 
-importModel <- function(session, full, importedModel) {
+importModel <- function(session, full, importedModel, shinyapps) {
   imported <- FALSE
-  session$sendCustomMessage("full", message = full)
+  session$sendCustomMessage("fullServer", message = list(full = full, shinyapps = shinyapps))
 
   makeNewVars <- function(vars, groups) {
     allCombs <- expand.grid(vars, groups)
     paste0(allCombs$Var1, ".", allCombs$Var2)
   }
-  
+
   # import model if present
   if ((!imported) && !(is.null(importedModel))) {
     parTable <- importedModel$parTable
@@ -58,8 +58,8 @@ modifyResTable <- function(ests) {
   names(ests)[names(ests) == "lhs"] <- "source"
   names(ests)[names(ests) == "op"] <- "arrow"
   names(ests)[names(ests) == "rhs"] <- "target"
-  ests$arrow[ests$arrow == "~"] <- "\u2192" #→
-  ests$arrow[ests$arrow == "=~"] <- "\u2192" #→
-  ests$arrow[ests$arrow == "~~"] <- "\u2194" #↔
+  ests$arrow[ests$arrow == "~"] <- "\u2192" # →
+  ests$arrow[ests$arrow == "=~"] <- "\u2192" # →
+  ests$arrow[ests$arrow == "~~"] <- "\u2194" # ↔
   return(ests)
 }

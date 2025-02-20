@@ -6,13 +6,21 @@ checkVarsInData <- function(model_parsed, data) {
   return(var_not_in_data)
 }
 
+getHashData <- function(df) {
+  attributes(df) <- NULL
+  return(digest::digest(df))
+}
+
 sendResultsFront <- function(session, result, fromJavascript, df) {
+  result$fit@Data@X <- list()
   res <- list(
     fitted_model = base64enc::base64encode(serialize(result, NULL)),
-    model = digest::digest(fromJavascript$model), data = digest::digest(df)
+    model = digest::digest(fromJavascript$model[c("options", "syntax")]), data = getHashData(df)
   )
   session$sendCustomMessage("lav_results", res)
 }
+
+
 
 serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
@@ -31,20 +39,40 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       ## Mode = "Full Model" or "Estimate", send model
       modelJavascript <- fromJavascript$model
       model <- eval(parse(text = modelJavascript$syntax)) # nolint: object_usage_linter.
-      if (length(modelJavascript$ordered_labels) > 0) {
-        model <- paste0(model, "\n")
+      if (length(modelJavascript$ordered_labels) > 0) { ## ordinal data present
+        modelParse <- paste0(model, "\n")
         for (i in 1:length(modelJavascript$ordered_labels)) {
-          model <- paste0(model, modelJavascript$ordered_labels[i], "|t1\n")
+          modelParse <- paste0(modelParse, modelJavascript$ordered_labels[i], "|t1\n")
         }
+        modify_arguments_for_ordered <- function(input_string) {
+          # Remove the "ordered", "missing", and "estimator" arguments
+          modified_string <- gsub("ordered = c\\([^\\)]*\\),", "", input_string)
+          modified_string <- gsub("missing = \"[^\"]*\",", "", modified_string)
+          modified_string <- gsub("estimator = \"[^\"]*\",", "", modified_string)
+          modified_string <- gsub("se = \"[^\"]*\",", "", modified_string)
+          modified_string <- gsub("bootstrap = [0-9]+", "", modified_string)
+          
+          # Replace meanstructure argument (whether it is TRUE, FALSE, or "default") with TRUE
+          modified_string <- gsub("meanstructure = (TRUE|FALSE|\"default\")", "meanstructure = TRUE", modified_string)
+
+          return(modified_string)
+        }
+        lavaan_parse_string <- (paste0("lavaanify(modelParse, ", modify_arguments_for_ordered(modelJavascript$options)))
+      } else {
+        lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
       }
-      lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
+
 
       ## gotta love R error handling...
       wasError <- tryCatch(
         withCallingHandlers(
           {
-            lavaan_model <- eval(parse(text = lavaan_parse_string))
-            model_parsed <- parTable(lavaan_model)
+            if (length(modelJavascript$ordered_labels) > 0) {
+              model_parsed <- eval(parse(text = lavaan_parse_string))
+            } else {
+              lavaan_model <- eval(parse(text = lavaan_parse_string))
+              model_parsed <- parTable(lavaan_model)
+            }
           },
           error = function(e) {
             session$sendCustomMessage(
@@ -82,10 +110,17 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       stopifnot(fromJavascript$mode == "estimate")
       # cache is valid, return cached results
       cacheValid <- !is.null(fromJavascript$cache$lastFitModel) &&
-        fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model) &&
-        (is.null(getData()) || fromJavascript$cache$lastFitData == digest::digest(getData()))
+        fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model[c("options", "syntax")]) &&
+        (is.null(getData()) || fromJavascript$cache$lastFitData == getHashData(getData()))
       if (cacheValid) {
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
+        if (isTruthy(getData())){
+          data <- getData()
+          lavaan_string <- paste0("lavaan(model, data, do.fit = FALSE, ", modelJavascript$options)
+          tmp <- eval(parse(text = lavaan_string))
+          cacheResult$fit@Data@X <- tmp@Data@X
+        }
+        
         fit(cacheResult$fit)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
         to_render(cacheResult)
@@ -128,16 +163,24 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
 
           environment(new_function) <- asNamespace("lavaan")
           utils::assignInNamespace("lav_model_objective", new_function, ns = "lavaan")
-          lastWarning <- c()
+          lastWarning <- NULL
+          lastError <- NULL
+
           withCallingHandlers(
             {
-              local_fit <- eval(parse(text = lavaan_string))
+              local_fit <- tryCatch(
+                eval(parse(text = lavaan_string)),
+                error = function(e) {
+                  lastError <<- e
+                  return(NULL) 
+                }
+              )
             },
             warning = function(w) {
               lastWarning <<- c(lastWarning, w)
             }
           )
-          list(fit = local_fit, warning = lastWarning)
+          list(fit = local_fit, warning = lastWarning, error = lastError)
         },
         packages = "lavaan",
         globals = c("data", "abort_file", "model", "lavaan_string"),
@@ -147,18 +190,25 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       promises::then(
         fut,
         function(value) {
-          fit(value$fit)
-          sendResultsFront(session, value, fromJavascript, getData())
-          to_render(value)
-          session$sendCustomMessage("lav_sucess", "lav_error")
+          if(is.null(value$error)){
+            fit(value$fit)
+            sendResultsFront(session, value, fromJavascript, getData())
+            to_render(value)
+            session$sendCustomMessage("lav_sucess", "lav_error")  
+          }else{
+            print(value$error)
+            session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = value$error$message, type = "danger"))
+            to_render(value$error)
+          }
         }
       )
 
-      ## fail fit
+      ## fail fit, might not be reachable anymore because of new try in promises, which was needed
+      ## because this catch did not catch all errors
       promises::catch(
         fut,
         function(e) {
-          if(grepl("No process exists with this PID", e$message)){
+          if (grepl("No process exists with this PID", e$message) || grepl("failed to receive message results from cluster RichSOCKnode #1")) {
             e$message <- "Fitting cancelled by user"
           }
           session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = e$message, type = "danger"))

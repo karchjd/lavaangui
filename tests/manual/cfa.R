@@ -4,4 +4,4 @@ HS.model <- " visual  =~ x1 + x2 + x3
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
 lavaangui(fit)
-plot_interactive(fit)
+plot_lavaan(fit)

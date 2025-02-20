@@ -35,15 +35,19 @@
       target = lhs;
       directed = DIRECTED;
     } else {
-      target = lhs;
-      source = rhs;
       if (op === "~~") {
+        // this order is needed for bezier curves to look correct
+        target = rhs;
+        source = lhs;
+
         if (lhs === rhs) {
           directed = LOOP;
         } else {
           directed = UNDIRECTED;
         }
       } else if (op === "~" || "<~") {
+        target = lhs;
+        source = rhs;
         directed = DIRECTED;
       }
     }
@@ -168,7 +172,11 @@
     let const_added = false;
     let added_const_id;
     for (let i = 0; i < lav_model.lhs.length; i++) {
-      if (lav_model.op[i] == "~*~" || lav_model.op[i] == "|") {
+      if (
+        lav_model.op[i] == "~*~" ||
+        lav_model.op[i] == "|" ||
+        lav_model.op[i] == "=="
+      ) {
         continue;
       }
       // validate and remove existing edges
@@ -252,9 +260,11 @@
           } else {
             edge.markAddedLavaan();
           }
-
-          checkNodeLoop(sourceId);
-          checkNodeLoop(targetId);
+          if (!imported && desiredEdge.directed == DIRECTED) {
+            checkNodeLoop(sourceId);
+            checkNodeLoop(targetId);
+          }
+          // }
         } else if (!imported && existingEdge.length == 1) {
           edge = existingEdge;
         }
@@ -295,6 +305,35 @@
       });
     } else {
       applySemLayout("tree", false);
+      const angleCounts = new Map();
+
+      cy.getUndirectedEdges().forEach((edge) => {
+        const sourceAngle = checkNodeLoop(edge.source().id(), true);
+        const targetAngle = checkNodeLoop(edge.target().id(), true);
+
+        const countAngle = (angle) => {
+          angleCounts.set(angle, (angleCounts.get(angle) || 0) + 1);
+        };
+
+        countAngle(sourceAngle);
+        countAngle(targetAngle);
+      });
+
+      let mostCommonAngle = null;
+      let maxCount = 0;
+
+      angleCounts.forEach((count, angle) => {
+        if (count > maxCount) {
+          maxCount = count;
+          mostCommonAngle = angle;
+        }
+      });
+
+      if (mostCommonAngle === 180) {
+        cy.edges().forEach((edge) => {
+          if (edge.isUserAdded()) edge.data("control-point-distances", [100]);
+        });
+      }
       cy.fit();
     }
 
@@ -361,6 +400,7 @@
       $appState.loadedFileName = data_info.name;
       $appState.dataAvail = true;
       tolavaan($modelOptions.mode);
+      window.$("#upload-modal").modal("hide");
       if (data_info.showData) {
         window.$("#data-modal-2").modal();
       }
@@ -382,6 +422,9 @@
 
     Shiny.addCustomMessageHandler("lav_warning_error", function (info) {
       const what = info.type == "warning" ? "warning" : "error";
+      if (info.origin == "loading data") {
+        window.$("#upload-modal").modal("hide");
+      }
       setAlert(
         info.type,
         `During ${info.origin} the following ${what} occurred: ${info.message}`,
@@ -458,7 +501,7 @@
       $modelOptions.fix_first = false;
       setAlert(
         "warning",
-        "lavaangui only imports user edges. Your full model is very likely different than what you fitted in lavaan because of different options used. To display the model, as you fitted it in lavaan, use plot_interactive",
+        "lavaangui only imports user edges. Your full model is very likely different than what you fitted in lavaan because of different options used. To display the model, as you fitted it in lavaan, use plot_lavaan",
       );
     });
 

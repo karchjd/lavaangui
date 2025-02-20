@@ -13,6 +13,7 @@
       name: "Weighted Least Squares (WLS)",
     },
     { value: "ULS", name: "Unweighted Least Squares (ULS)" },
+    { value: "DWLS", name: "Diagonally Weighted Least Squares (DWLS)" },
     { value: "DLS", name: "Distributionally-weighted Least Squares (DLW)" },
   ];
 

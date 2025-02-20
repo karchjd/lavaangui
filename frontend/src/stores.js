@@ -19,6 +19,8 @@ export let modelOptions = writable({
   auto_cov_y: true,
   fixed_x: true,
   mode: "user model",
+  "auto.th": true,
+  "auto.delta": true,
 });
 
 export let gridViewOptions = writable({
@@ -66,6 +68,8 @@ export let appState = writable({
   drawing: "none",
   undoEmpty: true,
   redoEmpty: true,
+  server: false,
+  shinyapps: false
 });
 
 export let dataInfo = writable(0);
@@ -92,4 +96,4 @@ export function setAlert(type, message) {
   });
 }
 
-setAlert("info", "Greetings");
+setAlert("info", "Greetings. lavaangui is BETA software. Please report any bugs at https://github.com/karchjd/lavaangui/issues.");

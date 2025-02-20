@@ -1,8 +1,14 @@
 serverDownloader <- function(id, getData) {
   moduleServer(id, function(input, output, session) {
     observeEvent(input$requestData, {
-      data_csv <- paste0(utils::capture.output(utils::write.csv(getData(), row.names = FALSE)), collapse = "\n")
-      session$sendCustomMessage("dataForDownload", data_csv)
+      data_csv <- readr::format_csv(getData())
+      if(input$requestData$goal == "download"){
+        session$sendCustomMessage("dataForDownload", data_csv)  
+      }else if(input$requestData$goal == "saveData"){
+        session$sendCustomMessage("dataForSave", data_csv)  
+      }else {
+        stop("invalid goal")
+      }
     })
   })
 }

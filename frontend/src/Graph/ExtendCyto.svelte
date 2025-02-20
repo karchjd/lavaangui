@@ -276,6 +276,10 @@
         return this.edges(`.${Constants.FROM_USER}`);
     });
 
+    cytoscape("core", "getUndirectedEdges", function () {
+        return this.edges(`.${Constants.UNDIRECTED}`);
+    });
+
     cytoscape("core", "getLavaanModifiedEdges", function () {
         return this.edges(`.${Constants.BY_LAV}`);
     });

@@ -38,6 +38,16 @@
       max-height: calc(100vh - 75px);
       overflow-y: auto;
     }
+
+    #upload-modal .input-group,
+    #upload-modal .control-label {
+      display: none;
+    }
+
+    .upload-width {
+      width: 200px;
+      /* Adjust the percentage as needed */
+    }
   </style>
 
   </script>
@@ -74,6 +84,24 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" id="upload-modal">
+    <div class="modal-dialog upload-width" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Data Upload Status</h4>
+        </div>
+        <div class="modal-body">
+          {{ shiny::fileInput("dataUpload-fileInput", "Uploading Status", accept=c(".csv,.sav, .xlsx, .rds", ".txt"))}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 
   <div id="picker"></div>
 

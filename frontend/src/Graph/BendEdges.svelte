@@ -23,12 +23,13 @@
       useTrailingDividersAfterContextMenuOptions: false,
       enableCreateAnchorOnDrag: true,
       anchorShapeSizeFactor: 4,
-      addBendMenuItemTitle: `Add ${kinkName} Point`,
-      removeBendMenuItemTitle: `Remove ${kinkName} Point`,
-      removeAllBendMenuItemTitle: `Remove All${kinkName} Points`,
+      addBendMenuItemTitle: null,
+      removeBendMenuItemTitle: null,
+      removeAllBendMenuItemTitle: null,
       addControlMenuItemTitle: `Add ${bendName} Point`,
       removeControlMenuItemTitle: `Remove ${bendName} Point`,
       removeAllControlMenuItemTitle: `Remove All ${bendName} Points`,
+      handleReconnectEdge: false,
     });
 
     cy.style().update();

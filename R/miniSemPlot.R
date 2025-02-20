@@ -235,18 +235,6 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
   
   
   
-  # Check if input is combination of models:
-  call <- paste(deparse(substitute(object)), collapse = "")
-  if (grepl("\\+",call)) 
-  {
-    args <- unlist(strsplit(call,split="\\+"))
-    obs <- lapply(args,function(x)semPlotModel(eval(parse(text=x))))
-    object <- obs[[1]]
-    for (i in 2:length(obs)) object <- object + obs[[i]]
-  }
-  
-  if (!"semPlotModel"%in%class(object)) object <- do.call(semPlotModel,c(list(object),modelOpts))
-  stopifnot("semPlotModel"%in%class(object))
   
   ### edgeConnectPoints dummy:
   ECP <- NULL
@@ -888,11 +876,8 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
           }
           maxPaths <- c(maxPaths,maxPathsInts)
         }
-        if (springLevels)
-        {
-          Cons <- cbind(NA,maxPaths)
-          Layout <- qgraph::qgraph.layout.fruchtermanreingold(Edgelist,vcount=length(maxPaths),constraints=Cons*sqrt(length(maxPaths)))
-        } else {
+        if (!springLevels)
+       {
           Layout <- cbind(NA,maxPaths)
           Layout[,1] <- stats::ave(Layout[,2],Layout[,2],FUN=function(x)seq(-1,1,length=length(x)+2)[-c(1,length(x)+2)])
           
@@ -1226,7 +1211,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
       {
         if (is.character(Layout))
         {
-          Layout <- qgraph::qgraph(Edgelist, layout = Layout, DoNotPlot = TRUE, edgelist=TRUE)$layout
+          Layout <- qgraph(Edgelist, layout = Layout, DoNotPlot = TRUE, edgelist=TRUE)$layout
         }
         ## Store in submodel list (could well be moved earlier but whatever)
         subModList[[Sub]] <- list(
@@ -1251,7 +1236,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
       
       if (is.character(Layout))
       {
-        Layout <- qgraph::qgraph(Edgelist, layout = Layout, DoNotPlot = TRUE)$layout
+        Layout <- qgraph(Edgelist, layout = Layout, DoNotPlot = TRUE)$layout
       }
       # Rescale main layout:
       Layout <- LayoutScaler(Layout,  din[1]/2, din[2]/2)
@@ -1768,7 +1753,7 @@ semPaths <- function(object,what="paths",whatLabels,style,layout="tree",intercep
     
     ### RUN QGRAPH ###
     
-    qgraphRes[[which(Groups==gr)]] <- qgraph::qgraph(Edgelist,
+    qgraphRes[[which(Groups==gr)]] <- qgraph(Edgelist,
                                                      labels=nLab,
                                                      bidirectional=Bidir,
                                                      directed=Directed,

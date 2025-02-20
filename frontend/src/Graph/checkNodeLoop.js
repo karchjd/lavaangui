@@ -1,12 +1,16 @@
-export function checkNodeLoop(nodeID) {
+export function checkNodeLoop(nodeID, forceCheck = false) {
   const selfLoop = getSelfLoop(nodeID);
-  if (selfLoop != null) {
-    const edgePostions = getEdgePositions(nodeID);
-    const angles = getOccupiedAngles(edgePostions);
-    let goalAngle = getBestFreeAngle(angles);
-    goalAngle = checkDefaultsFree(goalAngle, angles);
+  if (!selfLoop && !forceCheck) return null;
+
+  const edgePositions = getEdgePositions(nodeID);
+  const angles = getOccupiedAngles(edgePositions);
+  const goalAngle = checkDefaultsFree(getBestFreeAngle(angles), angles);
+
+  if (selfLoop) {
     selfLoop.data("loop-direction", `${goalAngle}deg`);
   }
+
+  return goalAngle;
 }
 
 function checkDefaultsFree(goalAngle, angles) {
@@ -52,7 +56,7 @@ function getEdgePositions(nodeID) {
     return;
   }
   let edgePostions = [];
-  node.connectedEdges().forEach((edge) => {
+  node.connectedEdges(edge => edge.style('display') !== 'none').forEach((edge) => {
     const source = edge.source();
     const target = edge.target();
     let toAdd;

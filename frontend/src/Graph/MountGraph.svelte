@@ -143,6 +143,15 @@
       }
     }
 
+    //no variance edges for ordinal nodes
+    if (edge.myIsLoop() && sourceNode.isOrdered()) {
+      setAlert(
+        "error",
+        "User-defined variance arrow is not allowed for ordered variables.",
+      );
+      return;
+    }
+
     if (edge.isDirected() && sourceNode.isConstant()) {
       edge.makeMeanEdge();
     } else {
@@ -203,7 +212,7 @@
     }
 
     if ($appState.dragged == "observed-with-name") {
-      addNode(OBSERVED, pos, true, $appState.draggedName);
+      addNode(OBSERVED, pos, true, $appState.draggedName, true);
     } else if ($appState.dragged == "multiple") {
       createBootPrompt("Select Variables", function (result) {
         if (checkValid(result)) {
@@ -214,6 +223,7 @@
               { x: pos.x + offset * zoom, y: pos.y },
               true,
               name,
+              true,
             );
             offset += gap; // Update offset for next node
           });
@@ -236,6 +246,7 @@
               { x: pos.x + offset * zoom, y: pos.y + zoom * ygap },
               true,
               name,
+              true,
             );
             offset += gap;
             addEdge(latentID, itemItem);
@@ -295,6 +306,7 @@
               { x: pos.x + offset * zoom, y: pos.y + 2 * ygap * zoom },
               true,
               name,
+              true,
             );
             offset += gap;
             addEdge(interceptID, itemItem, true, true, 1);
@@ -369,6 +381,7 @@
         style: { "loop-direction": `${angle}deg` },
       });
       currentEdge = null;
+      angle = undefined;
     }
   });
 </script>

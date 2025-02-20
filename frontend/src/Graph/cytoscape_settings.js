@@ -27,7 +27,10 @@ export const graphStyles = [
       label: "data(label)", // Use the 'label' property from the data for the node's label
       "text-valign": "center",
       "text-halign": "center",
-
+      "text-wrap": "ellipsis",
+      "text-max-width": function (ele) {
+        return ele.width();
+      },
     },
   },
   {
@@ -125,15 +128,11 @@ export const graphStyles = [
     selector: `edge.${Constants.UNDIRECTED}`,
     style: {
       "curve-style": "unbundled-bezier",
-      "control-point-distances": [-100],
+      "control-point-distances": function (ele) {
+        return ele.data("control-point-distances") || [-100];
+      },
       "control-point-weights": [0.5],
       "source-arrow-shape": "triangle",
-    },
-  },
-  {
-    selector: `edge.${Constants.UNDIRECTED}.${Constants.FROM_LAV}`,
-    style: {
-      "control-point-distances": [100],
     },
   },
   {
@@ -171,6 +170,12 @@ export const graphStyles = [
     style: {
       "line-style": "dashed",
     },
+  },
+  {
+    selector: "edge.hidden, node.hidden",
+    style: {
+      "display": "none",
+    }
   },
   {
     selector: "edge:selected",

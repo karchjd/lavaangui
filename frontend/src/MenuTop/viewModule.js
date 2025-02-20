@@ -1,5 +1,6 @@
 import { get } from "svelte/store";
 import { cyStore } from "../stores";
+import { checkNodeLoop } from "../Graph/checkNodeLoop";
 
 export const edgeItems = [
   {
@@ -35,7 +36,7 @@ export function updateLabels(viewOption, std, number_digits) {
   cy.style().selector("edge.hasEstFixed").style({ label: fixedEstStyle }).update();
 }
 
-export function updateVisibility(showVar, showLav, showMean, menuItems) {
+export function updateVisibility(showVar, showLav, showMean) {
   function which(logicalVector) {
     return logicalVector.reduce((indices, value, index) => {
       if (value) {
@@ -46,9 +47,11 @@ export function updateVisibility(showVar, showLav, showMean, menuItems) {
   }
 
   const cy = get(cyStore);
-  const logicalVector = [showLav, showVar, showMean];
-  const trueIndices = which(logicalVector);
-  const falseIndices = which(logicalVector.map((x) => !x));
+  const showElement = [showLav, showVar, showMean];
+  const trueIndices = which(showElement);
+  const falseIndices = which(showElement.map((x) => !x));
+  const allIndices = trueIndices.concat(falseIndices);
+
 
   function applyFunction(i, elements) {
     const functionsArray = [
@@ -59,11 +62,34 @@ export function updateVisibility(showVar, showLav, showMean, menuItems) {
     ];
     return functionsArray[i](elements);
   }
-  for (let i of trueIndices) {
-    cy.elements(function (ele) { return applyFunction(i, ele) }).show();
-  }
-  for (let i of falseIndices) {
-    cy.elements(function (ele) { return applyFunction(i, ele) }).hide();
+  for (let i of allIndices) {
+    const elements = cy.elements(function (ele) { return applyFunction(i, ele) });
+    if (showElement[i]) {
+      elements.removeClass('hidden');
+    } else {
+      elements.addClass('hidden');
+    }
+    if (i == 2) {
+      const conNodes = elements.connectedEdges().connectedNodes();
+      const connectedEdges = elements.connectedEdges();
+      if (showElement[i]) {
+        connectedEdges.forEach(edge => {
+          edge.removeClass('hidden');
+        });
+      } else {
+        connectedEdges.forEach(edge => {
+          edge.addClass('hidden');
+        });
+      }
+      conNodes.forEach(node => {
+        checkNodeLoop(node.id());
+      });
+    } else {
+      elements.forEach(ele => {
+        checkNodeLoop(ele.source().id());
+        checkNodeLoop(ele.target().id());
+      });
+    }
   }
 }
 
