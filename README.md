@@ -19,7 +19,7 @@ There are three main ways to use the `lavaangui` package.
 
 3. **Interactive plots:** `lavaangui` can also be used for plotting `lavaan` models that were created in R. For this, use `plot_lavaan(fit)`. This will create a path diagram of your model. The core difference compared to other packages for plotting `lavaan` models is that the resulting plot is interactive. That is, you can change its appearance easily, for example, by dragging around nodes with your mouse.
 
-An extenstive tutorial on using `lavaangui` is available at https://osf.io/preprints/psyarxiv/f4ary.
+An extensive tutorial on using `lavaangui` is available at https://osf.io/preprints/psyarxiv/f4ary.
 
 # Getting Started
 
