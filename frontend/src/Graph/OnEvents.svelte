@@ -5,6 +5,58 @@
   import { tolavaan } from "../Shiny/toR.js";
   let cy = get(cyStore);
 
+  function getEdgeVector(edge) {
+    const edgeSourcePos = edge.source().position();
+    const edgeTargetPos = edge.target().position();
+
+    const edgeVector = {
+      x: edgeTargetPos.x - edgeSourcePos.x,
+      y: edgeTargetPos.y - edgeSourcePos.y,
+    };
+    const edgeVectorMagnitude = Math.sqrt(
+      edgeVector.x ** 2 + edgeVector.y ** 2,
+    );
+
+    return {
+      normalizedEdgeVector: {
+        x: edgeVector.x / edgeVectorMagnitude,
+        y: edgeVector.y / edgeVectorMagnitude,
+      },
+      edgeMidpoint: edge.midpoint(),
+      edgeSourcePos,
+      edgeTargetPos,
+    };
+  }
+
+  function calculateDisplacement(edge, displacement) {
+    const { normalizedEdgeVector, edgeMidpoint, edgeSourcePos, edgeTargetPos } =
+      getEdgeVector(edge);
+
+    const TargetMax =
+      (edgeTargetPos.y - edgeMidpoint.y) / normalizedEdgeVector.y - 70;
+    const SourceMin =
+      (edgeSourcePos.y - edgeMidpoint.y) / normalizedEdgeVector.y + 70;
+
+    let displacementAlongEdgeCut = Math.min(TargetMax, displacement);
+    displacementAlongEdgeCut = Math.max(SourceMin, displacementAlongEdgeCut);
+
+    return {
+      newMarginX: displacementAlongEdgeCut * normalizedEdgeVector.x,
+      newMarginY: displacementAlongEdgeCut * normalizedEdgeVector.y,
+    };
+  }
+
+  function updateEdgeStyle(edge, displacement) {
+    const { newMarginX, newMarginY } = calculateDisplacement(
+      edge,
+      displacement,
+    );
+    edge.style({
+      "text-margin-x": newMarginX,
+      "text-margin-y": newMarginY,
+    });
+  }
+
   cy.on("add", "node", function (event) {
     const node = event.target;
     if (node.isObserved()) {
@@ -46,10 +98,15 @@
   cy.on("position", "node", function (event) {
     const node = event.target;
     const connectedNodes = node.neighborhood().nodes();
+    const connectedEdges = node.connectedEdges((edge) => edge.isDirected());
 
     connectedNodes.forEach((connectedNode) => {
-      const connectedNodeId = connectedNode.id();
-      checkNodeLoop(connectedNodeId);
+      checkNodeLoop(connectedNode.id());
+    });
+
+    connectedEdges.forEach((connectedEdge) => {
+      const displacement = connectedEdge.data("displacement");
+      updateEdgeStyle(connectedEdge, displacement);
     });
   });
 
@@ -97,25 +154,9 @@
 
   cy.on("mousemove", function (evt) {
     if (isDraggingLabel && selectedEdge) {
+      const { normalizedEdgeVector, edgeMidpoint } =
+        getEdgeVector(selectedEdge);
       const mousePosition = evt.position;
-      const edgeMidpoint = selectedEdge.midpoint();
-      const edgeSourcePos = selectedEdge.source().position();
-      const edgeTargetPos = selectedEdge.target().position();
-
-      // Calculate the vector from the source to the target and its magnitude
-      const edgeVector = {
-        x: edgeTargetPos.x - edgeSourcePos.x,
-        y: edgeTargetPos.y - edgeSourcePos.y,
-      };
-      const edgeVectorMagnitude = Math.sqrt(
-        edgeVector.x ** 2 + edgeVector.y ** 2,
-      );
-
-      // Normalize the edge vector
-      const normalizedEdgeVector = {
-        x: edgeVector.x / edgeVectorMagnitude,
-        y: edgeVector.y / edgeVectorMagnitude,
-      };
 
       // Calculate vector from the midpoint to the mouse position
       const midpointToMouseVector = {
@@ -123,27 +164,13 @@
         y: mousePosition.y - edgeMidpoint.y,
       };
 
-      // Project the midpointToMouseVector onto the normalized edge vector to get the displacement along the edge
+      // Project onto the normalized edge vector
       let displacementAlongEdge =
         midpointToMouseVector.x * normalizedEdgeVector.x +
         midpointToMouseVector.y * normalizedEdgeVector.y;
 
-      const TargetMax =
-        (edgeTargetPos.y - edgeMidpoint.y) / normalizedEdgeVector.y - 70;
-      const SourceMin =
-        (edgeSourcePos.y - edgeMidpoint.y) / normalizedEdgeVector.y + 70;
-
-      let displacementAlongEdgeCut = Math.min(TargetMax, displacementAlongEdge);
-      displacementAlongEdgeCut = Math.max(SourceMin, displacementAlongEdgeCut);
-
-      // Calculate the new margin positions
-      const newMarginX = displacementAlongEdgeCut * normalizedEdgeVector.x;
-      const newMarginY = displacementAlongEdgeCut * normalizedEdgeVector.y;
-
-      selectedEdge.style({
-        "text-margin-x": newMarginX,
-        "text-margin-y": newMarginY,
-      });
+      selectedEdge.data("displacement", displacementAlongEdge);
+      updateEdgeStyle(selectedEdge, displacementAlongEdge);
     }
   });
 
