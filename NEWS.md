@@ -1,5 +1,11 @@
 # lavaangui 0.2.3
 
+- Bugfix: Label move, node move, and edge bend interactions no longer cause issues.
+- Bugfix: Invalid variables can no longer be entered via the drag-and-drop menu.
+= Bugfix: Disabled king edges due to conflicts with the label move algorithm.
+
+# lavaangui 0.2.3
+
 - First version automatic undirected edge bend
 - Multiple bug fixes
 

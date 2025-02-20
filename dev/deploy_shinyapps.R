@@ -15,7 +15,7 @@ production <- FALSE
 if (production){
   appName = desc::desc_get_field("Package")
 }else{
-  appName = 'lavaangui'
+  appName = 'lavaanguitest'
 }
 
 # Test your app
