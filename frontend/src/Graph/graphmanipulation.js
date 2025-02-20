@@ -23,7 +23,7 @@ function isValidName(str) {
 function validLabel(str) {
   if (!isValidName(str)) {
     // @ts-expect-error
-    bootbox.alert(`The variable <b>${str}</b> was not added to the model because <b>${str}</b> is not a valid lavaan variable name. Please use only letters, numbers, underscores, and dots. The name must start with a letter or underscore and cannot end with a dot. You can use the <b>Show Data</b> menu to rename <b>${str}</b>`);
+    bootbox.alert(`The variable <b>${str}</b> was not added to the model because <b>${str}</b> is not a valid lavaan variable name. Please use only letters, numbers, underscores, and dots. The name must start with a letter or underscore and cannot end with a dot. You can use the <b>Show Data</b> menu to rename <b>${str}</b>.`);
     return false;
   }
   return true;
