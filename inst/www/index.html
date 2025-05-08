@@ -18,25 +18,25 @@
 
 
   <style>
-    .modal-dialog {
+    #data-modal-2 .modal-dialog,
+    #data-modal-extend-results .modal-dialog {
       width: 90%;
-      /* or any desired width */
       height: 90%;
-      /* or any desired height */
       margin: auto;
-      /* Centers the modal */
     }
+
+    #data-modal-2 .modal-body,
+    #data-modal-extend-results .modal-body {
+      overflow-x: auto;
+      max-height: calc(100vh - 75px);
+      overflow-y: auto;
+    }
+
 
     #picker {
       position: absolute;
       z-index: 1000;
       display: none;
-    }
-
-    .modal-body {
-      overflow-x: auto;
-      max-height: calc(100vh - 75px);
-      overflow-y: auto;
     }
 
     #upload-modal .input-group,
@@ -48,10 +48,14 @@
       width: 200px;
       /* Adjust the percentage as needed */
     }
+
+    .dialogWide>.modal-dialog {
+      width: 70% !important;
+    }
   </style>
 
   </script>
-  <script type="module" crossorigin src="./assets/index-45781b04.js"></script>
+  <script type="module" crossorigin src="./assets/index-a7f41120.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/svelte-fdfc2579.js">
   <link rel="modulepreload" crossorigin href="./assets/cytoscape-716fe419.js">
   <link rel="modulepreload" crossorigin href="./assets/core-js-93797867.js">

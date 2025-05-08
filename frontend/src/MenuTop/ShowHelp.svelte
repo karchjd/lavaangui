@@ -33,6 +33,7 @@
   function openAbout() {
     bootbox.alert({
       title: "About Lavaangui",
+      size: "large",
       message: `Version: ${version}<br> Author: Julian D. Karch<br> Email: j.d.karch@fsw.leidenuniv.nl <br> lavaangui is BETA software. Please report any bugs at https://github.com/karchjd/lavaangui/issues.`,
     });
   }
@@ -40,6 +41,7 @@
   function openCite() {
     bootbox.alert({
       title: "How to Cite",
+      className: "dialogWide",
       message: `To cite this package in publications, please use:<br><br>
               <div style="margin-left: 20px;">
                   Karch, J. D. (2025). lavaangui: A Web-Based Graphical Interface for Specifying Lavaan Models by Drawing Path Diagrams.
