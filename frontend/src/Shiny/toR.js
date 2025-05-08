@@ -293,6 +293,10 @@ export function createSyntax(mode) {
     }
   }
 
+  if (get(modelOptions).derived != '') {
+    syntax += "\n" + "# user defined parameters" + "\n";
+    syntax += get(modelOptions).defined;
+  }
 
 
   // split lines that are two long

@@ -9,6 +9,7 @@
   import GridOptions from "./GridOptions.svelte";
   import DropDownOpenhover from "./DropDownOpenhover.svelte";
   import EditMenu from "./EditMenu.svelte";
+  import DefinedVariable from "./DefinedVariable.svelte";
 </script>
 
 <Navbar>
@@ -17,6 +18,7 @@
   <ViewMenu />
   <AddMenu />
   <EstimationMenu />
+  <DefinedVariable />
   <Layouts />
   <GridOptions />
   <ShowHelp />

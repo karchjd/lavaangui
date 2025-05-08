@@ -21,6 +21,7 @@ export let modelOptions = writable({
   mode: "user model",
   "auto.th": true,
   "auto.delta": true,
+  defined: ''
 });
 
 export let gridViewOptions = writable({
