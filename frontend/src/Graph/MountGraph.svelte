@@ -132,6 +132,8 @@
       return;
     }
 
+    edge.checkLORegressionMark();
+
     //only one directed edge from constant
     if (edge.isDirected() && sourceNode.isConstant()) {
       const conConstant = targetNode.connectedEdges(

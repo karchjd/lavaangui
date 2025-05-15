@@ -198,6 +198,31 @@
       hasTrailingDivider: false,
     },
     {
+      id: "switch-reg",
+      content: "Mark as Regression Relationship",
+      selector: `edge.${Constants.FACTLOAD}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markRegression();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+
+    {
+      id: "switch-factor",
+      content: "Mark as Factor Loading",
+      selector: `edge.${Constants.REGRESSION}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markFactload();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
       id: "free-force-para",
       content: "Force Parameter Free",
       selector: `edge.${Constants.FREE}.${Constants.FROM_USER}, edge.${Constants.FIXED}.${Constants.FROM_USER}`,

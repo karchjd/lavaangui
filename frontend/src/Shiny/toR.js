@@ -184,7 +184,8 @@ export function createSyntax(mode) {
       return (
         edge.isDirected() &&
         edge.source().id() == latentNode.id() &&
-        (edge.target().isObserved() || hierachicalFactors.some(node => node.id() === latentNode.id())) //add measurement equation also if source is a hierachical factor
+        ((edge.target().isObserved() && edge.isFactLoad()) ||
+          hierachicalFactors.some(node => node.id() === latentNode.id())) //add measurement equation also if source is a hierachical factor
       );
     });
     if (connectedEdges.length > 0) {
@@ -201,10 +202,10 @@ export function createSyntax(mode) {
   function regression_edge(edge) {
     let res = edge.isDirected() &&
       !edge.source().isConstant() &&
-      !(
-        edge.source().isLatent() &&
-        edge.target().isObserved()
-      ) && !(edge.source().isLatent() && hierachicalFactors.some(node => node.id() === edge.source().id()) && edge.target().isLatent()) && (edge.isUserAdded() || edge.isModifiedLavaan()) && !(formativeFactors.some(node => node.id() === edge.target().id()));
+      (!(edge.source().isLatent() && edge.target().isObserved()) || edge.isRegression()) && // only if edge is explicitly marked as regression for arrows from latent to observed
+      !(edge.source().isLatent() && hierachicalFactors.some(node => node.id() === edge.source().id()) && edge.target().isLatent()) &&
+      (edge.isUserAdded() || edge.isModifiedLavaan()) &&
+      !(formativeFactors.some(node => node.id() === edge.target().id()));
     return res;
 
   }

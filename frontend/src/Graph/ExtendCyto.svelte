@@ -206,6 +206,49 @@
         return this;
     });
 
+    cytoscape("collection", "checkLORegressionMark", function () {
+        if (
+            this.isDirected() &&
+            this.source().isLatent() &&
+            this.target().isObserved()
+        ) {
+            this.addClass(Constants.LOREGRESSION);
+            this.addClass(Constants.FACTLOAD);
+        }
+        return this;
+    });
+
+    cytoscape("collection", "isLOReg", function () {
+        if (
+            this.isDirected() &&
+            this.source().isLatent() &&
+            this.target().isObserved()
+        ) {
+            this.addClass(Constants.LOREGRESSION);
+        }
+        return this.hasClass(Constants.LOREGRESSION);
+    });
+
+    cytoscape("collection", "markRegression", function () {
+        this.addClass(Constants.REGRESSION);
+        this.removeClass(Constants.FACTLOAD);
+        return this;
+    });
+
+    cytoscape("collection", "markFactload", function () {
+        this.removeClass(Constants.REGRESSION);
+        this.addClass(Constants.FACTLOAD);
+        return this;
+    });
+
+    cytoscape("collection", "isRegression", function () {
+        return this.hasClass(Constants.REGRESSION);
+    });
+
+    cytoscape("collection", "isFactLoad", function () {
+        return this.hasClass(Constants.FACTLOAD);
+    });
+
     // Nodes
     cytoscape("collection", "link", function () {
         this.addClass(Constants.LINKED);
