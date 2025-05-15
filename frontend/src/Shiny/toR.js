@@ -264,10 +264,7 @@ export function createSyntax(mode) {
       syntax += "\n" + "# intercepts" + "\n";
       for (var j = 0; j < connectedEdges.length; j++) {
         var node = connectedEdges[j].target();
-        syntax +=
-          node.getLabel() +
-          " ~ " +
-          addTerms(undefined, connectedEdges[j]) +
+        syntax += " " + node.getLabel() + " ~ " + addTerms(undefined, connectedEdges[j]) +
           "\n";
       }
     }

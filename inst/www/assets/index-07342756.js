@@ -10,7 +10,7 @@ import{d as Ln,w as Ne,S as X,i as Z,s as K,c as te,g as Y,o as we,e as U,a as E
 # (residual) (co)variances`;for(let v=0;v<f.length;v++){let y=f[v].source().data("label");t+=`
  `+y+" ~~ "+nt(f[v].target(),f[v])}}const $=e.nodes(function(v){return v.isConstant()});for(let v=0;v<$.length;v++){const w=$[v].connectedEdges(function(T){return T.isUserAdded()});if(w.length>0){t+=`
 # intercepts
-`;for(var g=0;g<w.length;g++){var c=w[g].target();t+=c.getLabel()+" ~ "+nt(void 0,w[g])+`
+`;for(var g=0;g<w.length;g++){var c=w[g].target();t+=" "+c.getLabel()+" ~ "+nt(void 0,w[g])+`
 `}}}d=!1;for(let v=0;v<r.length;v++){const y=r[v],w=y.connectedEdges(function(T){return T.isDirected()&&T.target().id()==y.id()});w.length>0&&(d||(t+=`
 
  #  formative factors
