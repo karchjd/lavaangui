@@ -294,6 +294,59 @@
       },
     },
     {
+      id: "change-line-style",
+      content: "Change Line Style",
+      show: "both",
+      selector: "edge",
+      submenu: [
+        {
+          id: "line-style-solid",
+          content: "Solid",
+          selector: "edge",
+          onClickFunction: function (event) {
+            const target = event.target || event.cyTarget;
+            const toChange = getChange(target, "edges");
+            if (toChange !== null) {
+              $ur.do("style", {
+                eles: toChange,
+                style: { "line-style": "solid" },
+              });
+            }
+          },
+        },
+        {
+          id: "line-style-dotted",
+          content: "Dotted",
+          selector: "edge",
+          onClickFunction: function (event) {
+            const target = event.target || event.cyTarget;
+            const toChange = getChange(target, "edges");
+            if (toChange !== null) {
+              $ur.do("style", {
+                eles: toChange,
+                style: { "line-style": "dotted" },
+              });
+            }
+          },
+        },
+        {
+          id: "line-style-dashed",
+          content: "Dashed",
+          selector: "edge",
+          onClickFunction: function (event) {
+            const target = event.target || event.cyTarget;
+            const toChange = getChange(target, "edges");
+            if (toChange !== null) {
+              $ur.do("style", {
+                eles: toChange,
+                style: { "line-style": "dashed" },
+              });
+            }
+          },
+        },
+      ],
+    },
+    {
       id: "change-line-width",
       content: "Change Line Width",
       show: "both", // Apply to both edges and nodes
