@@ -202,12 +202,14 @@
       } else {
         // add (missing) edges
         let edge;
+        // here the actual adding takes p
         if (imported || existingEdge.length == 0) {
           const desiredEdge = getEdge(
             lav_model.lhs[i],
             lav_model.op[i],
             lav_model.rhs[i],
           );
+          // do not import lavaan edges when user imports model via lavaangui()
           if (imported && $appState.full && lav_model.user[i] == 0) {
             continue;
           }
@@ -268,6 +270,7 @@
         } else if (!imported && existingEdge.length == 1) {
           edge = existingEdge;
         }
+        // post processing
         if (lav_model.free[i] == 0) {
           if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
             if (
@@ -287,6 +290,7 @@
         if (!imported) {
           edge.validate();
         }
+        edge.checkLORegressionMark();
       }
     }
     if (!imported) {
