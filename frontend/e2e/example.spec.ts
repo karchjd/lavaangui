@@ -4,7 +4,6 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
-console.log(__dirname);
 
 //File menu
 
@@ -27,7 +26,7 @@ test("new model", async ({ page }) => {
   // @ts-expect-error
   const numberOfNodes = await page.evaluate(() => window.cy.nodes().length);
 
-  // Asserttions
+  // Assertions
   expect(numberOfNodes).toBe(0);
   await expect(page.getByTestId("result-text")).toContainText("Command");
 });
@@ -160,7 +159,7 @@ test("Show Full Model", async ({ page }) => {
     // @ts-expect-error
     window.cy.edges(".fromUser").map((edge) => edge.visible())
   );
-  const x = 3;
+
   // Expect all lavEdges to be visible
   expect(lavEdges.every((isVisible) => isVisible)).toBe(true);
 
