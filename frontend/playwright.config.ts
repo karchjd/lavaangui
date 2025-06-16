@@ -9,6 +9,8 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+const isCI = !!process.env.CI;
+
 export default defineConfig({
   testDir: "./e2e",
   /* Run tests in files in parallel */
@@ -53,17 +55,33 @@ export default defineConfig({
         ...devices["Desktop Chrome"], baseURL: 'http://test.lavaangui.org'
       },
     },
-
-    {
-      name: "firefox remote",
-      use: { ...devices["Desktop Firefox"], baseURL: 'http://test.lavaangui.org' },
-    },
-    {
-      name: 'webkit remote',
-      use: {
-        ...devices['Desktop Safari'], baseURL: 'http://test.lavaangui.org'
-      },
-    },
+    ...(!isCI
+      ? [
+        {
+          name: "chromium remote",
+          use: {
+            ...devices["Desktop Chrome"],
+            baseURL: "http://test.lavaangui.org",
+          },
+        },
+        {
+          name: "firefox remote",
+          use: {
+            ...devices["Desktop Firefox"],
+            baseURL: "http://test.lavaangui.org",
+          },
+        },
+        {
+          name: "webkit remote",
+          use: {
+            ...devices["Desktop Safari"],
+            baseURL: "http://test.lavaangui.org",
+          },
+        },
+      ]
+      : []),
+  ],
+});
 
     /* Test against mobile viewports. */
     // {
