@@ -85,6 +85,9 @@ export const graphStyles = [
         return ele.data("source-arrow-color") || "#000";
       },
       "target-arrow-shape": "triangle",
+      "line-style": function (ele) {
+        return ele.data("line-style") || "solid";
+      },
       "curve-style": "bezier",
       "text-valign": "center",
       "text-halign": "center",
@@ -168,7 +171,9 @@ export const graphStyles = [
   {
     selector: `edge.${Constants.FROM_LAV}, edge.${Constants.BY_LAV}`,
     style: {
-      "line-style": "dashed",
+      "line-style": function (ele) {
+        return ele.data("line-style") || "dashed";
+      },
     },
   },
   {
