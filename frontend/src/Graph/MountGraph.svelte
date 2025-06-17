@@ -132,7 +132,7 @@
       return;
     }
 
-    edge.checkLORegressionMark();
+    edge.checkAndMarkPotentalLatObReg();
 
     //only one directed edge from constant
     if (edge.isDirected() && sourceNode.isConstant()) {

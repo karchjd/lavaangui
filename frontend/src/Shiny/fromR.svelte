@@ -290,7 +290,7 @@
         if (!imported) {
           edge.validate();
         }
-        edge.checkLORegressionMark();
+        edge.checkAndMarkPotentialLatObReg();
       }
     }
     if (!imported) {

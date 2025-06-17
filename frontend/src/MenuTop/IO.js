@@ -79,6 +79,11 @@ export function parseModel(content) {
     cy.nodes().forEach((node) => {
         checkNodeLoop(node.id());
     });
+
+    cy.edges().forEach((edge) => {
+        edge.checkAndMarkPotentialLatObReg()
+    });
+
     appState.update(state => {
         state.loadingMode = false;
         return state;

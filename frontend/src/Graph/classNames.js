@@ -22,6 +22,6 @@ export const ORDERED = 'ordered';
 export const HAS_EST_FIXED = "hasEstFixed"
 export const NODEWITH = 80;
 export const LABELWIDTH = 80;
-export const LOREGRESSION = 'loRegression';
+export const POTENTIAL_LAT_OB_REGRESSION = 'loRegression';
 export const REGRESSION = 'regression';
 export const FACTLOAD = 'factorLoad';

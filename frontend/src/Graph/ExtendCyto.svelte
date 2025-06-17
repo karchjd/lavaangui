@@ -206,27 +206,16 @@
         return this;
     });
 
-    cytoscape("collection", "checkLORegressionMark", function () {
+    cytoscape("collection", "checkAndMarkPotentialLatObReg", function () {
         if (
             this.isDirected() &&
             this.source().isLatent() &&
             this.target().isObserved()
         ) {
-            this.addClass(Constants.LOREGRESSION);
-            this.addClass(Constants.FACTLOAD);
+            this.addClass(Constants.POTENTIAL_LAT_OB_REGRESSION); //activates context menu to switch between regression and factor loading
+            this.addClass(Constants.FACTLOAD); // Default to factor loading;
         }
         return this;
-    });
-
-    cytoscape("collection", "isLOReg", function () {
-        if (
-            this.isDirected() &&
-            this.source().isLatent() &&
-            this.target().isObserved()
-        ) {
-            this.addClass(Constants.LOREGRESSION);
-        }
-        return this.hasClass(Constants.LOREGRESSION);
     });
 
     cytoscape("collection", "markRegression", function () {
