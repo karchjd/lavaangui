@@ -49,12 +49,6 @@ export default defineConfig({
         ...devices['Desktop Safari'], baseURL: 'http://127.0.0.1:3245'
       },
     },
-    {
-      name: "chromium remote",
-      use: {
-        ...devices["Desktop Chrome"], baseURL: 'http://test.lavaangui.org'
-      },
-    },
     ...(!isCI
       ? [
         {
