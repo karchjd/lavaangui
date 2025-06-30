@@ -130,7 +130,7 @@
           },
         });
       },
-      show: "full",
+      show: "both",
       hasTrailingDivider: false,
     },
     {
@@ -401,7 +401,7 @@
     //node menus
     {
       id: "rename-node",
-      show: "full",
+      show: "both",
       content: "Rename Variable",
       selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}`,
       onClickFunction: function (event) {
