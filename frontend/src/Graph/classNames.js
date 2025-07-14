@@ -25,3 +25,13 @@ export const LABELWIDTH = 80;
 export const POTENTIAL_LAT_OB_REGRESSION = 'loRegression';
 export const REGRESSION = 'regression';
 export const FACTLOAD = 'factorLoad';
+export const FIXEDSTYLELABEL = {
+    label: function (edge) {
+        return edge.data("label") + "@" + edge.data("value");
+    }
+}
+export const FIXEDSTYLE = {
+    label: function (edge) {
+        return "@" + edge.data("value");
+    },
+}

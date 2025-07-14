@@ -148,19 +148,11 @@ export const graphStyles = [
   },
   {
     selector: `edge.${Constants.FIXED}.${Constants.LABEL}`,
-    style: {
-      label: function (edge) {
-        return edge.data("label") + "@" + edge.data("value");
-      },
-    },
+    style: Constants.FIXEDSTYLE,
   },
   {
     selector: `edge.${Constants.FIXED}.${Constants.NOT_LABEL}`,
-    style: {
-      label: function (edge) {
-        return "@" + edge.data("value");
-      },
-    },
+    style: Constants.FIXEDSTYLELABEL,
   },
   {
     selector: `edge.${Constants.FORCE_FREE}`,
