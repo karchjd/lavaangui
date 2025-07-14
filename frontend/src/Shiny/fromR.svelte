@@ -16,6 +16,20 @@
     LOOP,
   } from "../Graph/classNames.js";
 
+  function floatEqual(a, b) {
+    if (a === b) {
+      return true;
+    }
+
+    const diff = Math.abs(a - b);
+
+    if (diff < Number.EPSILON) {
+      return true;
+    }
+
+    return diff <= Number.EPSILON * Math.min(Math.abs(a), Math.abs(b));
+  }
+
   function serverAvail() {
     // @ts-expect-error
     return typeof Shiny === "object" && Shiny !== null;
@@ -376,6 +390,17 @@
           allEstimates.se_std = std_result.se[i];
           allEstimates.ciLow_std = std_result["ci.lower"][i];
           allEstimates.ciHigh_std = std_result["ci.upper"][i];
+          allEstimates.p_value_std = std_result.pvalue[i];
+
+          //lavaan fixes some edges for std_result, so we need to respect that
+          if (
+            floatEqual(allEstimates.est_std, 1) &&
+            allEstimates.p_value_std == null &&
+            floatEqual(allEstimates.ciLow_std, 1) &&
+            floatEqual(allEstimates.ciHigh_std, 1)
+          ) {
+            existingEdge.addClass("fixedUnderStd");
+          }
 
           existingEdge.addClass("hasEst");
         } else if (ordered && lav_result.op[i] == "~~") {
@@ -384,6 +409,12 @@
             allEstimates.estFixed_std = std_result["est.std"][i];
             existingEdge.addClass("hasEstFixed");
           }
+        } else if (existingEdge.isFixed()) {
+          allEstimates.est_std = std_result["est.std"][i];
+          allEstimates.se_std = std_result.se[i];
+          allEstimates.ciLow_std = std_result["ci.lower"][i];
+          allEstimates.ciHigh_std = std_result["ci.upper"][i];
+          existingEdge.addClass("hasEstStd");
         }
         existingEdge.data("estimates", allEstimates);
       }

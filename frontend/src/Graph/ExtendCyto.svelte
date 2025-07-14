@@ -203,6 +203,10 @@
             Constants.HAS_EST_FIXED,
         );
         this.removeData("estimates");
+        this.removeClass("fixedUnderStd");
+        this.removeClass("hasEst");
+        this.removeClass("hasEstFixed");
+        this.removeClass("hasEstStd");
         return this;
     });
 

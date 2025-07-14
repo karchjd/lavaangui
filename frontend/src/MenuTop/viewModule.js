@@ -1,6 +1,7 @@
 import { get } from "svelte/store";
 import { cyStore } from "../stores";
 import { checkNodeLoop } from "../Graph/checkNodeLoop";
+import * as Constants from "../Graph/classNames.js";
 
 export const edgeItems = [
   {
@@ -32,6 +33,27 @@ export function updateLabels(viewOption, std, number_digits) {
     .style({ label: labeledStyleEst })
     .update();
 
+  // For fixed edges, to show estimates when standardized estimates are requested
+  if (std) {
+    cy.style().selector("edge.hasEstStd").style({ label: styleEst }).update();
+    cy.style().selector("edge.hasEstStd.label").style({ label: labeledStyleEst }).update();
+    cy.style().selector("edge.fixedUnderStd").style({
+      label: function (edge) {
+        return "@1";
+      }
+    }).update();
+    cy.style().selector("edge.fixedUnderStd.label").style({
+      label: function (edge) {
+        return edge.data("label") + "@1";
+      }
+    }).update();
+  } else {
+    cy.style().selector(`edge.${Constants.FIXED}.${Constants.NOT_LABEL}`).style(Constants.FIXEDSTYLE).update();
+    cy.style().selector(`edge.${Constants.FIXED}.${Constants.LABEL}`).style(Constants.FIXEDSTYLELABEL).update();
+  }
+
+
+  // Update fixed estimates for ordinal variables
   const fixedEstStyle = generateFixedEstStyle(viewOption, postfix, number_digits);
   cy.style().selector("edge.hasEstFixed").style({ label: fixedEstStyle }).update();
 }
@@ -118,7 +140,7 @@ function generateStyleEst(viewOption, postfix, number_digits) {
         `[${formatValue(edge.data("estimates")["ciLow" + postfix])}, ${formatValue(edge.data("estimates")["ciHigh" + postfix])}]`;
     case "estPVal":
       return (edge) =>
-        `${formatValue(edge.data("estimates")["est" + postfix])}${getStars(edge.data("estimates")["p_value"])}`;
+        `${formatValue(edge.data("estimates")["est" + postfix])}${getStars(edge.data("estimates")["p_value" + postfix])}`;
     case "estSE":
       return (edge) =>
         `${formatValue(edge.data("estimates")["est" + postfix])} (${formatValue(edge.data("estimates")["se" + postfix])})`;

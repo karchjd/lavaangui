@@ -22,4 +22,13 @@ export const ORDERED = 'ordered';
 export const HAS_EST_FIXED = "hasEstFixed"
 export const NODEWITH = 80;
 export const LABELWIDTH = 80;
-
+export const FIXEDSTYLELABEL = {
+    label: function (edge) {
+        return edge.data("label") + "@" + edge.data("value");
+    }
+}
+export const FIXEDSTYLE = {
+    label: function (edge) {
+        return "@" + edge.data("value");
+    },
+}
