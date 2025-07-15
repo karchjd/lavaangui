@@ -1,3 +1,7 @@
+# lavaangui 0.2.5
+
+- Bugfix: Standardized results were not displayed correctly for fixed edges, see https://github.com/karchjd/lavaangui/issues/83
+
 # lavaangui 0.2.4
 
 - Bugfix: Label move, node move, and edge bend interactions no longer cause issues.
