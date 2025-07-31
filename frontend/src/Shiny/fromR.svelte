@@ -92,7 +92,7 @@
           edge.target().getLabel() == goal_edge.target;
       }
       if (goal_edge.user != undefined) {
-        if (goal_edge.user == 1) {
+        if (goal_edge.user == 1 || goal_edge.user == 7) {
           res = res && edge.isUserAdded();
         } else if (goal_edge.user == 0) {
           res = res && edge.isLavaanAdded();
