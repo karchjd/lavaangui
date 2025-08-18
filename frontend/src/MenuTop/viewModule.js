@@ -130,20 +130,24 @@ function getStars(pval) {
 
 
 function generateStyleEst(viewOption, postfix, number_digits) {
-  const formatValue = (value) => value === null ? "NA" : value.toFixed(number_digits);
+  const formatOrNA = (estimates, field) => {
+    if (!estimates) return "NA";
+    const value = estimates[field];
+    return value.toFixed(number_digits);
+  };
 
   switch (viewOption) {
     case "est":
-      return (edge) => formatValue(edge.data("estimates")["est" + postfix]);
+      return (edge) => formatOrNA(edge.data("estimates"), "est" + postfix);
     case "ci":
       return (edge) =>
-        `[${formatValue(edge.data("estimates")["ciLow" + postfix])}, ${formatValue(edge.data("estimates")["ciHigh" + postfix])}]`;
+        `[${formatOrNA(edge.data("estimates"), "ciLow" + postfix)}, ${formatOrNA(edge.data("estimates"), "ciHigh" + postfix)}]`;
     case "estPVal":
       return (edge) =>
-        `${formatValue(edge.data("estimates")["est" + postfix])}${getStars(edge.data("estimates")["p_value" + postfix])}`;
+        `${formatOrNA(edge.data("estimates"), "est" + postfix)}${getStars(edge.data("estimates"), "p_value" + postfix)}`;
     case "estSE":
       return (edge) =>
-        `${formatValue(edge.data("estimates")["est" + postfix])} (${formatValue(edge.data("estimates")["se" + postfix])})`;
+        `${formatOrNA(edge.data("estimates"), "est" + postfix)} (${formatOrNA(edge.data("estimates"), "se" + postfix)})`;
     default:
       return () => "NA"; // Or some default behavior
   }
