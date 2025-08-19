@@ -1,3 +1,9 @@
+# lavaangui 0.2.6
+- Bugfix: `plot_lavaan()` after `efa` is now working
+- Bugfix: Avoid crashing when data("estimates") for an edge is undefined
+- Added renv for deployed version
+- Added display of `lavaan` version number in app
+
 # lavaangui 0.2.5
 
 - Bugfix: Standardized results were not displayed correctly for fixed edges, see https://github.com/karchjd/lavaangui/issues/83
@@ -27,7 +33,7 @@ Multiple bug fixes:
 
 
 # lavaangui 0.2.0-online
-- Enabled the cancel button shinyapps.io again
+- Enabled the cancel button only for shinyapps.io again
 
 # lavaangui 0.2.0
 
@@ -39,13 +45,13 @@ Multiple bug fixes:
 - Ordinal variables now work for all tested models; included the `auto.th` and `auto.delta` options; added DWLS estimator.
 - Data upload now supports a wider range of CSV files.
 - Added an auto-save feature to prevent data loss on timeout.
-- Data preparation for download has been sped up by 10x.
+- Data preparation for download has been speed up by 10x.
 - Bugfix in hashing functions for caching.
 - Improved file upload, now with a status bar.
 - The hide/show status of elements is now saved to the file.
-- `plot_lavaan`: Bugfix for multiple groups.
 - Renamed `plot_interactive` to `plot_lavaan`.
-- Removed dependencies on qgraph and htmlwidgets.
+- `plot_lavaan`: Bugfix for multiple groups.
+- Removed dependencies on `qgraph` and `htmlwidgets`.
 
 # lavaangui 0.1.2
 
