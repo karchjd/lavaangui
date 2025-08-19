@@ -1,6 +1,6 @@
 Package: lavaangui
 Title: Graphical User Interface with Integrated 'Diagrammer' for 'Lavaan'
-Version: 0.2.6
+Version: 0.2.6.9000
 Authors@R: 
     person(c("Julian",  "D."), "Karch",
     email = "j.d.karch@fsw.leidenuniv.nl", 
