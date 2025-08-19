@@ -1,6 +1,17 @@
 <script>
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
   let version;
+  let versionLavaan;
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("version", function (lavguiVersion) {
+    version = lavguiVersion[0].join(".");
+  });
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("lavVersion", function (lavVersion) {
+    versionLavaan = lavVersion[0].join(".");
+  });
 
   const menuItems = [
     {
@@ -32,8 +43,8 @@
 
   function openAbout() {
     bootbox.alert({
-      title: "About Lavaangui",
-      message: `Version: ${version}<br> Author: Julian D. Karch<br> Email: j.d.karch@fsw.leidenuniv.nl <br> lavaangui is BETA software. Please report any bugs at https://github.com/karchjd/lavaangui/issues.`,
+      title: "About lavaangui",
+      message: `lavaangui version: ${version}<br> lavaan version: ${versionLavaan}  <br>Author: Julian D. Karch<br> Email: j.d.karch@fsw.leidenuniv.nl <br> lavaangui is BETA software. Please report any bugs at https://github.com/karchjd/lavaangui/issues.`,
     });
   }
 
@@ -62,11 +73,6 @@
               </div>`,
     });
   }
-
-  // @ts-expect-error
-  Shiny.addCustomMessageHandler("version", function (lavguiVersion) {
-    version = lavguiVersion[0].join(".");
-  });
 </script>
 
 <DropdownLinks name={"Help"} {menuItems} />

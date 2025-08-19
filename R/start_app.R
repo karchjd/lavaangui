@@ -58,6 +58,7 @@ start_app <- function(fit = NULL, full, where) {
     }
 
     session$sendCustomMessage("version", message = utils::packageVersion("lavaangui"))
+    session$sendCustomMessage("lavVersion", message = utils::packageVersion("lavaan"))
 
     ## View data
     serverDataViewer("dataViewer", getData)
