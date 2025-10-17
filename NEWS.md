@@ -1,3 +1,7 @@
+# lavaangui 0.3.1
+- Bugfix: New lines in syntax are now more consistent
+
+
 # lavaangui 0.3.0
 -	Added: Allow renaming of nodes and edges in plot_lavaan.
 -	Added: Switch latent variable appearance between ellipse and rectangle.

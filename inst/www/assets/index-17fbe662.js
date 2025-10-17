@@ -4,18 +4,18 @@ import{d as On,w as Te,S as X,i as Z,s as K,c as te,g as Y,o as ke,e as G,a as E
 `;let s=e.getLatentNodes();s=s.nodes(function(y){const $=y.connectedEdges(function(w){return w.isDirected()&&w.source().id()==y.id()});return $.length>0&&$.every(w=>w.target().isLatent())});let r=e.getLatentNodes();r=r.nodes(function(y){const $=y.connectedEdges(function(N){return N.isDirected()&&N.target().id()==y.id()}),w=y.connectedEdges(function(N){return N.isDirected()});return w.length>0&&$.length==w.length});let l=e.getLatentNodes(),d=!1;for(let y=0;y<l.length;y++){const $=l[y],w=$.connectedEdges(function(N){return N.isDirected()&&N.source().id()==$.id()&&(N.target().isObserved()&&N.isFactLoad()||s.some(C=>C.id()===$.id()))});w.length>0&&(d||(t+=`# measurement model
 `,d=!0),t+=" "+$.getLabel()+" =~ "+Ft(w,"target")+`
 `)}function c(y){return y.isDirected()&&!y.source().isConstant()&&(!(y.source().isLatent()&&y.target().isObserved())||y.isRegression())&&!(y.source().isLatent()&&s.some(w=>w.id()===y.source().id())&&y.target().isLatent())&&(y.isUserAdded()||y.isModifiedLavaan())&&!r.some(w=>w.id()===y.target().id())}let a=e.edges(c),m=[];for(let y=0;y<a.length;y++)so(m,a[y].target())||m.push(a[y].target());if(m.length>0){t+=`
-# regressions`;for(let y=0;y<m.length;y++){const $=m[y],w=$.connectedEdges(N=>c(N)&&N.target().same($));if(w.length>0){let N="";for(var g=0;g<w.length;g++){var u=w[g].source();g>0&&(N+=" + "),N+=it(u,w[g])}t+=`
- `+$.getLabel()+" ~ "+N}}}let f=e.edges(function(y){return(y.isUndirected()||y.myIsLoop())&&(y.isUserAdded()||y.isModifiedLavaan())});if(f.length>0){t+=`
-
-# (residual) (co)variances`;for(let y=0;y<f.length;y++){let $=f[y].source().data("label");t+=`
- `+$+" ~~ "+it(f[y].target(),f[y])}}const h=e.nodes(function(y){return y.isConstant()});for(let y=0;y<h.length;y++){const w=h[y].connectedEdges(function(N){return N.isUserAdded()});if(w.length>0){t+=`
+ # regressions 
+`;for(let y=0;y<m.length;y++){const $=m[y],w=$.connectedEdges(N=>c(N)&&N.target().same($));if(w.length>0){let N="";for(var g=0;g<w.length;g++){var u=w[g].source();g>0&&(N+=" + "),N+=it(u,w[g])}t+=" "+$.getLabel()+" ~ "+N+`
+`}}}let f=e.edges(function(y){return(y.isUndirected()||y.myIsLoop())&&(y.isUserAdded()||y.isModifiedLavaan())});if(f.length>0){t+=`
+# (residual) (co)variances 
+`;for(let y=0;y<f.length;y++){let $=f[y].source().data("label");t+=" "+$+" ~~ "+it(f[y].target(),f[y])+`
+`}}const h=e.nodes(function(y){return y.isConstant()});for(let y=0;y<h.length;y++){const w=h[y].connectedEdges(function(N){return N.isUserAdded()});if(w.length>0){t+=`
 # intercepts
 `;for(var g=0;g<w.length;g++){var u=w[g].target();t+=" "+u.getLabel()+" ~ "+it(void 0,w[g])+`
 `}}}d=!1;for(let y=0;y<r.length;y++){const $=r[y],w=$.connectedEdges(function(N){return N.isDirected()&&N.target().id()==$.id()});w.length>0&&(d||(t+=`
-
- #  formative factors
+ # formative factors
 `,d=!0),t+=" "+$.getLabel()+" <~ "+Ft(w,"source")+`
-`)}t=`'
+`)}t=t.replace(/^(\s*\n)+/,""),t=`'
 `+t+`'
 
 `;function b(y,$=60){return y.split(`

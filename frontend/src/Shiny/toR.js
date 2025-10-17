@@ -218,7 +218,7 @@ export function createSyntax(mode) {
   }
 
   if (reg_nodes.length > 0) {
-    syntax += "\n" + "# regressions";
+    syntax += "\n # regressions \n";
     for (let i = 0; i < reg_nodes.length; i++) {
       const targetNode = reg_nodes[i];
       const connectedEdges = targetNode.connectedEdges(edge => regression_edge(edge) && edge.target().same(targetNode));
@@ -231,7 +231,7 @@ export function createSyntax(mode) {
           }
           nodeNames += addTerms(node, connectedEdges[j]);
         }
-        syntax += "\n " + targetNode.getLabel() + " ~ " + nodeNames;
+        syntax += " " + targetNode.getLabel() + " ~ " + nodeNames + "\n";
       }
     }
   }
@@ -244,11 +244,11 @@ export function createSyntax(mode) {
     );
   });
   if (cov_edges.length > 0) {
-    syntax += "\n\n" + "# (residual) (co)variances";
+    syntax += "\n" + "# (residual) (co)variances \n";
     for (let i = 0; i < cov_edges.length; i++) {
       let node1 = cov_edges[i].source().data("label");
       syntax +=
-        "\n " + node1 + " ~~ " + addTerms(cov_edges[i].target(), cov_edges[i]);
+        " " + node1 + " ~~ " + addTerms(cov_edges[i].target(), cov_edges[i]) + "\n";
     }
   }
 
@@ -284,7 +284,7 @@ export function createSyntax(mode) {
     });
     if (connectedEdges.length > 0) {
       if (!shown) {
-        syntax += "\n\n #  formative factors" + "\n";
+        syntax += "\n # formative factors" + "\n";
         shown = true;
       }
       syntax += " " + formativeNode.getLabel() + " <~ " + getNodeNames(connectedEdges, "source") + "\n";
@@ -292,7 +292,8 @@ export function createSyntax(mode) {
   }
 
 
-
+  // remove empty lines caused by sections not existing
+  syntax = syntax.replace(/^(\s*\n)+/, '')
   // split lines that are two long
   syntax = "'\n" + syntax + "'" + "\n\n";
   function splitLongLines(inputStr, threshold = 60) {
