@@ -144,7 +144,7 @@ function generateStyleEst(viewOption, postfix, number_digits) {
         `[${formatOrNA(edge.data("estimates"), "ciLow" + postfix)}, ${formatOrNA(edge.data("estimates"), "ciHigh" + postfix)}]`;
     case "estPVal":
       return (edge) =>
-        `${formatOrNA(edge.data("estimates"), "est" + postfix)}${getStars(edge.data("estimates"), "p_value" + postfix)}`;
+        `${formatOrNA(edge.data("estimates"), "est" + postfix)}${getStars(formatOrNA(edge.data("estimates"), "p_value" + postfix))}`;
     case "estSE":
       return (edge) =>
         `${formatOrNA(edge.data("estimates"), "est" + postfix)} (${formatOrNA(edge.data("estimates"), "se" + postfix)})`;
