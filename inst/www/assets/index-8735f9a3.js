@@ -21,7 +21,7 @@ import{d as On,w as Te,S as X,i as Z,s as K,c as te,g as W,o as ke,e as G,a as E
 `;function p(_,$=60){return _.split(`
 `).map(O=>{if(O.includes("+")&&O.length>$){const y=O.split(" + ");let h=[],x=y[0];const F=O.match(/^\s*/)[0],J=x.indexOf("~")+1;for(let A=1;A<y.length;A++)x.length+y[A].length+3>$?(h.push(x+" + "),x=F+" ".repeat(J)+y[A]):x+=" + "+y[A];return h.push(x),h.join(`
 `)}return O}).join(`
-`)}t=p(t);const v=e.nodes(function(_){return _.isOrdered()}).map(_=>_.getLabel()),C=lo(v,r);return i+="model <-"+t,i+="result <- lavaan(model, data, "+C,new ro(n,i,C,t=t,W(Fe),v)}function lo(n,e){const o=W(ne),t=Ee(o.meanStruc),i=Ee(o.intOvFree),r=Ee(o.intLvFree);let s=`meanstructure = ${t},
+`)}t=p(t);const v=e.nodes(function(_){return _.isOrdered()}).map(_=>_.getLabel()),C=lo(v,r);return i+="model <-"+t,i+="fit <- lavaan(model, data, "+C,new ro(n,i,C,t=t,W(Fe),v)}function lo(n,e){const o=W(ne),t=Ee(o.meanStruc),i=Ee(o.intOvFree),r=Ee(o.intLvFree);let s=`meanstructure = ${t},
 		 int.ov.free = ${i}, int.lv.free = ${r},
 		 estimator = ${mt(o.estimator)}, se = ${mt(o.se)},
 		 missing = ${mt(o.missing)}, auto.fix.first = ${Ee(o.fix_first)},

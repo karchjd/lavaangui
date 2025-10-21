@@ -334,7 +334,7 @@ export function createSyntax(mode) {
   const lavOptions = produceLavaanOptions(ordered_labels, formative);
 
   R_script += "model <-" + syntax;
-  R_script += "result <- lavaan(model, data, " + lavOptions;
+  R_script += "fit <- lavaan(model, data, " + lavOptions;
   const for_R = new DataForR(mode, R_script, lavOptions, syntax = syntax, get(fitCache), ordered_labels)
   return for_R;
 }
