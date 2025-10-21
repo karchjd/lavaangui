@@ -52,7 +52,7 @@ If you find typos or areas where documentation is lacking, feel free to submit P
 
 - R https://cran.r-project.org/
 - Node.js https://nodejs.org/en/download
-- Front-end dependencies: Run `npm run install` from a shell in the src/ folder.
+- Front-end dependencies: Run `npm install -D vite` from a shell in the `frontend/` folder.
 - Back-end dependencies: Execute `devtools::install_local(dependencies = TRUE)` in R, with the working directory set to the root folder of the package.
 
 ### Compile 
