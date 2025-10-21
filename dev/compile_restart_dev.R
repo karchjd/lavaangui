@@ -40,26 +40,27 @@ library(lavaan)
 # 
 # fit <- sem(model, data = PoliticalDemocracy)
 
+# model <- '
+#  # formative factors
+#  visual <~ 1*x1 + x2 + x3
+#  textual <~ x4 + x5 + x6
+#  speed <~ x7 + x8 + x9
+# '
+# 
+# fit <- lavaan(model, HolzingerSwineford1939, meanstructure = "default",
+#               int.ov.free = TRUE, int.lv.free = FALSE,
+#               estimator = "default", se = "default",
+#               missing = "listwise", auto.fix.first = FALSE,
+#               auto.fix.single = TRUE, auto.var = TRUE,
+#               auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
+#               fixed.x = TRUE, auto.th = TRUE, 
+#               auto.delta = TRUE,
+#               optim.gradient = "numerical", do.fit = FALSE)
 
 HS.model <- ' visual  =~ x1 + x2 + x3
               textual =~ x4 + x5 + x6
               speed   =~ x7 + x8 + x9 '
-# fit <- cfa(HS.model, data = HolzingerSwineford1939)
+fit <- cfa(HS.model, data = HolzingerSwineford1939)
 
-model <- '
- # formative factors
- visual <~ 1*x1 + x2 + x3
- textual <~ x4 + x5 + x6
- speed <~ x7 + x8 + x9
-'
 
-fit <- lavaan(model, HolzingerSwineford1939, meanstructure = "default",
-                 int.ov.free = TRUE, int.lv.free = FALSE,
-                 estimator = "default", se = "default",
-                 missing = "listwise", auto.fix.first = FALSE,
-                 auto.fix.single = TRUE, auto.var = TRUE,
-                 auto.cov.lv.x = TRUE, auto.cov.y = TRUE,
-                 fixed.x = TRUE, auto.th = TRUE, 
-                 auto.delta = TRUE,
-                 optim.gradient = "numerical", do.fit = FALSE)
 lavaangui(fit)

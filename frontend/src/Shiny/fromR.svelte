@@ -310,6 +310,11 @@
           edge.validate();
         }
         edge.checkAndMarkPotentialLatObReg();
+        if (edge.source().isConstant()) {
+          edge.makeMeanEdge();
+        } else {
+          edge.makeOtherEdge();
+        }
       }
     }
     if (!imported) {
