@@ -228,9 +228,7 @@ test("Not Identified", async ({ page }) => {
   await page.waitForTimeout(500);
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, "not_identified.lvm"));
-  const fitButton = await page.getByRole("button", { name: "Estimates" });
-  fitButton.click();
-  await page.waitForTimeout(500);
+  await page.locator('div.center-screen').waitFor({ state: 'hidden' });
   await expect(page.getByTestId("result-text")).toContainText(
     "This may be a symptom that the model is not"
   );
