@@ -176,6 +176,8 @@
       lav_model = lav_model.parTable;
     }
 
+    const formative = lav_model.op.includes("<~");
+
     const orderedVariables = new Set();
     for (let i = 0; i < lav_model.lhs.length; i++) {
       if (lav_model.op[i] === "|") {
@@ -285,7 +287,10 @@
           edge = existingEdge;
         }
         // post processing
-        if (lav_model.free[i] == 0) {
+        if (
+          lav_model.free[i] == 0 &&
+          (!formative || lav_model.ustart[i] !== null) // exception for formative indicators with ustart NA (null in JS)
+        ) {
           if (lav_model.ustart[i] !== 0 && lav_model.exo[i] !== 1) {
             if (
               orderedVariables.has(edge.target().getLabel()) &&

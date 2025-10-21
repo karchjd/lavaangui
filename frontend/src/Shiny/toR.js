@@ -142,6 +142,7 @@ export function createSyntax(mode) {
   let syntax = "";
   let R_script = "";
   const run = mode !== "user model"
+  let formative = false;
 
   R_script += "library(lavaan)" + "\n";
   if (appSt.dataAvail) {
@@ -284,6 +285,7 @@ export function createSyntax(mode) {
     });
     if (connectedEdges.length > 0) {
       if (!shown) {
+        formative = true;
         syntax += "\n # formative factors" + "\n";
         shown = true;
       }
@@ -291,9 +293,9 @@ export function createSyntax(mode) {
     }
   }
 
-
   // remove empty lines caused by sections not existing
   syntax = syntax.replace(/^(\s*\n)+/, '')
+
   // split lines that are two long
   syntax = "'\n" + syntax + "'" + "\n\n";
   function splitLongLines(inputStr, threshold = 60) {
@@ -329,7 +331,7 @@ export function createSyntax(mode) {
   const ordered_labels = ordered_nodes.map(node => node.getLabel());
 
 
-  const lavOptions = produceLavaanOptions(ordered_labels);
+  const lavOptions = produceLavaanOptions(ordered_labels, formative);
 
   R_script += "model <-" + syntax;
   R_script += "result <- lavaan(model, data, " + lavOptions;
@@ -337,7 +339,7 @@ export function createSyntax(mode) {
   return for_R;
 }
 
-function produceLavaanOptions(ordered_labels) {
+function produceLavaanOptions(ordered_labels, formative) {
   const modelOpt = get(modelOptions);
   const meanStruc = boolToString(modelOpt.meanStruc);
   const ovFree = boolToString(modelOpt.intOvFree);
@@ -359,18 +361,22 @@ function produceLavaanOptions(ordered_labels) {
   )}, auto.cov.y = ${boolToString(modelOpt.auto_cov_y)},
   \t\t fixed.x = ${boolToString(modelOpt.fixed_x)}, auto.th = ${boolToString(modelOpt["auto.th"])}, 
   \t\t auto.delta = ${boolToString(modelOpt["auto.delta"])}`;
-  if (modelOpt.se == "boot") {
-    const additional = `, bootstrap = ${modelOpt.n_boot})`;
-    options = options + additional;
-  } else {
-    options = options + ")";
-  }
 
+  // optional addons
+  if (modelOpt.se == "boot") {
+    options = options + `, bootstrap = ${modelOpt.n_boot}`;
+  }
+  if (formative) {
+    options = options + `,\n\t\t optim.gradient = "numerical"`;
+  }
   if (ordered_labels.length > 0) {
     const ordered_arg = 'c("' + ordered_labels.join('", "') + '")'
     options = `ordered = ${ordered_arg}, 
     \t\t ${options}`
   }
+
+  options = options + ")";
+
   return options;
 }
 
