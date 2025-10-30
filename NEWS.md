@@ -1,10 +1,14 @@
 # lavaangui 0.3.1
 - Bugfix: New lines in syntax are now more consistent
+- Bugfix: Changed support of composites to match lavaan 0.6-20, lavaan version >= 0.6-20 is now required.
+- Bugfix: Directed edges from models imported via `lavaangui()` can now be reverted and set to undirected
+- Bugfix: p values stars are shown again (was broken since 0.2.5)
+- Appearance: Made context menu for edges a bit prettier
+- Appearance: `results` is now named `fit`
 
 
 # lavaangui 0.3.0
 -	Added: Allow renaming of nodes and edges in plot_lavaan.
--	Added: Switch latent variable appearance between ellipse and rectangle.
 -	Added: Change fixed values in the context menu.
 -	Added: Directed arrow from latent to observed variable can be marked as a factor loading or regression coefficient.
 -	Added: Line style can be changed between solid, dashed, and dotted.
