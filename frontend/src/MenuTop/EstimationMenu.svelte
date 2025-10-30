@@ -17,6 +17,47 @@
     { value: "DLS", name: "Distributionally-weighted Least Squares (DLW)" },
   ];
 
+  // Advanced/less common estimators exposed under a nested "Others" submenu
+  const otherEstimators = [
+    {
+      value: "MLM",
+      name: "MLM",
+    },
+    {
+      value: "MLMV",
+      name: "MLMV",
+    },
+    {
+      value: "MLMVS",
+      name: "MLMVS",
+    },
+    { value: "MLF", name: "MLF" },
+    {
+      value: "MLR",
+      name: "MLR",
+    },
+    {
+      value: "WLSMV",
+      name: "WLSMV",
+    },
+    {
+      value: "DWLSM",
+      name: "DWLSM",
+    },
+    {
+      value: "DWLSMV",
+      name: "DWLSMV",
+    },
+    {
+      value: "ULSM",
+      name: "ULSM",
+    },
+    {
+      value: "ULSMV",
+      name: "ULSMV",
+    },
+  ];
+
   const standardErrors = [
     { value: "default", name: "Default" },
     { value: "robust", name: "Robust" },
@@ -47,6 +88,19 @@
           bind:group={$modelOptions.estimator}
         />
       {/each}
+      <!-- Nested submenu for additional/advanced estimators -->
+      <li class="dropdown-submenu">
+          <a tabindex="-1" href={"#"}>&nbsp;&nbsp;Others&nbsp;</a>
+        <ul class="dropdown-menu">
+          {#each otherEstimators as item}
+            <RadioItem
+              name={item.name}
+              value={item.value}
+              bind:group={$modelOptions.estimator}
+            />
+          {/each}
+        </ul>
+      </li>
     </ul>
   </li>
   <li class="dropdown-submenu">
