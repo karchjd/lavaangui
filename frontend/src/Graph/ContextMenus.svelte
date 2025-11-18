@@ -155,7 +155,7 @@
         edge.remove();
         tolavaan($modelOptions.mode);
       },
-      show: "full",
+      show: "both",
       hasTrailingDivider: true,
     },
     {
@@ -523,7 +523,7 @@
         node.remove();
         tolavaan($modelOptions.mode);
       },
-      show: "full",
+      show: "both",
       hasTrailingDivider: true,
     },
     {

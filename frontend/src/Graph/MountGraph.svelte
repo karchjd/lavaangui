@@ -27,20 +27,6 @@
   });
 
   function handleKeyDown(event) {
-    $appState.buttonDown = true;
-    if (
-      event.key === "Alt" ||
-      event.key === " " ||
-      event.key.toLowerCase() === "x"
-    ) {
-      eh.enableDrawMode();
-      if (event.key === "Alt") {
-        $appState.drawing = "undirected";
-      } else {
-        $appState.drawing = "directed";
-      }
-    }
-
     // Handle Backspace key
     if (event.key === "Backspace") {
       let selectedElements = cy.$(":selected");
@@ -51,23 +37,40 @@
       $appState.buttonDown = false;
     }
 
-    // Handle 'l', 'o', 'c' keys
-    if (["l", "o", "c"].includes(event.key.toLowerCase())) {
-      let nodeType;
-      switch (event.key.toLowerCase()) {
-        case "l":
-          nodeType = LATENT;
-          break;
-        case "o":
-          nodeType = OBSERVED;
-          break;
-        case "c":
-          nodeType = CONSTANT;
-          break;
+    if (full) {
+      $appState.buttonDown = true;
+      if (
+        event.key === "Alt" ||
+        event.key === " " ||
+        event.key.toLowerCase() === "x"
+      ) {
+        eh.enableDrawMode();
+        if (event.key === "Alt") {
+          $appState.drawing = "undirected";
+        } else {
+          $appState.drawing = "directed";
+        }
       }
-      addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
-      $appState.buttonDown = false;
+
+      // Handle 'l', 'o', 'c' keys
+      if (["l", "o", "c"].includes(event.key.toLowerCase())) {
+        let nodeType;
+        switch (event.key.toLowerCase()) {
+          case "l":
+            nodeType = LATENT;
+            break;
+          case "o":
+            nodeType = OBSERVED;
+            break;
+          case "c":
+            nodeType = CONSTANT;
+            break;
+        }
+        addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
+        $appState.buttonDown = false;
+      }
     }
+
     $appState.buttonDown = false;
   }
 
@@ -87,18 +90,15 @@
       makeNodesGrabbable();
     }
   }
-
   if (full) {
     document.addEventListener("keyup", handleKeyUp);
   }
 
   function handleMouseOver() {
-    if (!full) return;
     document.addEventListener("keydown", handleKeyDown);
   }
 
   function handleMouseOut() {
-    if (!full) return;
     document.removeEventListener("keydown", handleKeyDown, false);
   }
 
