@@ -1,4 +1,6 @@
 <script>
+  export let full = true;
+
   import { onMount } from "svelte";
   import { addNode, addEdge } from "./graphmanipulation.js";
   import {
@@ -25,20 +27,6 @@
   });
 
   function handleKeyDown(event) {
-    $appState.buttonDown = true;
-    if (
-      event.key === "Alt" ||
-      event.key === " " ||
-      event.key.toLowerCase() === "x"
-    ) {
-      eh.enableDrawMode();
-      if (event.key === "Alt") {
-        $appState.drawing = "undirected";
-      } else {
-        $appState.drawing = "directed";
-      }
-    }
-
     // Handle Backspace key
     if (event.key === "Backspace") {
       let selectedElements = cy.$(":selected");
@@ -49,23 +37,40 @@
       $appState.buttonDown = false;
     }
 
-    // Handle 'l', 'o', 'c' keys
-    if (["l", "o", "c"].includes(event.key.toLowerCase())) {
-      let nodeType;
-      switch (event.key.toLowerCase()) {
-        case "l":
-          nodeType = LATENT;
-          break;
-        case "o":
-          nodeType = OBSERVED;
-          break;
-        case "c":
-          nodeType = CONSTANT;
-          break;
+    if (full) {
+      $appState.buttonDown = true;
+      if (
+        event.key === "Alt" ||
+        event.key === " " ||
+        event.key.toLowerCase() === "x"
+      ) {
+        eh.enableDrawMode();
+        if (event.key === "Alt") {
+          $appState.drawing = "undirected";
+        } else {
+          $appState.drawing = "directed";
+        }
       }
-      addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
-      $appState.buttonDown = false;
+
+      // Handle 'l', 'o', 'c' keys
+      if (["l", "o", "c"].includes(event.key.toLowerCase())) {
+        let nodeType;
+        switch (event.key.toLowerCase()) {
+          case "l":
+            nodeType = LATENT;
+            break;
+          case "o":
+            nodeType = OBSERVED;
+            break;
+          case "c":
+            nodeType = CONSTANT;
+            break;
+        }
+        addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
+        $appState.buttonDown = false;
+      }
     }
+
     $appState.buttonDown = false;
   }
 
@@ -85,8 +90,9 @@
       makeNodesGrabbable();
     }
   }
-
-  document.addEventListener("keyup", handleKeyUp);
+  if (full) {
+    document.addEventListener("keyup", handleKeyUp);
+  }
 
   function handleMouseOver() {
     document.addEventListener("keydown", handleKeyDown);
@@ -101,73 +107,76 @@
     m.y = event.offsetY;
   }
 
-  cy.on("ehcomplete", (event, sourceNode, targetNode, addedEdge) => {
-    const edge = addedEdge;
-    const sourceNodeId = sourceNode.id();
-    const targetNodeId = targetNode.id();
-    edge.remove();
-    edge.init();
-    if (sourceNodeId !== targetNodeId) {
-      if ($appState.drawing === "undirected") {
-        edge.setUndirected();
+  if (full) {
+    cy.on("ehcomplete", (event, sourceNode, targetNode, addedEdge) => {
+      const edge = addedEdge;
+      const sourceNodeId = sourceNode.id();
+      const targetNodeId = targetNode.id();
+      edge.remove();
+      edge.init();
+      if (sourceNodeId !== targetNodeId) {
+        if ($appState.drawing === "undirected") {
+          edge.setUndirected();
+        } else {
+          edge.setDirected();
+        }
+        checkNodeLoop(sourceNodeId);
+        checkNodeLoop(targetNodeId);
       } else {
-        edge.setDirected();
+        edge.makeLoop();
+        checkNodeLoop(targetNodeId);
       }
-      checkNodeLoop(sourceNodeId);
-      checkNodeLoop(targetNodeId);
-    } else {
-      edge.makeLoop();
-      checkNodeLoop(targetNodeId);
-    }
-    //only directed edges from constant
-    if (
-      (edge.isUndirected() || edge.myIsLoop()) &&
-      (sourceNode.isConstant() || targetNode.isConstant())
-    ) {
-      return;
-    }
-
-    //no directed egdes to constant
-    if (edge.isDirected() && targetNode.isConstant()) {
-      return;
-    }
-
-    edge.checkAndMarkPotentialLatObReg();
-
-    //only one directed edge from constant
-    if (edge.isDirected() && sourceNode.isConstant()) {
-      const conConstant = targetNode.connectedEdges(
-        (edge_local) =>
-          edge_local.isUserAdded() && edge_local.source().isConstant(),
-      );
-      if (conConstant.length > 1) {
+      //only directed edges from constant
+      if (
+        (edge.isUndirected() || edge.myIsLoop()) &&
+        (sourceNode.isConstant() || targetNode.isConstant())
+      ) {
         return;
       }
-    }
 
-    //no variance edges for ordinal nodes
-    if (edge.myIsLoop() && sourceNode.isOrdered()) {
-      setAlert(
-        "error",
-        "User-defined variance arrow is not allowed for ordered variables.",
-      );
-      return;
-    }
+      //no directed egdes to constant
+      if (edge.isDirected() && targetNode.isConstant()) {
+        return;
+      }
 
-    if (edge.isDirected() && sourceNode.isConstant()) {
-      edge.makeMeanEdge();
-    } else {
-      edge.makeOtherEdge();
-    }
-    $ur.do("add", edge);
-    tolavaan($modelOptions.mode);
-  });
+      edge.checkAndMarkPotentialLatObReg();
+
+      //only one directed edge from constant
+      if (edge.isDirected() && sourceNode.isConstant()) {
+        const conConstant = targetNode.connectedEdges(
+          (edge_local) =>
+            edge_local.isUserAdded() && edge_local.source().isConstant(),
+        );
+        if (conConstant.length > 1) {
+          return;
+        }
+      }
+
+      //no variance edges for ordinal nodes
+      if (edge.myIsLoop() && sourceNode.isOrdered()) {
+        setAlert(
+          "error",
+          "User-defined variance arrow is not allowed for ordered variables.",
+        );
+        return;
+      }
+
+      if (edge.isDirected() && sourceNode.isConstant()) {
+        edge.makeMeanEdge();
+      } else {
+        edge.makeOtherEdge();
+      }
+      $ur.do("add", edge);
+      tolavaan($modelOptions.mode);
+    });
+  }
 
   function handleDragOver(event) {
     event.preventDefault();
   }
 
   function handleCreateNode(event) {
+    if (!full) return;
     let offset = 0;
     const gap = 100;
     const ygap = gap * 2;

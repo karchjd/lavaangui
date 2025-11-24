@@ -37,8 +37,6 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
   let label;
   if (customLabel !== null) {
     if (!validLabel(customLabel)) {
-
-
       return;
     }
     if (cy.nodes().find(node => node.data().label === customLabel)) {
