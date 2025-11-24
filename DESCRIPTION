@@ -12,7 +12,7 @@ Description: Provides a graphical user interface with an
     that allows users to specify models by drawing path diagrams, fitting them, 
     assessing model fit, and more; second, plot_lavaan() creates 
     interactive path diagrams from models specified in 'lavaan'. 
-    Karch (2024) <doi: 10.31234/osf.io/f4ary> contains a tutorial.
+    Karch (2024) <doi: 10.1080/10705511.2024.2420678> contains a tutorial.
 URL: https://lavaangui.org/, https://github.com/karchjd/lavaangui
 BugReports: https://github.com/karchjd/lavaangui/issues
 License: GPL (>= 3)
