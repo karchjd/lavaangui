@@ -1,7 +1,7 @@
 <script>
   import GridGuides from "./Graph/GridGuides.svelte";
   import Init from "./Graph/Init.svelte";
-  import Graph from "./Graph/MountGraph.svelte";
+  import MountGraph from "./Graph/MountGraph.svelte";
   import OnEvents from "./Graph/OnEvents.svelte";
   import MenuTop from "./MenuTop/MenuTop.svelte";
   import Results from "./Shiny/Results.svelte";
@@ -51,7 +51,7 @@
       </MinContextMenu>
     {/if}
     <MainContainer>
-      <Graph />
+      <MountGraph full={$appState.full} />
       <!-- UndoRedo must be before all components that use it -->
       <UndoRedo />
       <ExtendCyto />

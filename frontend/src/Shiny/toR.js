@@ -142,6 +142,7 @@ export function createSyntax(mode) {
   let syntax = "";
   let R_script = "";
   const run = mode !== "user model"
+  let formative = false;
 
   R_script += "library(lavaan)" + "\n";
   if (appSt.dataAvail) {
@@ -218,7 +219,7 @@ export function createSyntax(mode) {
   }
 
   if (reg_nodes.length > 0) {
-    syntax += "\n" + "# regressions";
+    syntax += "\n # regressions \n";
     for (let i = 0; i < reg_nodes.length; i++) {
       const targetNode = reg_nodes[i];
       const connectedEdges = targetNode.connectedEdges(edge => regression_edge(edge) && edge.target().same(targetNode));
@@ -231,7 +232,7 @@ export function createSyntax(mode) {
           }
           nodeNames += addTerms(node, connectedEdges[j]);
         }
-        syntax += "\n " + targetNode.getLabel() + " ~ " + nodeNames;
+        syntax += " " + targetNode.getLabel() + " ~ " + nodeNames + "\n";
       }
     }
   }
@@ -244,11 +245,11 @@ export function createSyntax(mode) {
     );
   });
   if (cov_edges.length > 0) {
-    syntax += "\n\n" + "# (residual) (co)variances";
+    syntax += "\n" + "# (residual) (co)variances \n";
     for (let i = 0; i < cov_edges.length; i++) {
       let node1 = cov_edges[i].source().data("label");
       syntax +=
-        "\n " + node1 + " ~~ " + addTerms(cov_edges[i].target(), cov_edges[i]);
+        " " + node1 + " ~~ " + addTerms(cov_edges[i].target(), cov_edges[i]) + "\n";
     }
   }
 
@@ -284,14 +285,16 @@ export function createSyntax(mode) {
     });
     if (connectedEdges.length > 0) {
       if (!shown) {
-        syntax += "\n\n #  formative factors" + "\n";
+        formative = true;
+        syntax += "\n # formative factors" + "\n";
         shown = true;
       }
       syntax += " " + formativeNode.getLabel() + " <~ " + getNodeNames(connectedEdges, "source") + "\n";
     }
   }
 
-
+  // remove empty lines caused by sections not existing
+  syntax = syntax.replace(/^(\s*\n)+/, '')
 
   // split lines that are two long
   syntax = "'\n" + syntax + "'" + "\n\n";
@@ -328,15 +331,15 @@ export function createSyntax(mode) {
   const ordered_labels = ordered_nodes.map(node => node.getLabel());
 
 
-  const lavOptions = produceLavaanOptions(ordered_labels);
+  const lavOptions = produceLavaanOptions(ordered_labels, formative);
 
   R_script += "model <-" + syntax;
-  R_script += "result <- lavaan(model, data, " + lavOptions;
+  R_script += "fit <- lavaan(model, data, " + lavOptions;
   const for_R = new DataForR(mode, R_script, lavOptions, syntax = syntax, get(fitCache), ordered_labels)
   return for_R;
 }
 
-function produceLavaanOptions(ordered_labels) {
+function produceLavaanOptions(ordered_labels, formative) {
   const modelOpt = get(modelOptions);
   const meanStruc = boolToString(modelOpt.meanStruc);
   const ovFree = boolToString(modelOpt.intOvFree);
@@ -358,18 +361,22 @@ function produceLavaanOptions(ordered_labels) {
   )}, auto.cov.y = ${boolToString(modelOpt.auto_cov_y)},
   \t\t fixed.x = ${boolToString(modelOpt.fixed_x)}, auto.th = ${boolToString(modelOpt["auto.th"])}, 
   \t\t auto.delta = ${boolToString(modelOpt["auto.delta"])}`;
-  if (modelOpt.se == "boot") {
-    const additional = `, bootstrap = ${modelOpt.n_boot})`;
-    options = options + additional;
-  } else {
-    options = options + ")";
-  }
 
+  // optional addons
+  if (modelOpt.se == "boot") {
+    options = options + `, bootstrap = ${modelOpt.n_boot}`;
+  }
+  if (formative) {
+    options = options + `,\n\t\t optim.gradient = "numerical"`;
+  }
   if (ordered_labels.length > 0) {
     const ordered_arg = 'c("' + ordered_labels.join('", "') + '")'
     options = `ordered = ${ordered_arg}, 
     \t\t ${options}`
   }
+
+  options = options + ")";
+
   return options;
 }
 
