@@ -428,6 +428,7 @@
           allEstimates.se_std = std_result.se[i];
           allEstimates.ciLow_std = std_result["ci.lower"][i];
           allEstimates.ciHigh_std = std_result["ci.upper"][i];
+          allEstimates.p_value_std = std_result.pvalue[i];
           existingEdge.addClass("hasEstStd");
         }
         existingEdge.data("estimates", allEstimates);
