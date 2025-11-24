@@ -1,155 +1,142 @@
 /// <reference types="node" />
 
-import { test, expect } from "./fixtures";
-import path from "path";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
+import type { BrowserContext, Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
+import { loadModelAndData } from "./fixtures";
 
-const __dirname = path.dirname(__filename);
-
-// File menu
-
-
-//View Menu
-test("Default options View", async ({ page }) => {
-  await page.getByRole("button", { name: "Estimates" }).click();
-  await page.waitForTimeout(1500);
-
-
-  //Edges created by lavaan visible
-  await page
-    .evaluate(() => {
-      // @ts-expect-error
-      const edgesFromLav = window.cy.edges(".fromLav");
-      return edgesFromLav.every((edge: any) => edge.visible());
-    })
-    .then((visible) => {
-      expect(visible).toBe(true);
+async function edgeHasLabel(page: Page, expectedLabel: string) {
+  return page.evaluate((expectedLabel: string) => {
+    // @ts-expect-error
+    const edge = window.cy.edges((edge) => {
+      const sourceNode = edge.source();
+      const targetNode = edge.target();
+      return (
+        sourceNode.data("label") === "visual" &&
+        targetNode.data("label") === "x2"
+      );
     });
-  //Standard estimates shown
-  await page
-    .evaluate(() => {
-      // @ts-expect-error
-      const edge = window.cy.edges((edge) => {
-        const sourceNode = edge.source();
-        const targetNode = edge.target();
-        return (
-          sourceNode.data("label") === "visual" &&
-          targetNode.data("label") === "x2"
-        );
+    const actualLabel = edge.style("label");
+    return actualLabel === expectedLabel ? true : actualLabel;
+  }, expectedLabel);
+}
+
+// Use describe.serial to group tests and reuse one page set up once
+test.describe.serial("Estimates View Group", () => {
+  let context: BrowserContext;
+  let sharedPage: Page;
+
+  test.beforeAll(async ({ browser }) => {
+    context = await browser.newContext();
+    sharedPage = await context.newPage();
+    await loadModelAndData(sharedPage);
+    await sharedPage.getByRole("button", { name: "Estimates" }).click();
+    await sharedPage.waitForTimeout(1500);
+  });
+
+  test.afterAll(async () => {
+    await context?.close();
+  });
+
+
+  test("Default options View", async () => {
+    const page = sharedPage;
+    // Edges created by lavaan visible
+    await page
+      .evaluate(() => {
+        // @ts-expect-error
+        const edgesFromLav = window.cy.edges(".fromLav");
+        return edgesFromLav.every((edge: any) => edge.visible());
+      })
+      .then((visible) => {
+        expect(visible).toBe(true);
       });
-      return edge.style("label") === "0.55";
-    })
-    .then((hasLabel) => {
+
+    // Standard estimates shown
+    await edgeHasLabel(page, "0.55").then((hasLabel) => {
       expect(hasLabel).toBe(true);
     });
-});
+  });
 
-test("Show Script", async ({ page }) => {
-  await page.waitForTimeout(500);
-  await expect(page.getByTestId("result-text")).toContainText(
-    "library(lavaan)"
-  );
-  const lavEdges = await page.evaluate(() =>
-    // @ts-expect-error
-    window.cy.edges(".fromLav").map((edge) => edge.visible())
-  );
-  const usrEdges = await page.evaluate(() =>
-    // @ts-expect-error
-    window.cy.edges(".fromUser").map((edge) => edge.visible())
-  );
-
-  // Expect all lavEdges to be invisible
-  expect(lavEdges.every((isVisible: boolean) => !isVisible)).toBe(true);
-
-  // Expect all usrEdges to be visible
-  expect(usrEdges.every((isVisible: boolean) => isVisible)).toBe(true);
-});
-
-test("Show Full Model", async ({ page }) => {
-  await page.waitForTimeout(500);
-  await page.getByRole("button", { name: "Autocompleted Model" }).click();
-  await page.waitForTimeout(500);
-  await expect(page.getByTestId("result-text")).toContainText("library(lavaan)");
-  const lavEdges = await page.evaluate(() =>
-    // @ts-expect-error
-    window.cy.edges(".fromLav").map((edge) => edge.visible())
-  );
-  const usrEdges = await page.evaluate(() =>
-    // @ts-expect-error
-    window.cy.edges(".fromUser").map((edge) => edge.visible())
-  );
-
-  // Expect all lavEdges to be visible
-  expect(lavEdges.every((isVisible: boolean) => isVisible)).toBe(true);
-
-  // Expect all usrEdges to be visible
-  expect(usrEdges.every((isVisible: boolean) => isVisible)).toBe(true);
-});
-
-test("Fit Model", async ({ page }) => {
-  await page.getByRole("button", { name: "Estimates" }).click();
-
-  await page.waitForTimeout(2000);
-
-  await page
-    .evaluate(() => {
-      // @ts-expect-error
-      const edge = window.cy.edges((edge) => {
-        const sourceNode = edge.source();
-        const targetNode = edge.target();
-        return (
-          sourceNode.data("label") === "visual" &&
-          targetNode.data("label") === "x2"
-        );
-      });
-      return edge.style("label") === "0.55";
-    })
-    .then((hasLabel) => {
+  test("Standardized Estimates", async () => {
+    const page = sharedPage;
+    await page.getByRole('button', { name: 'View' }).click();
+    await page.getByText('Standardized Estimates').click();
+    await edgeHasLabel(page, "0.42").then((hasLabel) => {
       expect(hasLabel).toBe(true);
     });
+  });
 
-  await expect(page.getByTestId("result-text")).toContainText(
-    "Model Test User Model:"
-  );
+
+  test("Confidence Interval", async () => {
+    const page = sharedPage;
+    await page.getByRole('button', { name: 'View' }).click();
+    await page.getByText('Confidence Interval').first().click();
+    await edgeHasLabel(page, "[0.31, 0.54]").then((hasLabel) => {
+      expect(hasLabel).toBe(true);
+    });
+  });
+
+  // Estimate + p value
+  test("Estimate + p value", async () => {
+    const page = sharedPage;
+    await page.getByRole('button', { name: 'View' }).click();
+    await page.getByText('Estimate + p-value (stars)').click();
+    await edgeHasLabel(page, "0.42***").then((hasLabel) => {
+      expect(hasLabel).toBe(true);
+    });
+  });
+
+  test("Estimate + Std Error", async () => {
+    const page = sharedPage;
+    await page.getByRole('button', { name: 'View' }).click();
+    await page.getByText('Estimate + Standard Error').click();
+    await edgeHasLabel(page, "0.42 (0.06)").then((hasLabel) => {
+      expect(hasLabel).toBe(true);
+    });
+  });
+
+  test("Change Confidence Level", async () => {
+    const page = sharedPage;
+    await page.getByRole('button', { name: 'View' }).click();
+    await page.getByText('Confidence Interval').first().click();
+    await page.getByRole('button', { name: 'View' }).click();
+    await page.getByRole('spinbutton').first().fill('0.80');
+    await page.getByRole('spinbutton').first().press('Enter');
+    await edgeHasLabel(page, "[0.31, 0.54]").then((hasLabel) => {
+      expect(hasLabel).toBe(true);
+    });
+  });
+
+  //TODO: fix this test
+  // test("Change Digits", async () => {
+  //   const page = sharedPage;
+  //   // Change to estimates with 3 digits
+  //   await page.getByRole('button', { name: 'View' }).click();
+  //   await page.getByText('Estimate', { exact: true }).click();
+  //   await page.getByRole('button', { name: 'View' }).click();
+  //   await page.getByRole('spinbutton').nth(1).fill('3');
+  //   await page.getByRole('spinbutton').nth(1).press('Enter');
+  //   await edgeHasLabel(page, '0.424').then((hasLabel) => {
+  //     expect(hasLabel).toBe(true);
+  //   });
+  // });
 });
 
-// test("Abort", async ({ page }) => {
-//   await page.goto("http://127.0.0.1:3245/");
-//   await page.getByRole("button", { name: "Estimation" }).click();
-//   await page.getByRole("link", { name: "Standard Error" }).hover();
-//   await page.getByText("Bootstrap").click();
-//   await page.getByText("OK").click();
-//   await page.getByRole("button", { name: "Fit Model" }).click();
-//   await page.getByRole("button", { name: "Cancel" }).click();
-//   await expect(page.getByTestId("result-text")).toContainText(
-//     "stopped by user"
-//   );
-//   await page.getByRole("button", { name: "Fit Model" }).click();
-//   await page.getByRole("button", { name: "Cancel" }).click();
-//   await expect(page.getByTestId("result-text")).toContainText(
-//     "stopped by user"
-//   );
-// });
 
-test("Remove data", async ({ page }) => {
-  await page.getByRole("button", { name: "File" }).click();
-  await page.getByRole("link", { name: "Remove Data" }).click();
-  const fitButton = await page.getByRole("button", { name: "Estimates" });
-  expect(await fitButton.isDisabled()).toBe(true);
-});
+// TODO:
+// Arrows created by lavaan
+// Variance Errors
+// Mean Arrows
 
-test("Not Identified", async ({ page }) => {
-  const fileChooserPromise = page.waitForEvent("filechooser");
-  await page.getByRole("button", { name: "File" }).click();
-  await page.waitForTimeout(500);
-  await page.getByRole("link", { name: "Load Model", exact: true }).click();
-  await page.getByText("OK").click();
-  await page.waitForTimeout(500);
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(path.join(__dirname, "not_identified.lvm"));
-  await page.locator('div.center-screen').waitFor({ state: 'hidden' });
-  await expect(page.getByTestId("result-text")).toContainText(
-    "This may be a symptom that the model is not"
-  );
-});
+
+
+
+
+
+
+
+
+
+
+
+

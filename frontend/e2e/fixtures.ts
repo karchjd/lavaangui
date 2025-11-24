@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function loadModelAndData(page) {
+export async function loadModelAndData(page) {
     const fileChooserPromise = page.waitForEvent("filechooser");
     await page.goto("/");
     await page.getByRole("button", { name: "File" }).click();
