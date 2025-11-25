@@ -118,6 +118,12 @@ start_app <- function(fit = NULL, full, where, layout) {
     extendResultsServer("extend", fit)
 
     serverUserLayoutSaver("layout_saver")
+    
+    if (interactive()) {
+      session$onSessionEnded(function() {
+        stopApp()
+      })
+    }
 
     # showing help leave as is
     observeEvent(input$show_help, {
