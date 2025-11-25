@@ -28,5 +28,5 @@
 #'
 #' @export
 lavaangui <- function(fit = NULL) {
-  start_app(fit = fit, full = TRUE, where = "browser", layout = NULL)
+  start_app(fit = fit, full = TRUE, where = "browser", layout = NULL, export_filepath = NULL)
 }

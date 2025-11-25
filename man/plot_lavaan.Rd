@@ -4,7 +4,7 @@
 \alias{plot_lavaan}
 \title{Create Interactive Path Diagrams for Lavaan Models}
 \usage{
-plot_lavaan(fit, where = "gadget")
+plot_lavaan(fit, layout = NULL, where = "gadget")
 }
 \arguments{
 \item{fit}{A lavaan model, as returned by the functions \code{lavaan}, \code{sem}, or \code{cfa} from the \code{lavaan} package.}

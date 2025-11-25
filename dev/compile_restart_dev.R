@@ -64,4 +64,4 @@ fit <- cfa(HS.model, data = HolzingerSwineford1939)
 # lavaangui(fit)
 
 plot_lavaan(fit, layout = "test")
-# start_app(fit = fit, full = FALSE, where = "gadget", layout = "test")
+export_plot(fit, layout = "test", filename = "test_plot.png")

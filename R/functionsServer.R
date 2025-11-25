@@ -41,7 +41,7 @@ importModel <- function(session, full, importedModel, shinyapps) {
     session$sendCustomMessage("imported_model", message = list(
       parTable = parTable, latent = latent, obs = observed,
       ordered = lavInspect(importedModel$fit, what = "ordered"), layout_hash = importedModel$layout_hash,
-      layout_name = importedModel$layout_name, saved_layout = saved_layout
+      layout_name = importedModel$layout_name, saved_layout = saved_layout, export_filepath = importedModel$export_filepath
     ))
     if (!is.null(importedModel$df)) {
       df_full <- list(df = importedModel$df, name = "Imported from R")

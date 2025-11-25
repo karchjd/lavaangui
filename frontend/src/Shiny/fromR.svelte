@@ -552,10 +552,29 @@
       if (lav_model.saved_layout) {
         parseModel(lav_model.saved_layout);
       }
+
+      //only needed when directly saving to file
+      if (lav_model.export_filepath !== null) {
+        const png_img = cy.png({ bg: "white" });
+        const base64Data = png_img.split(",")[1];
+        lav_model.export_filepath;
+        //send filepath and base64 data to server to save
+        // @ts-ignore
+        Shiny.setInputValue("export-image", {
+          filepath: lav_model.export_filepath,
+          data: base64Data,
+        });
+      }
       setAlert(
         "warning",
         "lavaangui only imports user edges. Your full model is very likely different than what you fitted in lavaan because of different options used. To display the model, as you fitted it in lavaan, use plot_lavaan",
       );
+    });
+
+    // only used when exporting image directly after import
+    // @ts-ignore
+    Shiny.addCustomMessageHandler("close", function (all_res) {
+      window.close();
     });
 
     // save all results in data attributes of the correct edges

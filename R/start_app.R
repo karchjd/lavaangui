@@ -2,9 +2,12 @@
 #' @import lavaan
 #' @importFrom igraph graph.edgelist layout.reingold.tilford
 
-start_app <- function(fit = NULL, full, where, layout) {
-  if (full & !is.null(layout)) {
+start_app <- function(fit = NULL, full, where, layout, export_filepath) {
+  if (full && !is.null(layout)) {
     stop("layout can only be provided when full = FALSE")
+  }
+  if (!is.null(export_filepath) && full) {
+    stop("export can only be TRUE when full = FALSE")
   }
   ## import model if present
   if (!is.null(fit)) {
@@ -39,7 +42,8 @@ start_app <- function(fit = NULL, full, where, layout) {
       obs = varNames, latent = factNames, parTable = parTable,
       df = df, fit = fit,
       layout_hash = layout_hash,
-      layout_name = layout
+      layout_name = layout,
+      export_filepath = export_filepath
     )
   } else {
     importedModel <- NULL
@@ -48,19 +52,19 @@ start_app <- function(fit = NULL, full, where, layout) {
   ## define server, here because we need to pass model, and full
   lavaan_gui_server <- function(input, output, session) {
     options(shiny.maxRequestSize = 20 * 1024^2)
-    
+
     # reactive vals
     fit <- reactiveVal(NULL)
     forceEstimateUpdate <- reactiveVal()
     to_render <- reactiveVal(help_text)
-    
-    #check whether running on shinyapps or not
+
+    # check whether running on shinyapps or not
     if (Sys.getenv("SHINY_PORT") == "") {
       shinyapps <- FALSE
     } else {
       shinyapps <- TRUE
     }
-    
+
     ## import model if present, also sends whether we are on shinyapps or not to
     ## frontend
     importRes <- importModel(session, full, importedModel, shinyapps)
@@ -118,7 +122,9 @@ start_app <- function(fit = NULL, full, where, layout) {
     extendResultsServer("extend", fit)
 
     serverUserLayoutSaver("layout_saver")
-    
+
+    serverImageExporter("export")
+
     if (interactive()) {
       session$onSessionEnded(function() {
         stopApp()

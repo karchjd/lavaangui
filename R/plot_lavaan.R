@@ -30,5 +30,5 @@ plot_lavaan <- function(fit, layout = NULL, where = "gadget"){
     where <- "browser"
     message("Layout provided: 'where' argument automatically set to 'browser'.")
   }
-  start_app(fit = fit, full = FALSE, where = where, layout = layout)
+  start_app(fit = fit, full = FALSE, where = where, layout = layout, export_filepath = NULL)
 }
