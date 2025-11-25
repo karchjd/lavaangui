@@ -47,6 +47,14 @@ export function parseModel(content) {
         const localCache = JSON.parse(combinedData.fitCache);
         fitCache.set(localCache);  // Use the set method to update the store with the new value
     }
+    // only restore viewport if available for backward compatibility (used to not save viewport)
+    if (combinedData.viewport !== undefined) {
+        const savedViewport = JSON.parse(combinedData.viewport);
+        cy.viewport({
+            pan: savedViewport.pan,
+            zoom: savedViewport.zoom
+        });
+    }
 
     // Set loading mode, update diagram and perform checks
     appState.update(state => {
@@ -115,6 +123,14 @@ export function jsonModel() {
             .join(" ");
     });
 
+    // Save viewport state
+    const currentPan = cy.pan();
+    const currentZoom = cy.zoom();
+    const savedViewport = {
+        pan: currentPan,
+        zoom: currentZoom
+    };
+
     const model = JSON.stringify(json);
     const modelOpt = JSON.stringify(get(modelOptions));
     const gridViewOpt = JSON.stringify(get(gridViewOptions));
@@ -124,6 +140,7 @@ export function jsonModel() {
         modelOpt,
         gridViewOpt,
         fitCache: fitCacheLocal,
+        viewport: JSON.stringify(savedViewport)
     });
     return combinedData;
 }
