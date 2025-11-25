@@ -25,6 +25,10 @@
 #'
 #'
 #' @export
-plot_lavaan <- function(fit, where = "gadget") {
-  start_app(fit = fit, full = FALSE, where = where)
+plot_lavaan <- function(fit, layout = NULL, where = "gadget"){
+  if (!is.null(layout)) {
+    where <- "browser"
+    message("Layout provided: 'where' argument automatically set to 'browser'.")
+  }
+  start_app(fit = fit, full = FALSE, where = where, layout = layout)
 }

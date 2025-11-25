@@ -25,9 +25,23 @@ importModel <- function(session, full, importedModel, shinyapps) {
       observed <- makeNewVars(observed, groups)
       latent <- makeNewVars(latent, groups)
     }
+    if (!is.null(importedModel$layout_name)) {
+      safe_name <- gsub("[^a-zA-Z0-9_-]", "", importedModel$layout_name)
+      filename <- sprintf("layout_%s_%s.json", importedModel$layout_hash, safe_name)
+      ## check whether filename exists
+      if (file.exists(filename)) {
+        saved_layout <- jsonlite::read_json(filename)
+      } else {
+        saved_layout <- NULL
+      }
+    } else {
+      saved_layout <- NULL
+    }
+    
     session$sendCustomMessage("imported_model", message = list(
       parTable = parTable, latent = latent, obs = observed,
-      ordered = lavInspect(importedModel$fit, what = "ordered")
+      ordered = lavInspect(importedModel$fit, what = "ordered"), layout_hash = importedModel$layout_hash,
+      layout_name = importedModel$layout_name, saved_layout = saved_layout
     ))
     if (!is.null(importedModel$df)) {
       df_full <- list(df = importedModel$df, name = "Imported from R")

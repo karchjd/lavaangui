@@ -15,6 +15,7 @@
     UNDIRECTED,
     LOOP,
   } from "../Graph/classNames.js";
+  import { parseModel } from "../MenuTop/IO";
 
   function floatEqual(a, b) {
     if (a === b) {
@@ -144,7 +145,7 @@
     }
   }
 
-  function getModelLav(lav_model, imported) {
+  function getModelLav(lav_model, imported, runLayout) {
     $appState.meansModelled = false;
     $appState.loadingMode = true;
 
@@ -331,7 +332,7 @@
           });
         }
       });
-    } else {
+    } else if (runLayout) {
       applySemLayout("tree", false);
       const angleCounts = new Map();
 
@@ -525,16 +526,17 @@
       );
     });
 
-    // parse model
+    // parse model gets message from serverLavaaRunner
     // @ts-expect-error
     Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
-      getModelLav(lav_model, false);
+      getModelLav(lav_model, false, false);
     });
 
-    //import model
+    //import model gets message from model importer
     // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
-      getModelLav(lav_model, true);
+      const runLayout = lav_model.saved_layout == null;
+      getModelLav(lav_model, true, runLayout);
       let cy = get(cyStore);
       if (!Array.isArray(lav_model.ordered)) {
         lav_model.ordered = [lav_model.ordered];
@@ -545,6 +547,11 @@
         })[0].makeOrdered();
       });
       $modelOptions.fix_first = false;
+      $appState.layout_hash = lav_model.layout_hash;
+      $appState.layout_name = lav_model.layout_name;
+      if (lav_model.saved_layout) {
+        parseModel(lav_model.saved_layout);
+      }
       setAlert(
         "warning",
         "lavaangui only imports user edges. Your full model is very likely different than what you fitted in lavaan because of different options used. To display the model, as you fitted it in lavaan, use plot_lavaan",

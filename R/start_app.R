@@ -2,7 +2,10 @@
 #' @import lavaan
 #' @importFrom igraph graph.edgelist layout.reingold.tilford
 
-start_app <- function(fit = NULL, full, where) {
+start_app <- function(fit = NULL, full, where, layout) {
+  if (full & !is.null(layout)) {
+    stop("layout can only be provided when full = FALSE")
+  }
   ## import model if present
   if (!is.null(fit)) {
     varNames <- lavaanNames(fit, type = "ov")
@@ -24,9 +27,20 @@ start_app <- function(fit = NULL, full, where) {
       }
       df <- NULL
     }
+    if (!full && !is.null(layout)) {
+      paraS <- parameterEstimates(fit)
+      layout_hash <- digest::digest(paraS)
+    } else {
+      layout_hash <- NULL
+    }
     parTable <- parTable(fit)
     parTable <- parTable[!parTable$op %in% c(":=", "<", ">", "==", "|", "<", ">"), ]
-    importedModel <- list(obs = varNames, latent = factNames, parTable = parTable, df = df, fit = fit)
+    importedModel <- list(
+      obs = varNames, latent = factNames, parTable = parTable,
+      df = df, fit = fit,
+      layout_hash = layout_hash,
+      layout_name = layout
+    )
   } else {
     importedModel <- NULL
   }
@@ -102,6 +116,8 @@ start_app <- function(fit = NULL, full, where) {
     serverDownloader("down", getData)
 
     extendResultsServer("extend", fit)
+
+    serverUserLayoutSaver("layout_saver")
 
     # showing help leave as is
     observeEvent(input$show_help, {
