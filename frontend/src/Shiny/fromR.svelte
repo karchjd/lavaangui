@@ -145,7 +145,7 @@
     }
   }
 
-  function getModelLav(lav_model, imported, runLayout) {
+  function getModelLav(lav_model, imported) {
     $appState.meansModelled = false;
     $appState.loadingMode = true;
 
@@ -332,7 +332,7 @@
           });
         }
       });
-    } else if (runLayout) {
+    } else {
       applySemLayout("tree", false);
       const angleCounts = new Map();
 
@@ -535,23 +535,23 @@
     //import model gets message from model importer
     // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
-      const runLayout = lav_model.saved_layout == null;
-      getModelLav(lav_model, true, runLayout);
-      let cy = get(cyStore);
-      if (!Array.isArray(lav_model.ordered)) {
-        lav_model.ordered = [lav_model.ordered];
-      }
-      lav_model.ordered.forEach((label) => {
-        cy.nodes(function (node) {
-          return node.getLabel() == label;
-        })[0].makeOrdered();
-      });
-      $modelOptions.fix_first = false;
-      $appState.layout_hash = lav_model.layout_hash;
-      $appState.layout_name = lav_model.layout_name;
-      if (lav_model.saved_layout) {
+      console.log("Imported model:", lav_model);
+      if (lav_model.saved_layout == null) {
+        getModelLav(lav_model, true);
+        let cy = get(cyStore);
+        if (!Array.isArray(lav_model.ordered)) {
+          lav_model.ordered = [lav_model.ordered];
+        }
+        lav_model.ordered.forEach((label) => {
+          cy.nodes(function (node) {
+            return node.getLabel() == label;
+          })[0].makeOrdered();
+        });
+      } else {
         parseModel(lav_model.saved_layout);
       }
+      $appState.layout_hash = lav_model.layout_hash;
+      $appState.layout_name = lav_model.layout_name;
 
       //only needed when directly saving to file
       if (lav_model.export_filepath !== null) {
