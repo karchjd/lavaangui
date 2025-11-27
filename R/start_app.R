@@ -121,7 +121,7 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
 
     extendResultsServer("extend", fit)
 
-    serverUserLayoutSaver("layout_saver")
+    serverUserLayoutSaver("layout_saver", !is.null(importedModel$export_filepath))
 
     serverImageExporter("export")
 

@@ -535,7 +535,6 @@
     //import model gets message from model importer
     // @ts-expect-error
     Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
-      console.log("Imported model:", lav_model);
       if (lav_model.saved_layout == null) {
         getModelLav(lav_model, true);
         let cy = get(cyStore);

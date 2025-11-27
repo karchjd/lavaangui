@@ -1,6 +1,9 @@
-serverUserLayoutSaver <- function(id) {
+serverUserLayoutSaver <- function(id, export_plot) {
     moduleServer(id, function(input, output, session) {
         observeEvent(input$user_layout, {
+            if (export_plot) {
+                return(NULL)
+            }
             req(input$user_layout)
 
             # Parse the incoming data
@@ -15,8 +18,6 @@ serverUserLayoutSaver <- function(id) {
             safe_name <- gsub("[^a-zA-Z0-9_-]", "", name)
             filename <- sprintf("layout_%s_%s.json", hash, safe_name)
 
-            # Save the model data to the file
-            print("saving model data file")
             jsonlite::write_json(model_data, filename)
             message(sprintf("Saved layout to %s", filename))
         })
