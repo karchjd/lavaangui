@@ -27,17 +27,18 @@ importModel <- function(session, full, importedModel, shinyapps) {
     }
     if (!is.null(importedModel$layout_name)) {
       safe_name <- gsub("[^a-zA-Z0-9_-]", "", importedModel$layout_name)
-      filename <- sprintf("layout_%s_%s.json", importedModel$layout_hash, safe_name)
+      layout_filename <- sprintf("layout_%s_%s.json", importedModel$layout_hash, safe_name)
       ## check whether filename exists
-      if (file.exists(filename)) {
-        saved_layout <- jsonlite::read_json(filename)
+      if (file.exists(layout_filename)) {
+        saved_layout <- jsonlite::read_json(layout_filename)
       } else {
         saved_layout <- NULL
       }
     } else {
       saved_layout <- NULL
+      layout_filename <- NULL
     }
-    
+
     session$sendCustomMessage("imported_model", message = list(
       parTable = parTable, latent = latent, obs = observed,
       ordered = lavInspect(importedModel$fit, what = "ordered"), layout_hash = importedModel$layout_hash,
@@ -53,7 +54,7 @@ importModel <- function(session, full, importedModel, shinyapps) {
     if (!full) {
       session$sendCustomMessage("setToEstimate", message = stats::rnorm(1))
     }
-    return(list(fit = importedModel$fit, data_react = df_full, imported = imported, full = full))
+    return(list(fit = importedModel$fit, data_react = df_full, imported = imported, full = full, layout_filename = layout_filename))
   } else {
     return(list(imported = imported))
   }

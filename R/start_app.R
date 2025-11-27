@@ -49,7 +49,8 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
     importedModel <- NULL
   }
 
-  ## define server, here because we need to pass model, and full
+  ## define server, here because we need to things from start_app
+  ## this seems to be the only way :(
   lavaan_gui_server <- function(input, output, session) {
     options(shiny.maxRequestSize = 20 * 1024^2)
 
@@ -69,10 +70,8 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
     ## frontend
     importRes <- importModel(session, full, importedModel, shinyapps)
     imported <- importRes$imported
-    if (imported) {
-      if (!full) {
-        fit(importRes$fit)
-      }
+    if (imported && !full) {
+      fit(importRes$fit)
     }
 
     session$sendCustomMessage("version", message = utils::packageVersion("lavaangui"))
@@ -121,7 +120,7 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
 
     extendResultsServer("extend", fit)
 
-    serverUserLayoutSaver("layout_saver", !is.null(importedModel$export_filepath))
+    serverUserLayoutSaver("layout_saver", !is.null(importedModel$export_filepath), importRes$layout_filename)
 
     serverImageExporter("export")
 
