@@ -85,7 +85,6 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
       session$sendCustomMessage("columnames", message = input$newnames)
     })
 
-
     ## Upload data
     x <- serverDataUploader("dataUpload")
     data_react <- reactive({
@@ -127,8 +126,6 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
 
     if (interactive()) {
       session$onSessionEnded(function() {
-        # get what was sent by Shiny.setInputValue("layout_saver-user_layout", layout_info);
-        user_layout <- session$input$user_layout
         stopApp()
       })
     }
