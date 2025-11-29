@@ -1,10 +1,13 @@
+# lavaangui 0.3.2
+- Bugfix: App could crash when hidding edges and trying to move the graph
+
 # lavaangui 0.3.1
 - Bugfix: New lines in syntax are now more consistent
 - Bugfix: Changed support of composites to match lavaan 0.6-20, lavaan version >= 0.6-20 is now required.
 - Bugfix: Directed edges from models imported via `lavaangui()` can now be reverted and set to undirected
 - Bugfix: p values stars are shown again (was broken since 0.2.5)
 - Bugfix: was possible to create edge in `plot_lavaan`
-- developer: added more playwright tests
+- Developer: added more playwright tests
 - Appearance: Made context menu for edges a bit prettier
 - Appearance: `results` is now named `fit`
 
