@@ -44,3 +44,5 @@ lavaangui-models-R
 plot_for_paper.R
 layout_*.json
 test_plot.png
+tmp
+
