@@ -123,11 +123,12 @@
     const mousePosition = evt.position;
     let nearestEdge = null;
     let minDistance = Infinity;
-    const clickThreshold = 30; // Adjust based on your needs
+    const clickThreshold = 30; // Adjusted based testing
     cy.edges().forEach(function (edge) {
       if (
         edge.isDirected() &&
-        !edge.hasClass("edgecontrolediting-hascontrolpoints")
+        !edge.hasClass("edgecontrolediting-hascontrolpoints") &&
+        !edge.hasClass("hidden")
       ) {
         const labelOffsetX = convertPxToNumber(edge.style("text-margin-x"));
         const labelOffsetY = convertPxToNumber(edge.style("text-margin-y"));
@@ -151,10 +152,7 @@
     });
 
     // If a nearest edge label was found within threshold, set it as selected for dragging
-    if (
-      nearestEdge !== null &&
-      !nearestEdge.hasClass(".edgecontrolediting-hascontrolpoints")
-    ) {
+    if (nearestEdge !== null) {
       selectedEdge = nearestEdge;
       isDraggingLabel = true;
       // Prevent the event from being handled further

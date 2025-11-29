@@ -1,3 +1,6 @@
+# lavaangui 0.3.2
+- Bugfix: App could crash when hidding edges and trying to move the graph
+
 # lavaangui 0.3.1
 - Bugfix: New lines in syntax are now more consistent
 - Bugfix: Changed support of composites to match lavaan 0.6-20, lavaan version >= 0.6-20 is now required.
