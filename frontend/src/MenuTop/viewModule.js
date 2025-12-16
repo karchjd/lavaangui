@@ -131,7 +131,9 @@ function getStars(pval) {
 
 function generateStyleEst(viewOption, postfix, number_digits) {
   const formatOrNA = (estimates, field) => {
-    if (!estimates) return "NA";
+    if (!estimates || estimates[field] == null) {
+      return "NA";
+    }
     const value = estimates[field];
     return value.toFixed(number_digits);
   };
