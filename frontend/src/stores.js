@@ -47,6 +47,19 @@ export let fitCache = writable({
   lastFitData: null,
 });
 
+// Load persisted composite setting from localStorage
+function loadCompositeFromStorage() {
+  if (typeof localStorage === "undefined") {
+    return false;
+  }
+  try {
+    const raw = localStorage.getItem("lavaangui.appState.composite");
+    return raw === "true";
+  } catch (error) {
+    return false;
+  }
+}
+
 export let appState = writable({
   fitting: false,
   loadingMode: false,
@@ -70,7 +83,7 @@ export let appState = writable({
   redoEmpty: true,
   server: false,
   shinyapps: false,
-  composite: false
+  composite: loadCompositeFromStorage()
 });
 
 export let dataInfo = writable(0);

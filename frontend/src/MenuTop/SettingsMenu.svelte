@@ -4,26 +4,10 @@
 
     export let minimal = false;
     import { appState } from "../stores";
-    import { onMount } from "svelte";
 
-    const APP_STATE_COMPOSITE_KEY = "lavaangui.appState.component";
+    const APP_STATE_COMPOSITE_KEY = "lavaangui.appState.composite";
 
-    function loadComponentSetting() {
-        if (typeof localStorage === "undefined") {
-            return null;
-        }
-        try {
-            const raw = localStorage.getItem(APP_STATE_COMPOSITE_KEY);
-            if (raw === null) {
-                return null;
-            }
-            return raw === "true";
-        } catch (error) {
-            return null;
-        }
-    }
-
-    function persistComponentSetting(value) {
+    function persistCompositeSetting(value) {
         if (typeof localStorage === "undefined") {
             return;
         }
@@ -34,17 +18,7 @@
         }
     }
 
-    onMount(() => {
-        const stored = loadComponentSetting();
-        if (stored !== null) {
-            appState.update((current) => ({
-                ...current,
-                composite: stored,
-            }));
-        }
-    });
-
-    $: persistComponentSetting($appState.composite);
+    $: persistCompositeSetting($appState.composite);
 </script>
 
 <Dropdown name="Settings" {minimal}>

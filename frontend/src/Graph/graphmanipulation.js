@@ -57,17 +57,11 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
       label = label + ".1";
     }
   }
-
-  let addStyle;
-
-  if (nodeType === COMPOSITE) {
-    addStyle = { shape: 'hexagon' };
-    nodeType = LATENT; // Treat component as latent for modeling purposes
-  } else {
-    addStyle = {};
+  let isComposite = false;
+  if (nodeType == COMPOSITE) {
+    isComposite = true;
+    nodeType = LATENT;
   }
-
-
 
   // Check if position is provided, if not, use random position
   let urLocal = get(ur);
@@ -77,7 +71,6 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
       data: { id: nodeId, label: label },
       classes: [nodeType, CONTINOUS],
       renderedPosition: position,
-      style: addStyle,
     });
   } else {
     position = { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 };
@@ -86,9 +79,13 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
       data: { id: nodeId, label: label },
       classes: [nodeType, CONTINOUS],
       renderedPosition: position,
-      style: addStyle,
     });
   }
+
+  if (isComposite) {
+    cy.getElementById(nodeId).data("shape", "hexagon");
+  }
+
 
   if (fromUser) {
     tolavaan(get(modelOptions).mode)
