@@ -81,9 +81,7 @@
   {/if}
 {/if}
 
-<!-- Warning: never ever put this inside ready, this will break them
-Shiny needs to see them to attach listeners -->
-<Errors />
+<!-- <Errors /> -->
 
 <style>
   div {
