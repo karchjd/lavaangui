@@ -199,6 +199,14 @@
       } else {
         inputOptions = Array.from({ length: 100 }, (_, i) => `var${i + 1}`);
       }
+
+      if (inputOptions.length === 0) {
+        setAlert(
+          "danger",
+          "No available variables to select. All variables are already in the model.",
+        );
+        return;
+      }
       const promptSettings = {
         title: title,
         inputType: "select",
