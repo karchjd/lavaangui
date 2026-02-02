@@ -104,6 +104,17 @@
       },
       show: "full",
     },
+    {
+      id: "add-composite",
+      content: "Add Composite",
+      coreAsWell: true,
+      onClickFunction: function (event) {
+        const position = event.renderedPosition;
+        addNode(Constants.COMPOSITE, position);
+      },
+      show: "full",
+      disable: !$appState.composite,
+    },
 
     //edge menus
 

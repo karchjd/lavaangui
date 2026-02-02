@@ -2,6 +2,7 @@
 
 export const OBSERVED = 'observed-variable';
 export const LATENT = 'latent-variable';
+export const COMPOSITE = 'component-variable';
 export const CONSTANT = 'constant';
 export const FREE = 'free';
 export const NOT_LABEL = 'nolabel';

@@ -1,7 +1,7 @@
 import { cyStore, modelOptions, setAlert, ur } from "../stores.js";
 import { get } from "svelte/store";
 import { v4 as uuidv4 } from "uuid";
-import { OBSERVED, LATENT, FROM_USER, FROM_LAV, FIXED, FREE, NOT_LABEL, CONTINOUS, DIRECTED, UNDIRECTED } from "./classNames.js";
+import { OBSERVED, LATENT, FROM_USER, FROM_LAV, FIXED, FREE, NOT_LABEL, CONTINOUS, DIRECTED, UNDIRECTED, COMPOSITE } from "./classNames.js";
 import { tolavaan } from "../Shiny/toR.js";
 
 
@@ -48,7 +48,7 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
   } else {
     if (nodeType == OBSERVED) {
       label = "x" + obCounter++;
-    } else if (nodeType == LATENT) {
+    } else if (nodeType == LATENT || nodeType == COMPOSITE) {
       label = "f" + latentCounter++;
     } else {
       label = undefined;
@@ -58,6 +58,17 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
     }
   }
 
+  let addStyle;
+
+  if (nodeType === COMPOSITE) {
+    addStyle = { shape: 'hexagon' };
+    nodeType = LATENT; // Treat component as latent for modeling purposes
+  } else {
+    addStyle = {};
+  }
+
+
+
   // Check if position is provided, if not, use random position
   let urLocal = get(ur);
   if (position) {
@@ -66,6 +77,7 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
       data: { id: nodeId, label: label },
       classes: [nodeType, CONTINOUS],
       renderedPosition: position,
+      style: addStyle,
     });
   } else {
     position = { x: Math.random() * 400 + 50, y: Math.random() * 400 + 50 };
@@ -74,6 +86,7 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
       data: { id: nodeId, label: label },
       classes: [nodeType, CONTINOUS],
       renderedPosition: position,
+      style: addStyle,
     });
   }
 

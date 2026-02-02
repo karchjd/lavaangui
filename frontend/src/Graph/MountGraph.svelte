@@ -13,7 +13,13 @@
   } from "../stores.js";
   import { get } from "svelte/store";
   import { checkNodeLoop } from "./checkNodeLoop.js";
-  import { OBSERVED, LATENT, CONSTANT, NODEWITH } from "./classNames.js";
+  import {
+    OBSERVED,
+    LATENT,
+    CONSTANT,
+    NODEWITH,
+    COMPOSITE,
+  } from "./classNames.js";
   import { tolavaan } from "../Shiny/toR.js";
 
   let cy = get(cyStore);
@@ -269,6 +275,35 @@
             );
             offset += gap;
             addEdge(latentID, itemItem);
+          });
+          $modelOptions.fix_first = true;
+          $modelOptions.fix_single = true;
+          $modelOptions.auto_var = true;
+          $modelOptions.intOvFree = true;
+          $modelOptions.intLvFree = false;
+        } else {
+          showError();
+        }
+      });
+    } else if ($appState.dragged == "composite-factor") {
+      // @ts-ignore
+      createBootPrompt("Select Variables", function (result) {
+        if (checkValid(result)) {
+          const zoom = cy.zoom();
+          const latentID = addNode(COMPOSITE, {
+            x: pos.x + (gap * zoom * result.length) / 2 - (NODEWITH / 2) * zoom,
+            y: pos.y,
+          });
+          result.forEach((name) => {
+            const itemItem = addNode(
+              OBSERVED,
+              { x: pos.x + offset * zoom, y: pos.y + zoom * ygap },
+              true,
+              name,
+              true,
+            );
+            offset += gap;
+            addEdge(itemItem, latentID);
           });
           $modelOptions.fix_first = true;
           $modelOptions.fix_single = true;

@@ -162,7 +162,7 @@ export function createSyntax(mode) {
     return outgoing.length > 0 && outgoing.every(edge => edge.target().isLatent())
   })
 
-  // to help detect formative factors, only incoming arrows
+  // to help detect composites, only incoming arrows
   let formativeFactors = cy.getLatentNodes()
   formativeFactors = formativeFactors.nodes(function (node) {
     const incoming = node.connectedEdges(function (edge) {
@@ -272,7 +272,7 @@ export function createSyntax(mode) {
     }
   }
 
-  // formative factors
+  // composites
   shown = false;
   for (let i = 0; i < formativeFactors.length; i++) {
     const formativeNode = formativeFactors[i];
@@ -286,7 +286,7 @@ export function createSyntax(mode) {
     if (connectedEdges.length > 0) {
       if (!shown) {
         formative = true;
-        syntax += "\n # formative factors" + "\n";
+        syntax += "\n # composites" + "\n";
         shown = true;
       }
       syntax += " " + formativeNode.getLabel() + " <~ " + getNodeNames(connectedEdges, "source") + "\n";

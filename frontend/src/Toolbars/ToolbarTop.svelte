@@ -1,6 +1,11 @@
 <script>
   import { appState, cyStore, ehStore } from "../stores";
-  import { OBSERVED, LATENT, CONSTANT } from "../Graph/classNames.js";
+  import {
+    OBSERVED,
+    LATENT,
+    CONSTANT,
+    COMPOSITE,
+  } from "../Graph/classNames.js";
   import { get } from "svelte/store";
 
   let state = {};
@@ -33,6 +38,10 @@
 
   function handleDragStarGrowth(event) {
     $appState.dragged = "growth";
+  }
+
+  function handleDragStartCompositeFactor(event) {
+    $appState.dragged = "composite-factor";
   }
 
   function alertEdge(type) {
@@ -124,6 +133,29 @@
           dragStart(LATENT);
         }}
       />
+      {#if $appState.composite}
+        <div
+          role="button"
+          tabindex="0"
+          id="add-composite"
+          title="Create Composite"
+          draggable="true"
+          class="variable-button"
+          data-button-type={LATENT}
+          on:dragstart={() => {
+            dragStart(COMPOSITE);
+          }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <polygon
+              points="12,2 22,7 22,17 12,22 2,17 2,7"
+              fill="white"
+              stroke="black"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+      {/if}
       <div
         role="button"
         tabindex="0"
@@ -153,6 +185,14 @@
         on:dragstart={(event) => handleDragStarFactor(event)}
         >Factor
       </button>
+      {#if $appState.composite}
+        <button
+          class="draggable-item"
+          draggable="true"
+          on:dragstart={(event) => handleDragStartCompositeFactor(event)}
+          >Composite
+        </button>
+      {/if}
       <button
         class="draggable-item"
         draggable="true"
@@ -347,5 +387,23 @@
   .arrow-btn:active {
     background-color: #d0d0d0;
     border-color: #777;
+  }
+
+  /* Hexagon button uses inline SVG, just center it */
+  #add-composite {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  #add-composite::before {
+    display: none;
+  }
+
+  #add-composite svg {
+    display: block;
+    width: 24px;
+    height: 24px;
   }
 </style>

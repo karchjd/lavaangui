@@ -69,7 +69,8 @@ export let appState = writable({
   undoEmpty: true,
   redoEmpty: true,
   server: false,
-  shinyapps: false
+  shinyapps: false,
+  composite: false
 });
 
 export let dataInfo = writable(0);
