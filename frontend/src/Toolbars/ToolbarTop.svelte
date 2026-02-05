@@ -152,6 +152,7 @@
               fill="white"
               stroke="black"
               stroke-width="2"
+              transform="rotate(90 12 12)"
             />
           </svg>
         </div>
@@ -389,7 +390,6 @@
     border-color: #777;
   }
 
-  /* Hexagon button uses inline SVG, just center it */
   #add-composite {
     display: flex;
     align-items: center;

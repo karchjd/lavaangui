@@ -21,9 +21,9 @@
     $: persistCompositeSetting($appState.composite);
 </script>
 
-<Dropdown name="Settings" {minimal}>
+<Dropdown name="Composites" {minimal}>
     <CheckItem
-        name={"Show More Composite Modeling Tools"}
+        name={"Shows Composites in Toolbar"}
         bind:checked={$appState.composite}
         disable={false}
     />
