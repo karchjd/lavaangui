@@ -62,11 +62,6 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
       label = label + ".1";
     }
   }
-  let isComposite = false;
-  if (nodeType == COMPOSITE) {
-    isComposite = true;
-    nodeType = LATENT;
-  }
 
   // Check if position is provided, if not, use random position
   let urLocal = get(ur);
@@ -86,11 +81,6 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
       renderedPosition: position,
     });
   }
-
-  if (isComposite) {
-    cy.getElementById(nodeId).data("shape", "hexagon");
-  }
-
 
   if (fromUser) {
     tolavaan(get(modelOptions).mode)

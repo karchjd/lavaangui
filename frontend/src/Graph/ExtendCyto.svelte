@@ -263,13 +263,24 @@
 
     cytoscape("collection", "makeLatent", function () {
         this.removeClass(Constants.OBSERVED)
+            .removeClass(Constants.COMPOSITE)
             .addClass(Constants.LATENT)
             .removeClass(Constants.LINKED);
         return this;
     });
 
+    cytoscape("collection", "makeComposite", function () {
+        this.removeClass(Constants.OBSERVED)
+            .removeClass(Constants.LATENT)
+            .addClass(Constants.COMPOSITE)
+            .removeClass(Constants.LINKED);
+        return this;
+    });
+
     cytoscape("collection", "makeObserved", function () {
-        this.addClass(Constants.OBSERVED).removeClass(Constants.LATENT);
+        this.addClass(Constants.OBSERVED)
+            .removeClass(Constants.LATENT)
+            .removeClass(Constants.COMPOSITE);
         return this;
     });
 

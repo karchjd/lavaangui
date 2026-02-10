@@ -436,7 +436,7 @@
       id: "rename-node",
       show: "both",
       content: "Rename Variable",
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}`,
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         const columnNames = $appState.columnNames;
@@ -528,7 +528,7 @@
     {
       id: "remove-node",
       content: "Delete Variable",
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}`,
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.remove();
@@ -540,10 +540,22 @@
     {
       id: "change-latent",
       content: "Change to Latent",
-      selector: `node.${Constants.OBSERVED}`,
+      selector: `node.${Constants.OBSERVED}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.makeLatent();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
+      id: "change-composite",
+      content: "Change to Composite",
+      selector: `node.${Constants.OBSERVED}, node.${Constants.LATENT}`,
+      onClickFunction: function (event) {
+        const node = event.target || event.cyTarget;
+        node.makeComposite();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -590,7 +602,7 @@
       id: "change-observed",
       show: "full",
       content: "Change to Observed",
-      selector: `node.${Constants.LATENT}`,
+      selector: `node.${Constants.LATENT}, node.${Constants.COMPOSITE}`,
       hasTrailingDivider: true,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
@@ -601,23 +613,6 @@
           bootbox.alert("Variable linked with data set");
         }
         tolavaan($modelOptions.mode);
-      },
-    },
-    {
-      id: "change-shape-hexagon",
-      content: "Change Shape to Hexagon",
-      selector: `node[shape = "ellipse"]`,
-      show: "both",
-      onClickFunction: function (event) {
-        var target = event.target || event.cyTarget;
-        const toChange = getChange(target, "nodes");
-        if (toChange === null) {
-          return null;
-        }
-        $ur.do("style", {
-          eles: toChange,
-          style: { shape: "hexagon" },
-        });
       },
     },
     {

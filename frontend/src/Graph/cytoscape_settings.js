@@ -56,6 +56,15 @@ export const graphStyles = [
     },
   },
   {
+    selector: `node.${Constants.COMPOSITE}`,
+    style: {
+      shape: function (ele) {
+        return ele.data("shape") || "hexagon";
+      },
+      "border-color": "black",
+    },
+  },
+  {
     selector: `node.${Constants.CONSTANT}`,
     style: {
       shape: "triangle",
