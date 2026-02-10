@@ -159,21 +159,11 @@ export function createSyntax(mode) {
     const outgoing = node.connectedEdges(function (edge) {
       return edge.isDirected() && edge.source().id() == node.id()
     })
-    return outgoing.length > 0 && outgoing.every(edge => edge.target().isLatent())
+    return outgoing.length > 0 && outgoing.every(edge => edge.target().isLatent() || edge.target().isComposite())
   })
 
   // to help detect composites, only incoming arrows
-  let formativeFactors = cy.getLatentNodes()
-  formativeFactors = formativeFactors.nodes(function (node) {
-    const incoming = node.connectedEdges(function (edge) {
-      return edge.isDirected() && edge.target().id() == node.id()
-    })
-    const all = node.connectedEdges(function (edge) {
-      return edge.isDirected()
-    })
-    return all.length > 0 && incoming.length == all.length
-  })
-
+  let formativeFactors = cy.getComposites()
 
   // measurement model
   let latentNodes = cy.getLatentNodes()
@@ -204,9 +194,9 @@ export function createSyntax(mode) {
     let res = edge.isDirected() &&
       !edge.source().isConstant() &&
       (!(edge.source().isLatent() && edge.target().isObserved()) || edge.isRegression()) && // only if edge is explicitly marked as regression for arrows from latent to observed
-      !(edge.source().isLatent() && hierachicalFactors.some(node => node.id() === edge.source().id()) && edge.target().isLatent()) &&
+      !(edge.source().isLatent() && hierachicalFactors.some(node => node.id() === edge.source().id()) && (edge.target().isLatent() || edge.target().isComposite())) &&
       (edge.isUserAdded() || edge.isModifiedLavaan()) &&
-      !(formativeFactors.some(node => node.id() === edge.target().id()));
+      !(edge.target().isComposite() && edge.source().isObserved());
     return res;
 
   }
@@ -280,7 +270,8 @@ export function createSyntax(mode) {
     const connectedEdges = formativeNode.connectedEdges(function (edge) {
       return (
         edge.isDirected() &&
-        edge.target().id() == formativeNode.id() // should even be unnecessary because of how formative factors are defined (all directed edges are incoming)
+        edge.target().id() == formativeNode.id() &&
+        edge.source().isObserved()
       );
     });
     if (connectedEdges.length > 0) {

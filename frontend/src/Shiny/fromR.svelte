@@ -14,6 +14,7 @@
     DIRECTED,
     UNDIRECTED,
     LOOP,
+    COMPOSITE,
   } from "../Graph/classNames.js";
 
   function floatEqual(a, b) {
@@ -173,6 +174,15 @@
         position.x = position.x + 50;
         importNode(LATENT, latent[i]);
       }
+
+      const composite = Array.isArray(lav_model.composite)
+        ? lav_model.composite
+        : [lav_model.composite];
+      for (let i = 0; i < composite.length; i++) {
+        position.x = position.x + 50;
+        importNode(COMPOSITE, composite[i]);
+      }
+
       lav_model = lav_model.parTable;
     }
 
@@ -390,16 +400,14 @@
       if (existingEdge.length > 0) {
         let allEstimates = {};
         if (existingEdge.isFree()) {
-          // Object to store all the estimates
-
-          // Populate the object with estimates from lav_result
+          //estimates from lav_result
           allEstimates.est = lav_result.est[i];
           allEstimates.p_value = lav_result.pvalue[i];
           allEstimates.se = lav_result.se[i];
           allEstimates.ciLow = lav_result["ci.lower"][i];
           allEstimates.ciHigh = lav_result["ci.upper"][i];
 
-          // Populate the object with estimates from std_result
+          // estimates from std_result
           allEstimates.est_std = std_result["est.std"][i];
           allEstimates.se_std = std_result.se[i];
           allEstimates.ciLow_std = std_result["ci.lower"][i];

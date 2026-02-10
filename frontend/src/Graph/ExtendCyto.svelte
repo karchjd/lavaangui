@@ -302,6 +302,9 @@
         return this.hasClass(Constants.CONSTANT);
     });
 
+    cytoscape("collection", "isComposite", function () {
+        return this.hasClass(Constants.COMPOSITE);
+    });
     cytoscape("collection", "isObserved", function () {
         return this.hasClass(Constants.OBSERVED);
     });
@@ -334,6 +337,12 @@
     cytoscape("core", "getLatentNodes", function () {
         return this.nodes(function (node) {
             return node.hasClass(Constants.LATENT);
+        });
+    });
+
+    cytoscape("core", "getComposites", function () {
+        return this.nodes(function (node) {
+            return node.hasClass(Constants.COMPOSITE);
         });
     });
 </script>
