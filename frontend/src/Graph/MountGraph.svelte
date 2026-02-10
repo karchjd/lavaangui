@@ -59,7 +59,7 @@
       }
 
       // Handle 'l', 'o', 'c' keys
-      if (["l", "o", "c"].includes(event.key.toLowerCase())) {
+      if (["l", "o", "c", "i"].includes(event.key.toLowerCase())) {
         let nodeType;
         switch (event.key.toLowerCase()) {
           case "l":
@@ -68,8 +68,11 @@
           case "o":
             nodeType = OBSERVED;
             break;
-          case "c":
+          case "i":
             nodeType = CONSTANT;
+            break;
+          case "c":
+            nodeType = COMPOSITE;
             break;
         }
         addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
