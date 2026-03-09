@@ -320,6 +320,13 @@
           edge.validate();
         }
         edge.checkAndMarkPotentialLatObReg();
+        if (lav_model.op[i] === "~" && edge.isFactLoad()) {
+          edge.markRegression();
+        }
+        edge.checkAndMarkPotentialObCompReg();
+        if (lav_model.op[i] === "~" && edge.isCompLoad()) {
+          edge.markCompRegression();
+        }
         if (edge.source().isConstant()) {
           edge.makeMeanEdge();
         } else {

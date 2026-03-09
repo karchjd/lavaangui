@@ -149,6 +149,7 @@
       }
 
       edge.checkAndMarkPotentialLatObReg();
+      edge.checkAndMarkPotentialObCompReg();
 
       //only one directed edge from constant
       if (edge.isDirected() && sourceNode.isConstant()) {

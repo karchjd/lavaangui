@@ -295,6 +295,32 @@
     },
 
     {
+      id: "switch-comp-reg",
+      content: "Mark as Regression Relationship",
+      selector: `edge.${Constants.COMPLOAD}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markCompRegression();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: true,
+    },
+
+    {
+      id: "switch-compload",
+      content: "Mark as Component Loading",
+      selector: `edge.${Constants.COMP_REGRESSION}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markCompload();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: true,
+    },
+
+    {
       id: "set-arrow",
       content: "Set Directed",
       selector: `edge.${Constants.UNDIRECTED}.${Constants.FROM_USER}`,

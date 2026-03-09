@@ -196,7 +196,7 @@ export function createSyntax(mode) {
       (!(edge.source().isLatent() && edge.target().isObserved()) || edge.isRegression()) && // only if edge is explicitly marked as regression for arrows from latent to observed
       !(edge.source().isLatent() && hierachicalFactors.some(node => node.id() === edge.source().id()) && (edge.target().isLatent() || edge.target().isComposite())) &&
       (edge.isUserAdded() || edge.isModifiedLavaan()) &&
-      !(edge.target().isComposite() && edge.source().isObserved());
+      (!(edge.target().isComposite() && edge.source().isObserved()) || edge.isCompRegression()); // only if edge is explicitly marked as regression for arrows from observed to composite
     return res;
 
   }
@@ -271,7 +271,8 @@ export function createSyntax(mode) {
       return (
         edge.isDirected() &&
         edge.target().id() == formativeNode.id() &&
-        edge.source().isObserved()
+        edge.source().isObserved() &&
+        edge.isCompLoad()
       );
     });
     if (connectedEdges.length > 0) {

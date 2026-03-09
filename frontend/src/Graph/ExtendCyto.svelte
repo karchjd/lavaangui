@@ -242,6 +242,38 @@
         return this.hasClass(Constants.FACTLOAD);
     });
 
+    cytoscape("collection", "checkAndMarkPotentialObCompReg", function () {
+        if (
+            this.isDirected() &&
+            this.source().isObserved() &&
+            this.target().isComposite()
+        ) {
+            this.addClass(Constants.POTENTIAL_OB_COMP_REGRESSION); //activates context menu to switch between regression and component loading
+            this.addClass(Constants.COMPLOAD); // Default to component loading;
+        }
+        return this;
+    });
+
+    cytoscape("collection", "markCompRegression", function () {
+        this.addClass(Constants.COMP_REGRESSION);
+        this.removeClass(Constants.COMPLOAD);
+        return this;
+    });
+
+    cytoscape("collection", "markCompload", function () {
+        this.removeClass(Constants.COMP_REGRESSION);
+        this.addClass(Constants.COMPLOAD);
+        return this;
+    });
+
+    cytoscape("collection", "isCompRegression", function () {
+        return this.hasClass(Constants.COMP_REGRESSION);
+    });
+
+    cytoscape("collection", "isCompLoad", function () {
+        return this.hasClass(Constants.COMPLOAD);
+    });
+
     // Nodes
     cytoscape("collection", "link", function () {
         this.addClass(Constants.LINKED);

@@ -105,6 +105,7 @@ export function addEdge(source, target, directed = true, fixed = false, fixedVal
   });
   if (fromUser) {
     edge.checkAndMarkPotentialLatObReg();
+    edge.checkAndMarkPotentialObCompReg();
   }
   return edge;
 }

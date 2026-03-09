@@ -83,6 +83,7 @@ export function parseModel(content) {
     // things to do for backward compatibility
     cy.edges().forEach((edge) => {
         edge.checkAndMarkPotentialLatObReg()
+        edge.checkAndMarkPotentialObCompReg()
     });
 
     cy.getLatentNodes().forEach((node) => {
