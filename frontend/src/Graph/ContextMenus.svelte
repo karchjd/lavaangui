@@ -113,7 +113,6 @@
         addNode(Constants.COMPOSITE, position);
       },
       show: "full",
-      disable: !$appState.composite,
     },
 
     //edge menus

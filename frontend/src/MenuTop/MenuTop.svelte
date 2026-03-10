@@ -9,7 +9,6 @@
   import GridOptions from "./GridOptions.svelte";
   import DropDownOpenhover from "./DropDownOpenhover.svelte";
   import EditMenu from "./EditMenu.svelte";
-  import SettingsMenu from "./SettingsMenu.svelte";
 </script>
 
 <Navbar>
@@ -20,7 +19,6 @@
   <EstimationMenu />
   <Layouts />
   <GridOptions />
-  <SettingsMenu />
   <ShowHelp />
   <DropDownOpenhover />
 </Navbar>

@@ -133,30 +133,28 @@
           dragStart(LATENT);
         }}
       />
-      {#if $appState.composite}
-        <div
-          role="button"
-          tabindex="0"
-          id="add-composite"
-          title="Create Composite"
-          draggable="true"
-          class="variable-button"
-          data-button-type={LATENT}
-          on:dragstart={() => {
-            dragStart(COMPOSITE);
-          }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24">
-            <polygon
-              points="12,2 22,7 22,17 12,22 2,17 2,7"
-              fill="white"
-              stroke="black"
-              stroke-width="2"
-              transform="rotate(90 12 12)"
-            />
-          </svg>
-        </div>
-      {/if}
+      <div
+        role="button"
+        tabindex="0"
+        id="add-composite"
+        title="Create Composite"
+        draggable="true"
+        class="variable-button"
+        data-button-type={LATENT}
+        on:dragstart={() => {
+          dragStart(COMPOSITE);
+        }}
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <polygon
+            points="12,2 22,7 22,17 12,22 2,17 2,7"
+            fill="white"
+            stroke="black"
+            stroke-width="2"
+            transform="rotate(90 12 12)"
+          />
+        </svg>
+      </div>
       <div
         role="button"
         tabindex="0"
@@ -186,14 +184,12 @@
         on:dragstart={(event) => handleDragStarFactor(event)}
         >Factor
       </button>
-      {#if $appState.composite}
-        <button
-          class="draggable-item"
-          draggable="true"
-          on:dragstart={(event) => handleDragStartCompositeFactor(event)}
-          >Composite
-        </button>
-      {/if}
+      <button
+        class="draggable-item"
+        draggable="true"
+        on:dragstart={(event) => handleDragStartCompositeFactor(event)}
+        >Composite
+      </button>
       <button
         class="draggable-item"
         draggable="true"
