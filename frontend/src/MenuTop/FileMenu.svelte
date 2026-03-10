@@ -29,6 +29,24 @@
     }
   }
 
+  function resetAll() {
+    if (!$appState.modelEmpty || $appState.dataAvail) {
+      // @ts-expect-error
+      bootbox.confirm(
+        "Are you sure you want to reset everything? This will delete the current model and data.",
+        function (result) {
+          if (result) {
+            reset();
+            removeData();
+          }
+        },
+      );
+    } else {
+      reset();
+      removeData();
+    }
+  }
+
   function startDownload(object, fileEnding) {
     saveAs(object, "model." + fileEnding);
   }
@@ -250,7 +268,8 @@
   let menuItems;
   $: {
     let allMenuItems = [
-      { name: "New Model", action: newModel, divider: true },
+      { name: "New Model", action: newModel },
+      { name: "Reset", action: resetAll, divider: true },
       { name: "Load Model", action: loadModel },
       { name: "Load Data", action: loadData },
       { name: "Load Model and Data", action: loadModelData, divider: true },
