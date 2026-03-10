@@ -241,7 +241,55 @@
       show: "full",
       hasTrailingDivider: true,
     },
+    {
+      id: "switch-reg",
+      content: "Mark as Regression Relationship",
+      selector: `edge.${Constants.FACTLOAD}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markRegression();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
+      id: "switch-comp-reg",
+      content: "Mark as Regression Relationship",
+      selector: `edge.${Constants.COMPLOAD}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markCompRegression();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
 
+    {
+      id: "switch-compload",
+      content: "Mark as Component Loading",
+      selector: `edge.${Constants.COMP_REGRESSION}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markCompload();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
+      id: "switch-factor",
+      content: "Mark as Factor Loading",
+      selector: `edge.${Constants.REGRESSION}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markFactload();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
     {
       id: "revert-arrow",
       content: "Revert Direction",
@@ -256,76 +304,24 @@
       hasTrailingDivider: false,
     },
     {
-      id: "set-undirected",
-      content: "Set Undirected",
-      selector: `edge[isMean="0"].${Constants.DIRECTED}.${Constants.FROM_USER}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.setUndirected();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: false,
-    },
-    {
-      id: "switch-reg",
-      content: "Mark as Regression Relationship",
-      selector: `edge.${Constants.FACTLOAD}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.markRegression();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: true,
-    },
-
-    {
-      id: "switch-factor",
-      content: "Mark as Factor Loading",
-      selector: `edge.${Constants.REGRESSION}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.markFactload();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: true,
-    },
-
-    {
-      id: "switch-comp-reg",
-      content: "Mark as Regression Relationship",
-      selector: `edge.${Constants.COMPLOAD}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.markCompRegression();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: true,
-    },
-
-    {
-      id: "switch-compload",
-      content: "Mark as Component Loading",
-      selector: `edge.${Constants.COMP_REGRESSION}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.markCompload();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: true,
-    },
-
-    {
       id: "set-arrow",
       content: "Set Directed",
       selector: `edge.${Constants.UNDIRECTED}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.setDirected();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: true,
+    },
+    {
+      id: "set-undirected",
+      content: "Set Undirected",
+      selector: `edge[isMean="0"].${Constants.DIRECTED}.${Constants.FROM_USER}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.setUndirected();
         tolavaan($modelOptions.mode);
       },
       show: "full",
