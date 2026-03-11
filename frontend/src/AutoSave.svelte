@@ -22,7 +22,6 @@
     }
 
     async function logout() {
-        console.log("Timeout");
         let model = null;
         let data = null;
         if ($appState.dataAvail) {
@@ -47,7 +46,6 @@
             if (!sessionId) {
                 sessionId = Date.now().toString();
                 sessionStorage.setItem("sessionId", sessionId);
-                console.log("Session ID save: ", sessionId);
             }
             var db = new Dexie("ModelDatabase");
             db.version(1).stores({
@@ -64,7 +62,6 @@
 
     onMount(async () => {
         let sessionId = sessionStorage.getItem("sessionId");
-        console.log("Session ID load: ", sessionId);
         if (sessionId) {
             var db = new Dexie("ModelDatabase");
             db.version(1).stores({
@@ -72,11 +69,9 @@
             });
             const cachedData = await db.cache.get(sessionId);
             if (cachedData.model) {
-                console.log("Model loaded from cache");
                 parseModel(cachedData.model);
             }
             if (cachedData.data) {
-                console.log("Data loaded from cache");
                 Shiny.setInputValue("dataUpload-fileInput", {
                     content: btoa(cachedData.data),
                 });

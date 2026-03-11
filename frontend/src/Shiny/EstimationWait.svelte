@@ -6,24 +6,35 @@
   }
 </script>
 
-{#if $appState.fitting}
+{#if $appState.fitting || $appState.blockingMessage}
   <div class="center-screen">
-    <button
-      class="btn btn-lg btn-secondary fixed-width disabled-button"
-      id="fitting-button"
-      disabled
-    >
-      <span class="glyphicon glyphicon-refresh spinning" /> Fitting...
-    </button>
-    <button class="btn btn-lg btn-default fixed-width" on:click={abort}
-      >Cancel</button
-    >
+    {#if $appState.fitting}
+      <button
+        class="btn btn-lg btn-secondary fixed-width disabled-button"
+        id="fitting-button"
+        disabled
+      >
+        <span class="glyphicon glyphicon-refresh spinning" /> Fitting...
+      </button>
+      <button class="btn btn-lg btn-default fixed-width" on:click={abort}
+        >Cancel</button
+      >
+    {:else}
+      <button class="btn btn-lg btn-secondary message-button" disabled>
+        <span class="glyphicon glyphicon-refresh spinning" />
+        {$appState.blockingMessage}
+      </button>
+    {/if}
   </div>
 {/if}
 
 <style>
   .fixed-width {
     width: 150px; /* Adjust the width as needed */
+  }
+
+  .message-button {
+    min-width: 300px;
   }
 
   .glyphicon.spinning {

@@ -19,11 +19,13 @@ importModel <- function(session, full, importedModel, shinyapps) {
     parTable <- importedModel$parTable
     observed <- importedModel$obs
     latent <- importedModel$latent
+    composite <- importedModel$composite
     if (lavInspect(importedModel$fit, "ngroups") > 1) {
       parTable <- getGroupTable(parTable)
       groups <- unique(parTable$group)
       observed <- makeNewVars(observed, groups)
       latent <- makeNewVars(latent, groups)
+      composite <- makeNewVars(composite, groups)
     }
     if (!is.null(importedModel$layout_name)) {
       safe_name <- gsub("[^a-zA-Z0-9_-]", "", importedModel$layout_name)
@@ -40,8 +42,8 @@ importModel <- function(session, full, importedModel, shinyapps) {
     }
 
     session$sendCustomMessage("imported_model", message = list(
-      parTable = parTable, latent = latent, obs = observed,
-      ordered = lavInspect(importedModel$fit, what = "ordered"), layout_hash = importedModel$layout_hash,
+      parTable = parTable, latent = latent, obs = observed, composite = composite,
+      ordered = lavInspect(importedModel$fit, what = "ordered"),
       layout_name = importedModel$layout_name, saved_layout = saved_layout, export_filepath = importedModel$export_filepath
     ))
     if (!is.null(importedModel$df)) {
@@ -73,8 +75,6 @@ modifyResTable <- function(ests) {
   names(ests)[names(ests) == "lhs"] <- "source"
   names(ests)[names(ests) == "op"] <- "arrow"
   names(ests)[names(ests) == "rhs"] <- "target"
-  ests$arrow[ests$arrow == "~"] <- "\u2192" # →
-  ests$arrow[ests$arrow == "=~"] <- "\u2192" # →
-  ests$arrow[ests$arrow == "~~"] <- "\u2194" # ↔
+  names(ests)[names(ests) == "pvalue"] <- "p value"
   return(ests)
 }

@@ -13,7 +13,13 @@
   } from "../stores.js";
   import { get } from "svelte/store";
   import { checkNodeLoop } from "./checkNodeLoop.js";
-  import { OBSERVED, LATENT, CONSTANT, NODEWITH } from "./classNames.js";
+  import {
+    OBSERVED,
+    LATENT,
+    CONSTANT,
+    NODEWITH,
+    COMPOSITE,
+  } from "./classNames.js";
   import { tolavaan } from "../Shiny/toR.js";
 
   let cy = get(cyStore);
@@ -53,7 +59,7 @@
       }
 
       // Handle 'l', 'o', 'c' keys
-      if (["l", "o", "c"].includes(event.key.toLowerCase())) {
+      if (["l", "o", "c", "i"].includes(event.key.toLowerCase())) {
         let nodeType;
         switch (event.key.toLowerCase()) {
           case "l":
@@ -62,8 +68,11 @@
           case "o":
             nodeType = OBSERVED;
             break;
-          case "c":
+          case "i":
             nodeType = CONSTANT;
+            break;
+          case "c":
+            nodeType = COMPOSITE;
             break;
         }
         addNode(nodeType, { ...m }); // Use the last known mouse position within Cytoscape container.
@@ -140,6 +149,7 @@
       }
 
       edge.checkAndMarkPotentialLatObReg();
+      edge.checkAndMarkPotentialObCompReg();
 
       //only one directed edge from constant
       if (edge.isDirected() && sourceNode.isConstant()) {
@@ -198,6 +208,14 @@
         });
       } else {
         inputOptions = Array.from({ length: 100 }, (_, i) => `var${i + 1}`);
+      }
+
+      if (inputOptions.length === 0) {
+        setAlert(
+          "danger",
+          "No available variables to select. All variables are already in the model.",
+        );
+        return;
       }
       const promptSettings = {
         title: title,
@@ -261,6 +279,35 @@
             );
             offset += gap;
             addEdge(latentID, itemItem);
+          });
+          $modelOptions.fix_first = true;
+          $modelOptions.fix_single = true;
+          $modelOptions.auto_var = true;
+          $modelOptions.intOvFree = true;
+          $modelOptions.intLvFree = false;
+        } else {
+          showError();
+        }
+      });
+    } else if ($appState.dragged == "composite-factor") {
+      // @ts-ignore
+      createBootPrompt("Select Variables", function (result) {
+        if (checkValid(result)) {
+          const zoom = cy.zoom();
+          const latentID = addNode(COMPOSITE, {
+            x: pos.x + (gap * zoom * result.length) / 2 - (NODEWITH / 2) * zoom,
+            y: pos.y,
+          });
+          result.forEach((name) => {
+            const itemItem = addNode(
+              OBSERVED,
+              { x: pos.x + offset * zoom, y: pos.y + zoom * ygap },
+              true,
+              name,
+              true,
+            );
+            offset += gap;
+            addEdge(itemItem, latentID);
           });
           $modelOptions.fix_first = true;
           $modelOptions.fix_single = true;

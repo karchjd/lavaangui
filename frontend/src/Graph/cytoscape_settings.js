@@ -50,7 +50,16 @@ export const graphStyles = [
     selector: `node.${Constants.LATENT}`,
     style: {
       shape: function (ele) {
-        return ele.data("shape") || "ellipse";
+        return "ellipse";
+      },
+      "border-color": "black",
+    },
+  },
+  {
+    selector: `node.${Constants.COMPOSITE}`,
+    style: {
+      shape: function (ele) {
+        return "hexagon";
       },
       "border-color": "black",
     },

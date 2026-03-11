@@ -242,6 +242,38 @@
         return this.hasClass(Constants.FACTLOAD);
     });
 
+    cytoscape("collection", "checkAndMarkPotentialObCompReg", function () {
+        if (
+            this.isDirected() &&
+            this.source().isObserved() &&
+            this.target().isComposite()
+        ) {
+            this.addClass(Constants.POTENTIAL_OB_COMP_REGRESSION); //activates context menu to switch between regression and component loading
+            this.addClass(Constants.COMPLOAD); // Default to component loading;
+        }
+        return this;
+    });
+
+    cytoscape("collection", "markCompRegression", function () {
+        this.addClass(Constants.COMP_REGRESSION);
+        this.removeClass(Constants.COMPLOAD);
+        return this;
+    });
+
+    cytoscape("collection", "markCompload", function () {
+        this.removeClass(Constants.COMP_REGRESSION);
+        this.addClass(Constants.COMPLOAD);
+        return this;
+    });
+
+    cytoscape("collection", "isCompRegression", function () {
+        return this.hasClass(Constants.COMP_REGRESSION);
+    });
+
+    cytoscape("collection", "isCompLoad", function () {
+        return this.hasClass(Constants.COMPLOAD);
+    });
+
     // Nodes
     cytoscape("collection", "link", function () {
         this.addClass(Constants.LINKED);
@@ -263,13 +295,24 @@
 
     cytoscape("collection", "makeLatent", function () {
         this.removeClass(Constants.OBSERVED)
+            .removeClass(Constants.COMPOSITE)
             .addClass(Constants.LATENT)
             .removeClass(Constants.LINKED);
         return this;
     });
 
+    cytoscape("collection", "makeComposite", function () {
+        this.removeClass(Constants.OBSERVED)
+            .removeClass(Constants.LATENT)
+            .addClass(Constants.COMPOSITE)
+            .removeClass(Constants.LINKED);
+        return this;
+    });
+
     cytoscape("collection", "makeObserved", function () {
-        this.addClass(Constants.OBSERVED).removeClass(Constants.LATENT);
+        this.addClass(Constants.OBSERVED)
+            .removeClass(Constants.LATENT)
+            .removeClass(Constants.COMPOSITE);
         return this;
     });
 
@@ -291,6 +334,9 @@
         return this.hasClass(Constants.CONSTANT);
     });
 
+    cytoscape("collection", "isComposite", function () {
+        return this.hasClass(Constants.COMPOSITE);
+    });
     cytoscape("collection", "isObserved", function () {
         return this.hasClass(Constants.OBSERVED);
     });
@@ -323,6 +369,12 @@
     cytoscape("core", "getLatentNodes", function () {
         return this.nodes(function (node) {
             return node.hasClass(Constants.LATENT);
+        });
+    });
+
+    cytoscape("core", "getComposites", function () {
+        return this.nodes(function (node) {
+            return node.hasClass(Constants.COMPOSITE);
         });
     });
 </script>
