@@ -85,11 +85,12 @@ function addTerms(node, edge) {
 }
 
 class DataForR {
-  constructor(mode, R_script, lavOptions = null, syntax = null, fitCache = null, ordered_labels = null) {
+  constructor(mode, R_script, lavOptions = null, syntax = null, fitCache = null, ordered_labels = null, lavOptionsList = null) {
     this.mode = mode;
     Object.assign(this, {
       model: {
         options: lavOptions,
+        optionsList: lavOptionsList,
         syntax: syntax,
         R_script: R_script,
         ordered_labels: ordered_labels
@@ -288,6 +289,9 @@ export function createSyntax(mode) {
   // remove empty lines caused by sections not existing
   syntax = syntax.replace(/^(\s*\n)+/, '')
 
+  // raw syntax for R execution (no wrapping quotes, no eval needed)
+  const rawSyntax = syntax;
+
   // split lines that are two long
   syntax = "'\n" + syntax + "'" + "\n\n";
   function splitLongLines(inputStr, threshold = 60) {
@@ -324,10 +328,11 @@ export function createSyntax(mode) {
 
 
   const lavOptions = produceLavaanOptions(ordered_labels, formative);
+  const lavOptionsList = produceLavaanOptionsList(ordered_labels, formative);
 
   R_script += "model <-" + syntax;
   R_script += "fit <- lavaan(model, data, " + lavOptions;
-  const for_R = new DataForR(mode, R_script, lavOptions, syntax = syntax, get(fitCache), ordered_labels)
+  const for_R = new DataForR(mode, R_script, lavOptions, rawSyntax, get(fitCache), ordered_labels, lavOptionsList)
   return for_R;
 }
 
@@ -370,6 +375,44 @@ function produceLavaanOptions(ordered_labels, formative) {
   options = options + ")";
 
   return options;
+}
+
+function produceLavaanOptionsList(ordered_labels, formative) {
+  const modelOpt = get(modelOptions);
+  const opts = {
+    meanstructure: convertBool(modelOpt.meanStruc),
+    "int.ov.free": convertBool(modelOpt.intOvFree),
+    "int.lv.free": convertBool(modelOpt.intLvFree),
+    estimator: modelOpt.estimator,
+    se: modelOpt.se,
+    missing: modelOpt.missing,
+    "auto.fix.first": convertBool(modelOpt.fix_first),
+    "auto.fix.single": convertBool(modelOpt.fix_single),
+    "auto.var": convertBool(modelOpt.auto_var),
+    "auto.cov.lv.x": convertBool(modelOpt.auto_cov_lv_x),
+    "auto.cov.y": convertBool(modelOpt.auto_cov_y),
+    "fixed.x": convertBool(modelOpt.fixed_x),
+    "auto.th": convertBool(modelOpt["auto.th"]),
+    "auto.delta": convertBool(modelOpt["auto.delta"]),
+  };
+
+  if (modelOpt.se == "boot") {
+    opts.bootstrap = modelOpt.n_boot;
+  }
+  if (formative) {
+    opts["optim.gradient"] = "numerical";
+  }
+  if (ordered_labels.length > 0) {
+    opts.ordered = ordered_labels;
+  }
+
+  return opts;
+}
+
+function convertBool(value) {
+  if (value === true || value === "true") return true;
+  if (value === false || value === "false") return false;
+  return value;
 }
 
 function addQuotes(inputString) {
