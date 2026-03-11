@@ -85,11 +85,12 @@ function addTerms(node, edge) {
 }
 
 class DataForR {
-  constructor(mode, R_script, lavOptions = null, syntax = null, fitCache = null, ordered_labels = null) {
+  constructor(mode, R_script, lavOptions = null, syntax = null, fitCache = null, ordered_labels = null, lavOptionsList = null) {
     this.mode = mode;
     Object.assign(this, {
       model: {
         options: lavOptions,
+        optionsList: lavOptionsList,
         syntax: syntax,
         R_script: R_script,
         ordered_labels: ordered_labels
@@ -159,21 +160,11 @@ export function createSyntax(mode) {
     const outgoing = node.connectedEdges(function (edge) {
       return edge.isDirected() && edge.source().id() == node.id()
     })
-    return outgoing.length > 0 && outgoing.every(edge => edge.target().isLatent())
+    return outgoing.length > 0 && outgoing.every(edge => edge.target().isLatent() || edge.target().isComposite())
   })
 
-  // to help detect formative factors, only incoming arrows
-  let formativeFactors = cy.getLatentNodes()
-  formativeFactors = formativeFactors.nodes(function (node) {
-    const incoming = node.connectedEdges(function (edge) {
-      return edge.isDirected() && edge.target().id() == node.id()
-    })
-    const all = node.connectedEdges(function (edge) {
-      return edge.isDirected()
-    })
-    return all.length > 0 && incoming.length == all.length
-  })
-
+  // to help detect composites, only incoming arrows
+  let formativeFactors = cy.getComposites()
 
   // measurement model
   let latentNodes = cy.getLatentNodes()
@@ -204,9 +195,9 @@ export function createSyntax(mode) {
     let res = edge.isDirected() &&
       !edge.source().isConstant() &&
       (!(edge.source().isLatent() && edge.target().isObserved()) || edge.isRegression()) && // only if edge is explicitly marked as regression for arrows from latent to observed
-      !(edge.source().isLatent() && hierachicalFactors.some(node => node.id() === edge.source().id()) && edge.target().isLatent()) &&
+      !(edge.source().isLatent() && hierachicalFactors.some(node => node.id() === edge.source().id()) && (edge.target().isLatent() || edge.target().isComposite())) &&
       (edge.isUserAdded() || edge.isModifiedLavaan()) &&
-      !(formativeFactors.some(node => node.id() === edge.target().id()));
+      (!(edge.target().isComposite() && edge.source().isObserved()) || edge.isCompRegression()); // only if edge is explicitly marked as regression for arrows from observed to composite
     return res;
 
   }
@@ -272,7 +263,7 @@ export function createSyntax(mode) {
     }
   }
 
-  // formative factors
+  // composites
   shown = false;
   for (let i = 0; i < formativeFactors.length; i++) {
     const formativeNode = formativeFactors[i];
@@ -280,13 +271,15 @@ export function createSyntax(mode) {
     const connectedEdges = formativeNode.connectedEdges(function (edge) {
       return (
         edge.isDirected() &&
-        edge.target().id() == formativeNode.id() // should even be unnecessary because of how formative factors are defined (all directed edges are incoming)
+        edge.target().id() == formativeNode.id() &&
+        edge.source().isObserved() &&
+        edge.isCompLoad()
       );
     });
     if (connectedEdges.length > 0) {
       if (!shown) {
         formative = true;
-        syntax += "\n # formative factors" + "\n";
+        syntax += "\n # composites" + "\n";
         shown = true;
       }
       syntax += " " + formativeNode.getLabel() + " <~ " + getNodeNames(connectedEdges, "source") + "\n";
@@ -295,6 +288,9 @@ export function createSyntax(mode) {
 
   // remove empty lines caused by sections not existing
   syntax = syntax.replace(/^(\s*\n)+/, '')
+
+  // raw syntax for R execution (no wrapping quotes, no eval needed)
+  const rawSyntax = syntax;
 
   // split lines that are two long
   syntax = "'\n" + syntax + "'" + "\n\n";
@@ -332,10 +328,11 @@ export function createSyntax(mode) {
 
 
   const lavOptions = produceLavaanOptions(ordered_labels, formative);
+  const lavOptionsList = produceLavaanOptionsList(ordered_labels, formative);
 
   R_script += "model <-" + syntax;
   R_script += "fit <- lavaan(model, data, " + lavOptions;
-  const for_R = new DataForR(mode, R_script, lavOptions, syntax = syntax, get(fitCache), ordered_labels)
+  const for_R = new DataForR(mode, R_script, lavOptions, rawSyntax, get(fitCache), ordered_labels, lavOptionsList)
   return for_R;
 }
 
@@ -378,6 +375,44 @@ function produceLavaanOptions(ordered_labels, formative) {
   options = options + ")";
 
   return options;
+}
+
+function produceLavaanOptionsList(ordered_labels, formative) {
+  const modelOpt = get(modelOptions);
+  const opts = {
+    meanstructure: convertBool(modelOpt.meanStruc),
+    "int.ov.free": convertBool(modelOpt.intOvFree),
+    "int.lv.free": convertBool(modelOpt.intLvFree),
+    estimator: modelOpt.estimator,
+    se: modelOpt.se,
+    missing: modelOpt.missing,
+    "auto.fix.first": convertBool(modelOpt.fix_first),
+    "auto.fix.single": convertBool(modelOpt.fix_single),
+    "auto.var": convertBool(modelOpt.auto_var),
+    "auto.cov.lv.x": convertBool(modelOpt.auto_cov_lv_x),
+    "auto.cov.y": convertBool(modelOpt.auto_cov_y),
+    "fixed.x": convertBool(modelOpt.fixed_x),
+    "auto.th": convertBool(modelOpt["auto.th"]),
+    "auto.delta": convertBool(modelOpt["auto.delta"]),
+  };
+
+  if (modelOpt.se == "boot") {
+    opts.bootstrap = modelOpt.n_boot;
+  }
+  if (formative) {
+    opts["optim.gradient"] = "numerical";
+  }
+  if (ordered_labels.length > 0) {
+    opts.ordered = ordered_labels;
+  }
+
+  return opts;
+}
+
+function convertBool(value) {
+  if (value === true || value === "true") return true;
+  if (value === false || value === "false") return false;
+  return value;
 }
 
 function addQuotes(inputString) {

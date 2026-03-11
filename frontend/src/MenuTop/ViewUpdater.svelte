@@ -10,7 +10,7 @@
       $gridViewOptions.showVar,
       $gridViewOptions.showLav,
       $gridViewOptions.showMean,
-      edgeItems,
+      $gridViewOptions.showCov,
     );
   }
 

@@ -104,6 +104,16 @@
       },
       show: "full",
     },
+    {
+      id: "add-composite",
+      content: "Add Composite",
+      coreAsWell: true,
+      onClickFunction: function (event) {
+        const position = event.renderedPosition;
+        addNode(Constants.COMPOSITE, position);
+      },
+      show: "full",
+    },
 
     //edge menus
 
@@ -231,7 +241,55 @@
       show: "full",
       hasTrailingDivider: true,
     },
+    {
+      id: "switch-reg",
+      content: "Mark as Regression Relationship",
+      selector: `edge.${Constants.FACTLOAD}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markRegression();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
+      id: "switch-comp-reg",
+      content: "Mark as Regression Relationship",
+      selector: `edge.${Constants.COMPLOAD}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markCompRegression();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
 
+    {
+      id: "switch-compload",
+      content: "Mark as Component Loading",
+      selector: `edge.${Constants.COMP_REGRESSION}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markCompload();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
+      id: "switch-factor",
+      content: "Mark as Factor Loading",
+      selector: `edge.${Constants.REGRESSION}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markFactload();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
     {
       id: "revert-arrow",
       content: "Revert Direction",
@@ -246,50 +304,24 @@
       hasTrailingDivider: false,
     },
     {
-      id: "set-undirected",
-      content: "Set Undirected",
-      selector: `edge[isMean="0"].${Constants.DIRECTED}.${Constants.FROM_USER}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.setUndirected();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: false,
-    },
-    {
-      id: "switch-reg",
-      content: "Mark as Regression Relationship",
-      selector: `edge.${Constants.FACTLOAD}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.markRegression();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: true,
-    },
-
-    {
-      id: "switch-factor",
-      content: "Mark as Factor Loading",
-      selector: `edge.${Constants.REGRESSION}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.markFactload();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: true,
-    },
-
-    {
       id: "set-arrow",
       content: "Set Directed",
       selector: `edge.${Constants.UNDIRECTED}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.setDirected();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: true,
+    },
+    {
+      id: "set-undirected",
+      content: "Set Undirected",
+      selector: `edge[isMean="0"].${Constants.DIRECTED}.${Constants.FROM_USER}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.setUndirected();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -425,7 +457,7 @@
       id: "rename-node",
       show: "both",
       content: "Rename Variable",
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}`,
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         const columnNames = $appState.columnNames;
@@ -517,7 +549,7 @@
     {
       id: "remove-node",
       content: "Delete Variable",
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}`,
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.remove();
@@ -529,10 +561,22 @@
     {
       id: "change-latent",
       content: "Change to Latent",
-      selector: `node.${Constants.OBSERVED}`,
+      selector: `node.${Constants.OBSERVED}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.makeLatent();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
+      id: "change-composite",
+      content: "Change to Composite",
+      selector: `node.${Constants.OBSERVED}, node.${Constants.LATENT}`,
+      onClickFunction: function (event) {
+        const node = event.target || event.cyTarget;
+        node.makeComposite();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -579,7 +623,7 @@
       id: "change-observed",
       show: "full",
       content: "Change to Observed",
-      selector: `node.${Constants.LATENT}`,
+      selector: `node.${Constants.LATENT}, node.${Constants.COMPOSITE}`,
       hasTrailingDivider: true,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
@@ -590,23 +634,6 @@
           bootbox.alert("Variable linked with data set");
         }
         tolavaan($modelOptions.mode);
-      },
-    },
-    {
-      id: "change-shape-hexagon",
-      content: "Change Shape to Hexagon",
-      selector: `node[shape = "ellipse"]`,
-      show: "both",
-      onClickFunction: function (event) {
-        var target = event.target || event.cyTarget;
-        const toChange = getChange(target, "nodes");
-        if (toChange === null) {
-          return null;
-        }
-        $ur.do("style", {
-          eles: toChange,
-          style: { shape: "hexagon" },
-        });
       },
     },
     {

@@ -21,7 +21,6 @@ sendResultsFront <- function(session, result, fromJavascript, df) {
 }
 
 
-
 serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
     abort_file_global <- reactiveVal()
@@ -38,28 +37,23 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
 
       ## Mode = "Full Model" or "Estimate", send model
       modelJavascript <- fromJavascript$model
-      model <- eval(parse(text = modelJavascript$syntax)) # nolint: object_usage_linter.
+      model <- modelJavascript$syntax # nolint: object_usage_linter.
+      optsList <- modelJavascript$optionsList
       if (length(modelJavascript$ordered_labels) > 0) { ## ordinal data present
         modelParse <- paste0(model, "\n")
         for (i in 1:length(modelJavascript$ordered_labels)) {
           modelParse <- paste0(modelParse, modelJavascript$ordered_labels[i], "|t1\n")
         }
-        modify_arguments_for_ordered <- function(input_string) {
-          # Remove the "ordered", "missing", and "estimator" arguments
-          modified_string <- gsub("ordered = c\\([^\\)]*\\),", "", input_string)
-          modified_string <- gsub("missing = \"[^\"]*\",", "", modified_string)
-          modified_string <- gsub("estimator = \"[^\"]*\",", "", modified_string)
-          modified_string <- gsub("se = \"[^\"]*\",", "", modified_string)
-          modified_string <- gsub("bootstrap = [0-9]+", "", modified_string)
-          
-          # Replace meanstructure argument (whether it is TRUE, FALSE, or "default") with TRUE
-          modified_string <- gsub("meanstructure = (TRUE|FALSE|\"default\")", "meanstructure = TRUE", modified_string)
-
-          return(modified_string)
-        }
-        lavaan_parse_string <- (paste0("lavaanify(modelParse, ", modify_arguments_for_ordered(modelJavascript$options)))
+        ordered_opts <- optsList
+        ordered_opts$ordered <- NULL
+        ordered_opts$missing <- NULL
+        ordered_opts$estimator <- NULL
+        ordered_opts$se <- NULL
+        ordered_opts$bootstrap <- NULL
+        ordered_opts$meanstructure <- TRUE
+        lavaanify_args <- c(list(model = modelParse), ordered_opts)
       } else {
-        lavaan_parse_string <- paste0("lavaan(model, ", modelJavascript$options)
+        lavaan_args <- c(list(model = model), optsList)
       }
 
 
@@ -68,9 +62,9 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         withCallingHandlers(
           {
             if (length(modelJavascript$ordered_labels) > 0) {
-              model_parsed <- eval(parse(text = lavaan_parse_string))
+              model_parsed <- do.call(lavaan::lavaanify, lavaanify_args)
             } else {
-              lavaan_model <- eval(parse(text = lavaan_parse_string))
+              lavaan_model <- do.call(lavaan::lavaan, lavaan_args)
               model_parsed <- parTable(lavaan_model)
             }
           },
@@ -114,13 +108,13 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         (is.null(getData()) || fromJavascript$cache$lastFitData == getHashData(getData()))
       if (cacheValid) {
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
-        if (isTruthy(getData())){
+        if (isTruthy(getData())) {
           data <- getData()
-          lavaan_string <- paste0("lavaan(model, data, do.fit = FALSE, ", modelJavascript$options)
-          tmp <- eval(parse(text = lavaan_string))
+          cache_args <- c(list(model = model, data = data, do.fit = FALSE), optsList)
+          tmp <- do.call(lavaan::lavaan, cache_args)
           cacheResult$fit@Data@X <- tmp@Data@X
         }
-        
+
         fit(cacheResult$fit)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
         to_render(cacheResult)
@@ -147,7 +141,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       session$sendCustomMessage("fitting", "")
       abort_file <- tempfile()
       abort_file_global(abort_file)
-      lavaan_string <- paste0("lavaan(model, data, ", modelJavascript$options)
+      fit_args <- c(list(model = model, data = data), optsList)
       fut <- promises::future_promise(
         {
           `%get%` <- function(pkg, fun) {
@@ -169,10 +163,10 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
           withCallingHandlers(
             {
               local_fit <- tryCatch(
-                eval(parse(text = lavaan_string)),
+                do.call(lavaan::lavaan, fit_args),
                 error = function(e) {
                   lastError <<- e
-                  return(NULL) 
+                  return(NULL)
                 }
               )
             },
@@ -183,19 +177,19 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
           list(fit = local_fit, warning = lastWarning, error = lastError)
         },
         packages = "lavaan",
-        globals = c("data", "abort_file", "model", "lavaan_string"),
+        globals = c("abort_file", "fit_args"),
         seed = TRUE
       )
       ## sucesses fit
       promises::then(
         fut,
         function(value) {
-          if(is.null(value$error)){
+          if (is.null(value$error)) {
             fit(value$fit)
             sendResultsFront(session, value, fromJavascript, getData())
             to_render(value)
-            session$sendCustomMessage("lav_sucess", "lav_error")  
-          }else{
+            session$sendCustomMessage("lav_sucess", "lav_error")
+          } else {
             print(value$error)
             session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = value$error$message, type = "danger"))
             to_render(value$error)

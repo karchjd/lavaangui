@@ -22,6 +22,20 @@ test("new model", async ({ page }) => {
   await expect(page.getByTestId("result-text")).toContainText("Command");
 });
 
+test("Reset", async ({ page }) => {
+  await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole("link", { name: "Reset", exact: true }).click();
+  await page.getByText("OK").click();
+  // @ts-expect-error
+  const numberOfNodes = await page.evaluate(() => window.cy.nodes().length);
+
+  expect(numberOfNodes).toBe(0);
+  const showDataButton = page.getByRole("button", { name: "Show Data" });
+  expect(await showDataButton.isDisabled()).toBe(true);
+  await expect(page.getByTestId("result-text")).toContainText("Command");
+});
+
 
 test("Load Data", async ({ page }) => {
   const fileChooserPromise = page.waitForEvent("filechooser");

@@ -42,7 +42,7 @@ export function parseModel(content) {
     const modelOptData = JSON.parse(combinedData.modelOpt);
     const gridViewOptData = JSON.parse(combinedData.gridViewOpt);
     mergeExistingProperties(modelOptions, modelOptData);
-    mergeExistingProperties(modelOptions, gridViewOptData);
+    mergeExistingProperties(gridViewOptions, gridViewOptData);
     if (combinedData.fitCache !== undefined) {
         const localCache = JSON.parse(combinedData.fitCache);
         fitCache.set(localCache);  // Use the set method to update the store with the new value
@@ -83,6 +83,7 @@ export function parseModel(content) {
     // things to do for backward compatibility
     cy.edges().forEach((edge) => {
         edge.checkAndMarkPotentialLatObReg()
+        edge.checkAndMarkPotentialObCompReg()
     });
 
     cy.getLatentNodes().forEach((node) => {
@@ -117,7 +118,7 @@ export function jsonModel() {
 
     const model = JSON.stringify(json);
     const modelOpt = JSON.stringify(get(modelOptions));
-    const gridViewOpt = JSON.stringify(get(modelOptions));
+    const gridViewOpt = JSON.stringify(get(gridViewOptions));
     const fitCacheLocal = JSON.stringify(get(fitCache));
     const combinedData = JSON.stringify({
         model,

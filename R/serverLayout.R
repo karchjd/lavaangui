@@ -12,7 +12,7 @@ serverLayout <- function(id, fit, full, imported) {
             first_run_layout(FALSE)
             fitObject <- TRUE
           } else {
-            model <- eval(parse(text = fromJavascript$model$syntax))
+            model <- fromJavascript$model$syntax
             semPlotModel <- semPlotModel_lavaanModel(model)
           }
           semPlotRes <- semPaths(semPlotModel,

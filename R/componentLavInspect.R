@@ -130,7 +130,7 @@ lavInspectServer <- function(id, fit) {
           choices = li_vcovmodpar,
           selected = ""
         )
-      } else if (topic == "Miscallaneous") {
+      } else if (topic == "Miscellaneous") {
         updateSelectInput(session, "what",
           choices = li_misc,
           selected = ""

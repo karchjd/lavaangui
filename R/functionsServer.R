@@ -19,11 +19,13 @@ importModel <- function(session, full, importedModel, shinyapps) {
     parTable <- importedModel$parTable
     observed <- importedModel$obs
     latent <- importedModel$latent
+    composite <- importedModel$composite
     if (lavInspect(importedModel$fit, "ngroups") > 1) {
       parTable <- getGroupTable(parTable)
       groups <- unique(parTable$group)
       observed <- makeNewVars(observed, groups)
       latent <- makeNewVars(latent, groups)
+      composite <- makeNewVars(composite, groups)
     }
     savedModelSent <- FALSE
     if (!full) {
@@ -76,8 +78,6 @@ modifyResTable <- function(ests) {
   names(ests)[names(ests) == "lhs"] <- "source"
   names(ests)[names(ests) == "op"] <- "arrow"
   names(ests)[names(ests) == "rhs"] <- "target"
-  ests$arrow[ests$arrow == "~"] <- "\u2192" # →
-  ests$arrow[ests$arrow == "=~"] <- "\u2192" # →
-  ests$arrow[ests$arrow == "~~"] <- "\u2194" # ↔
+  names(ests)[names(ests) == "pvalue"] <- "p value"
   return(ests)
 }

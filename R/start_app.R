@@ -6,8 +6,12 @@ start_app <- function(fit = NULL, full, where) {
   ## import model if present
   if (!is.null(fit)) {
     varNames <- lavaanNames(fit, type = "ov")
-    factNames <- lavaanNames(fit, type = "lv")
+    factNames <- lavaanNames(fit, type = "lv.regular")
     factNames <- factNames[!factNames %in% varNames]
+    ## temporary fix until lavaanNames(fit, type = "lv.formative") works again
+    parTab <- parTable(fit)
+    compositeNames <- unique(parTab$lhs[parTab$op == "<~"])
+    print(compositeNames)
     if (lavInspect(fit, "ngroups") == 1) {
       df <- tryCatch(
         {
@@ -26,7 +30,7 @@ start_app <- function(fit = NULL, full, where) {
     }
     parTable <- parTable(fit)
     parTable <- parTable[!parTable$op %in% c(":=", "<", ">", "==", "|", "<", ">"), ]
-    importedModel <- list(obs = varNames, latent = factNames, parTable = parTable, df = df, fit = fit)
+    importedModel <- list(obs = varNames, latent = factNames, composite = compositeNames, parTable = parTable, df = df, fit = fit)
   } else {
     importedModel <- NULL
   }

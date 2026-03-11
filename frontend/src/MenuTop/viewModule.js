@@ -10,6 +10,7 @@ export const edgeItems = [
   },
   { name: "Variance Arrows", modelSlot: "showVar" },
   { name: "Mean Arrows", modelSlot: "showMean" },
+  { name: "Undirected Arrows", modelSlot: "showCov" }
 ];
 
 export let viewRadios = [
@@ -58,7 +59,7 @@ export function updateLabels(viewOption, std, number_digits) {
   cy.style().selector("edge.hasEstFixed").style({ label: fixedEstStyle }).update();
 }
 
-export function updateVisibility(showVar, showLav, showMean) {
+export function updateVisibility(showVar, showLav, showMean, showCov) {
   function which(logicalVector) {
     return logicalVector.reduce((indices, value, index) => {
       if (value) {
@@ -69,7 +70,7 @@ export function updateVisibility(showVar, showLav, showMean) {
   }
 
   const cy = get(cyStore);
-  const showElement = [showLav, showVar, showMean];
+  const showElement = [showLav, showVar, showMean, showCov];
   const trueIndices = which(showElement);
   const falseIndices = which(showElement.map((x) => !x));
   const allIndices = trueIndices.concat(falseIndices);
@@ -80,7 +81,7 @@ export function updateVisibility(showVar, showLav, showMean) {
       elements => elements.isLavaanAdded(),
       elements => elements.isLoop(),
       elements => elements.isMean(),
-      // Add more functions as needed
+      elements => elements.isUndirected()
     ];
     return functionsArray[i](elements);
   }
@@ -131,7 +132,9 @@ function getStars(pval) {
 
 function generateStyleEst(viewOption, postfix, number_digits) {
   const formatOrNA = (estimates, field) => {
-    if (!estimates) return "NA";
+    if (!estimates || estimates[field] == null) {
+      return "NA";
+    }
     const value = estimates[field];
     return value.toFixed(number_digits);
   };
