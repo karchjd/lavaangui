@@ -4,6 +4,7 @@ import { createSyntax } from "../Shiny/toR.js";
 
 let counter = 0;
 let undo = false;
+let layoutResolve = null;
 
 function objectOfArraysToArrayOfObjects(obj) {
   const keys = Object.keys(obj);
@@ -21,15 +22,27 @@ function objectOfArraysToArrayOfObjects(obj) {
   return result;
 }
 
-export function applySemLayout(name, undoArg = true) {
+let animate
+export function applySemLayout(name, undoArg = true, animateArg = true) {
   undo = undoArg;
   counter = counter + 1;
+  animate = animateArg;
   let for_R = createSyntax(true);
   // @ts-expect-error
   for_R.name = name;
   // @ts-expect-error
   for_R.counter = counter;
   Shiny.setInputValue("layout-layout", JSON.stringify(for_R));
+  return new Promise((resolve) => {
+    layoutResolve = resolve;
+  });
+}
+
+export function resolveLayout() {
+  if (layoutResolve) {
+    layoutResolve();
+    layoutResolve = null;
+  }
 }
 
 
@@ -74,7 +87,8 @@ Shiny.addCustomMessageHandler("semPlotLayout", function (layout_R) {
     },
     fit: true,
     padding: 60,
-    animate: true,
+    animate: animate,
+    stop: resolveLayout,
   };
   // Run the layout
   if (undo) {

@@ -6,7 +6,7 @@
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { addNode } from "../Graph/graphmanipulation.js";
   import { tolavaan } from "./toR.js";
-  import { applySemLayout } from "../MenuTop/semPlotLayouts.js";
+  import { applySemLayout, resolveLayout } from "../MenuTop/semPlotLayouts.js";
   import {
     OBSERVED,
     LATENT,
@@ -140,7 +140,7 @@
     }
   }
 
-  function getModelLav(lav_model, imported) {
+  async function getModelLav(lav_model, imported) {
     $appState.meansModelled = false;
     $appState.loadingMode = true;
 
@@ -345,7 +345,7 @@
         }
       });
     } else {
-      applySemLayout("tree", false);
+      await applySemLayout("tree", false, false);
       const angleCounts = new Map();
 
       cy.getUndirectedEdges().forEach((edge) => {
@@ -481,6 +481,9 @@
     const what = info.type == "warning" ? "warning" : "error";
     if (info.origin == "loading data") {
       window.$("#upload-modal").modal("hide");
+    }
+    if (info.origin == "layout") {
+      resolveLayout();
     }
     setAlert(
       info.type,
