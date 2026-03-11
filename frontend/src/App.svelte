@@ -34,9 +34,7 @@
 
 <AppReady />
 {#if $appState.ready}
-  {#if $appState.full}
-    <EstimationWait />
-  {/if}
+  <EstimationWait />
 
   <Init />
   <div>

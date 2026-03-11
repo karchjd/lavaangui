@@ -51,6 +51,7 @@ export let fitCache = writable({
 export let appState = writable({
   fitting: false,
   loadingMode: false,
+  blockingMessage: null,
   runCounter: 0,
   modelEmpty: true,
   dataAvail: false,
