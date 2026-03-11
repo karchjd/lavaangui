@@ -45,7 +45,7 @@ importModel <- function(session, full, importedModel, shinyapps) {
     }
     if (!savedModelSent) {
       session$sendCustomMessage("imported_model", message = list(
-        parTable = parTable, latent = latent, obs = observed,
+        parTable = parTable, latent = latent, composite = composite, obs = observed,
         ordered = lavInspect(importedModel$fit, what = "ordered")
       ))
     }
