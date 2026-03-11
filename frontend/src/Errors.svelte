@@ -54,17 +54,10 @@
     return true;
   }
 
-  function serverAvail() {
-    // @ts-expect-error
-    return typeof Shiny === "object" && Shiny !== null;
-  }
-
-  if (serverAvail()) {
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("serverError", function (message) {
-      if (get(appState).showServerErrors) {
-        showError(message.msg, "Server");
-      }
-    });
-  }
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("serverError", function (message) {
+    if (get(appState).showServerErrors) {
+      showError(message.msg, "Server");
+    }
+  });
 </script>
