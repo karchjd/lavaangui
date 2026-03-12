@@ -6,8 +6,15 @@ serverUserLayoutSaver <- function(id, export_plot, filename) {
             }
             req(input$user_layout)
             layout <- input$user_layout$model
-            jsonlite::write_json(layout, filename)
-            message(sprintf("Saved layout to %s", filename))
+
+            layouts_dir <- file.path("layouts")
+            if (!dir.exists(layouts_dir)) {
+                dir.create(layouts_dir, recursive = TRUE)
+            }
+
+            layout_path <- file.path(layouts_dir, filename)
+            jsonlite::write_json(layout, layout_path)
+            message(sprintf("Saved layout to %s", layout_path))
         })
     })
 }
