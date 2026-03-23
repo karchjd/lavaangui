@@ -30,6 +30,18 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         working-directory: frontend
+      - name: Wait for Shiny server
+        run: |
+          for i in $(seq 1 60); do
+            if curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3245/ | grep -q '200'; then
+              echo "Server is ready"
+              exit 0
+            fi
+            echo "Waiting for server... attempt $i"
+            sleep 2
+          done
+          echo "Server failed to start within 120 seconds"
+          exit 1
       - name: Run Playwright tests
         run: npx playwright test
         working-directory: frontend
