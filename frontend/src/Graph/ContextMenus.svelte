@@ -450,31 +450,6 @@
         });
       },
     },
-    {
-      id: "edge-display-label",
-      content: "Set Display Label",
-      selector: "edge",
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        // @ts-expect-error
-        bootbox.prompt({
-          title:
-            "Enter a Display Label (cosmetic only, not used in lavaan syntax)",
-          value: edge.getDisplayLabelRaw() || "",
-          callback: function (result) {
-            if (result === null) return;
-            if (result === "") {
-              edge.removeDisplayLabel();
-            } else {
-              edge.setDisplayLabel(result);
-            }
-          },
-        });
-      },
-      show: "both",
-      hasTrailingDivider: false,
-    },
-
     //node menus
     {
       id: "rename-node",
@@ -721,7 +696,7 @@
       content: "Change Font Size",
       show: "both",
       hasTrailingDivider: false,
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, edge`,
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, node.${Constants.COMPOSITE}, edge`,
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
         const toChange = getChange(target, "nodes.edges");
@@ -744,15 +719,39 @@
       },
     },
     {
-      id: "node-display-label",
+      id: "edge-display-label",
       content: "Set Display Label",
+      selector: "edge",
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        // @ts-expect-error
+        bootbox.prompt({
+          title:
+            "Enter a display label (cosmetic only, not used in lavaan syntax). Supports \\alpha, \\beta, _1, ^2, etc.",
+          value: edge.getDisplayLabelRaw() || "",
+          callback: function (result) {
+            if (result === null) return;
+            if (result === "") {
+              edge.removeDisplayLabel();
+            } else {
+              edge.setDisplayLabel(result);
+            }
+          },
+        });
+      },
+      show: "both",
+      hasTrailingDivider: true,
+    },
+    {
+      id: "node-display-label",
+      content: "Set Display Name",
       selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         // @ts-expect-error
         bootbox.prompt({
           title:
-            "Enter a Display Label (cosmetic only, not used in lavaan syntax)",
+            "Enter a display name (cosmetic only, not used in lavaan syntax). Supports \\alpha, \\beta, _1, ^2, etc.",
           value: node.getDisplayLabelRaw() || "",
           callback: function (result) {
             if (result === null) return;
