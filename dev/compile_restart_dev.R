@@ -1,4 +1,4 @@
-recompile_front <- F # nolint
+recompile_front <- T # nolint
 debug <- F
 
 if (recompile_front) {
@@ -44,6 +44,6 @@ fit <- sem(model, data = PoliticalDemocracy)
 HS.model <- ' visual  <~ x1 + x2 + x3
               textual =~ x4 + x5 + x6'
 fit2 <- cfa(HS.model, data = HolzingerSwineford1939)
-
-plot_lavaan(fit)
+lavaangui(fit)
+# plot_lavaan(fit)
 # export_plot(fit, filename = "test_plot.png")

@@ -57,6 +57,46 @@
     });
   }
 
+  // Show variable name on hover when a display label is set
+  let hoverTip = null;
+
+  cy.on("mouseover", "node", function (event) {
+    const node = event.target;
+    if (!node.data("displayLabel")) return;
+    const container = cy.container();
+    const pos = node.renderedPosition();
+    hoverTip = document.createElement("div");
+    hoverTip.textContent = "lavaan name: " + node.getLabel();
+    hoverTip.style.cssText =
+      "position:absolute;pointer-events:none;background:rgba(0,0,0,.75);" +
+      "color:#fff;padding:2px 6px;border-radius:4px;font-size:12px;" +
+      "white-space:nowrap;z-index:9999;transform:translate(-50%,-100%);" +
+      "left:" + pos.x + "px;top:" + (pos.y - node.renderedHeight() / 2 - 6) + "px";
+    container.appendChild(hoverTip);
+  });
+
+  cy.on("mouseover", "edge", function (event) {
+    const edge = event.target;
+    if (!edge.data("displayLabel") || !edge.hasLabel()) return;
+    const container = cy.container();
+    const midpoint = edge.renderedMidpoint();
+    hoverTip = document.createElement("div");
+    hoverTip.textContent = "lavaan label: " + edge.getLabel();
+    hoverTip.style.cssText =
+      "position:absolute;pointer-events:none;background:rgba(0,0,0,.75);" +
+      "color:#fff;padding:2px 6px;border-radius:4px;font-size:12px;" +
+      "white-space:nowrap;z-index:9999;transform:translate(-50%,-100%);" +
+      "left:" + midpoint.x + "px;top:" + (midpoint.y - 16) + "px";
+    container.appendChild(hoverTip);
+  });
+
+  cy.on("mouseout", "node, edge", function () {
+    if (hoverTip) {
+      hoverTip.remove();
+      hoverTip = null;
+    }
+  });
+
   cy.on("add", "node", function (event) {
     const node = event.target;
     if (node.isObserved()) {

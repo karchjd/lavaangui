@@ -45,7 +45,7 @@ export function updateLabels(viewOption, std, number_digits) {
     }).update();
     cy.style().selector("edge.fixedUnderStd.label").style({
       label: function (edge) {
-        return edge.data("label") + "@1";
+        return (edge.data("displayLabel") || edge.data("label")) + "@1";
       }
     }).update();
   } else {
@@ -159,7 +159,7 @@ function generateStyleEst(viewOption, postfix, number_digits) {
 
 function generateLabeledStyleEst(viewOption, postfix, number_digits) {
   const baseStyle = generateStyleEst(viewOption, postfix, number_digits);
-  return (edge) => `${edge.data("label")} = ${baseStyle(edge)}`;
+  return (edge) => `${edge.data("displayLabel") || edge.data("label")} = ${baseStyle(edge)}`;
 }
 
 function generateFixedEstStyle(viewOption, postfix, number_digits) {

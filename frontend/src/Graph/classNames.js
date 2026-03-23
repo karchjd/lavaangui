@@ -31,11 +31,16 @@ export const COMP_REGRESSION = 'compRegression';
 export const COMPLOAD = 'compLoad';
 export const FIXEDSTYLELABEL = {
     label: function (edge) {
-        return edge.data("label") + "@" + edge.data("value");
+        const display = edge.data("displayLabel");
+        if (display) return display + "@" + edge.data("value");
+        return "@" + edge.data("value");
     }
 }
 export const FIXEDSTYLE = {
     label: function (edge) {
-        return "@" + edge.data("value");
+        const display = edge.data("displayLabel");
+        const constraintLabel = edge.data("label") || "";
+        if (display) return display + "@" + edge.data("value");
+        return constraintLabel + "@" + edge.data("value");
     },
 }

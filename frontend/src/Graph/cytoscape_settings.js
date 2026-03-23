@@ -24,7 +24,9 @@ export const graphStyles = [
       "border-width": function (ele) {
         return ele.data("border-width") || "2px";
       },
-      label: "data(label)", // Use the 'label' property from the data for the node's label
+      label: function (ele) {
+        return ele.data("displayLabel") || ele.data("label");
+      },
       "text-valign": "center",
       "text-halign": "center",
       "text-wrap": "ellipsis",
@@ -150,10 +152,18 @@ export const graphStyles = [
     },
   },
   {
-    selector: `edge.${Constants.LABEL}, edge.${Constants.LABEL}`,
+    selector: `edge.${Constants.LABEL}`,
     style: {
       label: function (edge) {
-        return edge.data("label");
+        return edge.data("displayLabel") || edge.data("label");
+      },
+    },
+  },
+  {
+    selector: `edge.${Constants.NOT_LABEL}`,
+    style: {
+      label: function (edge) {
+        return edge.data("displayLabel") || "";
       },
     },
   },

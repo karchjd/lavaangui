@@ -2,6 +2,7 @@
     import cytoscape from "cytoscape";
     import * as Constants from "./classNames.js";
     import { ur } from "../stores.js";
+    import { toUnicodeMath } from "./unicodeMath.js";
 
     // Edges
 
@@ -42,6 +43,26 @@
 
     cytoscape("collection", "getLabel", function () {
         return this.data("label");
+    });
+
+    cytoscape("collection", "setDisplayLabel", function (displayLabel) {
+        this.data("displayLabelRaw", displayLabel);
+        this.data("displayLabel", toUnicodeMath(displayLabel));
+        return this;
+    });
+
+    cytoscape("collection", "getDisplayLabel", function () {
+        return this.data("displayLabel");
+    });
+
+    cytoscape("collection", "getDisplayLabelRaw", function () {
+        return this.data("displayLabelRaw");
+    });
+
+    cytoscape("collection", "removeDisplayLabel", function () {
+        this.removeData("displayLabel");
+        this.removeData("displayLabelRaw");
+        return this;
     });
 
     cytoscape("collection", "fixPara", function (value) {

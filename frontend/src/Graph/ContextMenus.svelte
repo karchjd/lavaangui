@@ -37,7 +37,7 @@
 
     if (!isValidName(str)) {
       // @ts-expect-error
-      bootbox.alert("Provide a valid label");
+      bootbox.alert("Provide a valid lavaan label");
       return false;
     }
     return true;
@@ -155,7 +155,6 @@
       show: "both",
       hasTrailingDivider: false,
     },
-
     {
       id: "remove-edge",
       content: "Delete Edge",
@@ -451,6 +450,30 @@
         });
       },
     },
+    {
+      id: "edge-display-label",
+      content: "Set Display Label",
+      selector: "edge",
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        // @ts-expect-error
+        bootbox.prompt({
+          title:
+            "Enter a Display Label (cosmetic only, not used in lavaan syntax)",
+          value: edge.getDisplayLabelRaw() || "",
+          callback: function (result) {
+            if (result === null) return;
+            if (result === "") {
+              edge.removeDisplayLabel();
+            } else {
+              edge.setDisplayLabel(result);
+            }
+          },
+        });
+      },
+      show: "both",
+      hasTrailingDivider: false,
+    },
 
     //node menus
     {
@@ -697,7 +720,7 @@
       id: "change-font-size",
       content: "Change Font Size",
       show: "both",
-      hasTrailingDivider: true,
+      hasTrailingDivider: false,
       selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, edge`,
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
@@ -719,6 +742,30 @@
           },
         });
       },
+    },
+    {
+      id: "node-display-label",
+      content: "Set Display Label",
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.COMPOSITE}`,
+      onClickFunction: function (event) {
+        const node = event.target || event.cyTarget;
+        // @ts-expect-error
+        bootbox.prompt({
+          title:
+            "Enter a Display Label (cosmetic only, not used in lavaan syntax)",
+          value: node.getDisplayLabelRaw() || "",
+          callback: function (result) {
+            if (result === null) return;
+            if (result === "") {
+              node.removeDisplayLabel();
+            } else {
+              node.setDisplayLabel(result);
+            }
+          },
+        });
+      },
+      show: "both",
+      hasTrailingDivider: false,
     },
   ];
 
