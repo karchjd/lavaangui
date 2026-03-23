@@ -32,8 +32,9 @@ export const COMPLOAD = 'compLoad';
 export const FIXEDSTYLELABEL = {
     label: function (edge) {
         const display = edge.data("displayLabel");
+        const constraintLabel = edge.data("label") || "";
         if (display) return display + "@" + edge.data("value");
-        return "@" + edge.data("value");
+        return constraintLabel + "@" + edge.data("value");
     }
 }
 export const FIXEDSTYLE = {
