@@ -13,4 +13,4 @@ if (rebuild_frontend) {
 golem::detach_all_attached()
 pkgload::load_all()
 options(shiny.port = 3245)
-lavaangui()
+withr::with_envvar(c(DEPLOY_ENV = "shinyapps"), lavaangui())

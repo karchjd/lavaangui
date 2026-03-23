@@ -29,6 +29,7 @@ if (ret_val != 0) {
 # Deploy to Posit Connect or ShinyApps.io
 # In command line.
 rsconnect::deployApp(
+  envVars = c("DEPLOY_ENV" = "shinyapps"),
   appName = appName,
   appTitle = desc::desc_get_field("Package"),
   appFiles = c(

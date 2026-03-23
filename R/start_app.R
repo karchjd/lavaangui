@@ -128,8 +128,12 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
     serverUserLayoutSaver("layout_saver", !is.null(importedModel$export_filepath), importRes$layout_filename)
 
     serverImageExporter("export")
-
-    if (interactive()) {
+  
+    is_deployed <- function() {
+      Sys.getenv("DEPLOY_ENV") == "shinyapps"
+    }
+    
+    if (!is_deployed()) {
       session$onSessionEnded(function() {
         stopApp()
       })
