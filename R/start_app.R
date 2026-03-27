@@ -128,12 +128,9 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
     serverUserLayoutSaver("layout_saver", !is.null(importedModel$export_filepath), importRes$layout_filename)
 
     serverImageExporter("export")
-  
-    is_deployed <- function() {
-      Sys.getenv("DEPLOY_ENV") == "shinyapps"
-    }
-    
-    if (!is_deployed()) {
+
+    if (where != "shinyapps.io") {
+      print("Setting up session end listener")
       session$onSessionEnded(function() {
         stopApp()
       })
@@ -154,8 +151,6 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
   )
   if (where == "browser") {
     runApp(app, launch.browser = TRUE)
-  } else if (where == "heroku") {
-    runApp(app, port = as.numeric(Sys.getenv("PORT")), host = "0.0.0.0")
   } else if (where == "gadget") {
     runGadget(app, viewer = dialogViewer("lavaangui", width = 10^3, height = 10^3))
   } else if (where == "shinyapps.io") {

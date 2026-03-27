@@ -11,7 +11,7 @@
 #### CURRENT FILE: DEPLOY SCRIPT #####
 ######################################
 
-production <- TRUE
+production <- FALSE
 if (production){
   appName = desc::desc_get_field("Package")
 }else{
@@ -29,7 +29,6 @@ if (ret_val != 0) {
 # Deploy to Posit Connect or ShinyApps.io
 # In command line.
 rsconnect::deployApp(
-  envVars = c("DEPLOY_ENV" = "shinyapps"),
   appName = appName,
   appTitle = desc::desc_get_field("Package"),
   appFiles = c(
