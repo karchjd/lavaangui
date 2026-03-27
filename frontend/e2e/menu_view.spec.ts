@@ -30,7 +30,7 @@ test.describe.serial("Estimates View Group", () => {
     sharedPage = await context.newPage();
     await loadModelAndData(sharedPage);
     await sharedPage.getByRole("button", { name: "Estimates" }).click();
-    await sharedPage.waitForTimeout(1500);
+    await sharedPage.waitForTimeout(3000);
   });
 
   test.afterAll(async () => {
