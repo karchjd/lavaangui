@@ -80,13 +80,16 @@
     if (!edge.data("displayLabel") || !edge.hasLabel()) return;
     const container = cy.container();
     const midpoint = edge.renderedMidpoint();
+    const zoom = cy.zoom();
+    const labelX = midpoint.x + parseFloat(edge.style("text-margin-x")) * zoom;
+    const labelY = midpoint.y + parseFloat(edge.style("text-margin-y")) * zoom;
     hoverTip = document.createElement("div");
     hoverTip.textContent = "lavaan label: " + edge.getLabel();
     hoverTip.style.cssText =
       "position:absolute;pointer-events:none;background:rgba(0,0,0,.75);" +
       "color:#fff;padding:2px 6px;border-radius:4px;font-size:12px;" +
       "white-space:nowrap;z-index:9999;transform:translate(-50%,-100%);" +
-      "left:" + midpoint.x + "px;top:" + (midpoint.y - 16) + "px";
+      "left:" + labelX + "px;top:" + (labelY - 16) + "px";
     container.appendChild(hoverTip);
   });
 
