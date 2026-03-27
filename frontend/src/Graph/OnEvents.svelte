@@ -90,7 +90,7 @@
     container.appendChild(hoverTip);
   });
 
-  cy.on("mouseout", "node, edge", function () {
+  cy.on("mouseout grab", "node, edge", function () {
     if (hoverTip) {
       hoverTip.remove();
       hoverTip = null;
