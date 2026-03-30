@@ -46,8 +46,15 @@
     });
 
     cytoscape("collection", "setDisplayLabel", function (displayLabel) {
+        const hasTypedNewline =
+            typeof displayLabel === "string" && displayLabel.includes("\\n");
+        const normalizedDisplayLabel =
+            typeof displayLabel === "string"
+                ? displayLabel.replace(/\\n/g, "\n")
+                : displayLabel;
         this.data("displayLabelRaw", displayLabel);
-        this.data("displayLabel", toUnicodeMath(displayLabel));
+        this.data("displayLabel", toUnicodeMath(normalizedDisplayLabel));
+        this.nodes().style("text-wrap", hasTypedNewline ? "wrap" : "ellipsis");
         return this;
     });
 
@@ -62,6 +69,7 @@
     cytoscape("collection", "removeDisplayLabel", function () {
         this.removeData("displayLabel");
         this.removeData("displayLabelRaw");
+        this.nodes().style("text-wrap", "ellipsis");
         return this;
     });
 
