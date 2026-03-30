@@ -10,6 +10,9 @@
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { tolavaan } from "../Shiny/toR.js";
   import * as Constants from "./classNames.js";
+  import { showMathNotation } from "../MenuTop/mathNotationHelp.js";
+  // @ts-ignore
+  window.showMathNotation = showMathNotation;
   import iro from "@jaames/iro";
 
   // register extension
@@ -727,7 +730,7 @@
         // @ts-expect-error
         bootbox.prompt({
           title:
-            "Enter a display label (cosmetic only, not used in lavaan syntax). Supports \\alpha, \\beta, _1, ^2, etc.",
+            'Enter a display label (cosmetic only, not used in lavaan syntax). Supports \\alpha, \\beta, _1, ^2, etc. <a href="#" onclick="event.preventDefault(); showMathNotation();">Full reference</a>',
           value: edge.getDisplayLabelRaw() || "",
           callback: function (result) {
             if (result === null) return;
@@ -751,7 +754,7 @@
         // @ts-expect-error
         bootbox.prompt({
           title:
-            "Enter a display name (cosmetic only, not used in lavaan syntax). Supports \\alpha, \\beta, _1, ^2, etc.",
+            'Enter a display name (cosmetic only, not used in lavaan syntax). Supports \\alpha, \\beta, _1, ^2, etc. <a href="#" onclick="event.preventDefault(); showMathNotation();">Full reference</a>',
           value: node.getDisplayLabelRaw() || "",
           callback: function (result) {
             if (result === null) return;
