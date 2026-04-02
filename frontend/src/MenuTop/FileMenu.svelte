@@ -213,18 +213,26 @@
     Shiny.setInputValue("dataUpload-deleteData", Math.random());
   }
 
-  let imageScale = 5;
+  let imageScale = 1;
 
-  function setImageScale() {
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 10;
+
+  function promptScale(onConfirm) {
     // @ts-expect-error
     bootbox.prompt({
-      title: "Image export scale (1 = screen resolution, higher = sharper)",
+      title: `Image export scale (1 = screen resolution, higher=sharper but larger file, max ${MAX_SCALE})`,
       inputType: "number",
       value: imageScale,
+      min: MIN_SCALE,
+      max: MAX_SCALE,
+      step: 1,
       callback: (result) => {
-        if (result !== null) {
-          const parsed = parseFloat(result);
-          if (parsed > 0) imageScale = parsed;
+        if (result === null) return;
+        const parsed = Math.round(parseFloat(result));
+        if (!isNaN(parsed)) {
+          imageScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, parsed));
+          onConfirm();
         }
       },
     });
@@ -232,12 +240,14 @@
 
   function exportPNG() {
     const cy = get(cyStore);
-    startDownload(cy.png({ bg: "white", scale: imageScale }), "png");
+    promptScale(() =>
+      startDownload(cy.png({ bg: "white", scale: imageScale }), "png"),
+    );
   }
 
   function exportJPG() {
     const cy = get(cyStore);
-    startDownload(cy.jpg({ scale: imageScale }), "jpg");
+    promptScale(() => startDownload(cy.jpg({ scale: imageScale }), "jpg"));
   }
 
   function getSVG() {
@@ -305,10 +315,6 @@
         action: removeData,
         disable: !$appState.dataAvail,
         divider: true,
-      },
-      {
-        name: "Set Image Scale...",
-        action: setImageScale,
       },
       {
         name: "Export Diagram to PNG",
