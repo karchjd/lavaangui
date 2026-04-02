@@ -56,19 +56,15 @@ function getEdgePositions(nodeID) {
     return;
   }
   let edgePostions = [];
-  node.connectedEdges(edge => edge.style('display') !== 'none').forEach((edge) => {
+  for (const edge of node.connectedEdges(edge => edge.style('display') !== 'none')) {
     const source = edge.source();
     const target = edge.target();
-    let toAdd;
     if (source.id() !== node.id() || target.id() !== node.id()) {
-      if (source.id() === node.id()) {
-        toAdd = elementWiseSubtract(edge.sourceEndpoint(), node.position());
-      } else {
-        toAdd = elementWiseSubtract(edge.targetEndpoint(), node.position());
-      }
-      edgePostions.push(toAdd);
+      const endpoint = source.id() === node.id() ? edge.sourceEndpoint() : edge.targetEndpoint();
+      if (!endpoint || !node.position()) continue; // Guard against undefined positions which occurs when mean edges are unhidden (TODO: find a better solution for this)
+      edgePostions.push(elementWiseSubtract(endpoint, node.position()));
     }
-  });
+  }
   return edgePostions;
 }
 
