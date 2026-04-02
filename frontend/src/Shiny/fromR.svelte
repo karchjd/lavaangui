@@ -565,6 +565,19 @@
     }
     $appState.layout_hash = lav_model.layout_hash;
     $appState.layout_name = lav_model.layout_name;
+    if (lav_model.layout_exists) {
+      // @ts-expect-error
+      bootbox.prompt({
+        title:
+          "A layout is already saved for this model. Enter a new name to save separately, or leave blank to overwrite.",
+        value: "",
+        callback: (result) => {
+          if (result !== null && result.trim() !== "") {
+            $appState.layout_name = result.trim();
+          }
+        },
+      });
+    }
 
     //only needed when directly saving to file
     if (lav_model.export_filepath !== null) {

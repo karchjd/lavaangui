@@ -30,9 +30,11 @@ importModel <- function(session, full, importedModel, shinyapps) {
     if (!is.null(importedModel$layout_name)) {
       safe_name <- gsub("[^a-zA-Z0-9_-]", "", importedModel$layout_name)
       layout_filename <- sprintf("layout_%s_%s.json", importedModel$layout_hash, safe_name)
-      ## check whether filename exists
-      if (file.exists(layout_filename)) {
-        saved_layout <- jsonlite::read_json(layout_filename)
+      layout_path <- file.path("layouts", layout_filename)
+      ## Load from layouts directory.
+      if (file.exists(layout_path)) {
+        message(sprintf("Found saved layout at %s; restoring it.", layout_path))
+        saved_layout <- jsonlite::read_json(layout_path)
       } else {
         saved_layout <- NULL
       }
@@ -44,7 +46,11 @@ importModel <- function(session, full, importedModel, shinyapps) {
     session$sendCustomMessage("imported_model", message = list(
       parTable = parTable, latent = latent, obs = observed, composite = composite,
       ordered = lavInspect(importedModel$fit, what = "ordered"),
-      layout_name = importedModel$layout_name, saved_layout = saved_layout, export_filepath = importedModel$export_filepath
+      layout_name = importedModel$layout_name,
+      layout_hash = importedModel$layout_hash,
+      layout_exists = !is.null(importedModel$layout_name) && file.exists(layout_path),
+      saved_layout = saved_layout,
+      export_filepath = importedModel$export_filepath
     ))
     if (!is.null(importedModel$df)) {
       df_full <- list(df = importedModel$df, name = "Imported from R")
