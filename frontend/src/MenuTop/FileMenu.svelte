@@ -213,15 +213,31 @@
     Shiny.setInputValue("dataUpload-deleteData", Math.random());
   }
 
+  let imageScale = 5;
+
+  function setImageScale() {
+    // @ts-expect-error
+    bootbox.prompt({
+      title: "Image export scale (1 = screen resolution, higher = sharper)",
+      inputType: "number",
+      value: imageScale,
+      callback: (result) => {
+        if (result !== null) {
+          const parsed = parseFloat(result);
+          if (parsed > 0) imageScale = parsed;
+        }
+      },
+    });
+  }
+
   function exportPNG() {
     const cy = get(cyStore);
-
-    startDownload(cy.png({ bg: "white" }), "png");
+    startDownload(cy.png({ bg: "white", scale: imageScale }), "png");
   }
 
   function exportJPG() {
     const cy = get(cyStore);
-    startDownload(cy.jpg(), "jpg");
+    startDownload(cy.jpg({ scale: imageScale }), "jpg");
   }
 
   function getSVG() {
@@ -289,6 +305,10 @@
         action: removeData,
         disable: !$appState.dataAvail,
         divider: true,
+      },
+      {
+        name: "Set Image Scale...",
+        action: setImageScale,
       },
       {
         name: "Export Diagram to PNG",

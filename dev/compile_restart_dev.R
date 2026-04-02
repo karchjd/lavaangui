@@ -42,6 +42,6 @@ model <- "
 fit <- sem(model, data = PoliticalDemocracy)
 
 
-# lavaangui(fit)
-plot_lavaan(fit)
+lavaangui(fit)
+#plot_lavaan(fit)
 # export_plot(fit, filename = "test_plot.png")
