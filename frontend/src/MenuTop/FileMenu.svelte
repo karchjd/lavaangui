@@ -250,18 +250,21 @@
     promptScale(() => startDownload(cy.jpg({ scale: imageScale }), "jpg"));
   }
 
-  function getSVG() {
+  function getSVG(scale = 1) {
     const cy = get(cyStore);
-    const svgContent = cy.svg({ scale: 1, full: true });
+    // true full is inconsistent with JPG + PDF, but false is broken
+    const svgContent = cy.svg({ scale, full: true });
     return svgContent;
   }
 
   function exportSVG() {
-    const svgContent = getSVG();
-    const blob = new Blob([svgContent], {
-      type: "image/svg+xml;charset=utf-8",
+    promptScale(() => {
+      const svgContent = getSVG(imageScale);
+      const blob = new Blob([svgContent], {
+        type: "image/svg+xml;charset=utf-8",
+      });
+      startDownload(blob, "svg");
     });
-    startDownload(blob, "svg");
   }
 
   function downloadModelData() {
@@ -269,7 +272,13 @@
   }
 
   async function exportPDF() {
-    const svgContent = getSVG();
+    promptScale(async () => {
+      const svgContent = getSVG(imageScale);
+      await renderPDF(svgContent);
+    });
+  }
+
+  async function renderPDF(svgContent) {
     const parser = new DOMParser();
     const svgElement = parser.parseFromString(
       svgContent,
