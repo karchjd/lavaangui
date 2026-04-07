@@ -4,10 +4,13 @@
 \alias{plot_lavaan}
 \title{Create Interactive Path Diagrams for Lavaan Models}
 \usage{
-plot_lavaan(fit, layout = NULL, where = "gadget")
+plot_lavaan(fit, layout = "default", where = "gadget")
 }
 \arguments{
-\item{fit}{A lavaan model, as returned by the functions \code{lavaan}, \code{sem}, or \code{cfa} from the \code{lavaan} package.}
+\item{fit}{A lavaan model, as returned by the \code{lavaan}, \code{sem}, or \code{cfa} functions from the \code{lavaan} package.}
+
+\item{layout}{A character string specifying the name of the layout to use (default: \code{"default"}).
+If \code{NULL}, no layout is saved or loaded.}
 
 \item{where}{A character string to specify where the path diagram should be shown.
 The default value "gadget" shows it directly in Rstudio. For "browser", it's shown in your default browser.
@@ -25,14 +28,15 @@ around nodes representing variable with the mouse.
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 library(lavaan)
-model <- ' 
+model <- "
   visual  =~ x1 + loadingx2*x2 + x3
   textual =~ x4 + x5 + x6
   speed   =~ x7 + x8 + x9
-'
+"
 fit <- cfa(model, data = HolzingerSwineford1939)
 plot_lavaan(fit)
-
-
 \dontshow{\}) # examplesIf}
+}
+\seealso{
+\code{\link[=remove_layouts]{remove_layouts()}} to delete saved layouts.
 }

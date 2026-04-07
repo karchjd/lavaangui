@@ -9,13 +9,15 @@
 #'
 #' @return Invisibly returns the paths of removed files.
 #'
-#' @seealso [plot_lavaan()] which creates and saves layouts.
+#' @seealso [plot_lavaan()] to create and interactively edit path diagrams,
+#'   [export_plot()] to export diagrams to a file without interaction.
 #'
 #' @examplesIf interactive()
 #' library(lavaan)
 #' model <- "
 #'   visual  =~ x1 + x2 + x3
 #'   textual =~ x4 + x5 + x6
+#'   speed   =~ x7 + x8 + x9
 #' "
 #' fit <- cfa(model, data = HolzingerSwineford1939)
 #' remove_layouts(fit)

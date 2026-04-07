@@ -24,6 +24,12 @@
     COMPOSITE,
   } from "../Graph/classNames.js";
   import { parseModel } from "../MenuTop/IO";
+  import cytoscape from "cytoscape";
+  import svg from "cytoscape-svg";
+  import { jsPDF } from "jspdf";
+  import { svg2pdf } from "svg2pdf.js";
+
+  cytoscape.use(svg);
 
   function floatEqual(a, b) {
     if (a === b) {
@@ -600,19 +606,52 @@
         $gridViewOptions.std,
         $gridViewOptions.number_digits,
       );
+      const cy = get(cyStore);
       const ext = lav_model.export_filepath.split(".").pop().toLowerCase();
-      const img =
-        ext === "jpg" || ext === "jpeg"
-          ? cy.jpg({ bg: "white", full: true, scale: lav_model.scale })
-          : cy.png({ bg: "white", full: true, scale: lav_model.scale });
-      const base64Data = img.split(",")[1];
-      lav_model.export_filepath;
-      //send filepath and base64 data to server to save
-      // @ts-ignore
-      Shiny.setInputValue("export-image", {
-        filepath: lav_model.export_filepath,
-        data: base64Data,
-      });
+      const scale = lav_model.scale ?? 1;
+
+      function sendExport(base64Data) {
+        // @ts-ignore
+        Shiny.setInputValue("export-image", {
+          filepath: lav_model.export_filepath,
+          data: base64Data,
+        });
+      }
+
+      function svgToBase64(svgContent) {
+        const bytes = new TextEncoder().encode(svgContent);
+        return btoa(String.fromCharCode(...bytes));
+      }
+
+      if (ext === "svg") {
+        const svgContent = cy.svg({ scale, full: true });
+        sendExport(svgToBase64(svgContent));
+      } else if (ext === "pdf") {
+        (async () => {
+          const svgContent = cy.svg({ scale, full: true });
+          const parser = new DOMParser();
+          const svgElement = parser.parseFromString(svgContent, "image/svg+xml").documentElement;
+          svgElement.style.position = "absolute";
+          svgElement.style.left = "-9999px";
+          document.body.appendChild(svgElement);
+          const rect = svgElement.getBoundingClientRect();
+          document.body.removeChild(svgElement);
+          const width = rect.width;
+          const height = rect.height;
+          const pdf = new jsPDF({
+            orientation: width > height ? "landscape" : "portrait",
+            unit: "pt",
+            format: [width, height],
+          });
+          await svg2pdf(svgElement, pdf, { width, height });
+          sendExport(pdf.output("datauristring").split(",")[1]);
+        })();
+      } else if (ext === "jpg" || ext === "jpeg") {
+        sendExport(cy.jpg({ bg: "white", full: true, scale }).split(",")[1]);
+      } else {
+        // png
+        sendExport(cy.png({ bg: "white", full: true, scale }).split(",")[1]);
+      }
     }
     setAlert(
       "warning",

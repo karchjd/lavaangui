@@ -3,6 +3,7 @@
 export(export_plot)
 export(lavaangui)
 export(plot_lavaan)
+export(remove_layouts)
 import(lavaan)
 import(shiny)
 importFrom(igraph,graph.edgelist)
