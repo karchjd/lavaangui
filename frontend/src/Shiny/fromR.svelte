@@ -1,5 +1,11 @@
 <script>
-  import { appState, setAlert, fitCache, modelOptions } from "../stores";
+  import {
+    appState,
+    setAlert,
+    fitCache,
+    modelOptions,
+    gridViewOptions,
+  } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass.js";
   import { get } from "svelte/store";
   import { cyStore } from "../stores";
@@ -7,6 +13,7 @@
   import { addNode } from "../Graph/graphmanipulation.js";
   import { tolavaan } from "./toR.js";
   import { applySemLayout, resolveLayout } from "../MenuTop/semPlotLayouts.js";
+  import { updateLabels, updateVisibility } from "../MenuTop/viewModule";
   import {
     OBSERVED,
     LATENT,
@@ -582,6 +589,18 @@
     //only needed when directly saving to file
     if (lav_model.export_filepath !== null) {
       const png_img = cy.png({ bg: "white" });
+      //enforce that gridviewoptions are respected
+      updateVisibility(
+        $gridViewOptions.showVar,
+        $gridViewOptions.showLav,
+        $gridViewOptions.showMean,
+        $gridViewOptions.showCov,
+      );
+      updateLabels(
+        $gridViewOptions.view,
+        $gridViewOptions.std,
+        $gridViewOptions.number_digits,
+      );
       const base64Data = png_img.split(",")[1];
       lav_model.export_filepath;
       //send filepath and base64 data to server to save
