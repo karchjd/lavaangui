@@ -2,7 +2,7 @@
 #' @import lavaan
 #' @importFrom igraph graph.edgelist layout.reingold.tilford
 
-start_app <- function(fit = NULL, full, where, layout, export_filepath) {
+start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
   if (full && !is.null(layout)) {
     stop("layout can only be provided when full = FALSE")
   }
@@ -48,7 +48,8 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath) {
       df = df, fit = fit,
       layout_hash = layout_hash,
       layout_name = layout,
-      export_filepath = export_filepath
+      export_filepath = export_filepath,
+      scale = scale
     )
   } else {
     importedModel <- NULL

@@ -600,8 +600,12 @@
         $gridViewOptions.std,
         $gridViewOptions.number_digits,
       );
-      const png_img = cy.png({ bg: "white", full: true });
-      const base64Data = png_img.split(",")[1];
+      const ext = lav_model.export_filepath.split(".").pop().toLowerCase();
+      const img =
+        ext === "jpg" || ext === "jpeg"
+          ? cy.jpg({ bg: "white", full: true, scale: lav_model.scale })
+          : cy.png({ bg: "white", full: true, scale: lav_model.scale });
+      const base64Data = img.split(",")[1];
       lav_model.export_filepath;
       //send filepath and base64 data to server to save
       // @ts-ignore

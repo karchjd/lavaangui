@@ -50,7 +50,8 @@ importModel <- function(session, full, importedModel, shinyapps) {
       layout_hash = importedModel$layout_hash,
       layout_exists = !is.null(importedModel$layout_name) && file.exists(layout_path),
       saved_layout = saved_layout,
-      export_filepath = importedModel$export_filepath
+      export_filepath = importedModel$export_filepath,
+      scale = importedModel$scale
     ))
     if (!is.null(importedModel$df)) {
       df_full <- list(df = importedModel$df, name = "Imported from R")
