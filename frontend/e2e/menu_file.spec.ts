@@ -84,9 +84,8 @@ test("Remove Data", async ({ page }) => {
 test("Export PNG", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
-  await page.getByRole("link", { name: "PNG", exact: false }).click();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "OK" }).click();
+  await page.getByRole("link", { name: "PNG", exact: false }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("model.png");
 });
@@ -94,9 +93,8 @@ test("Export PNG", async ({ page }) => {
 test("Export JPG", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
-  await page.getByRole("link", { name: "JPG", exact: false }).click();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "OK" }).click();
+  await page.getByRole("link", { name: "JPG", exact: false }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("model.jpg");
 });
@@ -105,9 +103,8 @@ test("Export JPG", async ({ page }) => {
 test("Export SVG", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
-  await page.getByRole("link", { name: "SVG", exact: false }).click();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "OK" }).click();
+  await page.getByRole("link", { name: "SVG", exact: false }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("model.svg");
 });
@@ -116,9 +113,8 @@ test("Export SVG", async ({ page }) => {
 test("Export PDF", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
-  await page.getByRole("link", { name: "PDF", exact: false }).click();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "OK" }).click();
+  await page.getByRole("link", { name: "PDF", exact: false }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("model.pdf");
 });
