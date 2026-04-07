@@ -588,7 +588,6 @@
 
     //only needed when directly saving to file
     if (lav_model.export_filepath !== null) {
-      const png_img = cy.png({ bg: "white" });
       //enforce that gridviewoptions are respected
       updateVisibility(
         $gridViewOptions.showVar,
@@ -601,6 +600,7 @@
         $gridViewOptions.std,
         $gridViewOptions.number_digits,
       );
+      const png_img = cy.png({ bg: "white", full: true });
       const base64Data = png_img.split(",")[1];
       lav_model.export_filepath;
       //send filepath and base64 data to server to save
