@@ -19,7 +19,7 @@ export const graphStyles = [
         return ele.data("background-color") || "white";
       },
       "border-color": function (ele) {
-        return ele.data("border-color") || "grey";
+        return ele.data("border-color") || "black";
       },
       "border-width": function (ele) {
         return ele.data("border-width") || "2px";
@@ -54,7 +54,6 @@ export const graphStyles = [
       shape: function (ele) {
         return "ellipse";
       },
-      "border-color": "black",
     },
   },
   {
@@ -63,7 +62,6 @@ export const graphStyles = [
       shape: function (ele) {
         return "hexagon";
       },
-      "border-color": "black",
     },
   },
   {
@@ -73,12 +71,6 @@ export const graphStyles = [
       label: "1",
       "text-valign": "center",
       "text-margin-y": "10px",
-      "border-color": "black",
-    },
-  },
-  {
-    selector: `node.${Constants.LINKED}`,
-    style: {
       "border-color": "black",
     },
   },
