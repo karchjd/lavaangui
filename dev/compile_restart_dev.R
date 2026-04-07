@@ -36,12 +36,12 @@ model <- "
 
   # residual correlations
     y1 ~~ y5
-    ind60 ~ 1
 "
 
 fit <- sem(model, data = PoliticalDemocracy)
 
 
-lavaangui(fit)
-#plot_lavaan(fit)
-# export_plot(fit, filename = "test_plot.png")
+# lavaangui(fit)
+plot_lavaan(fit)
+export_plot(fit, "test.png")
+
