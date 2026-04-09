@@ -1,7 +1,8 @@
-rebuild_frontend <- TRUE
-build_target <- "deplot"
+rebuild_frontend <- !nzchar(Sys.getenv("GITHUB_ACTIONS"))
+build_target <- "deploy"
 
 if (rebuild_frontend) {
+  print("Rebuilding Svelte front end...")
   build_cmd <- if (build_target == "dev") "build:dev" else "build:deploy"
   ret_val <- system2("npm", c("--prefix", "frontend", "run", build_cmd))
   if (ret_val != 0) {
