@@ -14,10 +14,6 @@ if (recompile_front) {
   }
 }
 
-
-# Detach all loaded packages and clean your environment
-golem::detach_all_attached()
-
 # Document and reload your package
 # roxygen2::roxygenise()
 pkgload::load_all()

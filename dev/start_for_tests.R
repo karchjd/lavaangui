@@ -10,7 +10,6 @@ if (rebuild_frontend) {
   }
 }
 
-golem::detach_all_attached()
 pkgload::load_all()
 options(shiny.port = 3245)
 app <- lavaangui:::start_app(full = TRUE, where = "shinyapps.io", layout = NULL, export_filepath = NULL)
