@@ -1,18 +1,16 @@
 #' Export a Path Diagram of a Lavaan Model to a File
 #'
 #' Renders the path diagram for a lavaan model and saves it directly to a file
-#' without requiring manual interaction. The diagram respects the display options
-#' stored in a saved layout (e.g. which estimates or confidence intervals to show).
+#' without requiring manual interaction.
 #'
 #' @param fit A lavaan model, as returned by the `lavaan`, `sem`, or `cfa` functions from the `lavaan` package.
 #' @param filename A single character string giving the output file path.
 #'   The file extension determines the format: `png`, `jpg`/`jpeg`, `svg`, or `pdf`.
 #' @param layout A character string specifying the name of a previously saved layout to use
-#'   (default: `"default"`). If `NULL`, no layout is loaded and the default automatic layout
-#'   is used. Display options such as which estimates are shown are restored from the saved layout.
+#'   (default: `"default"`).
 #' @param scale A positive number controlling the output resolution relative to screen size
 #'   (default: `1`). Higher values produce sharper raster images (PNG/JPG) and larger SVG/PDF
-#'   output. Has no effect on PDF quality, which is always vector-based.
+#'   output.
 #'
 #' @return nothing
 #'

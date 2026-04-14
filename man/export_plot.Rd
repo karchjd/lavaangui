@@ -13,20 +13,18 @@ export_plot(fit, filename, layout = "default", scale = 1)
 The file extension determines the format: \code{png}, \code{jpg}/\code{jpeg}, \code{svg}, or \code{pdf}.}
 
 \item{layout}{A character string specifying the name of a previously saved layout to use
-(default: \code{"default"}). If \code{NULL}, no layout is loaded and the default automatic layout
-is used. Display options such as which estimates are shown are restored from the saved layout.}
+(default: \code{"default"}).}
 
 \item{scale}{A positive number controlling the output resolution relative to screen size
 (default: \code{1}). Higher values produce sharper raster images (PNG/JPG) and larger SVG/PDF
-output. Has no effect on PDF quality, which is always vector-based.}
+output.}
 }
 \value{
 nothing
 }
 \description{
 Renders the path diagram for a lavaan model and saves it directly to a file
-without requiring manual interaction. The diagram respects the display options
-stored in a saved layout (e.g. which estimates or confidence intervals to show).
+without requiring manual interaction.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

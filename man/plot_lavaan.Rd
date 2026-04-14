@@ -25,6 +25,16 @@ The created paths diagrams  are interactive.
 That is, their appearance can be customized easily, for example, by dragging
 around nodes representing variable with the mouse.
 }
+\details{
+When \code{layout} is not \code{NULL}, closing the interactive diagram saves the
+current graph state — including node positions and display settings
+(e.g., which estimates or confidence intervals are shown) — as a layout
+file in the working directory. This layout is automatically restored
+the next time you call \code{plot_lavaan} with the same model, so that you do not
+have to rearrange the diagram each time. Saved layouts are also used by
+\code{\link[=export_plot]{export_plot()}} to export the diagram to a file non-interactively, making
+it easy to reproduce publication-ready figures from R scripts.
+}
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 library(lavaan)
@@ -35,8 +45,12 @@ model <- "
 "
 fit <- cfa(model, data = HolzingerSwineford1939)
 plot_lavaan(fit)
+
+# After arranging the diagram interactively, export it to a file:
+export_plot(fit, "my_diagram.png")
 \dontshow{\}) # examplesIf}
 }
 \seealso{
+\code{\link[=export_plot]{export_plot()}} to export diagrams to a file without interaction,
 \code{\link[=remove_layouts]{remove_layouts()}} to delete saved layouts.
 }
