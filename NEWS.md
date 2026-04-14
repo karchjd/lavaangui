@@ -1,3 +1,5 @@
+# lavaangui (development version)
+
 # lavaangui 0.4.0
 - Added: `export_plot()` function to export the graph as PNG, JPEG, SVG, or PDF
 - Added: `plot_lavaan()` now saves and restores the layout and viewport between sessions.
