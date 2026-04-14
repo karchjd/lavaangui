@@ -13,7 +13,7 @@
 - Bugfix: Divider in context menu was not rendered correctly.
 - Bugfix: Guard added for undefined nodes in cycle detection.
 - Security: Removed use of `eval()` on the server side.
-- Appearance: Removed the linked/not-linked visual distinction for edges.
+- Appearance: Removed the linked/not-linked visual distinction for observed nodes.
 - Developer: Detection of local vs. shinyapps.io deployment now uses the `where` command; Heroku support removed.
 
 # lavaangui 0.3.2
