@@ -1,16 +1,18 @@
 import { cyStore, modelOptions, setAlert, ur } from "../stores.js";
 import { get } from "svelte/store";
 import { v4 as uuidv4 } from "uuid";
-import { OBSERVED, LATENT, FROM_USER, FROM_LAV, FIXED, FREE, NOT_LABEL, CONTINOUS, DIRECTED, UNDIRECTED } from "./classNames.js";
+import { OBSERVED, LATENT, FROM_USER, FROM_LAV, FIXED, FREE, NOT_LABEL, CONTINOUS, DIRECTED, UNDIRECTED, COMPOSITE } from "./classNames.js";
 import { tolavaan } from "../Shiny/toR.js";
 
 
 let obCounter;
 let latentCounter;
+let compositeCounter;
 
 export function resetCounters() {
   obCounter = 1;
   latentCounter = 1;
+  compositeCounter = 1;
 }
 
 resetCounters();
@@ -30,7 +32,7 @@ function validLabel(str) {
 }
 
 
-// Adding new nodes via mouse, toolbar, or hotkey
+// Adding new nodes via mouse, toolbar, or hotkey, or import model
 export function addNode(nodeType, position, fromUser = true, customLabel = null, checkLabel = false) {
   let cy = get(cyStore);
   let nodeId = uuidv4();
@@ -50,6 +52,9 @@ export function addNode(nodeType, position, fromUser = true, customLabel = null,
       label = "x" + obCounter++;
     } else if (nodeType == LATENT) {
       label = "f" + latentCounter++;
+    }
+    else if (nodeType === COMPOSITE) {
+      label = "c" + compositeCounter++;
     } else {
       label = undefined;
     }
@@ -100,6 +105,7 @@ export function addEdge(source, target, directed = true, fixed = false, fixedVal
   });
   if (fromUser) {
     edge.checkAndMarkPotentialLatObReg();
+    edge.checkAndMarkPotentialObCompReg();
   }
   return edge;
 }

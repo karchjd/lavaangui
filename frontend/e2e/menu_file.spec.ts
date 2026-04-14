@@ -22,6 +22,20 @@ test("new model", async ({ page }) => {
   await expect(page.getByTestId("result-text")).toContainText("Command");
 });
 
+test("Reset", async ({ page }) => {
+  await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole("link", { name: "Reset", exact: true }).click();
+  await page.getByText("OK").click();
+  // @ts-expect-error
+  const numberOfNodes = await page.evaluate(() => window.cy.nodes().length);
+
+  expect(numberOfNodes).toBe(0);
+  const showDataButton = page.getByRole("button", { name: "Show Data" });
+  expect(await showDataButton.isDisabled()).toBe(true);
+  await expect(page.getByTestId("result-text")).toContainText("Command");
+});
+
 
 test("Load Data", async ({ page }) => {
   const fileChooserPromise = page.waitForEvent("filechooser");
@@ -70,17 +84,18 @@ test("Remove Data", async ({ page }) => {
 test("Export PNG", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("link", { name: "PNG", exact: false }).click();
+  await page.getByRole('link', { name: 'Export Diagram to PNG' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByText('OK').click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("model.png");
 });
-
 test("Export JPG", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("link", { name: "JPG", exact: false }).click();
+  await page.getByRole('link', { name: 'Export Diagram to JPG' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByText('OK').click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("model.jpg");
 });
@@ -89,8 +104,9 @@ test("Export JPG", async ({ page }) => {
 test("Export SVG", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("link", { name: "SVG", exact: false }).click();
+  await page.getByRole('link', { name: 'Export Diagram to SVG' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByText('OK').click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("model.svg");
 });
@@ -99,8 +115,9 @@ test("Export SVG", async ({ page }) => {
 test("Export PDF", async ({ page }) => {
   await page.getByRole("button", { name: "File" }).click();
   await page.waitForTimeout(500);
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("link", { name: "PDF", exact: false }).click();
+  await page.getByRole('link', { name: 'Export Diagram to PDF' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByText('OK').click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("model.pdf");
 });

@@ -1,3 +1,21 @@
+# lavaangui 0.4.0
+- Added: `export_plot()` function to export the graph as PNG, JPEG, SVG, or PDF
+- Added: `plot_lavaan()` now saves and restores the layout and viewport between sessions.
+- Added: Full composite variable support — composites are their own class with a hexagonal node shape.
+- Added: Lavaan labels and display labels are now distinguished; display labels can be edited independently. Display labels support simple math/LaTeX-style notation and multi-line text.
+- Added: Option to hide undirected edges.
+- Added: Reset button to restore the default state.
+- Added: Variable selector for model templates validates that selected variables are still available.
+- Added: Package-level documentation page.
+- Bugfix: Grid options were not saved with the model file.
+- Bugfix: Serialization/state bug in model save and load.
+- Bugfix: Minor bug in `lavInspect` output handling.
+- Bugfix: Divider in context menu was not rendered correctly.
+- Bugfix: Guard added for undefined nodes in cycle detection.
+- Security: Removed use of `eval()` on the server side.
+- Appearance: Removed the linked/not-linked visual distinction for observed nodes.
+- Developer: Detection of local vs. shinyapps.io deployment now uses the `where` command; Heroku support removed.
+
 # lavaangui 0.3.2
 - Bugfix: App could crash when hidding edges and trying to move the graph
 

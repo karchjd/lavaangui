@@ -17,7 +17,7 @@ There are three main ways to use the `lavaangui` package.
 
 2. **Local web application:** After installing the  `lavaangui` package (see below), you can start a local version of the web application via the `lavaangui()` command.
 
-3. **Interactive plots:** `lavaangui` can also be used for plotting `lavaan` models that were created in R. For this, use `plot_lavaan(fit)`. This will create a path diagram of your model. The core difference compared to other packages for plotting `lavaan` models is that the resulting plot is interactive. That is, you can change its appearance easily, for example, by dragging around nodes with your mouse.
+3. **Interactive plots:** `lavaangui` can also be used for plotting `lavaan` models that were created in R. For this, use `plot_lavaan(fit)`. This will create a path diagram of your model. The core difference compared to other packages for plotting `lavaan` models is that the resulting plot is interactive. That is, you can change its appearance easily, for example, by dragging around nodes with your mouse. After customizing a diagram, use `export_plot(fit, "diagram.png")` to save that diagram to a file (PNG, JPG, SVG, or PDF) without any further user intervention.
 
 An extensive tutorial on using `lavaangui` is available at https://www.tandfonline.com/doi/full/10.1080/10705511.2024.2420678.
 
@@ -63,7 +63,7 @@ lavaangui(fit)
 
 ### `plot_lavaan()`
 
-To obtain an interactive plot of your fitted model without leaving R Studio, use the `plot_lavaan(fit)` function:
+To obtain an interactive plot of your fitted model, use the `plot_lavaan(fit)` function:
 
 ```{r, eval = FALSE}
 library(lavaan)
@@ -74,6 +74,24 @@ HS.model <- ' visual  =~ x1 + x2 + x3
 
 fit <- cfa(HS.model, data = HolzingerSwineford1939)
 plot_lavaan(fit)
+```
+
+### `export_plot()`
+
+A common challenge with diagram tools is the trade-off between customizability and reproducibility: either you tweak diagrams manually and lose the ability to regenerate them from a script, or you script everything and give up fine-grained control over appearance. `export_plot()` resolves this by separating the two steps. First use `plot_lavaan(fit)` to interactively arrange the diagram to your liking. The layout you created is automatically saved. `export_plot()` then renders that saved layout directly to a file (PNG, JPG, SVG, or PDF), so the same diagram can be reproduced at any time from a script without further manual interaction.
+
+```{r, eval = FALSE}
+library(lavaan)
+library(lavaangui)
+HS.model <- ' visual  =~ x1 + x2 + x3
+              textual =~ x4 + x5 + x6
+              speed   =~ x7 + x8 + x9 '
+
+fit <- cfa(HS.model, data = HolzingerSwineford1939)
+# Step 1: customize and save a layout interactively
+plot_lavaan(fit)
+# Step 2: export that layout to a file
+export_plot(fit, "diagram.png")
 ```
 
 # Cite

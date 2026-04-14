@@ -1,5 +1,6 @@
 <script>
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
+  import { showMathNotation } from "./mathNotationHelp.js";
   let version;
   let versionLavaan;
 
@@ -17,6 +18,10 @@
     {
       name: "Show Commands",
       action: showCommands,
+    },
+    {
+      name: "Math Notation",
+      action: showMathNotation,
     },
     {
       name: "Open Tutorial",

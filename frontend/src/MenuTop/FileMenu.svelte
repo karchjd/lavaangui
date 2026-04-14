@@ -29,6 +29,24 @@
     }
   }
 
+  function resetAll() {
+    if (!$appState.modelEmpty || $appState.dataAvail) {
+      // @ts-expect-error
+      bootbox.confirm(
+        "Are you sure you want to reset everything? This will delete the current model and data.",
+        function (result) {
+          if (result) {
+            reset();
+            removeData();
+          }
+        },
+      );
+    } else {
+      reset();
+      removeData();
+    }
+  }
+
   function startDownload(object, fileEnding) {
     saveAs(object, "model." + fileEnding);
   }
@@ -195,29 +213,58 @@
     Shiny.setInputValue("dataUpload-deleteData", Math.random());
   }
 
+  let imageScale = 1;
+
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 10;
+
+  function promptScale(onConfirm) {
+    // @ts-expect-error
+    bootbox.prompt({
+      title: `Image export scale (1 = screen resolution, higher=sharper but larger file, max ${MAX_SCALE})`,
+      inputType: "number",
+      value: imageScale,
+      min: MIN_SCALE,
+      max: MAX_SCALE,
+      step: 1,
+      callback: (result) => {
+        if (result === null) return;
+        const parsed = Math.round(parseFloat(result));
+        if (!isNaN(parsed)) {
+          imageScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, parsed));
+          onConfirm();
+        }
+      },
+    });
+  }
+
   function exportPNG() {
     const cy = get(cyStore);
-
-    startDownload(cy.png({ bg: "white" }), "png");
+    promptScale(() =>
+      startDownload(cy.png({ bg: "white", scale: imageScale }), "png"),
+    );
   }
 
   function exportJPG() {
     const cy = get(cyStore);
-    startDownload(cy.jpg(), "jpg");
+    promptScale(() => startDownload(cy.jpg({ scale: imageScale }), "jpg"));
   }
 
-  function getSVG() {
+  function getSVG(scale = 1) {
     const cy = get(cyStore);
-    const svgContent = cy.svg({ scale: 1, full: true });
+    // true full is inconsistent with JPG + PDF, but false is broken
+    const svgContent = cy.svg({ scale, full: true });
     return svgContent;
   }
 
   function exportSVG() {
-    const svgContent = getSVG();
-    const blob = new Blob([svgContent], {
-      type: "image/svg+xml;charset=utf-8",
+    promptScale(() => {
+      const svgContent = getSVG(imageScale);
+      const blob = new Blob([svgContent], {
+        type: "image/svg+xml;charset=utf-8",
+      });
+      startDownload(blob, "svg");
     });
-    startDownload(blob, "svg");
   }
 
   function downloadModelData() {
@@ -225,7 +272,13 @@
   }
 
   async function exportPDF() {
-    const svgContent = getSVG();
+    promptScale(async () => {
+      const svgContent = getSVG(imageScale);
+      await renderPDF(svgContent);
+    });
+  }
+
+  async function renderPDF(svgContent) {
     const parser = new DOMParser();
     const svgElement = parser.parseFromString(
       svgContent,
@@ -250,7 +303,8 @@
   let menuItems;
   $: {
     let allMenuItems = [
-      { name: "New Model", action: newModel, divider: true },
+      { name: "New Model", action: newModel },
+      { name: "Reset", action: resetAll, divider: true },
       { name: "Load Model", action: loadModel },
       { name: "Load Data", action: loadData },
       { name: "Load Model and Data", action: loadModelData, divider: true },

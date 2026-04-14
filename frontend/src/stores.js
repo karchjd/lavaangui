@@ -35,6 +35,7 @@ export let gridViewOptions = writable({
   showLav: true,
   showVar: true,
   showMean: true,
+  showCov: true,
   std: false,
   view: "est",
   ci: .95,
@@ -50,6 +51,7 @@ export let fitCache = writable({
 export let appState = writable({
   fitting: false,
   loadingMode: false,
+  blockingMessage: null,
   runCounter: 0,
   modelEmpty: true,
   dataAvail: false,
@@ -69,7 +71,9 @@ export let appState = writable({
   undoEmpty: true,
   redoEmpty: true,
   server: false,
-  shinyapps: false
+  shinyapps: false,
+  layout_name: null,
+  layout_hash: null,
 });
 
 export let dataInfo = writable(0);

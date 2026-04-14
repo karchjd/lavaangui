@@ -2,6 +2,7 @@
   import { cyStore, appState, ur } from "./stores.js";
   import { get } from "svelte/store";
   import { onMount } from "svelte";
+  import { jsonModel } from "./MenuTop/IO.js";
 
   let cy = get(cyStore);
 
@@ -17,6 +18,15 @@
 
   // prevents users from losing their work
   window.addEventListener("beforeunload", (event) => {
+    if ($appState.layout_name != null) {
+      const layout_info = {
+        name: $appState.layout_name,
+        hash: $appState.layout_hash,
+        model: jsonModel(),
+      };
+      // @ts-ignore
+      Shiny.setInputValue("layout_saver-user_layout", layout_info);
+    }
     // Cancel the event as stated by the standard.
     event.preventDefault();
     // Chrome requires returnValue to be set.

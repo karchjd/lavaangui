@@ -10,6 +10,9 @@
   import { checkNodeLoop } from "./checkNodeLoop.js";
   import { tolavaan } from "../Shiny/toR.js";
   import * as Constants from "./classNames.js";
+  import { showMathNotation } from "../MenuTop/mathNotationHelp.js";
+  // @ts-ignore
+  window.showMathNotation = showMathNotation;
   import iro from "@jaames/iro";
 
   // register extension
@@ -37,7 +40,7 @@
 
     if (!isValidName(str)) {
       // @ts-expect-error
-      bootbox.alert("Provide a valid label");
+      bootbox.alert("Provide a valid lavaan label");
       return false;
     }
     return true;
@@ -104,6 +107,16 @@
       },
       show: "full",
     },
+    {
+      id: "add-composite",
+      content: "Add Composite",
+      coreAsWell: true,
+      onClickFunction: function (event) {
+        const position = event.renderedPosition;
+        addNode(Constants.COMPOSITE, position);
+      },
+      show: "full",
+    },
 
     //edge menus
 
@@ -145,7 +158,6 @@
       show: "both",
       hasTrailingDivider: false,
     },
-
     {
       id: "remove-edge",
       content: "Delete Edge",
@@ -231,7 +243,55 @@
       show: "full",
       hasTrailingDivider: true,
     },
+    {
+      id: "switch-reg",
+      content: "Mark as Regression Relationship",
+      selector: `edge.${Constants.FACTLOAD}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markRegression();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
+      id: "switch-comp-reg",
+      content: "Mark as Regression Relationship",
+      selector: `edge.${Constants.COMPLOAD}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markCompRegression();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
 
+    {
+      id: "switch-compload",
+      content: "Mark as Component Loading",
+      selector: `edge.${Constants.COMP_REGRESSION}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markCompload();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
+      id: "switch-factor",
+      content: "Mark as Factor Loading",
+      selector: `edge.${Constants.REGRESSION}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.markFactload();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
     {
       id: "revert-arrow",
       content: "Revert Direction",
@@ -246,50 +306,24 @@
       hasTrailingDivider: false,
     },
     {
-      id: "set-undirected",
-      content: "Set Undirected",
-      selector: `edge[isMean="0"].${Constants.DIRECTED}.${Constants.FROM_USER}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.setUndirected();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: false,
-    },
-    {
-      id: "switch-reg",
-      content: "Mark as Regression Relationship",
-      selector: `edge.${Constants.FACTLOAD}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.markRegression();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: true,
-    },
-
-    {
-      id: "switch-factor",
-      content: "Mark as Factor Loading",
-      selector: `edge.${Constants.REGRESSION}`,
-      onClickFunction: function (event) {
-        const edge = event.target || event.cyTarget;
-        edge.markFactload();
-        tolavaan($modelOptions.mode);
-      },
-      show: "full",
-      hasTrailingDivider: true,
-    },
-
-    {
       id: "set-arrow",
       content: "Set Directed",
       selector: `edge.${Constants.UNDIRECTED}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
         edge.setDirected();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: true,
+    },
+    {
+      id: "set-undirected",
+      content: "Set Undirected",
+      selector: `edge[isMean="0"].${Constants.DIRECTED}.${Constants.FROM_USER}`,
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        edge.setUndirected();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -419,13 +453,12 @@
         });
       },
     },
-
     //node menus
     {
       id: "rename-node",
       show: "both",
       content: "Rename Variable",
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}`,
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         const columnNames = $appState.columnNames;
@@ -517,7 +550,7 @@
     {
       id: "remove-node",
       content: "Delete Variable",
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}`,
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.remove();
@@ -529,10 +562,22 @@
     {
       id: "change-latent",
       content: "Change to Latent",
-      selector: `node.${Constants.OBSERVED}`,
+      selector: `node.${Constants.OBSERVED}, node.${Constants.COMPOSITE}`,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
         node.makeLatent();
+        tolavaan($modelOptions.mode);
+      },
+      show: "full",
+      hasTrailingDivider: false,
+    },
+    {
+      id: "change-composite",
+      content: "Change to Composite",
+      selector: `node.${Constants.OBSERVED}, node.${Constants.LATENT}`,
+      onClickFunction: function (event) {
+        const node = event.target || event.cyTarget;
+        node.makeComposite();
         tolavaan($modelOptions.mode);
       },
       show: "full",
@@ -579,7 +624,7 @@
       id: "change-observed",
       show: "full",
       content: "Change to Observed",
-      selector: `node.${Constants.LATENT}`,
+      selector: `node.${Constants.LATENT}, node.${Constants.COMPOSITE}`,
       hasTrailingDivider: true,
       onClickFunction: function (event) {
         const node = event.target || event.cyTarget;
@@ -590,23 +635,6 @@
           bootbox.alert("Variable linked with data set");
         }
         tolavaan($modelOptions.mode);
-      },
-    },
-    {
-      id: "change-shape-hexagon",
-      content: "Change Shape to Hexagon",
-      selector: `node[shape = "ellipse"]`,
-      show: "both",
-      onClickFunction: function (event) {
-        var target = event.target || event.cyTarget;
-        const toChange = getChange(target, "nodes");
-        if (toChange === null) {
-          return null;
-        }
-        $ur.do("style", {
-          eles: toChange,
-          style: { shape: "hexagon" },
-        });
       },
     },
     {
@@ -670,8 +698,8 @@
       id: "change-font-size",
       content: "Change Font Size",
       show: "both",
-      hasTrailingDivider: true,
-      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, edge`,
+      hasTrailingDivider: false,
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.CONSTANT}, node.${Constants.COMPOSITE}, edge`,
       onClickFunction: function (event) {
         var target = event.target || event.cyTarget;
         const toChange = getChange(target, "nodes.edges");
@@ -692,6 +720,54 @@
           },
         });
       },
+    },
+    {
+      id: "edge-display-label",
+      content: "Set Display Label",
+      selector: "edge",
+      onClickFunction: function (event) {
+        const edge = event.target || event.cyTarget;
+        // @ts-expect-error
+        bootbox.prompt({
+          title:
+            'Enter a display label (cosmetic only, not used in lavaan syntax). Supports \\alpha, \\beta, _1, ^2, etc. <a href="#" onclick="event.preventDefault(); showMathNotation();">Full reference</a>',
+          value: edge.getDisplayLabelRaw() || "",
+          callback: function (result) {
+            if (result === null) return;
+            if (result === "") {
+              edge.removeDisplayLabel();
+            } else {
+              edge.setDisplayLabel(result);
+            }
+          },
+        });
+      },
+      show: "both",
+      hasTrailingDivider: true,
+    },
+    {
+      id: "node-display-label",
+      content: "Set Display Name",
+      selector: `node.${Constants.LATENT}, node.${Constants.OBSERVED}, node.${Constants.COMPOSITE}`,
+      onClickFunction: function (event) {
+        const node = event.target || event.cyTarget;
+        // @ts-expect-error
+        bootbox.prompt({
+          title:
+            'Enter a display name (cosmetic only, not used in lavaan syntax). Supports \\alpha, \\beta, _1, ^2, etc. <a href="#" onclick="event.preventDefault(); showMathNotation();">Full reference</a>',
+          value: node.getDisplayLabelRaw() || "",
+          callback: function (result) {
+            if (result === null) return;
+            if (result === "") {
+              node.removeDisplayLabel();
+            } else {
+              node.setDisplayLabel(result);
+            }
+          },
+        });
+      },
+      show: "both",
+      hasTrailingDivider: false,
     },
   ];
 

@@ -2,6 +2,7 @@
 
 export const OBSERVED = 'observed-variable';
 export const LATENT = 'latent-variable';
+export const COMPOSITE = 'component-variable';
 export const CONSTANT = 'constant';
 export const FREE = 'free';
 export const NOT_LABEL = 'nolabel';
@@ -25,13 +26,22 @@ export const LABELWIDTH = 80;
 export const POTENTIAL_LAT_OB_REGRESSION = 'loRegression';
 export const REGRESSION = 'regression';
 export const FACTLOAD = 'factorLoad';
+export const POTENTIAL_OB_COMP_REGRESSION = 'ocRegression';
+export const COMP_REGRESSION = 'compRegression';
+export const COMPLOAD = 'compLoad';
 export const FIXEDSTYLELABEL = {
     label: function (edge) {
-        return edge.data("label") + "@" + edge.data("value");
+        const display = edge.data("displayLabel");
+        const constraintLabel = edge.data("label") || "";
+        if (display) return display + "@" + edge.data("value");
+        return constraintLabel + "@" + edge.data("value");
     }
 }
 export const FIXEDSTYLE = {
     label: function (edge) {
-        return "@" + edge.data("value");
+        const display = edge.data("displayLabel");
+        const constraintLabel = edge.data("label") || "";
+        if (display) return display + "@" + edge.data("value");
+        return constraintLabel + "@" + edge.data("value");
     },
 }

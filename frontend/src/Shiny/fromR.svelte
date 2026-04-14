@@ -1,12 +1,19 @@
 <script>
-  import { appState, setAlert, fitCache, modelOptions } from "../stores";
+  import {
+    appState,
+    setAlert,
+    fitCache,
+    modelOptions,
+    gridViewOptions,
+  } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass.js";
   import { get } from "svelte/store";
   import { cyStore } from "../stores";
   import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
   import { addNode } from "../Graph/graphmanipulation.js";
   import { tolavaan } from "./toR.js";
-  import { applySemLayout } from "../MenuTop/semPlotLayouts.js";
+  import { applySemLayout, resolveLayout } from "../MenuTop/semPlotLayouts.js";
+  import { updateLabels, updateVisibility } from "../MenuTop/viewModule";
   import {
     OBSERVED,
     LATENT,
@@ -14,7 +21,15 @@
     DIRECTED,
     UNDIRECTED,
     LOOP,
+    COMPOSITE,
   } from "../Graph/classNames.js";
+  import { parseModel } from "../MenuTop/IO";
+  import cytoscape from "cytoscape";
+  import svg from "cytoscape-svg";
+  import { jsPDF } from "jspdf";
+  import { svg2pdf } from "svg2pdf.js";
+
+  cytoscape.use(svg);
 
   function floatEqual(a, b) {
     if (a === b) {
@@ -28,11 +43,6 @@
     }
 
     return diff <= Number.EPSILON * Math.min(Math.abs(a), Math.abs(b));
-  }
-
-  function serverAvail() {
-    // @ts-expect-error
-    return typeof Shiny === "object" && Shiny !== null;
   }
 
   function getEdge(lhs, op, rhs) {
@@ -144,7 +154,7 @@
     }
   }
 
-  function getModelLav(lav_model, imported) {
+  async function getModelLav(lav_model, imported) {
     $appState.meansModelled = false;
     $appState.loadingMode = true;
 
@@ -152,6 +162,7 @@
     if (!imported) {
       cy.edges().invalidate();
     } else {
+      $appState.blockingMessage = "Importing model...";
       const observed = Array.isArray(lav_model.obs)
         ? lav_model.obs
         : [lav_model.obs];
@@ -173,6 +184,15 @@
         position.x = position.x + 50;
         importNode(LATENT, latent[i]);
       }
+
+      const composite = Array.isArray(lav_model.composite)
+        ? lav_model.composite
+        : [lav_model.composite];
+      for (let i = 0; i < composite.length; i++) {
+        position.x = position.x + 50;
+        importNode(COMPOSITE, composite[i]);
+      }
+
       lav_model = lav_model.parTable;
     }
 
@@ -310,6 +330,13 @@
           edge.validate();
         }
         edge.checkAndMarkPotentialLatObReg();
+        if (lav_model.op[i] === "~" && edge.isFactLoad()) {
+          edge.markRegression();
+        }
+        edge.checkAndMarkPotentialObCompReg();
+        if (lav_model.op[i] === "~" && edge.isCompLoad()) {
+          edge.markCompRegression();
+        }
         if (edge.source().isConstant()) {
           edge.makeMeanEdge();
         } else {
@@ -332,7 +359,7 @@
         }
       });
     } else {
-      applySemLayout("tree", false);
+      await applySemLayout("tree", false, false);
       const angleCounts = new Map();
 
       cy.getUndirectedEdges().forEach((edge) => {
@@ -363,6 +390,7 @@
         });
       }
       cy.fit();
+      $appState.blockingMessage = null;
     }
 
     if (!$appState.parsedModel) {
@@ -390,16 +418,14 @@
       if (existingEdge.length > 0) {
         let allEstimates = {};
         if (existingEdge.isFree()) {
-          // Object to store all the estimates
-
-          // Populate the object with estimates from lav_result
+          //estimates from lav_result
           allEstimates.est = lav_result.est[i];
           allEstimates.p_value = lav_result.pvalue[i];
           allEstimates.se = lav_result.se[i];
           allEstimates.ciLow = lav_result["ci.lower"][i];
           allEstimates.ciHigh = lav_result["ci.upper"][i];
 
-          // Populate the object with estimates from std_result
+          // estimates from std_result
           allEstimates.est_std = std_result["est.std"][i];
           allEstimates.se_std = std_result.se[i];
           allEstimates.ciLow_std = std_result["ci.lower"][i];
@@ -436,104 +462,107 @@
     }
   }
 
-  if (serverAvail()) {
-    //sent by server when data is loaded
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
-      applyLinkedClass(data_info.columns, true);
-      $appState.columnNames = [...data_info.columns];
-      $appState.ids = [...data_info.columns];
-      $appState.loadedFileName = data_info.name;
-      $appState.dataAvail = true;
-      tolavaan($modelOptions.mode);
+  //sent by server when data is loaded
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
+    applyLinkedClass(data_info.columns, true);
+    $appState.columnNames = [...data_info.columns];
+    $appState.ids = [...data_info.columns];
+    $appState.loadedFileName = data_info.name;
+    $appState.dataAvail = true;
+    tolavaan($modelOptions.mode);
+    window.$("#upload-modal").modal("hide");
+    if (data_info.showData) {
+      window.$("#data-modal-2").modal();
+    }
+  });
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("lav_failed", function (failCode) {
+    $appState.fitting = false;
+    if (failCode == "stopped") {
+      setAlert("danger", "Fitting stopped by user");
+    } else {
+      setAlert("danger", "Fitting failed");
+    }
+  });
+
+  Shiny.addCustomMessageHandler("fitting", function (ignored) {
+    $appState.fitting = true;
+  });
+
+  Shiny.addCustomMessageHandler("lav_warning_error", function (info) {
+    const what = info.type == "warning" ? "warning" : "error";
+    if (info.origin == "loading data") {
       window.$("#upload-modal").modal("hide");
-      if (data_info.showData) {
-        window.$("#data-modal-2").modal();
+    }
+    if (info.origin == "layout") {
+      resolveLayout();
+    }
+    setAlert(
+      info.type,
+      `During ${info.origin} the following ${what} occurred: ${info.message}`,
+    );
+  });
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("lav_error_fitting", function (info) {
+    $appState.fitting = false;
+    setAlert(
+      info.type,
+      "During " +
+        info.origin +
+        " the following error occurred: " +
+        info.message,
+    );
+  });
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("usecache", function (dummy) {
+    setAlert(
+      "info",
+      "Reusing cached results because model and data did not change since last fit",
+    );
+  });
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("data_missing", function (dummy) {
+    setAlert("danger", "Could not fit model because no data is available");
+  });
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("columnames", function (cnames) {
+    const cy = get(cyStore);
+    const oldName = $appState.columnNames[cnames.index];
+    $appState.columnNames[cnames.index] = cnames.newcolname;
+    cy.getObservedNodes().forEach((node) => {
+      if (node.getLabel() == oldName) {
+        node.setLabel(cnames.newcolname);
+        tolavaan($modelOptions.mode);
       }
     });
+    applyLinkedClass($appState.columnNames, true);
+  });
 
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("lav_failed", function (failCode) {
-      $appState.fitting = false;
-      if (failCode == "stopped") {
-        setAlert("danger", "Fitting stopped by user");
-      } else {
-        setAlert("danger", "Fitting failed");
-      }
-    });
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("missing_vars", function (missingVars) {
+    var missingVarsStr = [].concat(missingVars).join(", ");
+    setAlert(
+      "danger",
+      "Could not fit model because " +
+        missingVarsStr +
+        " are observed variables in the model but not present in the data.",
+    );
+  });
 
-    Shiny.addCustomMessageHandler("fitting", function (ignored) {
-      $appState.fitting = true;
-    });
+  // parse model
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
+    getModelLav(lav_model, false);
+  });
 
-    Shiny.addCustomMessageHandler("lav_warning_error", function (info) {
-      const what = info.type == "warning" ? "warning" : "error";
-      if (info.origin == "loading data") {
-        window.$("#upload-modal").modal("hide");
-      }
-      setAlert(
-        info.type,
-        `During ${info.origin} the following ${what} occurred: ${info.message}`,
-      );
-    });
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("lav_error_fitting", function (info) {
-      $appState.fitting = false;
-      setAlert(
-        info.type,
-        "During " +
-          info.origin +
-          " the following error occurred: " +
-          info.message,
-      );
-    });
-
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("usecache", function (dummy) {
-      setAlert(
-        "info",
-        "Reusing cached results because model and data did not change since last fit",
-      );
-    });
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("data_missing", function (dummy) {
-      setAlert("danger", "Could not fit model because no data is available");
-    });
-
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("columnames", function (cnames) {
-      const cy = get(cyStore);
-      const oldName = $appState.columnNames[cnames.index];
-      $appState.columnNames[cnames.index] = cnames.newcolname;
-      cy.getObservedNodes().forEach((node) => {
-        if (node.getLabel() == oldName) {
-          node.setLabel(cnames.newcolname);
-          tolavaan($modelOptions.mode);
-        }
-      });
-      applyLinkedClass($appState.columnNames, true);
-    });
-
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("missing_vars", function (missingVars) {
-      var missingVarsStr = [].concat(missingVars).join(", ");
-      setAlert(
-        "danger",
-        "Could not fit model because " +
-          missingVarsStr +
-          " are observed variables in the model but not present in the data.",
-      );
-    });
-
-    // parse model
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("lav_model", function (lav_model) {
-      getModelLav(lav_model, false);
-    });
-
-    //import model
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
+  //import model gets message from model importer
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
+    if (lav_model.saved_layout == null) {
       getModelLav(lav_model, true);
       let cy = get(cyStore);
       if (!Array.isArray(lav_model.ordered)) {
@@ -544,36 +573,120 @@
           return node.getLabel() == label;
         })[0].makeOrdered();
       });
-      $modelOptions.fix_first = false;
-      setAlert(
-        "warning",
-        "lavaangui only imports user edges. Your full model is very likely different than what you fitted in lavaan because of different options used. To display the model, as you fitted it in lavaan, use plot_lavaan",
+    } else {
+      parseModel(lav_model.saved_layout);
+    }
+    $appState.layout_hash = lav_model.layout_hash;
+    $appState.layout_name = lav_model.layout_name;
+    if (lav_model.layout_exists) {
+      // @ts-expect-error
+      bootbox.prompt({
+        title:
+          "A layout is already saved for this model. Enter a new name to save separately, or leave blank to overwrite.",
+        value: "",
+        callback: (result) => {
+          if (result !== null && result.trim() !== "") {
+            $appState.layout_name = result.trim();
+          }
+        },
+      });
+    }
+
+    //only needed when directly saving to file
+    if (lav_model.export_filepath !== null) {
+      //enforce that gridviewoptions are respected
+      updateVisibility(
+        $gridViewOptions.showVar,
+        $gridViewOptions.showLav,
+        $gridViewOptions.showMean,
+        $gridViewOptions.showCov,
       );
-    });
+      updateLabels(
+        $gridViewOptions.view,
+        $gridViewOptions.std,
+        $gridViewOptions.number_digits,
+      );
+      const cy = get(cyStore);
+      const ext = lav_model.export_filepath.split(".").pop().toLowerCase();
+      const scale = lav_model.scale ?? 1;
 
-    // save all results in data attributes of the correct edges
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("lav_results", function (all_res) {
-      $appState.loadingMode = true;
-      $fitCache.lastFitLavFit = all_res.fitted_model;
-      $fitCache.lastFitModel = all_res.model;
-      $fitCache.lastFitData = all_res.data;
-      $appState.fitting = false;
-      $appState.loadingMode = false;
-    });
+      function sendExport(base64Data) {
+        // @ts-ignore
+        Shiny.setInputValue("export-image", {
+          filepath: lav_model.export_filepath,
+          data: base64Data,
+        });
+      }
 
-    // get new estimates
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("lav_estimates", function (all_res) {
-      const lav_result = all_res.normal;
-      const std_result = all_res.std;
-      updateEstimates(lav_result, std_result);
-    });
+      function svgToBase64(svgContent) {
+        const bytes = new TextEncoder().encode(svgContent);
+        return btoa(String.fromCharCode(...bytes));
+      }
 
-    //import model
-    // @ts-expect-error
-    Shiny.addCustomMessageHandler("setToEstimate", function (lav_model) {
-      $modelOptions.mode = "estimate";
-    });
-  }
+      if (ext === "svg") {
+        const svgContent = cy.svg({ scale, full: true });
+        sendExport(svgToBase64(svgContent));
+      } else if (ext === "pdf") {
+        (async () => {
+          const svgContent = cy.svg({ scale, full: true });
+          const parser = new DOMParser();
+          const svgElement = parser.parseFromString(svgContent, "image/svg+xml").documentElement;
+          svgElement.style.position = "absolute";
+          svgElement.style.left = "-9999px";
+          document.body.appendChild(svgElement);
+          const rect = svgElement.getBoundingClientRect();
+          document.body.removeChild(svgElement);
+          const width = rect.width;
+          const height = rect.height;
+          const pdf = new jsPDF({
+            orientation: width > height ? "landscape" : "portrait",
+            unit: "pt",
+            format: [width, height],
+          });
+          await svg2pdf(svgElement, pdf, { width, height });
+          sendExport(pdf.output("datauristring").split(",")[1]);
+        })();
+      } else if (ext === "jpg" || ext === "jpeg") {
+        sendExport(cy.jpg({ bg: "white", full: true, scale }).split(",")[1]);
+      } else {
+        // png
+        sendExport(cy.png({ bg: "white", full: true, scale }).split(",")[1]);
+      }
+    }
+    setAlert(
+      "warning",
+      "lavaangui only imports user edges. Your full model is very likely different than what you fitted in lavaan because of different options used. To display the model, as you fitted it in lavaan, use plot_lavaan",
+    );
+  });
+
+  // save all results in data attributes of the correct edges
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("lav_results", function (all_res) {
+    $appState.loadingMode = true;
+    $fitCache.lastFitLavFit = all_res.fitted_model;
+    $fitCache.lastFitModel = all_res.model;
+    $fitCache.lastFitData = all_res.data;
+    $appState.fitting = false;
+    $appState.loadingMode = false;
+  });
+
+  // get new estimates
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("lav_estimates", function (all_res) {
+    const lav_result = all_res.normal;
+    const std_result = all_res.std;
+    updateEstimates(lav_result, std_result);
+  });
+
+  // only used when exporting image directly after import
+  // @ts-ignore
+  Shiny.addCustomMessageHandler("close", function (all_res) {
+    window.close();
+  });
+
+  //import model
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("setToEstimate", function (lav_model) {
+    $modelOptions.mode = "estimate";
+  });
 </script>

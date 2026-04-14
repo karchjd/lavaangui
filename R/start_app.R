@@ -2,12 +2,22 @@
 #' @import lavaan
 #' @importFrom igraph graph.edgelist layout.reingold.tilford
 
-start_app <- function(fit = NULL, full, where) {
+start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
+  if (full && !is.null(layout)) {
+    stop("layout can only be provided when full = FALSE")
+  }
+  if (!is.null(export_filepath) && full) {
+    stop("export can only be TRUE when full = FALSE")
+  }
   ## import model if present
   if (!is.null(fit)) {
     varNames <- lavaanNames(fit, type = "ov")
-    factNames <- lavaanNames(fit, type = "lv")
+    factNames <- lavaanNames(fit, type = "lv.regular")
     factNames <- factNames[!factNames %in% varNames]
+    ## temporary fix until lavaanNames(fit, type = "lv.formative") works again
+    parTab <- parTable(fit)
+    compositeNames <- unique(parTab$lhs[parTab$op == "<~"])
+    print(compositeNames)
     if (lavInspect(fit, "ngroups") == 1) {
       df <- tryCatch(
         {
@@ -24,37 +34,50 @@ start_app <- function(fit = NULL, full, where) {
       }
       df <- NULL
     }
+    if (!full && !is.null(layout)) {
+      paraS <- parameterEstimates(fit)
+      layout_hash <- digest::digest(paraS)
+    } else {
+      layout_hash <- NULL
+    }
     parTable <- parTable(fit)
     parTable <- parTable[!parTable$op %in% c(":=", "<", ">", "==", "|", "<", ">"), ]
-    importedModel <- list(obs = varNames, latent = factNames, parTable = parTable, df = df, fit = fit)
+    importedModel <- list(
+      obs = varNames, latent = factNames, parTable = parTable,
+      composite = compositeNames,
+      df = df, fit = fit,
+      layout_hash = layout_hash,
+      layout_name = layout,
+      export_filepath = export_filepath,
+      scale = scale
+    )
   } else {
     importedModel <- NULL
   }
 
-  ## define server, here because we need to pass model, and full
+  ## define server, here because we need to things from start_app
+  ## this seems to be the only way :(
   lavaan_gui_server <- function(input, output, session) {
     options(shiny.maxRequestSize = 20 * 1024^2)
-    
+
     # reactive vals
     fit <- reactiveVal(NULL)
     forceEstimateUpdate <- reactiveVal()
     to_render <- reactiveVal(help_text)
-    
-    #check whether running on shinyapps or not
+
+    # check whether running on shinyapps or not
     if (Sys.getenv("SHINY_PORT") == "") {
       shinyapps <- FALSE
     } else {
       shinyapps <- TRUE
     }
-    
+
     ## import model if present, also sends whether we are on shinyapps or not to
     ## frontend
     importRes <- importModel(session, full, importedModel, shinyapps)
     imported <- importRes$imported
-    if (imported) {
-      if (!full) {
-        fit(importRes$fit)
-      }
+    if (imported && !full) {
+      fit(importRes$fit)
     }
 
     session$sendCustomMessage("version", message = utils::packageVersion("lavaangui"))
@@ -103,6 +126,16 @@ start_app <- function(fit = NULL, full, where) {
 
     extendResultsServer("extend", fit)
 
+    serverUserLayoutSaver("layout_saver", !is.null(importedModel$export_filepath))
+
+    serverImageExporter("export")
+
+    if (where != "shinyapps.io") {
+      session$onSessionEnded(function() {
+        stopApp()
+      })
+    }
+
     # showing help leave as is
     observeEvent(input$show_help, {
       to_render(help_text)
@@ -118,8 +151,6 @@ start_app <- function(fit = NULL, full, where) {
   )
   if (where == "browser") {
     runApp(app, launch.browser = TRUE)
-  } else if (where == "heroku") {
-    runApp(app, port = as.numeric(Sys.getenv("PORT")), host = "0.0.0.0")
   } else if (where == "gadget") {
     runGadget(app, viewer = dialogViewer("lavaangui", width = 10^3, height = 10^3))
   } else if (where == "shinyapps.io") {

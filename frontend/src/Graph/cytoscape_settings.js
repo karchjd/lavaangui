@@ -19,12 +19,14 @@ export const graphStyles = [
         return ele.data("background-color") || "white";
       },
       "border-color": function (ele) {
-        return ele.data("border-color") || "grey";
+        return ele.data("border-color") || "black";
       },
       "border-width": function (ele) {
         return ele.data("border-width") || "2px";
       },
-      label: "data(label)", // Use the 'label' property from the data for the node's label
+      label: function (ele) {
+        return ele.data("displayLabel") || ele.data("label");
+      },
       "text-valign": "center",
       "text-halign": "center",
       "text-wrap": "ellipsis",
@@ -50,9 +52,16 @@ export const graphStyles = [
     selector: `node.${Constants.LATENT}`,
     style: {
       shape: function (ele) {
-        return ele.data("shape") || "ellipse";
+        return "ellipse";
       },
-      "border-color": "black",
+    },
+  },
+  {
+    selector: `node.${Constants.COMPOSITE}`,
+    style: {
+      shape: function (ele) {
+        return "hexagon";
+      },
     },
   },
   {
@@ -62,12 +71,6 @@ export const graphStyles = [
       label: "1",
       "text-valign": "center",
       "text-margin-y": "10px",
-      "border-color": "black",
-    },
-  },
-  {
-    selector: `node.${Constants.LINKED}`,
-    style: {
       "border-color": "black",
     },
   },
@@ -141,10 +144,18 @@ export const graphStyles = [
     },
   },
   {
-    selector: `edge.${Constants.LABEL}, edge.${Constants.LABEL}`,
+    selector: `edge.${Constants.LABEL}`,
     style: {
       label: function (edge) {
-        return edge.data("label");
+        return edge.data("displayLabel") || edge.data("label");
+      },
+    },
+  },
+  {
+    selector: `edge.${Constants.NOT_LABEL}`,
+    style: {
+      label: function (edge) {
+        return edge.data("displayLabel") || "";
       },
     },
   },
