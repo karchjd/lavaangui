@@ -8,6 +8,8 @@ if (rebuild_frontend) {
   if (ret_val != 0) {
     stop("Failed to compile Svelte front end.")
   }
+} else{
+  install.packages("pkgload")
 }
 
 pkgload::load_all()
