@@ -31,7 +31,7 @@ remove_layouts <- function(fit, layout = NULL) {
         stop("'layout' must be NULL or a single character string.")
     }
 
-    layout_hash <- digest::digest(parameterEstimates(fit))
+    layout_hash <- digest::digest(myParameterEstimates(fit))
     layouts_dir <- file.path("layouts")
 
     if (!dir.exists(layouts_dir)) {

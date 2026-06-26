@@ -9,10 +9,10 @@ serverEstimateUpdater <- function(id, forceEstimateUpdate, fit, to_render) {
         withCallingHandlers(
           {
             res <- list(
-              normal = parameterestimates(fit(), level = input$confindence_level),
+              normal = myParameterEstimates(fit(), level = input$confindence_level),
               std = standardizedsolution(fit(), level = input$confindence_level)
             )
-            if (lavInspect(fit(), "ngroups") > 1) {
+            if (getNGroups(fit()) > 1) {
               res$normal <- getGroupTable(res$normal)
               res$std <- getGroupTable(res$std)
             }

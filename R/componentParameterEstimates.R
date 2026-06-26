@@ -25,9 +25,9 @@ parameterEstimatesServer <- function(id, fit) {
   moduleServer(id, function(input, output, session) {
     ests <- reactive({
       if (input$rawStd == "raw") {
-        ests <- lavaan::parameterEstimates(fit(), level = input$level)
+        ests <- myParameterEstimates(fit(), level = input$level)
       } else {
-        ests <- lavaan::standardizedSolution(fit(), level = input$level)
+        ests <- standardizedEstimates(fit(), level = input$level)
       }
 
       ests <- modifyResTable(ests)

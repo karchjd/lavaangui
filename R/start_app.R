@@ -1,6 +1,47 @@
 #' @import shiny
 #' @import lavaan
 #' @importFrom igraph graph.edgelist layout.reingold.tilford
+#'
+
+getOVNames <- function(fit) {
+  if (inherits(fit, "fake_lavaan")) {
+    fit$observed
+  } else {
+    lavaanNames(fit, type = "ov")
+  }
+}
+
+getLVNames <- function(fit) {
+  if (inherits(fit, "fake_lavaan")) {
+    fit$latents
+  } else {
+    lavaanNames(fit, type = "lv.regular")
+  }
+}
+
+myParameterEstimates <- function(fit, ...) {
+  if (inherits(fit, "fake_lavaan")) {
+    fit$table
+  } else {
+    parameterEstimates(fit, ...)
+  }
+}
+
+standardizedEstimates <- function(fit, ...) {
+  if (inherits(fit, "fake_lavaan")) {
+    fit$table
+  } else {
+    standardizedSolution()(fit, ...)
+  }
+}
+
+getNGroups <- function(fit) {
+  if (inherits(fit, "fake_lavaan")) {
+    fit$ngroups
+  } else {
+    lavInspect(fit, "ngroups")
+  }
+}
 
 start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
   if (full && !is.null(layout)) {
@@ -11,14 +52,14 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
   }
   ## import model if present
   if (!is.null(fit)) {
-    varNames <- lavaanNames(fit, type = "ov")
-    factNames <- lavaanNames(fit, type = "lv.regular")
+    varNames <- getOVNames(fit, type = "ov")
+    factNames <- getLVNames(fit, type = "lv.regular")
     factNames <- factNames[!factNames %in% varNames]
     ## temporary fix until lavaanNames(fit, type = "lv.formative") works again
     parTab <- parTable(fit)
     compositeNames <- unique(parTab$lhs[parTab$op == "<~"])
     print(compositeNames)
-    if (lavInspect(fit, "ngroups") == 1) {
+    if (getNGroups(fit) == 1) {
       df <- tryCatch(
         {
           as.data.frame(lavInspect(fit, what = "data"))
@@ -35,7 +76,7 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
       df <- NULL
     }
     if (!full && !is.null(layout)) {
-      paraS <- parameterEstimates(fit)
+      paraS <- myParameterEstimates(fit)
       layout_hash <- digest::digest(paraS)
     } else {
       layout_hash <- NULL
