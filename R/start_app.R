@@ -52,8 +52,8 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
   }
   ## import model if present
   if (!is.null(fit)) {
-    varNames <- getOVNames(fit, type = "ov")
-    factNames <- getLVNames(fit, type = "lv.regular")
+    varNames <- getOVNames(fit)
+    factNames <- getLVNames(fit)
     factNames <- factNames[!factNames %in% varNames]
     ## temporary fix until lavaanNames(fit, type = "lv.formative") works again
     parTab <- parTable(fit)

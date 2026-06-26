@@ -130,7 +130,7 @@ setMethod("semPlotModel_S4", signature("lavaan"), function(object) {
 
   # Extract variable and factor names:
   varNames <- getOVNames(fit)
-  factNames <- getLVNamesPlot(object, type = "lv")
+  factNames <- getLVNamesPlot(object)
 
   factNames <- factNames[!factNames %in% varNames]
 
@@ -1706,8 +1706,8 @@ semPlotModel_lavaanModel <- function(object, ...) {
     object <- lavaanify(object, ...)
   }
 
-  varNames <- getOVNames()(object, type = "ov")
-  factNames <- getLVNamesPlot(object, type = "lv")
+  varNames <- getOVNames(object)
+  factNames <- getLVNamesPlot(object)
   #   rm(Lambda)
 
   factNames <- factNames[!factNames %in% varNames]
