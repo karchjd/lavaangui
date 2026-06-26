@@ -129,7 +129,7 @@ setMethod("semPlotModel_S4", signature("lavaan"), function(object) {
 
 
   # Extract variable and factor names:
-  varNames <- getOVNames(fit)
+  varNames <- getOVNames(object)
   factNames <- getLVNamesPlot(object)
 
   factNames <- factNames[!factNames %in% varNames]
@@ -209,6 +209,70 @@ setMethod("semPlotModel_S4", signature("lavaan"), function(object) {
 
   return(semModel)
 })
+
+## EXTRACT MODEL (fake_lavaan) ###
+# fake_lavaan objects (see functionsExtractModel.r) mimic only the parts of a
+# fitted lavaan object we rely on. They are plain S3 lists, so semPlotModel()
+# dispatches here instead of to the "lavaan" S4 method. We build the same
+# semPlotModel object but skip the lavaan-only covariance extraction
+# (lavTech/lavInspect), which fake_lavaan does not support.
+semPlotModel.fake_lavaan <- function(object, ...) {
+  pars <- myParameterEstimates(object)
+
+  varNames <- getOVNames(object)
+  factNames <- getLVNamesPlot(object)
+  factNames <- factNames[!factNames %in% varNames]
+
+  # Extract parameter names:
+  if (is.null(pars$label)) pars$label <- rep("", nrow(pars))
+  pars$label[is.na(pars$label)] <- ""
+
+  semModel <- methods::new("semPlotModel")
+
+  if (is.null(pars$group)) pars$group <- ""
+  free <- if (is.null(pars$free)) rep(1L, nrow(pars)) else pars$free
+
+  # Create edges dataframe
+  semModel@Pars <- data.frame(
+    label = pars$label,
+    lhs = ifelse(pars$op == "~" | pars$op == "~1", pars$rhs, pars$lhs),
+    edge = "--",
+    rhs = ifelse(pars$op == "~" | pars$op == "~1", pars$lhs, pars$rhs),
+    est = pars$est,
+    std = if (is.null(pars$std.all)) NA else pars$std.all,
+    group = pars$group,
+    fixed = free == 0,
+    par = free,
+    stringsAsFactors = FALSE
+  )
+
+  semModel@Pars$edge[pars$op == "~~"] <- "<->"
+  semModel@Pars$edge[pars$op == "~*~"] <- "<->"
+  semModel@Pars$edge[pars$op == "~"] <- "~>"
+  semModel@Pars$edge[pars$op == "=~"] <- "->"
+  semModel@Pars$edge[pars$op == "~1"] <- "int"
+  semModel@Pars$edge[grepl("\\|", pars$op)] <- "|"
+
+  # Move thresholds to Thresholds slot:
+  semModel@Thresholds <- semModel@Pars[grepl("\\|", semModel@Pars$edge), -(3:4)]
+
+  # Remove constraints and weird stuff:
+  semModel@Pars <- semModel@Pars[!pars$op %in% c("<", ">", ":=", "==", "|"), ]
+
+  semModel@Vars <- data.frame(
+    name = c(varNames, factNames),
+    manifest = c(varNames, factNames) %in% varNames,
+    exogenous = NA,
+    stringsAsFactors = FALSE
+  )
+
+  semModel@ObsCovs <- list()
+  semModel@ImpCovs <- list()
+  semModel@Computed <- FALSE
+  semModel@Original <- list(object)
+
+  return(semModel)
+}
 
 # Arguments:
 # rotation: 1 = normal (endo manifests under), 2 3 and 4 flip counterclockwise.

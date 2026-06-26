@@ -3,46 +3,6 @@
 #' @importFrom igraph graph.edgelist layout.reingold.tilford
 #'
 
-getOVNames <- function(fit) {
-  if (inherits(fit, "fake_lavaan")) {
-    fit$observed
-  } else {
-    lavaanNames(fit, type = "ov")
-  }
-}
-
-getLVNames <- function(fit) {
-  if (inherits(fit, "fake_lavaan")) {
-    fit$latents
-  } else {
-    lavaanNames(fit, type = "lv.regular")
-  }
-}
-
-myParameterEstimates <- function(fit, ...) {
-  if (inherits(fit, "fake_lavaan")) {
-    fit$table
-  } else {
-    parameterEstimates(fit, ...)
-  }
-}
-
-standardizedEstimates <- function(fit, ...) {
-  if (inherits(fit, "fake_lavaan")) {
-    fit$table
-  } else {
-    standardizedSolution()(fit, ...)
-  }
-}
-
-getNGroups <- function(fit) {
-  if (inherits(fit, "fake_lavaan")) {
-    fit$ngroups
-  } else {
-    lavInspect(fit, "ngroups")
-  }
-}
-
 start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
   if (full && !is.null(layout)) {
     stop("layout can only be provided when full = FALSE")
@@ -56,7 +16,7 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
     factNames <- getLVNames(fit)
     factNames <- factNames[!factNames %in% varNames]
     ## temporary fix until lavaanNames(fit, type = "lv.formative") works again
-    parTab <- parTable(fit)
+    parTab <- getParTable(fit)
     compositeNames <- unique(parTab$lhs[parTab$op == "<~"])
     print(compositeNames)
     if (getNGroups(fit) == 1) {
@@ -81,7 +41,7 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
     } else {
       layout_hash <- NULL
     }
-    parTable <- parTable(fit)
+    parTable <- getParTable(fit)
     parTable <- parTable[!parTable$op %in% c(":=", "<", ">", "==", "|", "<", ">"), ]
     importedModel <- list(
       obs = varNames, latent = factNames, parTable = parTable,
@@ -171,11 +131,11 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
 
     serverImageExporter("export")
 
-    if (where != "shinyapps.io") {
-      session$onSessionEnded(function() {
-        stopApp()
-      })
-    }
+    # if (where != "shinyapps.io") {
+    #   session$onSessionEnded(function() {
+    #     stopApp()
+    #   })
+    # }
 
     # showing help leave as is
     observeEvent(input$show_help, {

@@ -10,7 +10,7 @@ serverEstimateUpdater <- function(id, forceEstimateUpdate, fit, to_render) {
           {
             res <- list(
               normal = myParameterEstimates(fit(), level = input$confindence_level),
-              std = standardizedsolution(fit(), level = input$confindence_level)
+              std = standardizedEstimates(fit(), level = input$confindence_level)
             )
             if (getNGroups(fit()) > 1) {
               res$normal <- getGroupTable(res$normal)

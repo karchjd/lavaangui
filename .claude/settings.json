@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Rscript -e 'cat\\(find.package\\(\"lavaangui\"\\),\"\\\\n\"\\); print\\(packageVersion\\(\"lavaangui\"\\)\\)')",
+      "Bash(Rscript -e 'library\\(lavaangui\\); print\\(lavaangui:::getOVNames\\); cat\\(\"=== start_app calls ===\\\\n\"\\)')",
+      "Bash(Rscript -e 'library\\(lavaangui\\); b <- deparse\\(body\\(lavaangui:::start_app\\)\\); cat\\(grep\\(\"getOVNames|getLVNames\", b, value=TRUE\\), sep=\"\\\\n\"\\)')",
+      "Read(//Users/karch/Library/Caches/**)",
+      "Read(//opt/homebrew/opt/libomp/**)",
+      "Read(//usr/local/opt/libomp/**)",
+      "Bash(Rscript -e ' *)",
+      "Bash(Rscript -e 'suppressMessages\\(devtools::load_all\\(\".\", quiet=TRUE\\)\\); cat\\(\"exists semPlotModel.fake_lavaan:\", exists\\(\"semPlotModel.fake_lavaan\"\\), \"\\\\n\"\\)')"
+    ]
+  }
+}

@@ -23,7 +23,7 @@ serverLayout <- function(id, fit, full, imported) {
           if (!fitObject) {
             ngroups <- 1
           } else {
-            ngroups <- lavInspect(semPlotModel@"Original"[[1]], "ngroups")
+            ngroups <- getNGroups(semPlotModel@"Original"[[1]])
           }
           if (ngroups == 1) {
             coordinates <- data.frame(

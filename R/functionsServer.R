@@ -20,7 +20,7 @@ importModel <- function(session, full, importedModel, shinyapps) {
     observed <- importedModel$obs
     latent <- importedModel$latent
     composite <- importedModel$composite
-    if (lavInspect(importedModel$fit, "ngroups") > 1) {
+    if (getNGroups(importedModel$fit) > 1) {
       parTable <- getGroupTable(parTable)
       groups <- unique(parTable$group)
       observed <- makeNewVars(observed, groups)
@@ -45,7 +45,7 @@ importModel <- function(session, full, importedModel, shinyapps) {
 
     session$sendCustomMessage("imported_model", message = list(
       parTable = parTable, latent = latent, obs = observed, composite = composite,
-      ordered = lavInspect(importedModel$fit, what = "ordered"),
+      ordered = getOrdered(importedModel$fit),
       layout_name = importedModel$layout_name,
       layout_hash = importedModel$layout_hash,
       layout_exists = !is.null(importedModel$layout_name) && file.exists(layout_path),
