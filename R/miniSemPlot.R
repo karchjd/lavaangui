@@ -1706,8 +1706,8 @@ semPlotModel_lavaanModel <- function(object, ...) {
     object <- lavaanify(object, ...)
   }
 
-  varNames <- lavaanNames(object, type = "ov")
-  factNames <- lavaanNames(object, type = "lv")
+  varNames <- getOVNames()(object, type = "ov")
+  factNames <- getLVNamesPlot(object, type = "lv")
   #   rm(Lambda)
 
   factNames <- factNames[!factNames %in% varNames]
