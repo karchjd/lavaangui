@@ -191,7 +191,7 @@ setMethod("semPlotModel_S4", signature("lavaan"), function(object) {
     names(semModel@ObsCovs) <- lavInspect(object, "group.label")
     for (i in 1:length(semModel@ObsCovs))
     {
-      rownames(semModel@ObsCovs[[i]]) <- colnames(semModel@ObsCovs[[i]]) <- lavaanNames(object, type = "ov") # object@Data@ov.names[[i]]
+      rownames(semModel@ObsCovs[[i]]) <- colnames(semModel@ObsCovs[[i]]) <- getOVNames(object) # object@Data@ov.names[[i]]
     }
   }
 
@@ -200,7 +200,7 @@ setMethod("semPlotModel_S4", signature("lavaan"), function(object) {
 
   for (i in 1:length(semModel@ImpCovs))
   {
-    rownames(semModel@ImpCovs[[i]]) <- colnames(semModel@ImpCovs[[i]]) <- lavaanNames(object, type = "ov")
+    rownames(semModel@ImpCovs[[i]]) <- colnames(semModel@ImpCovs[[i]]) <- getOVNames(object)
   }
 
   semModel@Computed <- TRUE
