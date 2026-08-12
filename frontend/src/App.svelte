@@ -30,6 +30,7 @@
   import BendEdges from "./Graph/BendEdges.svelte";
   import GridOptions from "./MenuTop/GridOptions.svelte";
   import AutoSave from "./AutoSave.svelte";
+  import ModelComparisonDialog from "./MenuTop/ModelComparisonDialog.svelte";
 </script>
 
 <AppReady />
@@ -73,6 +74,7 @@
   </div>
   <Debug />
   <FromR />
+  <ModelComparisonDialog />
   <DuckTapeFixes />
   {#if $appState.shinyapps}
     <AutoSave />

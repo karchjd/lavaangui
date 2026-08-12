@@ -25,7 +25,7 @@ sendResultsFront <- function(session, result, fromJavascript, df) {
 }
 
 
-serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fitModelHash) { # nolint: cyclocomp_linter.
+serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fitModelHash, fitModelDetails) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
     abort_file_global <- reactiveVal()
     future::plan(future::multisession)
@@ -44,6 +44,10 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
       model <- modelJavascript$syntax # nolint: object_usage_linter.
       optsList <- modelJavascript$optionsList
       modelHash <- getHashModel(fromJavascript$model)
+      modelDetails <- list(
+        syntax = model,
+        call = paste0("fit <- lavaan(model, data, ", modelJavascript$options)
+      )
       if (length(modelJavascript$ordered_labels) > 0) { ## ordinal data present
         modelParse <- paste0(model, "\n")
         for (i in 1:length(modelJavascript$ordered_labels)) {
@@ -122,6 +126,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
 
         fit(cacheResult$fit)
         fitModelHash(modelHash)
+        fitModelDetails(modelDetails)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
         to_render(cacheResult)
         forceEstimateUpdate(stats::rnorm(1))
@@ -193,6 +198,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
           if (is.null(value$error)) {
             fit(value$fit)
             fitModelHash(modelHash)
+            fitModelDetails(modelDetails)
             sendResultsFront(session, value, fromJavascript, getData())
             to_render(value)
             session$sendCustomMessage("lav_sucess", "lav_error")

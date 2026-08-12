@@ -64,6 +64,7 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
     # reactive vals
     fit <- reactiveVal(NULL)
     fitModelHash <- reactiveVal(NULL)
+    fitModelDetails <- reactiveVal(NULL)
     forceEstimateUpdate <- reactiveVal()
     to_render <- reactiveVal(help_text)
 
@@ -118,10 +119,13 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
     serverLayout("layout", fit, full, imported)
 
     ## main server for running lavaan
-    serverLavaanRun("run", to_render, forceEstimateUpdate, getData, fit, fitModelHash)
+    serverLavaanRun(
+      "run", to_render, forceEstimateUpdate, getData, fit,
+      fitModelHash, fitModelDetails
+    )
 
     ## Store fitted models for later comparison
-    serverModelStore("modelStore", fit, fitModelHash, to_render)
+    serverModelStore("modelStore", fit, fitModelHash, fitModelDetails)
 
     serverEstimateUpdater("ests", forceEstimateUpdate, fit, to_render)
 

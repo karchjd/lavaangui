@@ -1,5 +1,6 @@
 <script>
-  import { appState, fitCache } from "../stores.js";
+  import { appState, cyStore, fitCache } from "../stores.js";
+  import { get } from "svelte/store";
   import DropdownLinks from "./helpers/DropdownLinks.svelte";
 
   function storeCurrentModel() {
@@ -20,6 +21,11 @@
         // @ts-expect-error
         Shiny.setInputValue("modelStore-storeCurrent", {
           name,
+          diagram: get(cyStore).png({
+            bg: "white",
+            full: true,
+            scale: 2,
+          }),
           nonce: Math.random(),
         });
       },
@@ -28,7 +34,7 @@
 
   function compareModels() {
     // @ts-expect-error
-    Shiny.setInputValue("modelStore-compare", Math.random());
+    Shiny.setInputValue("modelStore-requestModels", Math.random());
   }
 
   function removeAllModels() {
@@ -51,12 +57,12 @@
       disable: $appState.fitting || $fitCache.lastFitLavFit === null,
     },
     {
-      name: "Compare",
+      name: "Compare Stored Models",
       action: compareModels,
       disable: $appState.storedModelCount < 2,
     },
     {
-      name: "Remove All Models",
+      name: "Remove All Stored Models",
       action: removeAllModels,
       disable: $appState.storedModelCount === 0,
     },

@@ -19,14 +19,16 @@
 
   <style>
     #data-modal-2 .modal-dialog,
-    #data-modal-extend-results .modal-dialog {
+    #data-modal-extend-results .modal-dialog,
+    #model-comparison-modal .modal-dialog {
       width: 90%;
       height: 90%;
       margin: auto;
     }
 
     #data-modal-2 .modal-body,
-    #data-modal-extend-results .modal-body {
+    #data-modal-extend-results .modal-body,
+    #model-comparison-modal .modal-body {
       overflow-x: auto;
       max-height: calc(100vh - 75px);
       overflow-y: auto;
@@ -84,6 +86,22 @@
         </div>
         <div class="modal-body">
           {{ lavaangui:::extendResultsUI("extend") }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" id="model-comparison-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Model Comparison</h4>
+        </div>
+        <div class="modal-body">
+          {{ DT::DTOutput(shiny::NS("modelStore","comparisonTable"), width = "100%", height = "auto") }}
         </div>
       </div>
     </div>

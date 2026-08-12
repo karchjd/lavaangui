@@ -5,6 +5,7 @@
     fitCache,
     modelOptions,
     gridViewOptions,
+    modelComparisonDialog,
   } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass.js";
   import { get } from "svelte/store";
@@ -695,7 +696,46 @@
   // @ts-expect-error
   Shiny.addCustomMessageHandler("models_removed", function (info) {
     $appState.storedModelCount = info.count;
+    $modelComparisonDialog = {
+      open: false,
+      models: [],
+      selected: [],
+      validation: "",
+      details: null,
+      detailModelIndex: null,
+      detailsLoading: false,
+    };
+    window.$("#model-comparison-modal").modal("hide");
     setAlert("success", "Removed all models stored for comparison.");
+  });
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("comparison_models", function (models) {
+    $modelComparisonDialog = {
+      open: true,
+      models,
+      selected: models.map((model) => model.index),
+      validation: "",
+      details: null,
+      detailModelIndex: null,
+      detailsLoading: false,
+    };
+  });
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("model_details", function (details) {
+    if ($modelComparisonDialog.detailModelIndex !== details.index) return;
+
+    $modelComparisonDialog = {
+      ...$modelComparisonDialog,
+      details,
+      detailsLoading: false,
+    };
+  });
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("show_model_comparison", function (ignored) {
+    window.$("#model-comparison-modal").modal();
   });
 
   // only used when exporting image directly after import

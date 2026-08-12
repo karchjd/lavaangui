@@ -79,6 +79,16 @@ export let appState = writable({
 
 export let dataInfo = writable(0);
 
+export const modelComparisonDialog = writable({
+  open: false,
+  models: [],
+  selected: [],
+  validation: "",
+  details: null,
+  detailModelIndex: null,
+  detailsLoading: false,
+});
+
 export const columnNamesSTore = derived(
   appState,
   ($appState) => $appState.columnNames
