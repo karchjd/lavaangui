@@ -20,7 +20,8 @@ if (production){
   appName = 'lavaanguitest'
 }
 
-if(posit_connect){
+
+if (posit_connect){
   account <- "solofsw"
 }else{
   account <- "solo-fsw"
@@ -50,5 +51,5 @@ rsconnect::deployApp(
   appId = rsconnect::deployments(".")$appID,
   lint = FALSE,
   forceUpdate = TRUE,
-  account = "solo-fsw"
+  account = account
 )
