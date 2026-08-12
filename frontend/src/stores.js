@@ -74,6 +74,7 @@ export let appState = writable({
   shinyapps: false,
   layout_name: null,
   layout_hash: null,
+  storedModelCount: 0,
 });
 
 export let dataInfo = writable(0);

@@ -678,6 +678,26 @@
     updateEstimates(lav_result, std_result);
   });
 
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("model_stored", function (info) {
+    $appState.storedModelCount = info.count;
+    setAlert(
+      "success",
+      `Stored fitted model "${info.name}" for comparison (${info.count} stored).`,
+    );
+  });
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("model_duplicate", function (info) {
+    setAlert("warning", `This fitted model is already stored as "${info.name}".`);
+  });
+
+  // @ts-expect-error
+  Shiny.addCustomMessageHandler("models_removed", function (info) {
+    $appState.storedModelCount = info.count;
+    setAlert("success", "Removed all models stored for comparison.");
+  });
+
   // only used when exporting image directly after import
   // @ts-ignore
   Shiny.addCustomMessageHandler("close", function (all_res) {

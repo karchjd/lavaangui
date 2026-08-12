@@ -11,17 +11,21 @@ getHashData <- function(df) {
   return(digest::digest(df))
 }
 
+getHashModel <- function(model) {
+  digest::digest(model[c("options", "syntax")])
+}
+
 sendResultsFront <- function(session, result, fromJavascript, df) {
   result$fit@Data@X <- list()
   res <- list(
     fitted_model = base64enc::base64encode(serialize(result, NULL)),
-    model = digest::digest(fromJavascript$model[c("options", "syntax")]), data = getHashData(df)
+    model = getHashModel(fromJavascript$model), data = getHashData(df)
   )
   session$sendCustomMessage("lav_results", res)
 }
 
 
-serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { # nolint: cyclocomp_linter.
+serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fitModelHash) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
     abort_file_global <- reactiveVal()
     future::plan(future::multisession)
@@ -39,6 +43,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       modelJavascript <- fromJavascript$model
       model <- modelJavascript$syntax # nolint: object_usage_linter.
       optsList <- modelJavascript$optionsList
+      modelHash <- getHashModel(fromJavascript$model)
       if (length(modelJavascript$ordered_labels) > 0) { ## ordinal data present
         modelParse <- paste0(model, "\n")
         for (i in 1:length(modelJavascript$ordered_labels)) {
@@ -104,7 +109,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
       stopifnot(fromJavascript$mode == "estimate")
       # cache is valid, return cached results
       cacheValid <- !is.null(fromJavascript$cache$lastFitModel) &&
-        fromJavascript$cache$lastFitModel == digest::digest(fromJavascript$model[c("options", "syntax")]) &&
+        fromJavascript$cache$lastFitModel == modelHash &&
         (is.null(getData()) || fromJavascript$cache$lastFitData == getHashData(getData()))
       if (cacheValid) {
         cacheResult <- unserialize(base64enc::base64decode(fromJavascript$cache$lastFitLavFit))
@@ -116,6 +121,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         }
 
         fit(cacheResult$fit)
+        fitModelHash(modelHash)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
         to_render(cacheResult)
         forceEstimateUpdate(stats::rnorm(1))
@@ -186,6 +192,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit) { 
         function(value) {
           if (is.null(value$error)) {
             fit(value$fit)
+            fitModelHash(modelHash)
             sendResultsFront(session, value, fromJavascript, getData())
             to_render(value)
             session$sendCustomMessage("lav_sucess", "lav_error")
