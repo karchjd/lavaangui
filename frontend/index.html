@@ -101,6 +101,7 @@
           <h4 class="modal-title">Model Comparison</h4>
         </div>
         <div class="modal-body">
+          {{ shiny::uiOutput(shiny::NS("modelStore","comparisonMessages")) }}
           {{ DT::DTOutput(shiny::NS("modelStore","comparisonTable"), width = "100%", height = "auto") }}
         </div>
       </div>

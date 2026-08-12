@@ -57,7 +57,7 @@
   </style>
 
   </script>
-  <script type="module" crossorigin src="./assets/index-62ff706d.js"></script>
+  <script type="module" crossorigin src="./assets/index-1e4edd5c.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/svelte-1db5dfc0.js">
   <link rel="modulepreload" crossorigin href="./assets/cytoscape-c32909fe.js">
   <link rel="modulepreload" crossorigin href="./assets/core-js-2d8c9565.js">
@@ -146,6 +146,7 @@
           <h4 class="modal-title">Model Comparison</h4>
         </div>
         <div class="modal-body">
+          {{ shiny::uiOutput(shiny::NS("modelStore","comparisonMessages")) }}
           {{ DT::DTOutput(shiny::NS("modelStore","comparisonTable"), width = "100%", height = "auto") }}
         </div>
       </div>

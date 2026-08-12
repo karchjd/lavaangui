@@ -2,9 +2,36 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
   moduleServer(id, function(input, output, session) {
     storedModels <- reactiveVal(list())
     comparisonResult <- reactiveVal(NULL)
+    comparisonMessages <- reactiveVal(list())
+
+    addComparisonMessage <- function(message, type) {
+      comparisonMessages(c(
+        comparisonMessages(),
+        list(list(message = message, type = type))
+      ))
+    }
+
+    output$comparisonMessages <- renderUI({
+      messages <- comparisonMessages()
+      if (length(messages) == 0L) {
+        return(NULL)
+      }
+
+      tagList(lapply(messages, function(info) {
+        label <- if (identical(info$type, "danger")) "Error" else "Warning"
+        tags$div(
+          class = paste("alert", paste0("alert-", info$type)),
+          role = "alert",
+          tags$strong(paste0(label, ": ")),
+          info$message
+        )
+      }))
+    })
 
     output$comparisonTable <- DT::renderDataTable({
-      req(comparisonResult())
+      if (is.null(comparisonResult())) {
+        return(NULL)
+      }
       result <- as.data.frame(comparisonResult())
       result <- data.frame(
         Model = rownames(result),
@@ -12,7 +39,18 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
         check.names = FALSE,
         row.names = NULL
       )
-      custom_dt(result, digits = 4)
+      custom_dt(
+        result,
+        digits = 4,
+        filter = "none",
+        options = list(
+          dom = "t",
+          paging = FALSE,
+          searching = FALSE,
+          lengthChange = FALSE,
+          info = FALSE
+        )
+      )
     })
 
     observeEvent(input$storeCurrent, {
@@ -145,6 +183,8 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
       }
 
       models <- models[selected]
+      comparisonResult(NULL)
+      comparisonMessages(list())
 
       result <- tryCatch(
         withCallingHandlers(
@@ -158,25 +198,20 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
             )
           },
           warning = function(w) {
-            session$sendCustomMessage(
-              "lav_warning_error",
-              list(origin = "comparing models", message = w$message, type = "warning")
-            )
+            addComparisonMessage(conditionMessage(w), "warning")
+            invokeRestart("muffleWarning")
           }
         ),
         error = function(e) {
-          session$sendCustomMessage(
-            "lav_warning_error",
-            list(origin = "comparing models", message = e$message, type = "danger")
-          )
+          addComparisonMessage(conditionMessage(e), "danger")
           NULL
         }
       )
 
       if (!is.null(result)) {
         comparisonResult(result)
-        session$sendCustomMessage("show_model_comparison", list())
       }
+      session$sendCustomMessage("show_model_comparison", list())
     })
 
     observeEvent(input$modelDetails, {
@@ -214,6 +249,7 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
     observeEvent(input$removeAll, {
       storedModels(list())
       comparisonResult(NULL)
+      comparisonMessages(list())
       session$sendCustomMessage("models_removed", list(count = 0L))
     })
 
