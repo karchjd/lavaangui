@@ -12,10 +12,17 @@
 ######################################
 
 production <- TRUE
+posit_connect <- TRUE
 if (production){
   appName = desc::desc_get_field("Package")
 }else{
   appName = 'lavaanguitest'
+}
+
+if (posit_connect){
+  account <- "solofsw"
+}else{
+  account <- "solo-fsw"
 }
 
 # Test your app
@@ -42,5 +49,5 @@ rsconnect::deployApp(
   appId = rsconnect::deployments(".")$appID,
   lint = FALSE,
   forceUpdate = TRUE,
-  account = "solo-fsw"
+  account = account
 )

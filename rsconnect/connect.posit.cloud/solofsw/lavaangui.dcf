@@ -1,0 +1,10 @@
+name: lavaangui
+title: lavaangui
+username: solofsw
+account: solofsw
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 019f89f2-674f-6b0f-7334-2e7f5e786979
+bundleId:
+url: https://connect.posit.cloud/solofsw/content/019f89f2-674f-6b0f-7334-2e7f5e786979
+version: 1
