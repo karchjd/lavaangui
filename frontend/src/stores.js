@@ -79,6 +79,8 @@ export let appState = writable({
 
 export let dataInfo = writable(0);
 
+export const fitMessages = writable([]);
+
 export const modelComparisonDialog = writable({
   open: false,
   models: [],

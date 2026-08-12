@@ -6,6 +6,7 @@
     modelOptions,
     gridViewOptions,
     modelComparisonDialog,
+    fitMessages,
   } from "../stores";
   import { applyLinkedClass } from "./applyLinkedClass.js";
   import { get } from "svelte/store";
@@ -489,7 +490,12 @@
   });
 
   Shiny.addCustomMessageHandler("fitting", function (ignored) {
+    $fitMessages = [];
     $appState.fitting = true;
+  });
+
+  Shiny.addCustomMessageHandler("fit_messages", function (messages) {
+    $fitMessages = messages ?? [];
   });
 
   Shiny.addCustomMessageHandler("lav_warning_error", function (info) {
@@ -506,15 +512,8 @@
     );
   });
   // @ts-expect-error
-  Shiny.addCustomMessageHandler("lav_error_fitting", function (info) {
+  Shiny.addCustomMessageHandler("lav_error_fitting", function (ignored) {
     $appState.fitting = false;
-    setAlert(
-      info.type,
-      "During " +
-        info.origin +
-        " the following error occurred: " +
-        info.message,
-    );
   });
 
   // @ts-expect-error

@@ -15,6 +15,47 @@ getHashModel <- function(model) {
   digest::digest(model[c("options", "syntax")])
 }
 
+getFitWarningMessages <- function(warnings) {
+  if (is.null(warnings)) {
+    messages <- character()
+  } else if (inherits(warnings, "condition")) {
+    messages <- conditionMessage(warnings)
+  } else if (is.character(warnings)) {
+    messages <- unname(warnings)
+  } else if (!is.list(warnings)) {
+    messages <- character()
+  } else {
+    messages <- lapply(warnings, function(warning) {
+      if (inherits(warning, "condition")) {
+        conditionMessage(warning)
+      } else if (is.character(warning)) {
+        warning
+      } else if (is.list(warning) && !is.null(warning$message)) {
+        warning$message
+      } else {
+        NULL
+      }
+    })
+    messages <- unname(unlist(messages, use.names = FALSE))
+  }
+  messages
+}
+
+sendFitMessages <- function(session, warnings = NULL, error = NULL) {
+  messages <- lapply(getFitWarningMessages(warnings), function(message) {
+    list(type = "warning", message = message)
+  })
+  if (!is.null(error)) {
+    errorMessage <- if (inherits(error, "condition")) {
+      conditionMessage(error)
+    } else {
+      as.character(error)
+    }
+    messages <- c(messages, list(list(type = "danger", message = errorMessage)))
+  }
+  session$sendCustomMessage("fit_messages", messages)
+}
+
 sendResultsFront <- function(session, result, fromJavascript, df) {
   result$fit@Data@X <- list()
   res <- list(
@@ -34,6 +75,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
       req(input$fromJavascript)
       ## Mode == "User Model", just send R_script to output
       fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
+      sendFitMessages(session)
       if (fromJavascript$mode == "user model") {
         to_render(fromJavascript$model$R_script)
         return(NULL)
@@ -128,6 +170,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
         fitModelHash(modelHash)
         fitModelDetails(modelDetails)
         sendResultsFront(session, cacheResult, fromJavascript, getData())
+        sendFitMessages(session, cacheResult$warning)
         to_render(cacheResult)
         forceEstimateUpdate(stats::rnorm(1))
         session$sendCustomMessage("usecache", "")
@@ -182,7 +225,8 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
               )
             },
             warning = function(w) {
-              lastWarning <<- c(lastWarning, w)
+              lastWarning <<- c(lastWarning, conditionMessage(w))
+              invokeRestart("muffleWarning")
             }
           )
           list(fit = local_fit, warning = lastWarning, error = lastError)
@@ -200,11 +244,13 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
             fitModelHash(modelHash)
             fitModelDetails(modelDetails)
             sendResultsFront(session, value, fromJavascript, getData())
+            sendFitMessages(session, value$warning)
             to_render(value)
             session$sendCustomMessage("lav_sucess", "lav_error")
           } else {
             print(value$error)
-            session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = value$error$message, type = "danger"))
+            sendFitMessages(session, error = value$error)
+            session$sendCustomMessage("lav_error_fitting", list())
             to_render(value$error)
           }
         }
@@ -218,7 +264,8 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
           if (grepl("No process exists with this PID", e$message) || grepl("failed to receive message results from cluster RichSOCKnode #1")) {
             e$message <- "Fitting cancelled by user"
           }
-          session$sendCustomMessage("lav_error_fitting", list(origin = "fitting the model the model", message = e$message, type = "danger"))
+          sendFitMessages(session, error = e)
+          session$sendCustomMessage("lav_error_fitting", list())
           to_render(e)
         }
       )
