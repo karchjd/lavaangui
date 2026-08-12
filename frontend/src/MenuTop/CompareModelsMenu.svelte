@@ -55,16 +55,21 @@
       name: "Store Current Model",
       action: storeCurrentModel,
       disable: $appState.fitting || $fitCache.lastFitLavFit === null,
+      disabledReason: $appState.fitting
+        ? "Wait until the current model has finished fitting."
+        : "Fit a model before storing it for comparison.",
     },
     {
       name: "Compare Stored Models",
       action: compareModels,
       disable: $appState.storedModelCount < 2,
+      disabledReason: "Store at least two models before comparing them.",
     },
     {
       name: "Remove All Stored Models",
       action: removeAllModels,
       disable: $appState.storedModelCount === 0,
+      disabledReason: "There are no stored models to remove.",
     },
   ];
 </script>

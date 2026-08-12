@@ -13,8 +13,14 @@
 
 <Dropdown {minimal} {name}>
   {#each menuItems as item}
-    <li class:disabled={item.disable}>
-      <a href={"#"} on:click={(event) => handleClick(event, item)}
+    <li
+      class:disabled={item.disable}
+      title={item.disable ? item.disabledReason : undefined}
+    >
+      <a
+        href={"#"}
+        aria-disabled={item.disable}
+        on:click={(event) => handleClick(event, item)}
         >{item.name}</a
       >
     </li>

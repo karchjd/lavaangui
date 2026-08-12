@@ -87,7 +87,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
           <h4 class="modal-title" id="comparison-dialog-title">
-            Compare Stored Models
+            Model Comparison
           </h4>
         </div>
 
@@ -131,7 +131,7 @@
             <section class="details">
               <h4>{$modelComparisonDialog.details.name}</h4>
 
-              <h5>Saved autocompleted path diagram</h5>
+              <h5>Path diagram</h5>
               <div class="diagram-frame">
                 <img
                   src={$modelComparisonDialog.details.diagram}
@@ -142,7 +142,7 @@
               <h5>Model syntax</h5>
               <pre>{$modelComparisonDialog.details.syntax}</pre>
 
-              <h5>Lavaan call and options</h5>
+              <h5>Options</h5>
               <pre>{$modelComparisonDialog.details.call}</pre>
             </section>
           {/if}
@@ -202,17 +202,24 @@
   }
 
   .diagram-frame {
-    max-height: 480px;
-    overflow: auto;
+    box-sizing: border-box;
+    width: 100%;
+    height: min(480px, 55vh);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
     padding: 8px;
     border: 1px solid #ddd;
     background: white;
-    text-align: center;
   }
 
   .diagram-frame img {
     max-width: 100%;
+    max-height: 100%;
+    width: auto;
     height: auto;
+    object-fit: contain;
   }
 
   pre {
