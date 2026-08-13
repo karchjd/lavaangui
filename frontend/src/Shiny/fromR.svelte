@@ -17,7 +17,10 @@
   import { applySemLayout, resolveLayout } from "../MenuTop/semPlotLayouts.js";
   import { updateLabels, updateVisibility } from "../MenuTop/viewModule";
   import { activateEstimateGroup } from "./groupEstimates.js";
-  import { GROUP_PARAMETERS_CLASS } from "../Graph/groupParameters.js";
+  import {
+    GROUP_PARAMETERS_CLASS,
+    normalizeGroupList,
+  } from "../Graph/groupParameters.js";
   import {
     normalizeGroupEqual,
     normalizeGroupPartial,
@@ -163,38 +166,8 @@
     }
   }
 
-  function normalizeGroups(rawGroups) {
-    if (rawGroups == null) return [];
-
-    let groups;
-    if (Array.isArray(rawGroups)) {
-      groups = rawGroups;
-    } else if (
-      typeof rawGroups === "object" &&
-      ("id" in rawGroups || "label" in rawGroups)
-    ) {
-      groups = [rawGroups];
-    } else if (typeof rawGroups === "object") {
-      groups = Object.values(rawGroups);
-    } else {
-      groups = [rawGroups];
-    }
-
-    return groups
-      .filter((group) => group != null)
-      .map((group, index) => {
-        if (typeof group === "object") {
-          return {
-            id: group.id ?? index + 1,
-            label: String(group.label ?? group.id ?? index + 1),
-          };
-        }
-        return { id: index + 1, label: String(group) };
-      });
-  }
-
   function installGroups(groups) {
-    const normalized = normalizeGroups(groups);
+    const normalized = normalizeGroupList(groups);
     $appState.groupLabels = normalized.length > 1 ? normalized : [];
     if (normalized.length <= 1) {
       $appState.activeGroup = null;
@@ -563,6 +536,7 @@
   // @ts-expect-error
   Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
     applyLinkedClass(data_info.columns, true);
+    $appState.currentFitAvailable = false;
     $appState.columnNames = [...data_info.columns];
     $appState.groupingVariables = data_info.grouping_columns == null
       ? []
@@ -606,6 +580,10 @@
 
   Shiny.addCustomMessageHandler("fit_messages", function (messages) {
     $fitMessages = messages ?? [];
+  });
+
+  Shiny.addCustomMessageHandler("fit_availability", function (available) {
+    $appState.currentFitAvailable = Boolean(available);
   });
 
   Shiny.addCustomMessageHandler("lav_warning_error", function (info) {
@@ -700,11 +678,13 @@
   //import model gets message from model importer
   // @ts-expect-error
   Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
-    $modelOptions.groupVariable = lav_model.group_variable || null;
-    $modelOptions.groupEqual = normalizeGroupEqual(lav_model.group_equal);
-    $modelOptions.groupPartial = normalizeGroupPartial(lav_model.group_partial);
-    installGroups(lav_model.group_labels);
+    const importedGroupOptions = {
+      groupVariable: lav_model.group_variable || null,
+      groupEqual: normalizeGroupEqual(lav_model.group_equal),
+      groupPartial: normalizeGroupPartial(lav_model.group_partial),
+    };
     if (lav_model.saved_layout == null) {
+      $modelOptions = { ...$modelOptions, ...importedGroupOptions };
       getModelLav(lav_model, true);
       let cy = get(cyStore);
       if (!Array.isArray(lav_model.ordered)) {
@@ -716,8 +696,9 @@
         })[0].makeOrdered();
       });
     } else {
-      parseModel(lav_model.saved_layout);
+      parseModel(lav_model.saved_layout, importedGroupOptions);
     }
+    installGroups(lav_model.group_labels);
     $appState.layout_hash = lav_model.layout_hash;
     $appState.layout_name = lav_model.layout_name;
     if (lav_model.layout_exists) {
@@ -817,7 +798,7 @@
   Shiny.addCustomMessageHandler("lav_estimates", function (all_res) {
     const lav_result = all_res.normal;
     const std_result = all_res.std;
-    const groups = normalizeGroups(
+    const groups = normalizeGroupList(
       all_res.groups ?? [{ id: 1, label: "Group 1" }],
     );
     installGroups(groups);

@@ -215,6 +215,7 @@
     $appState.groupLabels = [];
     $appState.activeGroup = null;
     $appState.graphGroupView = "all";
+    $appState.currentFitAvailable = false;
     $modelOptions.groupVariable = null;
     $dataInfo = null;
     cy.nodes().unlink();

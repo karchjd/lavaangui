@@ -4,7 +4,7 @@ export const cyStore = writable(null);
 export const ehStore = writable(null);
 export const ur = writable(null);
 
-export let modelOptions = writable({
+export const DEFAULT_MODEL_OPTIONS = Object.freeze({
   meanStruc: "default",
   intOvFree: true,
   intLvFree: false,
@@ -25,6 +25,17 @@ export let modelOptions = writable({
   groupEqual: [],
   groupPartial: [],
 });
+
+export function createModelOptions(overrides = {}) {
+  return {
+    ...DEFAULT_MODEL_OPTIONS,
+    groupEqual: [],
+    groupPartial: [],
+    ...overrides,
+  };
+}
+
+export let modelOptions = writable(createModelOptions());
 
 export let gridViewOptions = writable({
   gridShow: false,
@@ -79,6 +90,7 @@ export let appState = writable({
   layout_name: null,
   layout_hash: null,
   storedModelCount: 0,
+  currentFitAvailable: false,
   groupLabels: [],
   activeGroup: null,
   graphGroupView: "all",

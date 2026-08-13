@@ -45,6 +45,13 @@ importModel <- function(session, full, importedModel, shinyapps) {
       layout_filename <- NULL
     }
 
+    if (!is.null(importedModel$df)) {
+      df_full <- list(df = importedModel$df, name = "Imported from R")
+      propagateData(df_full, session, showData = FALSE)
+    } else {
+      df_full <- NULL
+    }
+
     session$sendCustomMessage("imported_model", message = list(
       parTable = parTable, latent = latent, obs = observed, composite = composite,
       ordered = getOrdered(importedModel$fit),
@@ -59,12 +66,6 @@ importModel <- function(session, full, importedModel, shinyapps) {
       export_filepath = importedModel$export_filepath,
       scale = importedModel$scale
     ))
-    if (!is.null(importedModel$df)) {
-      df_full <- list(df = importedModel$df, name = "Imported from R")
-      propagateData(df_full, session, showData = FALSE)
-    } else {
-      df_full <- NULL
-    }
     imported <- TRUE
     if (!full) {
       session$sendCustomMessage("setToEstimate", message = stats::rnorm(1))
@@ -75,21 +76,20 @@ importModel <- function(session, full, importedModel, shinyapps) {
   }
 }
 
+isGroupingVariable <- function(column) {
+  tryCatch(
+    {
+      values <- column[!is.na(column)]
+      distinct <- unique(values)
+      counts <- tabulate(match(values, distinct), nbins = length(distinct))
+      length(distinct) >= 2L && all(counts >= 2L)
+    },
+    error = function(e) FALSE
+  )
+}
+
 getGroupingVariables <- function(data) {
-  names(data)[vapply(data, function(column) {
-    tryCatch(
-      {
-        values <- column[!is.na(column)]
-        distinct <- unique(values)
-        if (length(distinct) < 2L) {
-          return(FALSE)
-        }
-        counts <- tabulate(match(values, distinct), nbins = length(distinct))
-        all(counts >= 2L)
-      },
-      error = function(e) FALSE
-    )
-  }, logical(1))]
+  names(data)[vapply(data, isGroupingVariable, logical(1))]
 }
 
 propagateData <- function(df, session, showData = FALSE) {

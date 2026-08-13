@@ -22,12 +22,34 @@ function copyParameter(parameter = DEFAULT_PARAMETER) {
   };
 }
 
-function normalizeGroups(groups) {
-  if (!Array.isArray(groups)) return [];
-  return groups.map((group, index) => ({
-    id: group?.id ?? index + 1,
-    label: String(group?.label ?? group?.id ?? index + 1),
-  }));
+export function normalizeGroupList(rawGroups) {
+  if (rawGroups == null) return [];
+
+  let groups;
+  if (Array.isArray(rawGroups)) {
+    groups = rawGroups;
+  } else if (
+    typeof rawGroups === "object" &&
+    ("id" in rawGroups || "label" in rawGroups)
+  ) {
+    groups = [rawGroups];
+  } else if (typeof rawGroups === "object") {
+    groups = Object.values(rawGroups);
+  } else {
+    groups = [rawGroups];
+  }
+
+  return groups
+    .filter((group) => group != null)
+    .map((group, index) => {
+      if (typeof group === "object") {
+        return {
+          id: group.id ?? index + 1,
+          label: String(group.label ?? group.id ?? index + 1),
+        };
+      }
+      return { id: index + 1, label: String(group) };
+    });
 }
 
 export function createGroupParameterState(
@@ -36,7 +58,7 @@ export function createGroupParameterState(
   groups,
   fallback = DEFAULT_PARAMETER,
 ) {
-  const normalizedGroups = normalizeGroups(groups);
+  const normalizedGroups = normalizeGroupList(groups);
   const canReuse = existing?.groupVariable === groupVariable
     && Array.isArray(existing.groups);
   const previousByLabel = new Map(
@@ -142,12 +164,6 @@ export function buildGroupModifierParts(state, edgeId) {
   return modifiers;
 }
 
-export function getGroupParameter(state, groupId) {
-  return state?.groups?.find(
-    (group) => String(group.id) === String(groupId),
-  ) ?? null;
-}
-
 export function describeGroupParameter(group) {
   let description = "free";
   if (group.status === PARAMETER_STATUS.FIXED) {
@@ -159,4 +175,3 @@ export function describeGroupParameter(group) {
     ? `${description}; label ${group.constraintLabel}`
     : description;
 }
-

@@ -42,7 +42,7 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
         parTable$label == parTable$plabel
       parTable$label[auto_group_labels] <- ""
     }
-    parTable <- parTable[!parTable$op %in% c(":=", "<", ">", "==", "|", "<", ">"), ]
+    parTable <- parTable[!parTable$op %in% c(":=", "<", ">", "==", "|"), ]
     importedModel <- list(
       obs = varNames, latent = factNames, parTable = parTable,
       composite = compositeNames,
@@ -67,8 +67,13 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
 
     # reactive vals
     fit <- reactiveVal(NULL)
-    fitModelHash <- reactiveVal(NULL)
-    fitModelDetails <- reactiveVal(NULL)
+    analysisState <- reactiveVal(list(
+      currentModelHash = NULL,
+      currentDataHash = NULL,
+      fittedModelHash = NULL,
+      fittedDataHash = NULL,
+      details = NULL
+    ))
     forceEstimateUpdate <- reactiveVal()
     to_render <- reactiveVal(help_text)
 
@@ -125,11 +130,11 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
     ## main server for running lavaan
     serverLavaanRun(
       "run", to_render, forceEstimateUpdate, getData, fit,
-      fitModelHash, fitModelDetails
+      analysisState
     )
 
     ## Store fitted models for later comparison
-    serverModelStore("modelStore", fit, fitModelHash, fitModelDetails)
+    serverModelStore("modelStore", fit, analysisState)
 
     serverEstimateUpdater("ests", forceEstimateUpdate, fit, to_render, full)
 

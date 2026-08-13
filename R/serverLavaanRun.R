@@ -15,6 +15,41 @@ getHashModel <- function(model) {
   digest::digest(model[c("options", "syntax")])
 }
 
+analysisHasCurrentFit <- function(state) {
+  !is.null(state$fittedModelHash) &&
+    identical(state$currentModelHash, state$fittedModelHash) &&
+    identical(state$currentDataHash, state$fittedDataHash)
+}
+
+updateCurrentAnalysis <- function(analysisState, session, modelHash, dataHash) {
+  state <- analysisState()
+  state$currentModelHash <- modelHash
+  state$currentDataHash <- dataHash
+  analysisState(state)
+  session$sendCustomMessage(
+    "fit_availability",
+    analysisHasCurrentFit(state)
+  )
+}
+
+recordFittedAnalysis <- function(
+  analysisState,
+  session,
+  modelHash,
+  dataHash,
+  details
+) {
+  state <- analysisState()
+  state$fittedModelHash <- modelHash
+  state$fittedDataHash <- dataHash
+  state$details <- details
+  analysisState(state)
+  session$sendCustomMessage(
+    "fit_availability",
+    analysisHasCurrentFit(state)
+  )
+}
+
 getFitWarningMessages <- function(warnings) {
   if (is.null(warnings)) {
     messages <- character()
@@ -104,7 +139,7 @@ groupMetadataFromData <- function(data, group_variable) {
 }
 
 
-serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fitModelHash, fitModelDetails) { # nolint: cyclocomp_linter.
+serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, analysisState) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
     abort_file_global <- reactiveVal()
     future::plan(future::multisession)
@@ -114,6 +149,14 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
       ## Mode == "User Model", just send R_script to output
       fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
       sendFitMessages(session)
+      modelHash <- getHashModel(fromJavascript$model)
+      dataHash <- getHashData(getData())
+      updateCurrentAnalysis(
+        analysisState,
+        session,
+        modelHash,
+        dataHash
+      )
       if (fromJavascript$mode == "user model") {
         group_variable <- fromJavascript$model$optionsList$group
         session$sendCustomMessage(
@@ -129,7 +172,6 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
       model <- modelJavascript$syntax # nolint: object_usage_linter.
       optsList <- modelJavascript$optionsList
       has_group <- !is.null(optsList$group) && nzchar(as.character(optsList$group))
-      modelHash <- getHashModel(fromJavascript$model)
       modelDetails <- list(
         syntax = model,
         call = paste0("fit <- lavaan(model, data, ", modelJavascript$options)
@@ -226,8 +268,13 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
         }
 
         fit(cacheResult$fit)
-        fitModelHash(modelHash)
-        fitModelDetails(modelDetails)
+        recordFittedAnalysis(
+          analysisState,
+          session,
+          modelHash,
+          dataHash,
+          modelDetails
+        )
         sendResultsFront(session, cacheResult, fromJavascript, getData())
         sendFitMessages(session, cacheResult$warning)
         to_render(cacheResult)
@@ -300,9 +347,14 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
         function(value) {
           if (is.null(value$error)) {
             fit(value$fit)
-            fitModelHash(modelHash)
-            fitModelDetails(modelDetails)
-            sendResultsFront(session, value, fromJavascript, getData())
+            recordFittedAnalysis(
+              analysisState,
+              session,
+              modelHash,
+              dataHash,
+              modelDetails
+            )
+            sendResultsFront(session, value, fromJavascript, data)
             sendFitMessages(session, value$warning)
             to_render(value)
             session$sendCustomMessage("lav_sucess", "lav_error")

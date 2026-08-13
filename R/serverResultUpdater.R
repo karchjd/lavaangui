@@ -7,7 +7,6 @@ serverResultUpdater <- function(id, to_render) {
         cat(out)
       } else {
         if (!inherits(out, "error")) {
-          summary_warning <- NULL
           if ("lavaan" %in% class(out$fit)) {
             withCallingHandlers(
               {
@@ -16,7 +15,8 @@ serverResultUpdater <- function(id, to_render) {
               },
               warning = function(w) {
                 cat("Beware of the following lavaan warning (summary call):\n")
-                cat(paste0(w$message, "\n"))
+                cat(paste0(conditionMessage(w), "\n"))
+                invokeRestart("muffleWarning")
               }
             )
             print(sum_model)

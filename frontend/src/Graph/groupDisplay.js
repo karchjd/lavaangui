@@ -1,4 +1,7 @@
-import { PARAMETER_STATUS } from "./groupParameters.js";
+import {
+  PARAMETER_STATUS,
+  normalizeGroupList,
+} from "./groupParameters.js";
 
 const GROUP_SEPARATOR = " | ";
 
@@ -48,8 +51,7 @@ export function collapseOrderedGroupTokens(tokens) {
 }
 
 export function groupLegendEntries(groups) {
-  if (!Array.isArray(groups)) return [];
-  return groups.map((group, index) => ({
+  return normalizeGroupList(groups).map((group, index) => ({
     id: group?.id ?? index + 1,
     label: String(group?.label ?? group?.id ?? index + 1),
     position: index + 1,
@@ -240,16 +242,4 @@ export function formatGroupEstimateDisplay(
       }
       : estimateToken;
   }));
-}
-
-export function commonGroupConstraintLabel(state, orderedGroups) {
-  if (!state || !Array.isArray(orderedGroups) || orderedGroups.length === 0) {
-    return null;
-  }
-  const labels = orderedGroups.map(
-    (group) => findStateGroup(state, group)?.constraintLabel || null,
-  );
-  return labels[0] && labels.every((label) => label === labels[0])
-    ? labels[0]
-    : null;
 }

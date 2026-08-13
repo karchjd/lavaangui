@@ -16,7 +16,6 @@ custom_dt <- function(data, digits, callback = NULL, filter = "top", options = l
   }
   defaultOptions <- list(
     autoWidth = TRUE,
-    pageLength = -1,
     width = "60%",
     bAutoWidth = TRUE,
     pageLength = 15,

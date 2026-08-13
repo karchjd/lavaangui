@@ -235,7 +235,26 @@ export function pruneGroupPartial(value, options) {
   return normalizeGroupPartial(value).filter((syntax) => eligible.has(syntax));
 }
 
-function quoteRString(value) {
+export function resolveGroupOptions(cy, modelOptions) {
+  const group = String(modelOptions?.groupVariable ?? "").trim();
+  if (!group) return {};
+
+  const options = { group };
+  const groupEqual = normalizeGroupEqual(modelOptions.groupEqual);
+  if (groupEqual.length === 0) return options;
+
+  options["group.equal"] = groupEqual;
+  const groupPartial = pruneGroupPartial(
+    modelOptions.groupPartial,
+    getGroupPartialOptions(cy, groupEqual),
+  );
+  if (groupPartial.length > 0) {
+    options["group.partial"] = groupPartial;
+  }
+  return options;
+}
+
+export function toRString(value) {
   const escaped = String(value)
     .replace(/\\/g, "\\\\")
     .replace(/"/g, '\\"')
@@ -245,5 +264,5 @@ function quoteRString(value) {
 }
 
 export function toRCharacterVector(value) {
-  return `c(${normalizeGroupPartial(value).map(quoteRString).join(", ")})`;
+  return `c(${asArray(value).map(toRString).join(", ")})`;
 }

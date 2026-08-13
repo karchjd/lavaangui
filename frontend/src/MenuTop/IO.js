@@ -1,9 +1,17 @@
 import { get } from "svelte/store";
-import { cyStore, modelOptions, fitCache, appState, gridViewOptions } from "../stores";
+import {
+    appState,
+    createModelOptions,
+    cyStore,
+    fitCache,
+    gridViewOptions,
+    modelOptions,
+} from "../stores";
 import * as Constants from "../Graph/classNames.js";
 import { resetCounters } from "../Graph/graphmanipulation.js";
 import { applyLinkedClass } from "../Shiny/applyLinkedClass.js";
 import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
+import { GROUP_PARAMETERS_CLASS } from "../Graph/groupParameters.js";
 
 export async function requestData(goal) {
     // @ts-expect-error
@@ -16,13 +24,13 @@ export function reset() {
     resetCounters();
     appState.update((state) => {
         state.parsedModel = false;
+        state.currentFitAvailable = false;
+        state.groupLabels = [];
+        state.activeGroup = null;
+        state.graphGroupView = "all";
         return state;
     });
-    modelOptions.update((state) => {
-        state.fix_first = true;
-        state.mode = "user model";
-        return state;
-    });
+    modelOptions.set(createModelOptions());
     // @ts-expect-error
     Shiny.setInputValue("show_help", Math.random());
     fitCache.update((cache) => {
@@ -33,19 +41,25 @@ export function reset() {
     });
 }
 
-export function parseModel(content) {
+export function parseModel(content, modelOptionOverrides = {}) {
     reset();
     let combinedData = JSON.parse(content);
     let cy = get(cyStore);
     let json;
     json = JSON.parse(combinedData.model);
-    const modelOptData = {
-        groupEqual: [],
-        groupPartial: [],
+    const modelOptData = createModelOptions({
         ...JSON.parse(combinedData.modelOpt),
-    };
+        ...modelOptionOverrides,
+    });
+    if (
+        get(appState).dataAvail &&
+        modelOptData.groupVariable &&
+        !get(appState).groupingVariables.includes(modelOptData.groupVariable)
+    ) {
+        modelOptData.groupVariable = null;
+    }
     const gridViewOptData = JSON.parse(combinedData.gridViewOpt);
-    mergeExistingProperties(modelOptions, modelOptData);
+    modelOptions.set(modelOptData);
     mergeExistingProperties(gridViewOptions, gridViewOptData);
     if (combinedData.fitCache !== undefined) {
         const localCache = JSON.parse(combinedData.fitCache);
@@ -66,6 +80,11 @@ export function parseModel(content) {
         return state;
     });
     cy.json({ elements: json });
+    if (!modelOptData.groupVariable) {
+        cy.edges()
+            .removeData("groupParameters")
+            .removeClass(GROUP_PARAMETERS_CLASS);
+    }
 
     cy.nodes().forEach((node) => {
         node.style({ width: node.data("width") });

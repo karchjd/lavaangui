@@ -65,7 +65,7 @@
   function edgeParameterFallback(edge) {
     let status = PARAMETER_STATUS.DEFAULT;
     let value = null;
-    if (edge.isFixed() && !edge.isModifiedLavaan()) {
+    if (edge.isFixed()) {
       status = PARAMETER_STATUS.FIXED;
       value = edge.getValue();
     } else if (edge.isForceFree()) {

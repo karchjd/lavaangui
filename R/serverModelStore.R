@@ -1,4 +1,4 @@
-serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
+serverModelStore <- function(id, fit, analysisState) {
   moduleServer(id, function(input, output, session) {
     storedModels <- reactiveVal(list())
     comparisonResult <- reactiveVal(NULL)
@@ -85,11 +85,11 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
       }
 
       models <- storedModels()
-      currentHash <- fitModelHash()
-      currentDetails <- fitModelDetails()
+      state <- analysisState()
+      currentDetails <- state$details
       diagram <- input$storeCurrent$diagram
       if (
-        is.null(currentHash) ||
+        !analysisHasCurrentFit(state) ||
           is.null(currentDetails$syntax) ||
           is.null(currentDetails$call)
       ) {
@@ -97,7 +97,7 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
           "lav_warning_error",
           list(
             origin = "storing the model",
-            message = "The fitted model metadata is not available. Fit the model again before storing it.",
+            message = "The current model or data has changed since the last fit. Fit it again before storing it.",
             type = "danger"
           )
         )
@@ -116,7 +116,10 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
       }
       duplicate <- vapply(
         models,
-        function(model) identical(model$modelHash, currentHash),
+        function(model) {
+          identical(model$modelHash, state$fittedModelHash) &&
+            identical(model$dataHash, state$fittedDataHash)
+        },
         logical(1)
       )
       if (any(duplicate)) {
@@ -130,7 +133,8 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
       models[[length(models) + 1L]] <- list(
         name = modelName,
         fit = currentFit,
-        modelHash = currentHash,
+        modelHash = state$fittedModelHash,
+        dataHash = state$fittedDataHash,
         syntax = currentDetails$syntax,
         call = currentDetails$call,
         diagram = diagram
@@ -186,6 +190,21 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
       comparisonResult(NULL)
       comparisonMessages(list())
 
+      dataHashes <- lapply(models, function(model) model$dataHash)
+      if (!all(vapply(
+        dataHashes[-1L],
+        identical,
+        logical(1),
+        dataHashes[[1L]]
+      ))) {
+        addComparisonMessage(
+          "Likelihood-ratio tests require models fitted to the same data.",
+          "danger"
+        )
+        session$sendCustomMessage("show_model_comparison", list())
+        return(NULL)
+      }
+
       result <- tryCatch(
         withCallingHandlers(
           {
@@ -222,28 +241,14 @@ serverModelStore <- function(id, fit, fitModelHash, fitModelDetails) {
       }
 
       model <- models[[index]]
-      details <- tryCatch(
-        {
-          list(
-            index = index,
-            name = model$name,
-            syntax = model$syntax,
-            call = model$call,
-            diagram = model$diagram
-          )
-        },
-        error = function(e) {
-          session$sendCustomMessage(
-            "lav_warning_error",
-            list(origin = "showing model details", message = e$message, type = "danger")
-          )
-          NULL
-        }
+      details <- list(
+        index = index,
+        name = model$name,
+        syntax = model$syntax,
+        call = model$call,
+        diagram = model$diagram
       )
-
-      if (!is.null(details)) {
-        session$sendCustomMessage("model_details", details)
-      }
+      session$sendCustomMessage("model_details", details)
     })
 
     observeEvent(input$removeAll, {

@@ -5,10 +5,9 @@ import {
   buildGroupModifierParts,
 } from "../Graph/groupParameters.js";
 import {
-  getGroupPartialOptions,
-  normalizeGroupEqual,
-  pruneGroupPartial,
+  resolveGroupOptions,
   toRCharacterVector,
+  toRString,
 } from "../Graph/groupConstraints.js";
 
 export function tolavaan(mode) {
@@ -17,6 +16,11 @@ export function tolavaan(mode) {
   if (!appState_local.full) {
     return
   }
+
+  appState.update((state) => ({
+    ...state,
+    currentFitAvailable: false,
+  }));
 
   let cy = get(cyStore);
   const edges = cy.edges();
@@ -378,10 +382,10 @@ function produceLavaanOptions(ordered_labels, formative) {
 
   let options = `meanstructure = ${meanStruc},
 \t\t int.ov.free = ${ovFree}, int.lv.free = ${lvFree},
-\t\t estimator = ${addQuotes(modelOpt.estimator)}, se = ${addQuotes(
+\t\t estimator = ${toRString(modelOpt.estimator)}, se = ${toRString(
     modelOpt.se
   )},
-\t\t missing = ${addQuotes(modelOpt.missing)}, auto.fix.first = ${boolToString(
+\t\t missing = ${toRString(modelOpt.missing)}, auto.fix.first = ${boolToString(
     modelOpt.fix_first
   )},
 \t\t auto.fix.single = ${boolToString(
@@ -401,24 +405,21 @@ function produceLavaanOptions(ordered_labels, formative) {
     options = options + `,\n\t\t optim.gradient = "numerical"`;
   }
   if (ordered_labels.length > 0) {
-    const ordered_arg = 'c("' + ordered_labels.join('", "') + '")'
+    const ordered_arg = toRCharacterVector(ordered_labels);
     options = `ordered = ${ordered_arg}, 
-    \t\t ${options}`
+    \t\t ${options}`;
   }
-  if (modelOpt.groupVariable) {
-    const groupEqual = normalizeGroupEqual(modelOpt.groupEqual);
-    const groupPartial = pruneGroupPartial(
-      modelOpt.groupPartial,
-      getGroupPartialOptions(get(cyStore), groupEqual),
+  const groupOptions = resolveGroupOptions(get(cyStore), modelOpt);
+  if (groupOptions.group) {
+    const serializedGroupOptions = Object.entries(groupOptions).map(
+      ([name, value]) =>
+        `${name} = ${
+          Array.isArray(value)
+            ? toRCharacterVector(value)
+            : toRString(value)
+        }`,
     );
-    const groupOptions = [`group = ${addQuotes(modelOpt.groupVariable)}`];
-    if (groupEqual.length > 0) {
-      groupOptions.push(`group.equal = ${toRCharacterVector(groupEqual)}`);
-      if (groupPartial.length > 0) {
-        groupOptions.push(`group.partial = ${toRCharacterVector(groupPartial)}`);
-      }
-    }
-    options = `${groupOptions.join(",\n\t\t ")},\n\t\t ${options}`;
+    options = `${serializedGroupOptions.join(",\n\t\t ")},\n\t\t ${options}`;
   }
 
   options = options + ")";
@@ -454,20 +455,7 @@ function produceLavaanOptionsList(ordered_labels, formative) {
   if (ordered_labels.length > 0) {
     opts.ordered = ordered_labels;
   }
-  if (modelOpt.groupVariable) {
-    opts.group = modelOpt.groupVariable;
-    const groupEqual = normalizeGroupEqual(modelOpt.groupEqual);
-    const groupPartial = pruneGroupPartial(
-      modelOpt.groupPartial,
-      getGroupPartialOptions(get(cyStore), groupEqual),
-    );
-    if (groupEqual.length > 0) {
-      opts["group.equal"] = groupEqual;
-      if (groupPartial.length > 0) {
-        opts["group.partial"] = groupPartial;
-      }
-    }
-  }
+  Object.assign(opts, resolveGroupOptions(get(cyStore), modelOpt));
 
   return opts;
 }
@@ -476,10 +464,6 @@ function convertBool(value) {
   if (value === true || value === "true") return true;
   if (value === false || value === "false") return false;
   return value;
-}
-
-function addQuotes(inputString) {
-  return '"' + inputString + '"';
 }
 
 function boolToString(boolValue) {

@@ -1,5 +1,5 @@
 <script>
-  import { appState, cyStore, fitCache } from "../stores.js";
+  import { appState, cyStore } from "../stores.js";
   import { get } from "svelte/store";
   import DropdownLinks from "./helpers/DropdownLinks.svelte";
 
@@ -54,10 +54,10 @@
     {
       name: "Store Current Model",
       action: storeCurrentModel,
-      disable: $appState.fitting || $fitCache.lastFitLavFit === null,
+      disable: $appState.fitting || !$appState.currentFitAvailable,
       disabledReason: $appState.fitting
         ? "Wait until the current model has finished fitting."
-        : "Fit a model before storing it for comparison.",
+        : "Fit the current model and data before storing it for comparison.",
     },
     {
       name: "Compare Stored Models",
