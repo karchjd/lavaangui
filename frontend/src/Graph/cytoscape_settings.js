@@ -1,21 +1,37 @@
 import * as Constants from "./classNames.js";
 import { get } from "svelte/store";
 import { appState } from "../stores.js";
-import { formatGroupParameterDisplay } from "./groupDisplay.js";
+import {
+  formatGroupParameterDisplay,
+  graphDisplayGroups,
+} from "./groupDisplay.js";
 
 export function groupedParameterLabel(edge) {
   const state = edge.data("groupParameters");
-  const currentGroups = get(appState).groupLabels;
-  const orderedGroups = currentGroups.length > 1
-    ? currentGroups
-    : state?.groups ?? [];
+  const currentState = get(appState);
+  const currentGroups = currentState.groupLabels;
+  const orderedGroups = graphDisplayGroups(
+    currentGroups.length > 1
+      ? currentGroups
+      : state?.groups ?? [],
+    currentState.graphGroupView,
+  );
   const display = formatGroupParameterDisplay(state, orderedGroups).text;
   const cosmeticLabel = edge.data("displayLabel");
-  return cosmeticLabel ? `${cosmeticLabel}: ${display}` : display;
+  if (!cosmeticLabel) return display;
+  return display ? `${cosmeticLabel}: ${display}` : cosmeticLabel;
 }
 
 export function groupedLabelWidth(edge) {
-  const groupCount = edge.data("groupParameters")?.groups?.length ?? 2;
+  const currentState = get(appState);
+  const edgeGroups = edge.data("groupParameters")?.groups ?? [];
+  const groups = currentState.groupLabels.length > 1
+    ? currentState.groupLabels
+    : edgeGroups;
+  const groupCount = graphDisplayGroups(
+    groups,
+    currentState.graphGroupView,
+  ).length || 1;
   return Math.min(420, Math.max(120, groupCount * 85));
 }
 

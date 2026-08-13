@@ -4,6 +4,7 @@ import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
 import * as Constants from "../Graph/classNames.js";
 import {
   formatGroupEstimateDisplay,
+  graphDisplayGroups,
 } from "../Graph/groupDisplay.js";
 import {
   groupedLabelWidth,
@@ -75,8 +76,13 @@ export function updateLabels(viewOption, std, number_digits) {
     })
     .update();
 
-  const groups = get(appState).groupLabels;
-  if (groups.length > 1) {
+  const currentState = get(appState);
+  const allGroups = currentState.groupLabels;
+  const groups = graphDisplayGroups(
+    allGroups,
+    currentState.graphGroupView,
+  );
+  if (allGroups.length > 1) {
     const groupedEstimateStyle = function (edge) {
       const display = formatGroupEstimateDisplay(
         groups,

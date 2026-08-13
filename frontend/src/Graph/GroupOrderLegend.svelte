@@ -1,11 +1,21 @@
 <script>
-  import { appState, modelOptions } from "../stores.js";
+  import { appState, gridViewOptions, modelOptions } from "../stores.js";
   import { groupLegendEntries } from "./groupDisplay.js";
+  import { updateLabels } from "../MenuTop/viewModule.js";
 
   export let location = "graph";
   export let compact = false;
 
   $: entries = groupLegendEntries($appState.groupLabels);
+
+  function changeGraphView(event) {
+    $appState.graphGroupView = event.currentTarget.value;
+    updateLabels(
+      $gridViewOptions.view,
+      $gridViewOptions.std,
+      $gridViewOptions.number_digits,
+    );
+  }
 </script>
 
 {#if $modelOptions.groupVariable && entries.length > 1}
@@ -15,7 +25,7 @@
     data-testid={`group-order-legend-${location}`}
     role="note"
     aria-label={`Group order for ${$modelOptions.groupVariable}`}
-    title="Edge values use this left-to-right group order. @ means fixed, free! means explicitly forced free, and =name is an equality label."
+    title="Edge values use this left-to-right group order. * means free, *! means explicitly forced free, @ means fixed, and =name is an equality label. Edges that are free in every group have no parameter label."
   >
     <span class="group-title">
       {$modelOptions.groupVariable} group order:
@@ -30,6 +40,22 @@
         </li>
       {/each}
     </ol>
+    <label class="view-control" for={`group-view-${location}`}>
+      <span>Graph view:</span>
+      <select
+        id={`group-view-${location}`}
+        data-testid={`group-view-${location}`}
+        value={$appState.graphGroupView ?? "all"}
+        on:change={changeGraphView}
+      >
+        <option value="all">All groups</option>
+        {#each entries as entry}
+          <option value={String(entry.id)}>
+            {entry.position} {entry.label}
+          </option>
+        {/each}
+      </select>
+    </label>
   </div>
 {/if}
 
@@ -106,15 +132,27 @@
     text-overflow: ellipsis;
   }
 
-  .order-help {
+  .view-control {
+    display: inline-flex;
     flex: 0 0 auto;
-    color: #637487;
-    font-size: 11px;
+    align-items: center;
+    gap: 5px;
+    margin: 0 0 0 auto;
+    color: #23527c;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
   }
 
-  @media (max-width: 900px) {
-    .order-help {
-      display: none;
-    }
+  .view-control select {
+    height: 28px;
+    max-width: 190px;
+    padding: 2px 24px 2px 7px;
+    border: 1px solid #aab8c5;
+    border-radius: 3px;
+    background: white;
+    color: #333;
+    font-weight: normal;
   }
+
 </style>

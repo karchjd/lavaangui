@@ -18,6 +18,7 @@
     $modelOptions.groupVariable = variable;
     $appState.groupLabels = [];
     $appState.activeGroup = null;
+    $appState.graphGroupView = "all";
   }
 </script>
 

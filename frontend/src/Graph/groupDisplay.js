@@ -59,6 +59,15 @@ export function groupLegendEntries(groups) {
   }));
 }
 
+export function graphDisplayGroups(groups, graphGroupView = "all") {
+  if (!Array.isArray(groups)) return [];
+  if (graphGroupView == null || graphGroupView === "all") return groups;
+  const selected = groups.find(
+    (group) => String(group?.id) === String(graphGroupView),
+  );
+  return selected ? [selected] : groups;
+}
+
 function findStateGroup(state, group) {
   if (!Array.isArray(state?.groups)) return null;
   const byLabel = state.groups.find(
@@ -85,16 +94,16 @@ export function formatGroupParameterToken(parameter, groupId = "missing") {
     statusText = `@${fixedValueText(parameter.value)}`;
     statusKey = [PARAMETER_STATUS.FIXED, semanticValue(parameter.value)];
   } else if (parameter.status === PARAMETER_STATUS.FORCE_FREE) {
-    statusText = "free!";
+    statusText = "*!";
     statusKey = [PARAMETER_STATUS.FORCE_FREE];
   } else {
-    statusText = "free";
+    statusText = "*";
     statusKey = [PARAMETER_STATUS.DEFAULT];
   }
 
   return {
     text: label
-      ? `=${label}${statusText === "free" ? "" : ` ${statusText}`}`
+      ? `=${label}${statusText === "*" ? "" : ` ${statusText}`}`
       : statusText,
     key: serializedKey([statusKey, label]),
     preventCollapse: false,
@@ -105,9 +114,17 @@ export function formatGroupParameterDisplay(state, orderedGroups) {
   const groups = Array.isArray(orderedGroups) && orderedGroups.length > 0
     ? orderedGroups
     : state?.groups ?? [];
-  return collapseOrderedGroupTokens(groups.map((group) =>
+  const display = collapseOrderedGroupTokens(groups.map((group) =>
     formatGroupParameterToken(findStateGroup(state, group), group.id)
   ));
+  const allGroupsAreImplicitlyFree = Array.isArray(state?.groups)
+    && state.groups.length > 0
+    && state.groups.every((group) =>
+      group.status === PARAMETER_STATUS.DEFAULT && !group.constraintLabel
+    );
+  return allGroupsAreImplicitlyFree
+    ? { ...display, text: "", collapsed: true }
+    : display;
 }
 
 function pValueStars(value) {

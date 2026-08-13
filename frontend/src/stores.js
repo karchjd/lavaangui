@@ -78,6 +78,7 @@ export let appState = writable({
   storedModelCount: 0,
   groupLabels: [],
   activeGroup: null,
+  graphGroupView: "all",
 });
 
 export let dataInfo = writable(0);

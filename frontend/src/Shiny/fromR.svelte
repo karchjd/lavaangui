@@ -194,12 +194,22 @@
     $appState.groupLabels = normalized.length > 1 ? normalized : [];
     if (normalized.length <= 1) {
       $appState.activeGroup = null;
+      $appState.graphGroupView = "all";
     } else {
       const activeStillExists = normalized.some(
         (group) => String(group.id) === String($appState.activeGroup),
       );
       if (!activeStillExists) {
         $appState.activeGroup = normalized[0].id;
+      }
+      const graphGroupStillExists = normalized.some(
+        (group) => String(group.id) === String($appState.graphGroupView),
+      );
+      if (
+        $appState.graphGroupView !== "all" &&
+        !graphGroupStillExists
+      ) {
+        $appState.graphGroupView = "all";
       }
     }
 
@@ -558,6 +568,7 @@
       $modelOptions.groupVariable = null;
       $appState.groupLabels = [];
       $appState.activeGroup = null;
+      $appState.graphGroupView = "all";
     }
     $appState.ids = [...data_info.columns];
     $appState.loadedFileName = data_info.name;
@@ -794,10 +805,8 @@
     const groups = normalizeGroups(
       all_res.groups ?? [{ id: 1, label: "Group 1" }],
     );
-    const activeGroup = groups.length > 0 ? groups[0].id : null;
-    $appState.groupLabels = groups.length > 1 ? groups : [];
-    $appState.activeGroup = activeGroup;
-    updateEstimates(lav_result, std_result, activeGroup);
+    installGroups(groups);
+    updateEstimates(lav_result, std_result, $appState.activeGroup);
   });
 
   // @ts-expect-error
