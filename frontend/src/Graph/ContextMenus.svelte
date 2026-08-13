@@ -11,6 +11,13 @@
   import { tolavaan } from "../Shiny/toR.js";
   import * as Constants from "./classNames.js";
   import { showMathNotation } from "../MenuTop/mathNotationHelp.js";
+  import {
+    GROUP_PARAMETERS_CLASS,
+    PARAMETER_STATUS,
+    applyGroupParameterOperation,
+    createGroupParameterState,
+    describeGroupParameter,
+  } from "./groupParameters.js";
   // @ts-ignore
   window.showMathNotation = showMathNotation;
   import iro from "@jaames/iro";
@@ -43,6 +50,192 @@
       bootbox.alert("Provide a valid lavaan label");
       return false;
     }
+    return true;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function edgeParameterFallback(edge) {
+    let status = PARAMETER_STATUS.DEFAULT;
+    let value = null;
+    if (edge.isFixed() && !edge.isModifiedLavaan()) {
+      status = PARAMETER_STATUS.FIXED;
+      value = edge.getValue();
+    } else if (edge.isForceFree()) {
+      status = PARAMETER_STATUS.FORCE_FREE;
+    }
+
+    return {
+      status,
+      value,
+      constraintLabel: edge.hasLabel() ? edge.getLabel() : null,
+    };
+  }
+
+  let groupDialogNumber = 0;
+
+  function showGroupParameterDialog(edge, action) {
+    if (!$modelOptions.groupVariable || !edge.isUserAdded()) return false;
+
+    const groups = Array.isArray($appState.groupLabels)
+      ? $appState.groupLabels
+      : [];
+    if (groups.length < 2) {
+      // @ts-expect-error
+      bootbox.alert(
+        "Group information is still loading. Please try this action again in a moment.",
+      );
+      return true;
+    }
+
+    const state = createGroupParameterState(
+      edge.data("groupParameters"),
+      $modelOptions.groupVariable,
+      groups,
+      edgeParameterFallback(edge),
+    );
+    const config = {
+      fix: {
+        title: "Enter a Value",
+        confirm: "Fix parameter",
+        inputLabel: "Value",
+        inputType: "number",
+      },
+      setLabel: {
+        title: "Enter a Label",
+        confirm: "Apply label",
+        inputLabel: "Label",
+        inputType: "text",
+      },
+      free: {
+        title: "Free Parameter",
+        confirm: "Free parameter",
+      },
+      forceFree: {
+        title: "Force Parameter Free",
+        confirm: "Force parameter free",
+      },
+      removeLabel: {
+        title: "Remove Label",
+        confirm: "Remove label",
+      },
+    }[action];
+
+    const firstValue = action === "fix"
+      ? state.groups.find(
+        (group) => group.status === PARAMETER_STATUS.FIXED,
+      )?.value ?? ""
+      : state.groups.find((group) => group.constraintLabel)
+        ?.constraintLabel ?? "";
+    const dialogId = ++groupDialogNumber;
+    const inputHtml = config.inputType
+      ? `
+        <div class="form-group">
+          <label for="group-parameter-value-${dialogId}">${config.inputLabel}</label>
+          <input
+            id="group-parameter-value-${dialogId}"
+            class="form-control lavaangui-group-parameter-value"
+            type="${config.inputType}"
+            ${config.inputType === "number" ? 'step="any"' : ""}
+            value="${escapeHtml(firstValue)}"
+          >
+        </div>`
+      : "";
+    const groupRows = state.groups.map((group, index) => `
+      <label class="checkbox" style="display: block; margin-left: 20px;">
+        <input
+          type="checkbox"
+          class="lavaangui-group-parameter-checkbox"
+          data-group-index="${index}"
+          checked
+        >
+        <strong>${escapeHtml(group.label)}</strong>
+        <span class="text-muted"> — current: ${escapeHtml(
+          describeGroupParameter(group),
+        )}</span>
+      </label>
+    `).join("");
+    const equalityHelp = action === "setLabel"
+      ? `<p class="help-block">Applying one label to multiple groups constrains this parameter to be equal across those groups.</p>`
+      : "";
+
+    // @ts-expect-error
+    const dialog = bootbox.dialog({
+      title: config.title,
+      message: `
+        ${inputHtml}
+        <div class="form-group">
+          <div><strong>Apply to groups</strong></div>
+          ${groupRows}
+          ${equalityHelp}
+          <p class="help-block">Unchecked groups keep their current setting.</p>
+        </div>
+      `,
+      buttons: {
+        cancel: {
+          label: "Cancel",
+          className: "btn-default",
+        },
+        confirm: {
+          label: config.confirm,
+          className: "btn-primary",
+          callback: function () {
+            const selectedGroupIds = [];
+            dialog
+              .find(".lavaangui-group-parameter-checkbox:checked")
+              .each(function () {
+                const index = Number(this.dataset.groupIndex);
+                selectedGroupIds.push(state.groups[index].id);
+              });
+            if (selectedGroupIds.length === 0) {
+              // @ts-expect-error
+              bootbox.alert("Select at least one group");
+              return false;
+            }
+
+            let operation = { type: action };
+            if (action === "fix") {
+              const input = String(
+                dialog.find(".lavaangui-group-parameter-value").val() ?? "",
+              ).trim();
+              if (input === "" || !Number.isFinite(Number(input))) {
+                // @ts-expect-error
+                bootbox.alert("Provide a numeric value");
+                return false;
+              }
+              operation = { type: action, value: input };
+            } else if (action === "setLabel") {
+              const input = String(
+                dialog.find(".lavaangui-group-parameter-value").val() ?? "",
+              ).trim();
+              if (!validLabel(input)) return false;
+              operation = { type: action, label: input };
+            }
+
+            const updated = applyGroupParameterOperation(
+              state,
+              selectedGroupIds,
+              operation,
+            );
+            edge
+              .data("groupParameters", updated)
+              .addClass(GROUP_PARAMETERS_CLASS)
+              .removeEstimates();
+            tolavaan($modelOptions.mode);
+          },
+        },
+      },
+      onShown: function () {
+        dialog.find(".lavaangui-group-parameter-value").trigger("focus");
+      },
+    });
     return true;
   }
 
@@ -126,6 +319,7 @@
       selector: `edge.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        if (showGroupParameterDialog(edge, "setLabel")) return;
         // @ts-expect-error
         bootbox.prompt({
           title: "Enter a Label",
@@ -149,9 +343,10 @@
     {
       id: "label-remove",
       content: "Remove Label",
-      selector: `edge.${Constants.LABEL}`,
+      selector: `edge.${Constants.LABEL}, edge.${GROUP_PARAMETERS_CLASS}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        if (showGroupParameterDialog(edge, "removeLabel")) return;
         edge.removeLabel();
         tolavaan($modelOptions.mode);
       },
@@ -176,6 +371,7 @@
       selector: `edge.${Constants.FREE}.${Constants.FROM_USER}, edge.${Constants.FORCE_FREE}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        if (showGroupParameterDialog(edge, "fix")) return;
         // @ts-expect-error
         bootbox.prompt({
           title: "Enter a Value",
@@ -203,6 +399,7 @@
       selector: `edge.${Constants.FIXED}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        if (showGroupParameterDialog(edge, "fix")) return;
         // @ts-expect-error
         bootbox.prompt({
           title: "Enter a New Value",
@@ -222,9 +419,10 @@
     {
       id: "free-para",
       content: "Free Parameter",
-      selector: `edge.${Constants.FIXED}.${Constants.FROM_USER}, edge.${Constants.FORCE_FREE}.${Constants.FROM_USER}`,
+      selector: `edge.${Constants.FIXED}.${Constants.FROM_USER}, edge.${Constants.FORCE_FREE}.${Constants.FROM_USER}, edge.${GROUP_PARAMETERS_CLASS}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         var edge = event.target || event.cyTarget;
+        if (showGroupParameterDialog(edge, "free")) return;
         edge.freePara();
         tolavaan($modelOptions.mode);
       },
@@ -234,9 +432,10 @@
     {
       id: "free-force-para",
       content: "Force Parameter Free",
-      selector: `edge.${Constants.FREE}.${Constants.FROM_USER}, edge.${Constants.FIXED}.${Constants.FROM_USER}`,
+      selector: `edge.${Constants.FREE}.${Constants.FROM_USER}, edge.${Constants.FIXED}.${Constants.FROM_USER}, edge.${GROUP_PARAMETERS_CLASS}.${Constants.FROM_USER}`,
       onClickFunction: function (event) {
         const edge = event.target || event.cyTarget;
+        if (showGroupParameterDialog(edge, "forceFree")) return;
         edge.forceFreePara();
         tolavaan($modelOptions.mode);
       },

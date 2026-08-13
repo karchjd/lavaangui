@@ -237,6 +237,7 @@
         this.removeClass("hasEst");
         this.removeClass("hasEstFixed");
         this.removeClass("hasEstStd");
+        this.removeClass(Constants.HAS_GROUP_ESTIMATES);
         return this;
     });
 

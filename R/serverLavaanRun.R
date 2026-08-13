@@ -65,6 +65,44 @@ sendResultsFront <- function(session, result, fromJavascript, df) {
   session$sendCustomMessage("lav_results", res)
 }
 
+groupMetadata <- function(group_variable, group_labels = character()) {
+  if (is.null(group_variable) || length(group_variable) == 0L) {
+    return(list(group_variable = NULL, groups = list()))
+  }
+
+  group_variable <- as.character(group_variable[[1L]])
+  if (!nzchar(group_variable)) {
+    return(list(group_variable = NULL, groups = list()))
+  }
+
+  group_labels <- as.character(group_labels)
+  list(
+    group_variable = group_variable,
+    groups = lapply(seq_along(group_labels), function(index) {
+      list(id = index, label = unname(group_labels[[index]]))
+    })
+  )
+}
+
+groupMetadataFromData <- function(data, group_variable) {
+  if (
+    is.null(data) ||
+      is.null(group_variable) ||
+      length(group_variable) == 0L
+  ) {
+    return(groupMetadata(group_variable))
+  }
+
+  group_variable <- as.character(group_variable[[1L]])
+  if (!nzchar(group_variable) || !group_variable %in% names(data)) {
+    return(groupMetadata(group_variable))
+  }
+
+  values <- data[[group_variable]]
+  labels <- unique(as.character(values[!is.na(values)]))
+  groupMetadata(group_variable, labels)
+}
+
 
 serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fitModelHash, fitModelDetails) { # nolint: cyclocomp_linter.
   moduleServer(id, function(input, output, session) {
@@ -77,6 +115,11 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
       fromJavascript <- jsonlite::fromJSON(input$fromJavascript)
       sendFitMessages(session)
       if (fromJavascript$mode == "user model") {
+        group_variable <- fromJavascript$model$optionsList$group
+        session$sendCustomMessage(
+          "group_metadata",
+          groupMetadataFromData(getData(), group_variable)
+        )
         to_render(fromJavascript$model$R_script)
         return(NULL)
       }
@@ -146,6 +189,13 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
       ## there an error, exiting
       if (is.null(wasError)) {
         return(NULL)
+      }
+
+      if (has_group) {
+        session$sendCustomMessage(
+          "group_metadata",
+          groupMetadata(optsList$group, getGroupLabels(lavaan_model))
+        )
       }
 
       model_front <- model_parsed

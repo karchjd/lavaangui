@@ -21,6 +21,7 @@ export const VALIDATED = 'validated';
 export const CONTINOUS = 'continous';
 export const ORDERED = 'ordered';
 export const HAS_EST_FIXED = "hasEstFixed"
+export const HAS_GROUP_ESTIMATES = "hasGroupEstimates";
 export const NODEWITH = 80;
 export const LABELWIDTH = 80;
 export const POTENTIAL_LAT_OB_REGRESSION = 'loRegression';

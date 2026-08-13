@@ -17,6 +17,7 @@
   import { applySemLayout, resolveLayout } from "../MenuTop/semPlotLayouts.js";
   import { updateLabels, updateVisibility } from "../MenuTop/viewModule";
   import { activateEstimateGroup } from "./groupEstimates.js";
+  import { GROUP_PARAMETERS_CLASS } from "../Graph/groupParameters.js";
   import {
     OBSERVED,
     LATENT,
@@ -25,6 +26,7 @@
     UNDIRECTED,
     LOOP,
     COMPOSITE,
+    HAS_GROUP_ESTIMATES,
   } from "../Graph/classNames.js";
   import { parseModel } from "../MenuTop/IO";
   import cytoscape from "cytoscape";
@@ -155,6 +157,62 @@
     if (!condition) {
       throw new Error(message || "Assertion failed");
     }
+  }
+
+  function normalizeGroups(rawGroups) {
+    if (rawGroups == null) return [];
+
+    let groups;
+    if (Array.isArray(rawGroups)) {
+      groups = rawGroups;
+    } else if (
+      typeof rawGroups === "object" &&
+      ("id" in rawGroups || "label" in rawGroups)
+    ) {
+      groups = [rawGroups];
+    } else if (typeof rawGroups === "object") {
+      groups = Object.values(rawGroups);
+    } else {
+      groups = [rawGroups];
+    }
+
+    return groups
+      .filter((group) => group != null)
+      .map((group, index) => {
+        if (typeof group === "object") {
+          return {
+            id: group.id ?? index + 1,
+            label: String(group.label ?? group.id ?? index + 1),
+          };
+        }
+        return { id: index + 1, label: String(group) };
+      });
+  }
+
+  function installGroups(groups) {
+    const normalized = normalizeGroups(groups);
+    $appState.groupLabels = normalized.length > 1 ? normalized : [];
+    if (normalized.length <= 1) {
+      $appState.activeGroup = null;
+    } else {
+      const activeStillExists = normalized.some(
+        (group) => String(group.id) === String($appState.activeGroup),
+      );
+      if (!activeStillExists) {
+        $appState.activeGroup = normalized[0].id;
+      }
+    }
+
+    const cy = get(cyStore);
+    if (cy) cy.style().update();
+  }
+
+  function clearGroupParameterData() {
+    const cy = get(cyStore);
+    if (!cy) return;
+    cy.edges()
+      .removeData("groupParameters")
+      .removeClass(GROUP_PARAMETERS_CLASS);
   }
 
   async function getModelLav(lav_model, imported) {
@@ -408,6 +466,7 @@
   function updateEstimates(lav_result, std_result, activeGroup) {
     let cy = get(cyStore);
     const ordered = lav_result.op.some((op) => op.includes("~~"));
+    const hasGroupResults = $appState.groupLabels.length > 1;
 
     for (let i = 0; i < lav_result.lhs.length; i++) {
       if (lav_result.op[i] == "~*~" || lav_result.op[i] == "|") {
@@ -421,7 +480,14 @@
       if (existingEdge.length > 0) {
         let allEstimates = {};
         const groupId = lav_result.group?.[i] ?? 1;
-        if (existingEdge.isFree()) {
+        const resultIsFixed =
+          lav_result.se[i] != null &&
+          Number(lav_result.se[i]) === 0 &&
+          lav_result.pvalue[i] == null;
+        const resultIsFree = hasGroupResults
+          ? !resultIsFixed
+          : existingEdge.isFree();
+        if (resultIsFree) {
           //estimates from lav_result
           allEstimates.est = lav_result.est[i];
           allEstimates.p_value = lav_result.pvalue[i];
@@ -443,27 +509,32 @@
             floatEqual(allEstimates.ciLow_std, 1) &&
             floatEqual(allEstimates.ciHigh_std, 1)
           ) {
-            existingEdge.addClass("fixedUnderStd");
+            allEstimates.fixedUnderStd = true;
           }
 
-          existingEdge.addClass("hasEst");
-        } else if (ordered && lav_result.op[i] == "~~") {
+          allEstimates.displayClass = "hasEst";
+        } else if (
+          hasGroupResults ||
+          (ordered && lav_result.op[i] == "~~")
+        ) {
           allEstimates.estFixed = lav_result.est[i];
-          {
-            allEstimates.estFixed_std = std_result["est.std"][i];
-            existingEdge.addClass("hasEstFixed");
-          }
+          allEstimates.estFixed_std = std_result["est.std"][i];
+          allEstimates.displayClass = "hasEstFixed";
         } else if (existingEdge.isFixed()) {
+          allEstimates.estFixed = lav_result.est[i];
           allEstimates.est_std = std_result["est.std"][i];
           allEstimates.se_std = std_result.se[i];
           allEstimates.ciLow_std = std_result["ci.lower"][i];
           allEstimates.ciHigh_std = std_result["ci.upper"][i];
           allEstimates.p_value_std = std_result.pvalue[i];
-          existingEdge.addClass("hasEstStd");
+          allEstimates.displayClass = "hasEstStd";
         }
         const estimatesByGroup = existingEdge.data("estimatesByGroup") || {};
         estimatesByGroup[String(groupId)] = allEstimates;
         existingEdge.data("estimatesByGroup", estimatesByGroup);
+        if (hasGroupResults) {
+          existingEdge.addClass(HAS_GROUP_ESTIMATES);
+        }
         if (activeGroup == null) {
           existingEdge.data("estimates", allEstimates);
         }
@@ -483,6 +554,7 @@
       $modelOptions.groupVariable &&
       !$appState.columnNames.includes($modelOptions.groupVariable)
     ) {
+      clearGroupParameterData();
       $modelOptions.groupVariable = null;
       $appState.groupLabels = [];
       $appState.activeGroup = null;
@@ -552,6 +624,15 @@
     const oldName = $appState.columnNames[cnames.index];
     $appState.columnNames[cnames.index] = cnames.newcolname;
     if ($modelOptions.groupVariable === oldName) {
+      cy.edges(`.${GROUP_PARAMETERS_CLASS}`).forEach((edge) => {
+        const state = edge.data("groupParameters");
+        if (state?.groupVariable === oldName) {
+          edge.data("groupParameters", {
+            ...state,
+            groupVariable: cnames.newcolname,
+          });
+        }
+      });
       $modelOptions.groupVariable = cnames.newcolname;
     }
     cy.getObservedNodes().forEach((node) => {
@@ -580,12 +661,23 @@
     getModelLav(lav_model, false);
   });
 
+  // Group labels are needed while editing, before the model is estimated.
+  Shiny.addCustomMessageHandler("group_metadata", function (metadata) {
+    if (
+      !metadata ||
+      String(metadata.group_variable ?? "") !==
+        String($modelOptions.groupVariable ?? "")
+    ) {
+      return;
+    }
+    installGroups(metadata.groups);
+  });
+
   //import model gets message from model importer
   // @ts-expect-error
   Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
     $modelOptions.groupVariable = lav_model.group_variable || null;
-    $appState.groupLabels = [];
-    $appState.activeGroup = null;
+    installGroups(lav_model.group_labels);
     if (lav_model.saved_layout == null) {
       getModelLav(lav_model, true);
       let cy = get(cyStore);
@@ -699,7 +791,9 @@
   Shiny.addCustomMessageHandler("lav_estimates", function (all_res) {
     const lav_result = all_res.normal;
     const std_result = all_res.std;
-    const groups = [].concat(all_res.groups ?? [{ id: 1, label: "Group 1" }]);
+    const groups = normalizeGroups(
+      all_res.groups ?? [{ id: 1, label: "Group 1" }],
+    );
     const activeGroup = groups.length > 0 ? groups[0].id : null;
     $appState.groupLabels = groups.length > 1 ? groups : [];
     $appState.activeGroup = activeGroup;

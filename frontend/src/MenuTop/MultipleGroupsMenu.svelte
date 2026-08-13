@@ -1,12 +1,20 @@
 <script>
   import Dropdown from "./helpers/Dropdown.svelte";
-  import { appState, modelOptions } from "../stores.js";
+  import { appState, cyStore, modelOptions } from "../stores.js";
+  import { get } from "svelte/store";
+  import { GROUP_PARAMETERS_CLASS } from "../Graph/groupParameters.js";
 
   const name = "Multiple groups";
 
   function selectGroupingVariable(variable) {
     if ($modelOptions.groupVariable === variable) return;
 
+    const cy = get(cyStore);
+    if (cy) {
+      cy.edges()
+        .removeData("groupParameters")
+        .removeClass(GROUP_PARAMETERS_CLASS);
+    }
     $modelOptions.groupVariable = variable;
     $appState.groupLabels = [];
     $appState.activeGroup = null;

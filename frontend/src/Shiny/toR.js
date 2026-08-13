@@ -1,5 +1,9 @@
 import { get } from "svelte/store";
 import { appState, cyStore, modelOptions, fitCache, gridViewOptions, setAlert } from "../stores";
+import {
+  alignGroupParameterState,
+  buildGroupModifierParts,
+} from "../Graph/groupParameters.js";
 
 export function tolavaan(mode) {
   var appState_local = get(appState);
@@ -58,6 +62,30 @@ function addTerms(node, edge) {
   } else {
     node_label = node.getLabel();
   }
+
+  const modelOpt = get(modelOptions);
+  const savedGroupState = edge.data("groupParameters");
+  if (
+    modelOpt.groupVariable &&
+    savedGroupState?.groupVariable === modelOpt.groupVariable
+  ) {
+    const currentGroups = get(appState).groupLabels;
+    const groupState = currentGroups.length > 1
+      ? alignGroupParameterState(
+        savedGroupState,
+        modelOpt.groupVariable,
+        currentGroups,
+      )
+      : savedGroupState;
+    const modifiers = buildGroupModifierParts(groupState, edge.id());
+    if (modifiers.length > 0) {
+      return modifiers
+        .map((modifier) => `${modifier}*${node_label}`)
+        .join(" + ");
+    }
+    return node_label;
+  }
+
   let premultiplier = false;
   let formula;
   if (edge.isFixed() && !edge.isModifiedLavaan()) {

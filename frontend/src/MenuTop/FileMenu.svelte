@@ -11,6 +11,7 @@
   import { jsPDF } from "jspdf";
   import { svg2pdf } from "svg2pdf.js";
   import { requestData, jsonModel, reset, parseModel } from "./IO.js";
+  import { GROUP_PARAMETERS_CLASS } from "../Graph/groupParameters.js";
 
   cytoscape.use(svg);
   function newModel() {
@@ -203,6 +204,9 @@
 
   function removeData() {
     const cy = get(cyStore);
+    cy.edges()
+      .removeData("groupParameters")
+      .removeClass(GROUP_PARAMETERS_CLASS);
     $appState.dataAvail = false;
     $appState.columnNames = null;
     $appState.loadedFileName = null;

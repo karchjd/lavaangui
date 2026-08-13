@@ -1,4 +1,23 @@
 import * as Constants from "./classNames.js";
+import { get } from "svelte/store";
+import { appState } from "../stores.js";
+import { formatGroupParameterDisplay } from "./groupDisplay.js";
+
+export function groupedParameterLabel(edge) {
+  const state = edge.data("groupParameters");
+  const currentGroups = get(appState).groupLabels;
+  const orderedGroups = currentGroups.length > 1
+    ? currentGroups
+    : state?.groups ?? [];
+  const display = formatGroupParameterDisplay(state, orderedGroups).text;
+  const cosmeticLabel = edge.data("displayLabel");
+  return cosmeticLabel ? `${cosmeticLabel}: ${display}` : display;
+}
+
+export function groupedLabelWidth(edge) {
+  const groupCount = edge.data("groupParameters")?.groups?.length ?? 2;
+  return Math.min(420, Math.max(120, groupCount * 85));
+}
 
 
 export const graphStyles = [
@@ -171,6 +190,13 @@ export const graphStyles = [
     selector: `edge.${Constants.FORCE_FREE}`,
     style: {
       "line-color": "blue",
+    },
+  },
+  {
+    selector: "edge.groupParameters",
+    style: {
+      label: groupedParameterLabel,
+      "text-max-width": groupedLabelWidth,
     },
   },
   {

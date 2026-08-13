@@ -21,7 +21,7 @@
     COMPOSITE,
   } from "./classNames.js";
   import { tolavaan } from "../Shiny/toR.js";
-  import GroupSwitcher from "./GroupSwitcher.svelte";
+  import GroupOrderLegend from "./GroupOrderLegend.svelte";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -450,7 +450,7 @@
   class="graph-panel"
   style="flex-basis: {$appState.full ? '70%' : '100%'};"
 >
-  <GroupSwitcher />
+  <GroupOrderLegend location="graph" />
   <div
     id="cy"
     class="graph"

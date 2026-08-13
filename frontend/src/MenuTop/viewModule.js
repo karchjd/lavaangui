@@ -1,7 +1,14 @@
 import { get } from "svelte/store";
-import { cyStore } from "../stores";
-import { checkNodeLoop } from "../Graph/checkNodeLoop";
+import { appState, cyStore } from "../stores.js";
+import { checkNodeLoop } from "../Graph/checkNodeLoop.js";
 import * as Constants from "../Graph/classNames.js";
+import {
+  formatGroupEstimateDisplay,
+} from "../Graph/groupDisplay.js";
+import {
+  groupedLabelWidth,
+  groupedParameterLabel,
+} from "../Graph/cytoscape_settings.js";
 
 export const edgeItems = [
   {
@@ -57,6 +64,44 @@ export function updateLabels(viewOption, std, number_digits) {
   // Update fixed estimates for ordinal variables
   const fixedEstStyle = generateFixedEstStyle(viewOption, postfix, number_digits);
   cy.style().selector("edge.hasEstFixed").style({ label: fixedEstStyle }).update();
+
+  // Parsing may give a grouped edge a legacy fixed/label class based on group
+  // one. Reapply the grouped parameter style after all legacy style rules.
+  cy.style()
+    .selector(`edge.groupParameters`)
+    .style({
+      label: groupedParameterLabel,
+      "text-max-width": groupedLabelWidth,
+    })
+    .update();
+
+  const groups = get(appState).groupLabels;
+  if (groups.length > 1) {
+    const groupedEstimateStyle = function (edge) {
+      const display = formatGroupEstimateDisplay(
+        groups,
+        edge.data("estimatesByGroup"),
+        {
+          viewOption,
+          standardized: std,
+          digits: number_digits,
+        },
+        edge.data("groupParameters"),
+      ).text;
+      const state = edge.data("groupParameters");
+      const prefix = edge.data("displayLabel")
+        || (!state ? edge.data("label") : null);
+      return prefix ? `${prefix} = ${display}` : display;
+    };
+    const groupedWidth = Math.min(500, Math.max(140, groups.length * 100));
+    cy.style()
+      .selector(`edge.${Constants.HAS_GROUP_ESTIMATES}`)
+      .style({
+        label: groupedEstimateStyle,
+        "text-max-width": groupedWidth,
+      })
+      .update();
+  }
 }
 
 export function updateVisibility(showVar, showLav, showMean, showCov) {

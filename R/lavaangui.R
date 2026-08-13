@@ -24,7 +24,8 @@
 
 #' @details
 #' Multiple-group models are imported with their grouping variable selected.
-#' After estimation, estimates for each group can be selected above the diagram.
+#' An ordered group legend above the diagram identifies the left-to-right order
+#' used by group-specific parameter settings and estimates on each edge.
 #'
 #' @export
 lavaangui <- function(fit = NULL) {

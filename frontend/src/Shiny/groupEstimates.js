@@ -8,11 +8,26 @@ export function activateEstimateGroup(groupId) {
 
   const key = String(groupId);
   cy.edges().forEach((edge) => {
+    const legacyDisplayClass = ["hasEst", "hasEstFixed", "hasEstStd"]
+      .find((className) => edge.hasClass(className));
+    const legacyFixedUnderStd = edge.hasClass("fixedUnderStd");
+    edge.removeClass("hasEst hasEstFixed hasEstStd fixedUnderStd");
     const estimatesByGroup = edge.data("estimatesByGroup");
     if (!estimatesByGroup) return;
 
     if (Object.prototype.hasOwnProperty.call(estimatesByGroup, key)) {
-      edge.data("estimates", estimatesByGroup[key]);
+      const estimates = estimatesByGroup[key];
+      edge.data("estimates", estimates);
+      const displayClass = estimates.displayClass || legacyDisplayClass;
+      if (displayClass) {
+        edge.addClass(displayClass);
+      }
+      if (
+        estimates.fixedUnderStd ||
+        (!estimates.displayClass && legacyFixedUnderStd)
+      ) {
+        edge.addClass("fixedUnderStd");
+      }
     } else {
       edge.removeData("estimates");
     }
