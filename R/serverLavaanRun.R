@@ -200,8 +200,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
 
       model_front <- model_parsed
       if (has_group && "group" %in% names(model_front)) {
-        first_group <- min(model_front$group)
-        model_front <- model_front[model_front$group == first_group, , drop = FALSE]
+        model_front <- getFirstModelGroup(model_front)
       }
       session$sendCustomMessage("lav_model", model_front)
 

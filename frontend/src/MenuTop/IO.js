@@ -39,7 +39,11 @@ export function parseModel(content) {
     let cy = get(cyStore);
     let json;
     json = JSON.parse(combinedData.model);
-    const modelOptData = JSON.parse(combinedData.modelOpt);
+    const modelOptData = {
+        groupEqual: [],
+        groupPartial: [],
+        ...JSON.parse(combinedData.modelOpt),
+    };
     const gridViewOptData = JSON.parse(combinedData.gridViewOpt);
     mergeExistingProperties(modelOptions, modelOptData);
     mergeExistingProperties(gridViewOptions, gridViewOptData);

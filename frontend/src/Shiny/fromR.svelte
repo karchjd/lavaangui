@@ -19,6 +19,10 @@
   import { activateEstimateGroup } from "./groupEstimates.js";
   import { GROUP_PARAMETERS_CLASS } from "../Graph/groupParameters.js";
   import {
+    normalizeGroupEqual,
+    normalizeGroupPartial,
+  } from "../Graph/groupConstraints.js";
+  import {
     OBSERVED,
     LATENT,
     CONSTANT,
@@ -688,6 +692,8 @@
   // @ts-expect-error
   Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
     $modelOptions.groupVariable = lav_model.group_variable || null;
+    $modelOptions.groupEqual = normalizeGroupEqual(lav_model.group_equal);
+    $modelOptions.groupPartial = normalizeGroupPartial(lav_model.group_partial);
     installGroups(lav_model.group_labels);
     if (lav_model.saved_layout == null) {
       getModelLav(lav_model, true);

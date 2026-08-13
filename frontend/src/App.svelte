@@ -31,6 +31,7 @@
   import GridOptions from "./MenuTop/GridOptions.svelte";
   import AutoSave from "./AutoSave.svelte";
   import ModelComparisonDialog from "./MenuTop/ModelComparisonDialog.svelte";
+  import GroupPartialDialog from "./MenuTop/GroupPartialDialog.svelte";
 </script>
 
 <AppReady />
@@ -75,6 +76,7 @@
   <Debug />
   <FromR />
   <ModelComparisonDialog />
+  <GroupPartialDialog />
   <DuckTapeFixes />
   {#if $appState.shinyapps}
     <AutoSave />

@@ -18,6 +18,8 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
     ## temporary fix until lavaanNames(fit, type = "lv.formative") works again
     parTab <- getParTable(fit)
     compositeNames <- unique(parTab$lhs[parTab$op == "<~"])
+    group_equal <- getGroupEqual(fit)
+    group_partial <- getGroupPartial(fit)
     df <- tryCatch(
       getImportedData(fit),
       error = function(e) {
@@ -32,12 +34,22 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
       layout_hash <- NULL
     }
     parTable <- getParTable(fit)
+    if (
+      length(group_equal) > 0L &&
+        all(c("label", "plabel") %in% names(parTable))
+    ) {
+      auto_group_labels <- nzchar(parTable$label) &
+        parTable$label == parTable$plabel
+      parTable$label[auto_group_labels] <- ""
+    }
     parTable <- parTable[!parTable$op %in% c(":=", "<", ">", "==", "|", "<", ">"), ]
     importedModel <- list(
       obs = varNames, latent = factNames, parTable = parTable,
       composite = compositeNames,
       group_variable = getGroupVariable(fit),
       group_labels = getGroupLabels(fit),
+      group_equal = group_equal,
+      group_partial = group_partial,
       df = df, fit = fit,
       layout_hash = layout_hash,
       layout_name = layout,

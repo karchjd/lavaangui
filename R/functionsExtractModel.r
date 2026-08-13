@@ -73,6 +73,40 @@ getGroupVariable <- function(fit) {
     }
 }
 
+getGroupEqual <- function(fit) {
+    value <- if (inherits(fit, "fake_lavaan")) {
+        fit$group.equal
+    } else {
+        lavInspect(fit, "options")$group.equal
+    }
+    if (is.null(value)) character() else as.character(value)
+}
+
+getGroupPartial <- function(fit) {
+    value <- if (inherits(fit, "fake_lavaan")) {
+        fit$group.partial
+    } else {
+        lavInspect(fit, "options")$group.partial
+    }
+    if (is.null(value)) character() else as.character(value)
+}
+
+getFirstModelGroup <- function(parTable) {
+    if (!"group" %in% names(parTable)) {
+        return(parTable)
+    }
+
+    group_ids <- suppressWarnings(as.integer(parTable$group))
+    model_groups <- group_ids[!is.na(group_ids) & group_ids > 0L]
+    if (length(model_groups) == 0L) {
+        return(parTable)
+    }
+
+    first_group <- min(model_groups)
+    keep <- !is.na(group_ids) & group_ids == first_group
+    parTable[keep, , drop = FALSE]
+}
+
 getImportedData <- function(fit) {
     data <- lavInspect(fit, what = "data")
     if (getNGroups(fit) == 1L) {

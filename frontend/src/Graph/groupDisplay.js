@@ -205,9 +205,9 @@ export function formatEstimateToken(
   return {
     text,
     key: serializedKey([kind, viewOption, visibleValues]),
-    preventCollapse: visibleValues.some(
-      (value) => value.length === 1 && value[0] === "missing",
-    ),
+    // Freely estimated values must remain visible for every group, even when
+    // an equality constraint makes their estimates numerically identical.
+    preventCollapse: true,
   };
 }
 
@@ -236,6 +236,7 @@ export function formatGroupEstimateDisplay(
         ...estimateToken,
         text: `=${constraintLabel} ${estimateToken.text}`,
         key: serializedKey([constraintLabel, estimateToken.key]),
+        preventCollapse: true,
       }
       : estimateToken;
   }));

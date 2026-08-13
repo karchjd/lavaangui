@@ -4,6 +4,12 @@ import {
   alignGroupParameterState,
   buildGroupModifierParts,
 } from "../Graph/groupParameters.js";
+import {
+  getGroupPartialOptions,
+  normalizeGroupEqual,
+  pruneGroupPartial,
+  toRCharacterVector,
+} from "../Graph/groupConstraints.js";
 
 export function tolavaan(mode) {
   var appState_local = get(appState);
@@ -400,7 +406,19 @@ function produceLavaanOptions(ordered_labels, formative) {
     \t\t ${options}`
   }
   if (modelOpt.groupVariable) {
-    options = `group = ${addQuotes(modelOpt.groupVariable)},\n\t\t ${options}`;
+    const groupEqual = normalizeGroupEqual(modelOpt.groupEqual);
+    const groupPartial = pruneGroupPartial(
+      modelOpt.groupPartial,
+      getGroupPartialOptions(get(cyStore), groupEqual),
+    );
+    const groupOptions = [`group = ${addQuotes(modelOpt.groupVariable)}`];
+    if (groupEqual.length > 0) {
+      groupOptions.push(`group.equal = ${toRCharacterVector(groupEqual)}`);
+      if (groupPartial.length > 0) {
+        groupOptions.push(`group.partial = ${toRCharacterVector(groupPartial)}`);
+      }
+    }
+    options = `${groupOptions.join(",\n\t\t ")},\n\t\t ${options}`;
   }
 
   options = options + ")";
@@ -438,6 +456,17 @@ function produceLavaanOptionsList(ordered_labels, formative) {
   }
   if (modelOpt.groupVariable) {
     opts.group = modelOpt.groupVariable;
+    const groupEqual = normalizeGroupEqual(modelOpt.groupEqual);
+    const groupPartial = pruneGroupPartial(
+      modelOpt.groupPartial,
+      getGroupPartialOptions(get(cyStore), groupEqual),
+    );
+    if (groupEqual.length > 0) {
+      opts["group.equal"] = groupEqual;
+      if (groupPartial.length > 0) {
+        opts["group.partial"] = groupPartial;
+      }
+    }
   }
 
   return opts;

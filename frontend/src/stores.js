@@ -22,6 +22,8 @@ export let modelOptions = writable({
   "auto.th": true,
   "auto.delta": true,
   groupVariable: null,
+  groupEqual: [],
+  groupPartial: [],
 });
 
 export let gridViewOptions = writable({
@@ -93,6 +95,12 @@ export const modelComparisonDialog = writable({
   details: null,
   detailModelIndex: null,
   detailsLoading: false,
+});
+
+export const groupPartialDialog = writable({
+  open: false,
+  options: [],
+  selected: [],
 });
 
 export const columnNamesSTore = derived(
