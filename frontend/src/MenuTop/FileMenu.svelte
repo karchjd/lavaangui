@@ -209,6 +209,7 @@
       .removeClass(GROUP_PARAMETERS_CLASS);
     $appState.dataAvail = false;
     $appState.columnNames = null;
+    $appState.groupingVariables = [];
     $appState.loadedFileName = null;
     $appState.ids = null;
     $appState.groupLabels = [];

@@ -564,9 +564,14 @@
   Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
     applyLinkedClass(data_info.columns, true);
     $appState.columnNames = [...data_info.columns];
+    $appState.groupingVariables = data_info.grouping_columns == null
+      ? []
+      : Array.isArray(data_info.grouping_columns)
+        ? [...data_info.grouping_columns]
+        : [data_info.grouping_columns];
     if (
       $modelOptions.groupVariable &&
-      !$appState.columnNames.includes($modelOptions.groupVariable)
+      !$appState.groupingVariables.includes($modelOptions.groupVariable)
     ) {
       clearGroupParameterData();
       $modelOptions.groupVariable = null;
@@ -638,6 +643,10 @@
     const cy = get(cyStore);
     const oldName = $appState.columnNames[cnames.index];
     $appState.columnNames[cnames.index] = cnames.newcolname;
+    const groupingIndex = $appState.groupingVariables.indexOf(oldName);
+    if (groupingIndex >= 0) {
+      $appState.groupingVariables[groupingIndex] = cnames.newcolname;
+    }
     if ($modelOptions.groupVariable === oldName) {
       cy.edges(`.${GROUP_PARAMETERS_CLASS}`).forEach((edge) => {
         const state = edge.data("groupParameters");

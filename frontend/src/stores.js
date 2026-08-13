@@ -59,6 +59,7 @@ export let appState = writable({
   modelEmpty: true,
   dataAvail: false,
   columnNames: null,
+  groupingVariables: [],
   loadedFileName: null,
   ids: null,
   dragged: null,

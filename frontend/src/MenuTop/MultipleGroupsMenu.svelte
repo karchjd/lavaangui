@@ -125,19 +125,25 @@
     </li>
     <li role="separator" class="divider" />
     <li class="dropdown-header">Grouping variable</li>
-    {#each $appState.columnNames ?? [] as variable}
-      <li>
-        <button
-          type="button"
-          class="menu-option"
-          class:selected={$modelOptions.groupVariable === variable}
-          on:click={() => selectGroupingVariable(variable)}
-        >
-          <span class="glyphicon glyphicon-ok check-mark" aria-hidden="true" />
-          {variable}
-        </button>
+    {#if ($appState.groupingVariables ?? []).length === 0}
+      <li class="disabled">
+        <span class="menu-message">No eligible grouping variables</span>
       </li>
-    {/each}
+    {:else}
+      {#each $appState.groupingVariables as variable}
+        <li>
+          <button
+            type="button"
+            class="menu-option"
+            class:selected={$modelOptions.groupVariable === variable}
+            on:click={() => selectGroupingVariable(variable)}
+          >
+            <span class="glyphicon glyphicon-ok check-mark" aria-hidden="true" />
+            {variable}
+          </button>
+        </li>
+      {/each}
+    {/if}
     <li role="separator" class="divider" />
     <li
       class="dropdown-submenu"

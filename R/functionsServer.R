@@ -75,9 +75,27 @@ importModel <- function(session, full, importedModel, shinyapps) {
   }
 }
 
+getGroupingVariables <- function(data) {
+  names(data)[vapply(data, function(column) {
+    tryCatch(
+      {
+        values <- column[!is.na(column)]
+        distinct <- unique(values)
+        if (length(distinct) < 2L) {
+          return(FALSE)
+        }
+        counts <- tabulate(match(values, distinct), nbins = length(distinct))
+        all(counts >= 2L)
+      },
+      error = function(e) FALSE
+    )
+  }, logical(1))]
+}
+
 propagateData <- function(df, session, showData = FALSE) {
   data_info <- list(
     name = df$name, columns = colnames(df$df),
+    grouping_columns = getGroupingVariables(df$df),
     showData = showData
   )
   session$sendCustomMessage(type = "dataInfo", message = data_info)
