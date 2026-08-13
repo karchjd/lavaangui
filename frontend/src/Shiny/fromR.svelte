@@ -16,6 +16,7 @@
   import { tolavaan } from "./toR.js";
   import { applySemLayout, resolveLayout } from "../MenuTop/semPlotLayouts.js";
   import { updateLabels, updateVisibility } from "../MenuTop/viewModule";
+  import { activateEstimateGroup } from "./groupEstimates.js";
   import {
     OBSERVED,
     LATENT,
@@ -404,7 +405,7 @@
     $appState.loadingMode = false;
   }
 
-  function updateEstimates(lav_result, std_result) {
+  function updateEstimates(lav_result, std_result, activeGroup) {
     let cy = get(cyStore);
     const ordered = lav_result.op.some((op) => op.includes("~~"));
 
@@ -419,6 +420,7 @@
       );
       if (existingEdge.length > 0) {
         let allEstimates = {};
+        const groupId = lav_result.group?.[i] ?? 1;
         if (existingEdge.isFree()) {
           //estimates from lav_result
           allEstimates.est = lav_result.est[i];
@@ -459,8 +461,16 @@
           allEstimates.p_value_std = std_result.pvalue[i];
           existingEdge.addClass("hasEstStd");
         }
-        existingEdge.data("estimates", allEstimates);
+        const estimatesByGroup = existingEdge.data("estimatesByGroup") || {};
+        estimatesByGroup[String(groupId)] = allEstimates;
+        existingEdge.data("estimatesByGroup", estimatesByGroup);
+        if (activeGroup == null) {
+          existingEdge.data("estimates", allEstimates);
+        }
       }
+    }
+    if (activeGroup != null) {
+      activateEstimateGroup(activeGroup);
     }
   }
 
@@ -469,6 +479,14 @@
   Shiny.addCustomMessageHandler("dataInfo", function (data_info) {
     applyLinkedClass(data_info.columns, true);
     $appState.columnNames = [...data_info.columns];
+    if (
+      $modelOptions.groupVariable &&
+      !$appState.columnNames.includes($modelOptions.groupVariable)
+    ) {
+      $modelOptions.groupVariable = null;
+      $appState.groupLabels = [];
+      $appState.activeGroup = null;
+    }
     $appState.ids = [...data_info.columns];
     $appState.loadedFileName = data_info.name;
     $appState.dataAvail = true;
@@ -533,6 +551,9 @@
     const cy = get(cyStore);
     const oldName = $appState.columnNames[cnames.index];
     $appState.columnNames[cnames.index] = cnames.newcolname;
+    if ($modelOptions.groupVariable === oldName) {
+      $modelOptions.groupVariable = cnames.newcolname;
+    }
     cy.getObservedNodes().forEach((node) => {
       if (node.getLabel() == oldName) {
         node.setLabel(cnames.newcolname);
@@ -562,6 +583,9 @@
   //import model gets message from model importer
   // @ts-expect-error
   Shiny.addCustomMessageHandler("imported_model", function (lav_model) {
+    $modelOptions.groupVariable = lav_model.group_variable || null;
+    $appState.groupLabels = [];
+    $appState.activeGroup = null;
     if (lav_model.saved_layout == null) {
       getModelLav(lav_model, true);
       let cy = get(cyStore);
@@ -675,7 +699,11 @@
   Shiny.addCustomMessageHandler("lav_estimates", function (all_res) {
     const lav_result = all_res.normal;
     const std_result = all_res.std;
-    updateEstimates(lav_result, std_result);
+    const groups = [].concat(all_res.groups ?? [{ id: 1, label: "Group 1" }]);
+    const activeGroup = groups.length > 0 ? groups[0].id : null;
+    $appState.groupLabels = groups.length > 1 ? groups : [];
+    $appState.activeGroup = activeGroup;
+    updateEstimates(lav_result, std_result, activeGroup);
   });
 
   // @ts-expect-error

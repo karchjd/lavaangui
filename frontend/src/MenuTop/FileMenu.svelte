@@ -1,6 +1,6 @@
 <script>
   export let full = true;
-  import { cyStore, appState, dataInfo } from "../stores.js";
+  import { cyStore, appState, dataInfo, modelOptions } from "../stores.js";
   import { get } from "svelte/store";
   import JSZip from "jszip";
   import DropdownLinks from "./helpers/DropDownLinks.svelte";
@@ -207,6 +207,9 @@
     $appState.columnNames = null;
     $appState.loadedFileName = null;
     $appState.ids = null;
+    $appState.groupLabels = [];
+    $appState.activeGroup = null;
+    $modelOptions.groupVariable = null;
     $dataInfo = null;
     cy.nodes().unlink();
     // @ts-ignore

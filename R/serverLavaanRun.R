@@ -85,12 +85,13 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
       modelJavascript <- fromJavascript$model
       model <- modelJavascript$syntax # nolint: object_usage_linter.
       optsList <- modelJavascript$optionsList
+      has_group <- !is.null(optsList$group) && nzchar(as.character(optsList$group))
       modelHash <- getHashModel(fromJavascript$model)
       modelDetails <- list(
         syntax = model,
         call = paste0("fit <- lavaan(model, data, ", modelJavascript$options)
       )
-      if (length(modelJavascript$ordered_labels) > 0) { ## ordinal data present
+      if (length(modelJavascript$ordered_labels) > 0 && !has_group) { ## ordinal data present
         modelParse <- paste0(model, "\n")
         for (i in 1:length(modelJavascript$ordered_labels)) {
           modelParse <- paste0(modelParse, modelJavascript$ordered_labels[i], "|t1\n")
@@ -104,7 +105,11 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
         ordered_opts$meanstructure <- TRUE
         lavaanify_args <- c(list(model = modelParse), ordered_opts)
       } else {
-        lavaan_args <- c(list(model = model), optsList)
+        lavaan_args <- c(
+          list(model = model),
+          if (has_group) list(data = getData(), do.fit = FALSE) else list(),
+          optsList
+        )
       }
 
 
@@ -112,7 +117,7 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
       wasError <- tryCatch(
         withCallingHandlers(
           {
-            if (length(modelJavascript$ordered_labels) > 0) {
+            if (length(modelJavascript$ordered_labels) > 0 && !has_group) {
               model_parsed <- do.call(lavaan::lavaanify, lavaanify_args)
             } else {
               lavaan_model <- do.call(lavaan::lavaan, lavaan_args)
@@ -143,7 +148,12 @@ serverLavaanRun <- function(id, to_render, forceEstimateUpdate, getData, fit, fi
         return(NULL)
       }
 
-      session$sendCustomMessage("lav_model", model_parsed)
+      model_front <- model_parsed
+      if (has_group && "group" %in% names(model_front)) {
+        first_group <- min(model_front$group)
+        model_front <- model_front[model_front$group == first_group, , drop = FALSE]
+      }
+      session$sendCustomMessage("lav_model", model_front)
 
       ## Mode = "Full Model" send script to render and stop
       if (fromJavascript$mode == "full model") {

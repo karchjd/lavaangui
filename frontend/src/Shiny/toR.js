@@ -371,6 +371,9 @@ function produceLavaanOptions(ordered_labels, formative) {
     options = `ordered = ${ordered_arg}, 
     \t\t ${options}`
   }
+  if (modelOpt.groupVariable) {
+    options = `group = ${addQuotes(modelOpt.groupVariable)},\n\t\t ${options}`;
+  }
 
   options = options + ")";
 
@@ -404,6 +407,9 @@ function produceLavaanOptionsList(ordered_labels, formative) {
   }
   if (ordered_labels.length > 0) {
     opts.ordered = ordered_labels;
+  }
+  if (modelOpt.groupVariable) {
+    opts.group = modelOpt.groupVariable;
   }
 
   return opts;

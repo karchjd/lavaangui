@@ -10,6 +10,7 @@
   import DropDownOpenhover from "./DropDownOpenhover.svelte";
   import EditMenu from "./EditMenu.svelte";
   import CompareModelsMenu from "./CompareModelsMenu.svelte";
+  import MultipleGroupsMenu from "./MultipleGroupsMenu.svelte";
 </script>
 
 <Navbar>
@@ -18,6 +19,7 @@
   <ViewMenu />
   <AddMenu />
   <EstimationMenu />
+  <MultipleGroupsMenu />
   <CompareModelsMenu />
   <Layouts />
   <GridOptions />

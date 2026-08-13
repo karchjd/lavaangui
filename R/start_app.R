@@ -18,23 +18,13 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
     ## temporary fix until lavaanNames(fit, type = "lv.formative") works again
     parTab <- getParTable(fit)
     compositeNames <- unique(parTab$lhs[parTab$op == "<~"])
-    print(compositeNames)
-    if (getNGroups(fit) == 1) {
-      df <- tryCatch(
-        {
-          as.data.frame(lavInspect(fit, what = "data"))
-        },
-        error = function(e) {
-          message("Data not available only importing model")
-          return(NULL)
-        }
-      )
-    } else {
-      if (full) {
-        stop("Multipe group models are currently not supported. But you can plot your model using plot_lavaan")
+    df <- tryCatch(
+      getImportedData(fit),
+      error = function(e) {
+        message("Data not available; only importing model: ", conditionMessage(e))
+        NULL
       }
-      df <- NULL
-    }
+    )
     if (!full && !is.null(layout)) {
       paraS <- myParameterEstimates(fit)
       layout_hash <- digest::digest(paraS)
@@ -46,6 +36,8 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
     importedModel <- list(
       obs = varNames, latent = factNames, parTable = parTable,
       composite = compositeNames,
+      group_variable = getGroupVariable(fit),
+      group_labels = getGroupLabels(fit),
       df = df, fit = fit,
       layout_hash = layout_hash,
       layout_name = layout,
@@ -127,7 +119,7 @@ start_app <- function(fit = NULL, full, where, layout, export_filepath, scale) {
     ## Store fitted models for later comparison
     serverModelStore("modelStore", fit, fitModelHash, fitModelDetails)
 
-    serverEstimateUpdater("ests", forceEstimateUpdate, fit, to_render)
+    serverEstimateUpdater("ests", forceEstimateUpdate, fit, to_render, full)
 
     serverResultUpdater("res", to_render)
 

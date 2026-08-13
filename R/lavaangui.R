@@ -23,8 +23,8 @@
 #'
 
 #' @details
-#' Currently, multiple-group models are not supported. However, you can create an
-#' interactive plot of those models using \code{\link{plot_lavaan}}
+#' Multiple-group models are imported with their grouping variable selected.
+#' After estimation, estimates for each group can be selected above the diagram.
 #'
 #' @export
 lavaangui <- function(fit = NULL) {

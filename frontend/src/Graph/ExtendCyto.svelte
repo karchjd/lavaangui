@@ -232,6 +232,7 @@
             Constants.HAS_EST_FIXED,
         );
         this.removeData("estimates");
+        this.removeData("estimatesByGroup");
         this.removeClass("fixedUnderStd");
         this.removeClass("hasEst");
         this.removeClass("hasEstFixed");

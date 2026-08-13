@@ -20,21 +20,13 @@ pkgload::load_all()
 
 
 library(lavaan)
-model <- "
-  # latent variable definitions
-     ind60 =~ x1 + x2 + x3
-     dem60 =~ y1 + a*y2 + b*y3 + c*y4
-     dem65 =~ y5 + a*y6 + b*y7 + c*y8
+HS.model <- ' visual  =~ x1 + x2 + x3
+              textual =~ x4 + x5 + x6
+              speed   =~ x7 + x8 + x9'
 
-  # regressions
-    dem60 ~ ind60
-    dem65 ~ ind60 + dem60
-
-  # residual correlations
-    y1 ~~ y5
-"
-
-fit <- sem(model, data = PoliticalDemocracy)
+fit <- cfa(HS.model, 
+           data = HolzingerSwineford1939,
+           group = "school")
 
 
 lavaangui(fit)

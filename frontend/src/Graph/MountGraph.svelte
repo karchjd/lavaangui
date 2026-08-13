@@ -21,6 +21,7 @@
     COMPOSITE,
   } from "./classNames.js";
   import { tolavaan } from "../Shiny/toR.js";
+  import GroupSwitcher from "./GroupSwitcher.svelte";
 
   let cy = get(cyStore);
   let eh = get(ehStore);
@@ -446,23 +447,36 @@
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
-  id="cy"
-  class="graph"
+  class="graph-panel"
   style="flex-basis: {$appState.full ? '70%' : '100%'};"
-  bind:this={cyContainer}
-  on:mouseover={handleMouseOver}
-  on:mouseout={handleMouseOut}
-  on:mousemove={handleMousemove}
-  on:drop={handleCreateNode}
-  on:dragover={handleDragOver}
-/>
+>
+  <GroupSwitcher />
+  <div
+    id="cy"
+    class="graph"
+    bind:this={cyContainer}
+    on:mouseover={handleMouseOver}
+    on:mouseout={handleMouseOut}
+    on:mousemove={handleMousemove}
+    on:drop={handleCreateNode}
+    on:dragover={handleDragOver}
+  />
+</div>
 
 <style>
-  div {
+  .graph-panel {
     z-index: 1;
     display: flex;
     flex-basis: 70%;
+    flex-direction: column;
     padding: 0px;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .graph {
+    display: flex;
+    flex: 1 1 auto;
     min-width: 0;
     min-height: 0;
   }

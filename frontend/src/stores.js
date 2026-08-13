@@ -21,6 +21,7 @@ export let modelOptions = writable({
   mode: "user model",
   "auto.th": true,
   "auto.delta": true,
+  groupVariable: null,
 });
 
 export let gridViewOptions = writable({
@@ -75,6 +76,8 @@ export let appState = writable({
   layout_name: null,
   layout_hash: null,
   storedModelCount: 0,
+  groupLabels: [],
+  activeGroup: null,
 });
 
 export let dataInfo = writable(0);

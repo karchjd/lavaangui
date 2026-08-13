@@ -20,12 +20,15 @@ importModel <- function(session, full, importedModel, shinyapps) {
     observed <- importedModel$obs
     latent <- importedModel$latent
     composite <- importedModel$composite
-    if (getNGroups(importedModel$fit) > 1) {
+    if (getNGroups(importedModel$fit) > 1 && !full) {
       parTable <- getGroupTable(parTable)
       groups <- unique(parTable$group)
       observed <- makeNewVars(observed, groups)
       latent <- makeNewVars(latent, groups)
       composite <- makeNewVars(composite, groups)
+    } else if (getNGroups(importedModel$fit) > 1) {
+      first_group <- min(parTable$group)
+      parTable <- parTable[parTable$group == first_group, , drop = FALSE]
     }
     if (!is.null(importedModel$layout_name)) {
       safe_name <- gsub("[^a-zA-Z0-9_-]", "", importedModel$layout_name)
@@ -46,6 +49,8 @@ importModel <- function(session, full, importedModel, shinyapps) {
     session$sendCustomMessage("imported_model", message = list(
       parTable = parTable, latent = latent, obs = observed, composite = composite,
       ordered = getOrdered(importedModel$fit),
+      group_variable = importedModel$group_variable,
+      group_labels = importedModel$group_labels,
       layout_name = importedModel$layout_name,
       layout_hash = importedModel$layout_hash,
       layout_exists = !is.null(importedModel$layout_name) && file.exists(layout_path),
