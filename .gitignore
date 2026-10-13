@@ -46,3 +46,4 @@ layout_*.json
 test_plot.png
 tmp
 
+frontend/playwright-report
