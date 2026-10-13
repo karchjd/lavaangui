@@ -1,4 +1,5 @@
-# lavaangui (development version)
+# lavaangui 0.4.1
+- Bugfix: Math in display labels (e.g., Greek letters, subscripts) was garbled when exporting the diagram to PDF (#105).
 
 # lavaangui 0.4.0
 - Added: `export_plot()` function to export the graph as PNG, JPEG, SVG, or PDF

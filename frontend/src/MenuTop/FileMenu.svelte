@@ -8,8 +8,7 @@
   import svg from "cytoscape-svg";
   // @ts-ignore
   import { saveAs } from "file-saver";
-  import { jsPDF } from "jspdf";
-  import { svg2pdf } from "svg2pdf.js";
+  import { svgToPDF } from "./pdfExport.js";
   import { requestData, jsonModel, reset, parseModel } from "./IO.js";
 
   cytoscape.use(svg);
@@ -273,31 +272,9 @@
 
   async function exportPDF() {
     promptScale(async () => {
-      const svgContent = getSVG(imageScale);
-      await renderPDF(svgContent);
+      const pdf = await svgToPDF(getSVG(imageScale));
+      pdf.save("model.pdf");
     });
-  }
-
-  async function renderPDF(svgContent) {
-    const parser = new DOMParser();
-    const svgElement = parser.parseFromString(
-      svgContent,
-      "image/svg+xml",
-    ).documentElement;
-    svgElement.style.position = "absolute";
-    svgElement.style.left = "-9999px"; // Move the SVG off-screen
-    document.body.appendChild(svgElement); // Temporarily add the SVG to the document
-    const rect = svgElement.getBoundingClientRect(); // Get the actual size
-    document.body.removeChild(svgElement); // Remove the SVG from the document
-    const width = rect.width;
-    const height = rect.height;
-    const pdf = new jsPDF({
-      orientation: width > height ? "landscape" : "portrait",
-      unit: "pt",
-      format: [width, height],
-    });
-    await svg2pdf(svgElement, pdf, { width, height });
-    pdf.save("model.pdf");
   }
 
   let menuItems;

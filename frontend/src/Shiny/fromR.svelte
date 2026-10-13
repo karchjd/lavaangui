@@ -26,8 +26,7 @@
   import { parseModel } from "../MenuTop/IO";
   import cytoscape from "cytoscape";
   import svg from "cytoscape-svg";
-  import { jsPDF } from "jspdf";
-  import { svg2pdf } from "svg2pdf.js";
+  import { svgToPDF } from "../MenuTop/pdfExport.js";
 
   cytoscape.use(svg);
 
@@ -628,22 +627,7 @@
         sendExport(svgToBase64(svgContent));
       } else if (ext === "pdf") {
         (async () => {
-          const svgContent = cy.svg({ scale, full: true });
-          const parser = new DOMParser();
-          const svgElement = parser.parseFromString(svgContent, "image/svg+xml").documentElement;
-          svgElement.style.position = "absolute";
-          svgElement.style.left = "-9999px";
-          document.body.appendChild(svgElement);
-          const rect = svgElement.getBoundingClientRect();
-          document.body.removeChild(svgElement);
-          const width = rect.width;
-          const height = rect.height;
-          const pdf = new jsPDF({
-            orientation: width > height ? "landscape" : "portrait",
-            unit: "pt",
-            format: [width, height],
-          });
-          await svg2pdf(svgElement, pdf, { width, height });
+          const pdf = await svgToPDF(cy.svg({ scale, full: true }));
           sendExport(pdf.output("datauristring").split(",")[1]);
         })();
       } else if (ext === "jpg" || ext === "jpeg") {

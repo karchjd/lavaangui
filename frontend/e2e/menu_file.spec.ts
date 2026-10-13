@@ -1,6 +1,7 @@
 /// <reference types="node" />
 
 import { test, expect } from "./fixtures";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
@@ -120,4 +121,21 @@ test("Export PDF", async ({ page }) => {
   await page.getByText('OK').click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("model.pdf");
+});
+
+test("Export PDF with math display label", async ({ page }) => {
+  // @ts-expect-error
+  await expect.poll(() => page.evaluate(() => window.cy.nodes().length)).toBeGreaterThan(0);
+  // @ts-expect-error
+  await page.evaluate(() => window.cy.nodes().first().setDisplayLabel("\\lambda_{24}"));
+  await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole('link', { name: 'Export Diagram to PDF' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByText('OK').click();
+  const download = await downloadPromise;
+  const pdf = fs.readFileSync(await download.path()).toString("latin1");
+  // λ is outside the standard PDF fonts, so a Unicode font must be embedded
+  expect(pdf).toContain("/FontFile2");
+  expect(pdf).toMatch(/<03bb>/i);
 });
